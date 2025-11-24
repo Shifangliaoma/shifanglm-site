@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>十方料码-伪序趋势数据，主攻福彩3D综合缩水/趋势思路，仅供参考学习交流使用</title>
+  <meta name="description" content="十方料码的个人页：展示伪序趋势数据、趋势思路与联系方式。仅供参考学习交流使用。" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#home">十方料码</a>
+      <nav class="site-nav">
+        <a href="#about">关于</a>
+        <a href="#visual">伪序趋势</a>
+        <a href="#works">思路/作品</a>
+        <a href="#contact">联系</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="hero">
+      <div class="container hero-inner">
+        <div class="hero-left">
+          <h1>十方料码</h1>
+          <p class="lead">伪序趋势数据 · 主攻福彩3D综合缩水/趋势思路</p>
+          <p class="muted">仅供参考学习交流使用，不作为任何投注建议或决策依据。</p>
+          <div class="actions">
+            <a class="btn" href="#visual">生成伪序趋势</a>
+            <a class="btn outline" href="#contact">联系我</a>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="card">
+            <div class="avatar">十方料码</div>
+            <ul class="meta">
+              <li><strong>方向</strong><span>福彩3D缩水/趋势思路</span></li>
+              <li><strong>内容</strong><span>伪序趋势数据、思路分享</span></li>
+              <li><strong>用途</strong><span>学习交流 / 数据演示</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section container">
+      <h2>关于我</h2>
+      <p>我关注数据与趋势的表达与分析，擅长通过简单模型生成伪序趋势数据用于可视化、思路验证与教学演示。所展示内容为算法模拟与研究演示，仅供学习交流使用。</p>
+    </section>
+
+    <section id="visual" class="section alt container">
+      <h2>伪序趋势演示</h2>
+      <p>点击下方按钮可生成一组伪序趋势数据（自回归 + 周期 + 偶发跳变 + 噪声），并在画布中展示。支持导出 CSV。</p>
+
+      <div class="controls">
+        <label>点数：
+          <input id="count" type="number" min="10" max="5000" value="300" />
+        </label>
+        <label>周期：
+          <input id="period" type="number" min="5" max="1000" value="50" />
+        </label>
+        <label>噪声：
+          <input id="noise" type="number" min="0" max="20" step="0.1" value="1.0" />
+        </label>
+        <button id="generate" class="btn">生成并绘制</button>
+        <button id="export-csv" class="btn outline">导出 CSV</button>
+      </div>
+
+      <div class="chart-wrap">
+        <canvas id="trend-canvas" width="1200" height="360" aria-label="伪序趋势图"></canvas>
+      </div>
+      <p class="muted small">提示：这是基于随机过程生成的演示数据，非真实历史或预测。</p>
+    </section>
+
+    <section id="works" class="section container">
+      <h2>思路与作品</h2>
+      <ul class="works-list">
+        <li>伪序趋势生成器 — 用于验证趋势可视化与信号检测的教学工具</li>
+        <li>综合缩水思路笔记 — 数据筛选、热度统计与候选压缩（仅思路分享）</li>
+        <li>可视化展示组件 — 轻量画布绘图与数据导出</li>
+      </ul>
+    </section>
+
+    <section id="contact" class="section alt container">
+      <h2>联系</h2>
+      <p>如需交流或合作，请通过下面方式联系（或替换为你的联系方式）：</p>
+      <ul class="contact-info">
+        <li><strong>QQ：</strong><span id="qq">921913231</span> <button id="copy-qq" class="btn tiny">复制</button></li>
+        <li><strong>邮箱：</strong><span id="email">yourname@example.com</span> <button id="copy-email" class="btn tiny">复制</button></li>
+      </ul>
+      <p class="disclaimer"><strong>声明：</strong>页面内容为个人研究/学习用途，涉及彩种话题仅用于思想交流与技术演示，不提供投注建议。</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> 十方料码。仅供参考学习交流使用。</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

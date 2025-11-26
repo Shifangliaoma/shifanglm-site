@@ -1,0 +1,61 @@
+-- 用户表
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    register_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    points DECIMAL(10,2) DEFAULT 0.00,
+    level INT DEFAULT 1,
+    title VARCHAR(50) DEFAULT '新手上路',
+    is_author BOOLEAN DEFAULT FALSE,
+    is_banned BOOLEAN DEFAULT FALSE,
+    avatar VARCHAR(255)
+);
+
+-- 论坛分区表
+CREATE TABLE forums (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL,
+    description TEXT,
+    sort_order INT DEFAULT 0
+);
+
+-- 帖子表
+CREATE TABLE posts (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(200) NOT NULL,
+    summary TEXT,
+    content TEXT,
+    author_id INT,
+    forum_id INT,
+    price DECIMAL(10,2) DEFAULT 0.00,
+    view_count INT DEFAULT 0,
+    created_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_time DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (author_id) REFERENCES users(id),
+    FOREIGN KEY (forum_id) REFERENCES forums(id)
+);
+
+-- 帖子购买记录
+CREATE TABLE purchases (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    post_id INT,
+    purchase_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    amount DECIMAL(10,2),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (post_id) REFERENCES posts(id)
+);
+
+-- 管理操作日志
+CREATE TABLE admin_logs (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    admin_id INT,
+    action VARCHAR(100),
+    target_type VARCHAR(50),
+    target_id INT,
+    details TEXT,
+    created_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (admin_id) REFERENCES users(id)
+);

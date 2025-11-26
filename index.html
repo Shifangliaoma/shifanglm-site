@@ -3,1157 +3,1085 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数字彩交流论坛 - 霓虹黑科技版</title>
+    <title>彩友论坛 - 专业彩票交流平台</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:"Arial",sans-serif;background:#050517;color:#eee;line-height:1.6;overflow-x:hidden;}
-        /* 霓虹核心变量 */
-        :root{
-            --neon-primary:#00f3ff;/* 主霓虹蓝 */
-            --neon-secondary:#c774e8;/* 霓虹紫 */
-            --neon-accent:#ff2ec4;/* 霓虹粉 */
-            --neon-gold:#ffd700;/* 元宝金 */
-            --neon-green:#00ff9d;/* 等级绿 */
-            --dark-bg:#0a0a1f;/* 卡片背景 */
-            --border-bg:#121235;/* 边框背景 */
-        }
-        /* 霓虹通用样式 */
-        .neon-text-primary{text-shadow:0 0 5px var(--neon-primary),0 0 10px var(--neon-primary),0 0 20px var(--neon-primary);color:var(--neon-primary);}
-        .neon-text-secondary{text-shadow:0 0 5px var(--neon-secondary),0 0 10px var(--neon-secondary),0 0 20px var(--neon-secondary);color:var(--neon-secondary);}
-        .neon-text-gold{text-shadow:0 0 5px var(--neon-gold),0 0 10px var(--neon-gold),0 0 20px var(--neon-gold);color:var(--neon-gold);}
-        .neon-border-primary{box-shadow:0 0 8px var(--neon-primary),inset 0 0 4px var(--neon-primary);border:1px solid var(--neon-primary);}
-        .neon-border-secondary{box-shadow:0 0 8px var(--neon-secondary),inset 0 0 4px var(--neon-secondary);border:1px solid var(--neon-secondary);}
-        .neon-border-gold{box-shadow:0 0 8px var(--neon-gold),inset 0 0 4px var(--neon-gold);border:1px solid var(--neon-gold);}
-        .container{width:100%;max-width:1200px;margin:0 auto;padding:0 15px;}
-        
-        /* 顶部合规提示（固定置顶） */
-        .top-alert{
-            background:rgba(231,76,60,0.15);
-            border-bottom:1px solid var(--neon-accent);
-            text-align:center;
-            padding:8px 0;
-            font-size:13px;
-            position:sticky;
-            top:0;
-            z-index:100;
-            color:#f0f0f0;
+        :root {
+            --neon-blue: #0ff0fc;
+            --neon-purple: #bc13fe;
+            --neon-pink: #ff44cc;
+            --dark-bg: #0a0a16;
+            --darker-bg: #050510;
+            --card-bg: rgba(15, 15, 35, 0.8);
+            --text-color: #e0e0ff;
         }
         
-        /* 导航栏（模糊背景+霓虹边框） */
-        .header{
-            background:rgba(5,5,23,0.85);
-            backdrop-filter:blur(10px);
-            padding:15px 0;
-            position:sticky;
-            top:34px;
-            z-index:90;
-            border-bottom:1px solid rgba(0,243,255,0.2);
-        }
-        .nav-wrap{display:flex;justify-content:space-between;align-items:center;}
-        .logo{font-size:22px;font-weight:bold;neon-text-primary;}
-        .user-operate{display:flex;align-items:center;gap:12px;}
-        .admin-btn{
-            font-size:14px;
-            color:var(--neon-green);
-            text-decoration:none;
-            padding:5px 10px;
-            border:1px solid var(--neon-green);
-            border-radius:4px;
-            transition:all 0.3s;
-        }
-        .admin-btn:hover{background:rgba(0,255,157,0.1);}
-        .user-info{display:flex;align-items:center;gap:8px;}
-        .gold-num{
-            color:var(--neon-gold);
-            font-size:14px;
-            display:flex;
-            align-items:center;
-            neon-text-gold;
-            display:none;
-        }
-        .gold-icon{font-size:16px;margin-right:3px;}
-        .auth-btn{
-            font-size:14px;
-            color:var(--neon-secondary);
-            text-decoration:none;
-            padding:5px 10px;
-            border:1px solid var(--neon-secondary);
-            border-radius:4px;
-            transition:all 0.3s;
-        }
-        .auth-btn:hover{background:rgba(199,116,232,0.1);}
-        .menu-btn{
-            width:44px;height:44px;
-            background:transparent;
-            border:none;
-            color:var(--neon-primary);
-            font-size:24px;
-            cursor:pointer;
-        }
-        /* 侧边菜单 */
-        .nav-menu{
-            position:fixed;
-            top:92px;left:0;right:0;
-            background:rgba(5,5,23,0.95);
-            backdrop-filter:blur(10px);
-            display:none;
-            flex-direction:column;
-            z-index:80;
-            border-bottom:1px solid var(--neon-primary);
-            padding:10px 0;
-        }
-        .nav-menu.active{display:flex;}
-        .nav-item{padding:12px 20px;border-bottom:1px solid rgba(0,243,255,0.1);}
-        .nav-item a{color:#eee;text-decoration:none;font-size:15px;transition:color 0.3s;}
-        .nav-item a:hover{color:var(--neon-primary);}
-        .nav-item .author-apply{color:var(--neon-gold);}
-        .nav-item .level-title{color:var(--neon-green);font-size:13px;margin-left:8px;}
-        .logout-btn{color:var(--neon-accent)!important;}
-        
-        /* 公告栏 */
-        .notice{
-            background:var(--dark-bg);
-            border-radius:8px;
-            padding:15px;
-            margin:15px 0;
-            display:flex;
-            align-items:center;
-            neon-border-primary;
-        }
-        .notice-icon{color:var(--neon-primary);font-size:18px;margin-right:10px;}
-        .notice-text{font-size:14px;flex:1;color:#f0f0f0;}
-        .notice-more{color:var(--neon-primary);font-size:14px;text-decoration:none;}
-        
-        /* 分区入口（卡片式+霓虹hover） */
-        .section-title{
-            font-size:18px;
-            margin:25px 0 15px;
-            font-weight:bold;
-            neon-text-secondary;
-        }
-        .forum-list{
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            gap:15px;
-            margin-bottom:30px;
-        }
-        .forum-card{
-            background:var(--dark-bg);
-            border-radius:10px;
-            padding:20px;
-            text-align:center;
-            neon-border-secondary;
-            cursor:pointer;
-            transition:transform 0.3s,box-shadow 0.3s;
-        }
-        .forum-card:hover{
-            transform:scale(1.03);
-            box-shadow:0 0 12px var(--neon-secondary);
-        }
-        .forum-icon{font-size:32px;margin-bottom:12px;}
-        .icon-3d{color:var(--neon-primary);}
-        .icon-pl3{color:var(--neon-secondary);}
-        .forum-name{font-size:16px;font-weight:bold;margin-bottom:5px;}
-        .forum-desc{font-size:13px;color:#aaa;}
-        
-        /* 帖子列表（简洁排版+等级标注） */
-        .posts-container{
-            background:var(--dark-bg);
-            border-radius:8px;
-            padding:20px;
-            margin-bottom:30px;
-            neon-border-primary;
-        }
-        .posts-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
-        .posts-header-title{font-size:16px;neon-text-secondary;}
-        .post-btn{
-            padding:6px 12px;
-            background:var(--neon-primary);
-            color:#050517;
-            border:none;
-            border-radius:4px;
-            font-size:14px;
-            cursor:pointer;
-            neon-text-primary;
-            display:none;
-        }
-        .post-btn.show{display:block;}
-        /* 帖子项 */
-        .post-item{
-            padding:15px 0;
-            border-bottom:1px solid rgba(0,243,255,0.1);
-            cursor:pointer;
-            transition:background 0.3s;
-        }
-        .post-item:hover{background:rgba(0,243,255,0.05);}
-        .post-item:last-child{border-bottom:none;}
-        .post-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-        .post-author{font-size:13px;color:var(--neon-green);}
-        .post-author .level-tag{
-            background:rgba(0,255,157,0.1);
-            border:1px solid var(--neon-green);
-            border-radius:3px;
-            padding:1px 5px;
-            font-size:11px;
-            margin-left:5px;
-        }
-        .post-time{font-size:12px;color:#aaa;}
-        .post-title{
-            font-size:15px;
-            margin-bottom:8px;
-            display:flex;
-            align-items:center;
-        }
-        .post-title:hover{color:var(--neon-primary);}
-        .post-price{
-            margin-left:8px;
-            font-size:12px;
-            color:var(--neon-gold);
-            background:rgba(255,215,0,0.1);
-            border:1px solid var(--neon-gold);
-            border-radius:3px;
-            padding:1px 6px;
-            neon-text-gold;
-        }
-        .post-meta{
-            font-size:13px;
-            color:#aaa;
-            display:flex;
-            justify-content:space-between;
-        }
-        .post-section{
-            color:var(--neon-secondary);
-            background:rgba(199,116,232,0.1);
-            padding:1px 6px;
-            border-radius:3px;
-            font-size:12px;
-        }
-        .post-sold{color:var(--neon-gold);font-size:12px;}
-        .no-posts{text-align:center;padding:30px 0;color:#aaa;font-size:14px;}
-        
-        /* 帖子详情页 */
-        .post-detail{display:none;padding:15px 0;}
-        .back-btn{
-            display:inline-block;
-            padding:8px 15px;
-            background:rgba(0,243,255,0.1);
-            color:var(--neon-primary);
-            border-radius:5px;
-            margin-bottom:15px;
-            text-decoration:none;
-            font-size:14px;
-            neon-border-primary;
-        }
-        .detail-header{
-            background:var(--dark-bg);
-            border-radius:8px;
-            padding:20px;
-            margin-bottom:15px;
-            neon-border-primary;
-        }
-        .detail-title{
-            font-size:18px;
-            neon-text-primary;
-            margin-bottom:12px;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-        }
-        .detail-price{
-            font-size:14px;
-            color:var(--neon-gold);
-            background:rgba(255,215,0,0.1);
-            padding:4px 10px;
-            border-radius:4px;
-            neon-text-gold;
-            border:1px solid var(--neon-gold);
-        }
-        .detail-meta{
-            display:flex;
-            justify-content:space-between;
-            font-size:13px;
-            color:#aaa;
-            margin-bottom:10px;
-        }
-        .detail-author{color:var(--neon-green);}
-        .detail-author .level-tag{
-            background:rgba(0,255,157,0.1);
-            border:1px solid var(--neon-green);
-            border-radius:3px;
-            padding:1px 5px;
-            font-size:11px;
-            margin-left:5px;
-        }
-        .detail-section{
-            color:var(--neon-secondary);
-            background:rgba(199,116,232,0.1);
-            padding:1px 6px;
-            border-radius:3px;
-            font-size:12px;
-        }
-        /* 摘要区 */
-        .detail-excerpt{
-            background:var(--dark-bg);
-            border-radius:8px;
-            padding:15px;
-            margin-bottom:15px;
-            border-left:3px solid var(--neon-secondary);
-        }
-        .excerpt-title{font-size:15px;color:var(--neon-secondary);margin-bottom:8px;}
-        .excerpt-content{font-size:14px;color:#f0f0f0;line-height:1.7;}
-        /* 正文区（付费隐藏） */
-        .detail-content{
-            background:var(--dark-bg);
-            border-radius:8px;
-            padding:20px;
-            margin-bottom:20px;
-            neon-border-secondary;
-            display:none;
-        }
-        .detail-content.show{display:block;}
-        .content-empty{
-            text-align:center;
-            padding:40px 0;
-            color:#aaa;
-            font-size:14px;
-        }
-        /* 购买按钮 */
-        .buy-btn{
-            display:block;
-            width:100%;
-            padding:14px 0;
-            background:var(--neon-gold);
-            color:#050517;
-            border:none;
-            border-radius:8px;
-            font-size:16px;
-            cursor:pointer;
-            neon-text-gold;
-            margin-bottom:20px;
-            transition:box-shadow 0.3s;
-        }
-        .buy-btn:hover{box-shadow:0 0 12px var(--neon-gold);}
-        .buy-btn.hide{display:none;}
-        /* 评论区 */
-        .comment-section{
-            background:var(--dark-bg);
-            border-radius:8px;
-            padding:20px;
-            neon-border-primary;
-        }
-        .comment-header{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:15px;
-        }
-        .comment-title{font-size:16px;neon-text-secondary;}
-        .comment-input{
-            width:100%;
-            padding:12px;
-            background:var(--border-bg);
-            border:1px solid var(--neon-primary);
-            border-radius:6px;
-            color:#eee;
-            outline:none;
-            margin-bottom:10px;
-            min-height:80px;
-            resize:none;
-            font-size:14px;
-        }
-        .comment-input:disabled{background:#1a1a3a;opacity:0.6;cursor:not-allowed;}
-        .comment-submit{
-            padding:8px 20px;
-            background:var(--neon-primary);
-            color:#050517;
-            border:none;
-            border-radius:4px;
-            font-size:14px;
-            cursor:pointer;
-            neon-text-primary;
-        }
-        .comment-submit:disabled{opacity:0.6;cursor:not-allowed;}
-        .comment-list{margin-top:20px;}
-        .comment-item{
-            padding:15px 0;
-            border-bottom:1px solid rgba(0,243,255,0.1);
-        }
-        .comment-item:last-child{border-bottom:none;}
-        .comment-author{
-            font-size:13px;
-            color:var(--neon-green);
-            margin-bottom:8px;
-            display:flex;
-            justify-content:space-between;
-        }
-        .comment-time{color:#aaa;font-size:12px;}
-        .comment-content{font-size:14px;color:#f0f0f0;line-height:1.7;}
-        .no-comment{text-align:center;padding:20px 0;color:#aaa;font-size:14px;}
-        
-        /* 底部信息 */
-        .footer{
-            background:var(--dark-bg);
-            padding:20px 0;
-            margin-top:30px;
-            border-top:1px solid rgba(0,243,255,0.2);
-        }
-        .footer-info{
-            font-size:13px;
-            text-align:center;
-            line-height:1.8;
-            color:#aaa;
-        }
-        .footer-info a{color:var(--neon-primary);text-decoration:none;}
-        
-        /* 通用弹窗样式（居中+霓虹边框） */
-        .modal{
-            position:fixed;
-            top:0;left:0;right:0;bottom:0;
-            background:rgba(5,5,23,0.85);
-            backdrop-filter:blur(5px);
-            display:none;
-            align-items:center;
-            justify-content:center;
-            padding:0 15px;
-            z-index:200;
-        }
-        .modal.active{display:flex;}
-        .modal-content{
-            width:100%;
-            max-width:500px;
-            background:var(--dark-bg);
-            border-radius:10px;
-            neon-border-primary;
-            overflow:hidden;
-        }
-        .modal-header{
-            padding:15px 20px;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            border-bottom:1px solid rgba(0,243,255,0.1);
-        }
-        .modal-title{font-size:18px;neon-text-primary;}
-        .close-btn{
-            background:transparent;
-            border:none;
-            color:#aaa;
-            font-size:22px;
-            cursor:pointer;
-            transition:color 0.3s;
-        }
-        .close-btn:hover{color:var(--neon-accent);}
-        .modal-body{padding:20px;}
-        .form-group{margin-bottom:20px;}
-        .form-label{
-            display:block;
-            font-size:14px;
-            margin-bottom:8px;
-            color:var(--neon-secondary);
-        }
-        .form-control{
-            width:100%;
-            padding:12px;
-            background:var(--border-bg);
-            border:1px solid var(--neon-primary);
-            border-radius:6px;
-            color:#eee;
-            outline:none;
-            font-size:14px;
-        }
-        .form-control:focus{box-shadow:0 0 8px var(--neon-primary);}
-        .modal-footer{
-            padding:15px 20px;
-            display:flex;
-            justify-content:flex-end;
-            gap:10px;
-            border-top:1px solid rgba(0,243,255,0.1);
-        }
-        .cancel-btn{
-            padding:8px 16px;
-            background:var(--border-bg);
-            color:#aaa;
-            border:1px solid #333;
-            border-radius:4px;
-            cursor:pointer;
-            font-size:14px;
-        }
-        .confirm-btn{
-            padding:8px 16px;
-            background:var(--neon-primary);
-            color:#050517;
-            border:none;
-            border-radius:4px;
-            cursor:pointer;
-            font-size:14px;
-            neon-text-primary;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
-        /* 登录注册弹窗（分tab） */
-        .login-reg-modal .modal-content{max-width:400px;}
-        .tab-group{display:flex;border-bottom:1px solid rgba(0,243,255,0.1);}
-        .tab-btn{
-            flex:1;
-            padding:12px;
-            text-align:center;
-            background:transparent;
-            border:none;
-            color:#aaa;
-            cursor:pointer;
-            font-size:15px;
-            transition:all 0.3s;
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(28, 58, 173, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(188, 19, 254, 0.1) 0%, transparent 20%);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-        .tab-btn.active{
-            color:var(--neon-primary);
-            border-bottom:2px solid var(--neon-primary);
-        }
-        .tab-content{padding:20px 0;}
-        .tab-panel{display:none;}
-        .tab-panel.active{display:block;}
-        .code-group{display:flex;gap:10px;}
-        .code-input{flex:1;}
-        .get-code-btn{
-            padding:0 15px;
-            background:var(--neon-secondary);
-            color:#050517;
-            border:none;
-            border-radius:6px;
-            cursor:pointer;
-            neon-text-secondary;
-        }
-        .auth-tip{font-size:13px;color:#aaa;margin-top:8px;}
-        .auth-tip a{color:var(--neon-primary);text-decoration:none;}
         
-        /* 发帖弹窗（摘要+正文+固定价格） */
-        .post-modal .modal-content{max-width:600px;}
-        .price-select{
-            display:flex;
-            flex-wrap:wrap;
-            gap:8px;
-            margin-top:8px;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
-        .price-option{
-            padding:6px 12px;
-            background:var(--border-bg);
-            border:1px solid var(--neon-primary);
-            border-radius:4px;
-            color:#eee;
-            cursor:pointer;
-            font-size:14px;
-            transition:all 0.3s;
-        }
-        .price-option.active{
-            background:var(--neon-primary);
-            color:#050517;
-            neon-text-primary;
-        }
-        .editor-toolbar{
-            display:flex;
-            flex-wrap:wrap;
-            gap:8px;
-            padding:10px;
-            background:var(--border-bg);
-            border-radius:6px;
-            margin-bottom:10px;
-            neon-border-secondary;
-        }
-        .tool-btn{
-            padding:5px 10px;
-            background:transparent;
-            border:none;
-            color:#eee;
-            cursor:pointer;
-            font-size:14px;
-            border-radius:4px;
-            transition:background 0.3s;
-        }
-        .tool-btn:hover{background:rgba(0,243,255,0.1);}
-        .editor{
-            min-height:120px;
-            padding:12px;
-            background:var(--border-bg);
-            border:1px solid var(--neon-primary);
-            border-radius:6px;
-            color:#eee;
-            outline:none;
-            font-size:14px;
-            line-height:1.7;
-        }
-        .editor[contenteditable]:empty:before{
-            content:attr(placeholder);
-            color:#aaa;
-            display:block;
-        }
-        .author-tip{
-            font-size:13px;
-            color:var(--neon-accent);
-            margin-top:8px;
-            display:none;
-        }
-        .author-tip.show{display:block;}
         
-        /* 作者申请弹窗 */
-        .apply-modal .modal-content{max-width:400px;}
-        .apply-reason{min-height:100px;}
+        /* 头部样式 */
+        header {
+            background: linear-gradient(to right, var(--darker-bg), var(--card-bg));
+            border-bottom: 1px solid var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
         
-        /* 积分等级弹窗 */
-        .level-modal .modal-content{max-width:400px;}
-        .level-list{padding:10px 0;}
-        .level-item{
-            display:flex;
-            justify-content:space-between;
-            padding:10px 0;
-            border-bottom:1px solid rgba(0,243,255,0.1);
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .level-name{
-            color:var(--neon-secondary);
-            font-size:15px;
-        }
-        .level-name .title-tag{
-            font-size:13px;
-            color:var(--neon-gold);
-            margin-left:8px;
-            background:rgba(255,215,0,0.1);
-            padding:1px 6px;
-            border-radius:3px;
-        }
-        .level-score{color:var(--neon-green);font-size:14px;}
-        .level-rule{
-            margin-top:20px;
-            padding:15px;
-            background:var(--border-bg);
-            border-radius:6px;
-            neon-border-secondary;
-        }
-        .rule-title{font-size:15px;color:var(--neon-secondary);margin-bottom:10px;}
-        .rule-list{font-size:13px;color:#aaa;line-height:1.8;}
-        .rule-list li{margin-bottom:5px;}
         
-        /* 管理员后台弹窗（多功能分区） */
-        .admin-modal .modal-content{max-width:600px;}
-        .admin-login{margin-bottom:20px;}
-        .admin-func{display:none;}
-        .func-group{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(0,243,255,0.1);}
-        .func-title{font-size:16px;color:var(--neon-green);margin-bottom:15px;}
-        .func-operate{display:flex;gap:10px;}
-        .admin-btn-group{display:flex;gap:10px;margin-top:10px;}
-        .admin-operate-btn{
-            padding:8px 16px;
-            border:none;
-            border-radius:4px;
-            cursor:pointer;
-            font-size:14px;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .ban-btn{background:var(--neon-accent);color:#050517;}
-        .delete-btn{background:var(--neon-secondary);color:#050517;}
-        .recharge-btn{background:var(--neon-gold);color:#050517;neon-text-gold;}
-        .author-gold-list{
-            max-height:200px;
-            overflow-y:auto;
-            margin-top:10px;
-            padding:10px;
-            background:var(--border-bg);
-            border-radius:6px;
-        }
-        .author-gold-item{
-            display:flex;
-            justify-content:space-between;
-            padding:8px 0;
-            border-bottom:1px solid rgba(0,243,255,0.05);
-            font-size:14px;
-        }
-        .author-name{color:var(--neon-secondary);}
-        .author-gold{color:var(--neon-gold);}
         
-        /* 响应式适配（手机优先） */
-        @media (max-width:768px){
-            .forum-list{grid-template-columns:1fr;}
-            .price-select{gap:6px;}
-            .price-option{padding:5px 10px;font-size:13px;}
-            .tool-btn{padding:5px 8px;font-size:13px;}
-            .detail-title{font-size:16px;}
-            .post-item .post-title{font-size:14px;}
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
+        }
+        
+        .logo-icon {
+            color: var(--neon-blue);
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+        
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        .user-level {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: var(--neon-blue);
+        }
+        
+        .level-badge {
+            background: linear-gradient(90deg, #ffd700, #ff9500);
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .user-yuanbao {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 15px;
+            border: 1px solid gold;
+        }
+        
+        .yuanbao-icon {
+            color: gold;
+        }
+        
+        /* 导航样式 */
+        nav {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(10, 10, 30, 0.7);
+            border: 1px solid transparent;
+        }
+        
+        .tab.active {
+            background: rgba(15, 15, 40, 0.9);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+        
+        .tab:hover:not(.active) {
+            border: 1px solid var(--neon-purple);
+        }
+        
+        /* 内容区域样式 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .forum-section {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .new-post-btn {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .new-post-btn:hover {
+            box-shadow: 0 0 15px var(--neon-purple);
+            transform: translateY(-2px);
+        }
+        
+        .posts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .post-item {
+            background: rgba(20, 20, 40, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .post-item:hover {
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .post-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--neon-blue);
+        }
+        
+        .post-price {
+            background: linear-gradient(90deg, gold, orange);
+            color: black;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .post-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+        
+        .post-author {
+            color: var(--neon-pink);
+        }
+        
+        .post-excerpt {
+            color: #ccc;
+            line-height: 1.4;
+        }
+        
+        /* 侧边栏样式 */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .sidebar-widget {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+        
+        .widget-title {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+            color: var(--neon-blue);
+        }
+        
+        .author-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .stat-label {
+            color: #aaa;
+        }
+        
+        .stat-value {
+            color: var(--neon-blue);
+            font-weight: bold;
+        }
+        
+        .apply-author-btn {
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
+        }
+        
+        .apply-author-btn:hover {
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 15, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 30px var(--neon-blue);
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            background: linear-gradient(90deg, var(--darker-bg), var(--card-bg));
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--neon-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.3rem;
+            color: var(--neon-blue);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: var(--neon-pink);
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--neon-blue);
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(10, 10, 30, 0.7);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+            outline: none;
+        }
+        
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .price-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .price-option {
+            background: rgba(10, 10, 30, 0.7);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 5px;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .price-option:hover, .price-option.selected {
+            background: rgba(0, 255, 255, 0.2);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 8px var(--neon-blue);
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 0 15px var(--neon-purple);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* 帖子详情页样式 */
+        .post-detail {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+        
+        .post-detail-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .post-detail-title {
+            font-size: 1.8rem;
+            color: var(--neon-blue);
+            margin-bottom: 10px;
+        }
+        
+        .post-detail-meta {
+            display: flex;
+            gap: 20px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        .post-detail-author {
+            color: var(--neon-pink);
+        }
+        
+        .post-detail-price {
+            background: linear-gradient(90deg, gold, orange);
+            color: black;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+        
+        .post-detail-excerpt {
+            background: rgba(10, 10, 30, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 3px solid var(--neon-purple);
+        }
+        
+        .post-detail-content {
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .post-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        /* 后台管理样式 */
+        .admin-panel {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+        
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .admin-tab {
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            background: rgba(10, 10, 30, 0.7);
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .admin-tab.active {
+            background: rgba(15, 15, 40, 0.9);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+        
+        .admin-content {
+            min-height: 400px;
+        }
+        
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .admin-table th, .admin-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .admin-table th {
+            color: var(--neon-blue);
+            font-weight: bold;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .admin-btn {
+            padding: 5px 10px;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .btn-ban {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        
+        .btn-delete {
+            background: rgba(255, 165, 0, 0.2);
+            color: orange;
+            border: 1px solid orange;
+        }
+        
+        .btn-recharge {
+            background: rgba(0, 255, 0, 0.2);
+            color: #0f0;
+            border: 1px solid #0f0;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .price-options {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* 霓虹效果 */
+        .neon-text {
+            text-shadow: 
+                0 0 5px currentColor,
+                0 0 10px currentColor,
+                0 0 20px currentColor,
+                0 0 40px currentColor;
+        }
+        
+        .neon-border {
+            box-shadow: 
+                inset 0 0 5px currentColor,
+                0 0 5px currentColor,
+                0 0 10px currentColor,
+                0 0 20px currentColor;
         }
     </style>
 </head>
 <body>
-    <!-- 顶部合规提示 -->
-    <div class="top-alert">
-        理性购彩 量力而行 | 仅数字彩思路交流 无售彩/代买/包中承诺 | 元宝=1元（虚拟积分，仅论坛内使用）
-    </div>
-
-    <!-- 导航栏 -->
-    <header class="header">
-        <div class="container nav-wrap">
-            <div class="logo neon-text-primary">数字彩交流论坛</div>
-            <div class="user-operate">
-                <a href="javascript:;" class="admin-btn" id="adminBtn">管理员后台</a>
-                <div class="user-info">
-                    <div class="gold-num" id="userGold">
-                        <span class="gold-icon">💰</span>
-                        <span id="goldCount">0</span> 元宝
-                    </div>
-                    <a href="javascript:;" class="auth-btn" id="authBtn">登录/注册</a>
-                </div>
-                <button class="menu-btn" id="menuBtn">☰</button>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <div class="logo-icon">✦</div>
+                <h1>彩友论坛</h1>
             </div>
-            <!-- 侧边菜单 -->
-            <div class="nav-menu" id="navMenu">
-                <div class="nav-item">
-                    <a href="javascript:;" id="homeLink">首页</a>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <span>用户</span>
                 </div>
-                <div class="nav-item">
-                    <a href="javascript:;" class="section-link" data-section="3d">福彩3D交流区</a>
+                <div class="user-details">
+                    <div class="user-name">彩友_8888</div>
+                    <div class="user-level">
+                        <span>等级: </span>
+                        <span class="level-badge">黄金会员</span>
+                    </div>
                 </div>
-                <div class="nav-item">
-                    <a href="javascript:;" class="section-link" data-section="pl3">排列三交流区</a>
-                </div>
-                <div class="nav-item">
-                    <a href="javascript:;" id="levelLink">积分等级
-                        <span class="level-title" id="userLevelTitle">未登录</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="javascript:;" class="author-apply" id="authorApplyLink">作者申请</a>
-                </div>
-                <div class="nav-item">
-                    <a href="javascript:;" class="logout-btn" id="logoutLink" style="display:none;">退出登录</a>
+                <div class="user-yuanbao">
+                    <span class="yuanbao-icon">💰</span>
+                    <span>1688 元宝</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- 主体内容 -->
     <div class="container">
-        <!-- 首页内容 -->
-        <div id="homeContent">
-            <!-- 公告栏 -->
-            <div class="notice">
-                <div class="notice-icon">📢</div>
-                <div class="notice-text">普通用户需申请作者权限方可发帖，违规发布涉赌/售彩内容将封禁账号并清零元宝</div>
-                <a href="#" class="notice-more">更多</a>
+        <nav>
+            <div class="nav-tabs">
+                <div class="tab active" data-tab="forum">论坛首页</div>
+                <div class="tab" data-tab="fucai3d">福彩3D交流区</div>
+                <div class="tab" data-tab="pailie3">排列三交流区</div>
+                <div class="tab" data-tab="admin" id="admin-tab">后台管理</div>
+            </div>
+        </nav>
+
+        <div class="main-content">
+            <div class="content-area">
+                <!-- 论坛首页 -->
+                <div class="forum-section active" id="forum-section">
+                    <div class="section-header">
+                        <h2 class="section-title">热门帖子</h2>
+                        <button class="new-post-btn" id="new-post-btn">发布新帖</button>
+                    </div>
+                    <div class="posts-list">
+                        <div class="post-item">
+                            <div class="post-header">
+                                <div class="post-title">3D组选六实战技巧分享</div>
+                                <div class="post-price">10.8 元宝</div>
+                            </div>
+                            <div class="post-meta">
+                                <span class="post-author">作者: 彩票大师</span>
+                                <span>发布时间: 2023-10-15</span>
+                                <span>浏览: 1286</span>
+                            </div>
+                            <div class="post-excerpt">
+                                今天分享一个非常实用的组选六选号技巧，通过分析历史数据，找到冷热号的规律...
+                            </div>
+                        </div>
+                        <div class="post-item">
+                            <div class="post-header">
+                                <div class="post-title">排列三杀号公式验证</div>
+                                <div class="post-price">6.8 元宝</div>
+                            </div>
+                            <div class="post-meta">
+                                <span class="post-author">作者: 数据分析师</span>
+                                <span>发布时间: 2023-10-14</span>
+                                <span>浏览: 892</span>
+                            </div>
+                            <div class="post-excerpt">
+                                经过一个月的数据验证，这个杀号公式准确率达到85%以上，今天免费分享给大家...
+                            </div>
+                        </div>
+                        <div class="post-item">
+                            <div class="post-header">
+                                <div class="post-title">福彩3D近期走势分析</div>
+                                <div class="post-price">免费</div>
+                            </div>
+                            <div class="post-meta">
+                                <span class="post-author">作者: 趋势预测员</span>
+                                <span>发布时间: 2023-10-13</span>
+                                <span>浏览: 1543</span>
+                            </div>
+                            <div class="post-excerpt">
+                                通过对最近30期开奖数据的分析，发现了一些有趣的规律，特别是大小号的比例变化...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 福彩3D交流区 -->
+                <div class="forum-section" id="fucai3d-section">
+                    <div class="section-header">
+                        <h2 class="section-title">福彩3D交流区</h2>
+                        <button class="new-post-btn">发布新帖</button>
+                    </div>
+                    <div class="posts-list">
+                        <!-- 福彩3D帖子列表 -->
+                    </div>
+                </div>
+
+                <!-- 排列三交流区 -->
+                <div class="forum-section" id="pailie3-section">
+                    <div class="section-header">
+                        <h2 class="section-title">排列三交流区</h2>
+                        <button class="new-post-btn">发布新帖</button>
+                    </div>
+                    <div class="posts-list">
+                        <!-- 排列三帖子列表 -->
+                    </div>
+                </div>
+
+                <!-- 后台管理 -->
+                <div class="admin-panel" id="admin-section">
+                    <div class="admin-tabs">
+                        <div class="admin-tab active" data-admin-tab="users">用户管理</div>
+                        <div class="admin-tab" data-admin-tab="posts">帖子管理</div>
+                        <div class="admin-tab" data-admin-tab="recharge">元宝管理</div>
+                    </div>
+                    <div class="admin-content">
+                        <!-- 用户管理 -->
+                        <div class="admin-tab-content active" id="users-tab">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>用户ID</th>
+                                        <th>用户名</th>
+                                        <th>用户类型</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>10001</td>
+                                        <td>彩友_8888</td>
+                                        <td>作者</td>
+                                        <td>正常</td>
+                                        <td class="admin-actions">
+                                            <button class="admin-btn btn-ban">封禁</button>
+                                            <button class="admin-btn btn-recharge">充值</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>10002</td>
+                                        <td>彩票新手</td>
+                                        <td>普通用户</td>
+                                        <td>正常</td>
+                                        <td class="admin-actions">
+                                            <button class="admin-btn btn-ban">封禁</button>
+                                            <button class="admin-btn btn-recharge">充值</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- 帖子管理 -->
+                        <div class="admin-tab-content" id="posts-tab">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>帖子ID</th>
+                                        <th>标题</th>
+                                        <th>作者</th>
+                                        <th>价格</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>20001</td>
+                                        <td>3D组选六实战技巧分享</td>
+                                        <td>彩票大师</td>
+                                        <td>10.8 元宝</td>
+                                        <td class="admin-actions">
+                                            <button class="admin-btn btn-delete">删除</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>20002</td>
+                                        <td>排列三杀号公式验证</td>
+                                        <td>数据分析师</td>
+                                        <td>6.8 元宝</td>
+                                        <td class="admin-actions">
+                                            <button class="admin-btn btn-delete">删除</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- 元宝管理 -->
+                        <div class="admin-tab-content" id="recharge-tab">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>用户ID</th>
+                                        <th>用户名</th>
+                                        <th>当前元宝</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>10001</td>
+                                        <td>彩友_8888</td>
+                                        <td>1688 元宝</td>
+                                        <td class="admin-actions">
+                                            <button class="admin-btn btn-recharge">充值/扣除</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>10003</td>
+                                        <td>彩票大师</td>
+                                        <td>3250 元宝</td>
+                                        <td class="admin-actions">
+                                            <button class="admin-btn btn-recharge">充值/扣除</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- 分区入口 -->
-            <h2 class="section-title neon-text-secondary">论坛分区</h2>
-            <div class="forum-list">
-                <div class="forum-card section-card" data-section="3d">
-                    <div class="forum-icon icon-3d">📊</div>
-                    <div class="forum-name">福彩3D交流区</div>
-                    <div class="forum-desc">数字走势·缩水思路·实战心得</div>
+            <div class="sidebar">
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">个人统计</h3>
+                    <div class="author-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">发帖数:</span>
+                            <span class="stat-value">28</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">被购买数:</span>
+                            <span class="stat-value">156</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">总收入:</span>
+                            <span class="stat-value">1286 元宝</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平台抽成:</span>
+                            <span class="stat-value">450 元宝</span>
+                        </div>
+                    </div>
+                    <button class="apply-author-btn" id="apply-author-btn">申请成为作者</button>
                 </div>
-                <div class="forum-card section-card" data-section="pl3">
-                    <div class="forum-icon icon-pl3">🔢</div>
-                    <div class="forum-name">排列三交流区</div>
-                    <div class="forum-desc">规律分析·选号技巧·经验分享</div>
-                </div>
-            </div>
 
-            <!-- 最新帖子 -->
-            <h2 class="section-title neon-text-secondary">最新发帖</h2>
-            <div class="posts-container" id="latestPostsContainer">
-                <div class="posts-header">
-                    <div class="posts-header-title neon-text-secondary">全论坛最新帖子</div>
-                    <button class="post-btn" id="latestPostBtn">发布帖子</button>
-                </div>
-                <div id="latestPostsList" class="posts-list">
-                    <!-- 脚本动态渲染 -->
-                </div>
-            </div>
-        </div>
-
-        <!-- 分区帖子列表 -->
-        <div id="sectionPostsContent" style="display:none;">
-            <a href="javascript:;" class="back-btn" id="backHomeBtn">← 返回首页</a>
-            <div class="posts-container" id="sectionPostsContainer">
-                <div class="posts-header">
-                    <div class="posts-header-title neon-text-secondary" id="sectionPostsTitle">福彩3D交流区</div>
-                    <button class="post-btn" id="sectionPostBtn">发布帖子</button>
-                </div>
-                <div id="sectionPostsList" class="posts-list">
-                    <!-- 脚本动态渲染 -->
-                </div>
-            </div>
-        </div>
-
-        <!-- 帖子详情页 -->
-        <div id="postDetailContent" style="display:none;">
-            <a href="javascript:;" class="back-btn" id="backSectionBtn">← 返回列表</a>
-            <div class="detail-header">
-                <div class="detail-title">
-                    <span id="detailPostTitle">帖子标题</span>
-                    <span class="detail-price" id="detailPostPrice">0 元宝</span>
-                </div>
-                <div class="detail-meta">
-                    <span class="detail-author">
-                        作者：<span id="detailPostAuthor">匿名用户</span>
-                        <span class="level-tag" id="detailAuthorLevel">Lv.1 彩界萌新</span>
-                    </span>
-                    <span class="detail-time" id="detailPostTime">2025-11-27</span>
-                </div>
-                <div class="detail-meta">
-                    <span class="detail-section" id="detailPostSection">福彩3D交流区</span>
-                    <span class="detail-sold" id="detailPostSold">已售：0 次</span>
-                </div>
-            </div>
-
-            <!-- 摘要区 -->
-            <div class="detail-excerpt">
-                <div class="excerpt-title">帖子摘要</div>
-                <div class="excerpt-content" id="detailPostExcerpt">帖子摘要内容...</div>
-            </div>
-
-            <!-- 正文区（付费隐藏） -->
-            <div class="detail-content" id="detailPostContent">
-                <!-- 脚本动态渲染 -->
-            </div>
-
-            <!-- 购买按钮 -->
-            <button class="buy-btn" id="detailBuyBtn">购买查看（0 元宝）</button>
-
-            <!-- 评论区 -->
-            <div class="comment-section">
-                <div class="comment-header">
-                    <div class="comment-title neon-text-secondary">评论交流</div>
-                </div>
-                <textarea class="comment-input" id="commentInput" placeholder="请登录后发表评论..." disabled></textarea>
-                <button class="comment-submit" id="commentSubmitBtn" disabled>提交评论</button>
-                <div class="comment-list" id="commentList">
-                    <!-- 脚本动态渲染 -->
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">热门作者</h3>
+                    <div class="hot-authors">
+                        <div class="author-item">
+                            <span>彩票大师</span>
+                            <span>1250 元宝</span>
+                        </div>
+                        <div class="author-item">
+                            <span>数据分析师</span>
+                            <span>980 元宝</span>
+                        </div>
+                        <div class="author-item">
+                            <span>趋势预测员</span>
+                            <span>760 元宝</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 发帖按钮（固定底部） -->
-    <button class="post-btn" id="fixedPostBtn" style="display:none;position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;font-size:24px;">✍️</button>
-
-    <!-- 底部信息 -->
-    <footer class="footer">
-        <div class="container footer-info">
-            <p>© 2025 数字彩交流论坛 版权所有 | 理性购彩 快乐常在</p>
-            <p>ICP备案号：粤ICP备XXXXXXXX号-1 | 元宝为虚拟积分 仅论坛内使用 与人民币1:1等价</p>
-            <p><a href="#">合规声明</a> | <a href="#">联系我们</a></p>
-        </div>
-    </footer>
-
-    <!-- 登录注册弹窗 -->
-    <div class="modal login-reg-modal" id="loginRegModal">
+    <!-- 发帖模态框 -->
+    <div class="modal" id="post-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title neon-text-primary">用户登录/注册</h3>
-                <button class="close-btn" id="closeLoginRegBtn">×</button>
-            </div>
-            <div class="tab-group">
-                <button class="tab-btn active" data-tab="login">登录</button>
-                <button class="tab-btn" data-tab="register">注册</button>
+                <h3 class="modal-title">发布新帖子</h3>
+                <button class="close-modal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="tab-content">
-                    <!-- 登录面板 -->
-                    <div class="tab-panel active" id="loginPanel">
-                        <div class="form-group">
-                            <label class="form-label">手机号</label>
-                            <input type="tel" class="form-control" id="loginPhone" placeholder="请输入手机号" maxlength="11">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">密码</label>
-                            <input type="password" class="form-control" id="loginPwd" placeholder="请输入密码（6-16位）">
-                        </div>
-                        <div class="auth-tip">还没有账号？<a href="javascript:;" class="switch-register">立即注册</a></div>
-                        <div class="modal-footer">
-                            <button class="cancel-btn" id="cancelLoginBtn">取消</button>
-                            <button class="confirm-btn" id="doLoginBtn">登录</button>
-                        </div>
-                    </div>
-                    <!-- 注册面板 -->
-                    <div class="tab-panel" id="registerPanel">
-                        <div class="form-group">
-                            <label class="form-label">手机号</label>
-                            <input type="tel" class="form-control" id="regPhone" placeholder="请输入手机号" maxlength="11">
-                        </div>
-                        <div class="form-group code-group">
-                            <input type="text" class="form-control code-input" id="regCode" placeholder="请输入验证码">
-                            <button class="get-code-btn" id="getRegCodeBtn">获取验证码</button>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">密码</label>
-                            <input type="password" class="form-control" id="regPwd" placeholder="请设置密码（6-16位）">
-                        </div>
-                        <div class="auth-tip">已有账号？<a href="javascript:;" class="switch-login">立即登录</a></div>
-                        <div class="modal-footer">
-                            <button class="cancel-btn" id="cancelRegBtn">取消</button>
-                            <button class="confirm-btn" id="doRegBtn">注册</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 发帖弹窗 -->
-    <div class="modal post-modal" id="postModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title neon-text-primary">发布帖子</h3>
-                <button class="close-btn" id="closePostModalBtn">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="author-tip show" id="postAuthorTip">仅作者可发布帖子，请先申请作者权限</div>
-                <div class="form-group">
-                    <label class="form-label">帖子标题</label>
-                    <input type="text" class="form-control" id="postTitleInput" placeholder="请输入帖子标题（不超过50字）">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">选择分区</label>
-                    <select class="form-control" id="postSectionSelect">
-                        <option value="3d">福彩3D交流区</option>
-                        <option value="pl3">排列三交流区</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">帖子定价（元宝）</label>
-                    <div class="price-select" id="priceSelect">
-                        <div class="price-option active" data-price="0">0（免费）</div>
-                        <div class="price-option" data-price="1">1</div>
-                        <div class="price-option" data-price="2">2</div>
-                        <div class="price-option" data-price="3">3</div>
-                        <div class="price-option" data-price="5.8">5.8</div>
-                        <div class="price-option" data-price="6.8">6.8</div>
-                        <div class="price-option" data-price="8.8">8.8</div>
-                        <div class="price-option" data-price="10.8">10.8</div>
-                        <div class="price-option" data-price="15.8">15.8</div>
-                        <div class="price-option" data-price="18">18</div>
-                        <div class="price-option" data-price="18.8">18.8</div>
-                        <div class="price-option" data-price="20.8">20.8</div>
-                        <div class="price-option" data-price="28.8">28.8</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">帖子摘要（必填）</label>
-                    <div class="editor" id="postExcerptEditor" contenteditable="true" placeholder="请输入帖子摘要（吸引用户查看，不超过150字）"></div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">帖子正文（必填）</label>
-                    <div class="editor-toolbar">
-                        <button class="tool-btn" data-cmd="bold">粗体</button>
-                        <button class="tool-btn" data-cmd="underline">下划线</button>
-                        <button class="tool-btn" data-cmd="strikeThrough">删除线</button>
-                        <button class="tool-btn" data-cmd="foreColor" data-val="#00f3ff">蓝</button>
-                        <button class="tool-btn" data-cmd="foreColor" data-val="#c774e8">紫</button>
-                        <button class="tool-btn" data-cmd="foreColor" data-val="#ff2ec4">粉</button>
-                    </div>
-                    <div class="editor" id="postContentEditor" contenteditable="true" placeholder="请输入帖子正文内容，支持格式编辑"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="cancel-btn" id="cancelPostBtn">取消</button>
-                <button class="confirm-btn" id="doPostBtn">发布帖子</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 作者申请弹窗 -->
-    <div class="modal apply-modal" id="authorApplyModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title neon-text-primary">作者权限申请</h3>
-                <button class="close-btn" id="closeApplyModalBtn">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">申请理由</label>
-                    <div class="editor apply-reason" id="applyReasonEditor" contenteditable="true" placeholder="请说明申请作者权限的理由（如：分享3D缩水思路、排列三实战经验等）"></div>
-                </div>
-                <div class="auth-tip">申请提交后将自动通过，请注意遵守论坛规则，违规将收回权限</div>
-            </div>
-            <div class="modal-footer">
-                <button class="cancel-btn" id="cancelApplyBtn">取消</button>
-                <button class="confirm-btn" id="doApplyBtn">提交申请</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 积分等级弹窗 -->
-    <div class="modal level-modal" id="levelModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title neon-text-primary">积分等级体系</h3>
-                <button class="close-btn" id="closeLevelModalBtn">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="level-list">
-                    <div class="level-item">
-                        <div class="level-name">Lv.1 新手入门 <span class="title-tag">彩界萌新</span></div>
-                        <div class="level-score">0 - 100 积分</div>
-                    </div>
-                    <div class="level-item">
-                        <div class="level-name">Lv.2 进阶学者 <span class="title-tag">趋势初探</span></div>
-                        <div class="level-score">101 - 300 积分</div>
-                    </div>
-                    <div class="level-item">
-                        <div class="level-name">Lv.3 实战能手 <span class="title-tag">缩水达人</span></div>
-                        <div class="level-score">301 - 500 积分</div>
-                    </div>
-                    <div class="level-item">
-                        <div class="level-name">Lv.4 资深玩家 <span class="title-tag">数据先锋</span></div>
-                        <div class="level-score">501 - 800 积分</div>
-                    </div>
-                    <div class="level-item">
-                        <div class="level-name">Lv.5 理论大师 <span class="title-tag">伪序专家</span></div>
-                        <div class="level-score">801 - 1200 积分</div>
-                    </div>
-                    <div class="level-item">
-                        <div class="level-name">Lv.6 顶尖专家 <span class="title-tag">料码宗师</span></div>
-                        <div class="level-score">1201+ 积分</div>
-                    </div>
-                </div>
-                <div class="level-rule">
-                    <div class="rule-title neon-text-secondary">积分获取规则</div>
-                    <ul class="rule-list">
-                        <li>1. 发布帖子：+5 积分/篇（优质帖额外+10积分）</li>
-                        <li>2. 回复评论：+2 积分/条（有效回复，无灌水）</li>
-                        <li>3. 帖子被购买：+1 积分/次（作者专属）</li>
-                        <li>4. 违规扣除：涉禁内容扣50积分/次，封禁账号清零积分</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 管理员后台弹窗 -->
-    <div class="modal admin-modal" id="adminModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title neon-text-primary">管理员后台</h3>
-                <button class="close-btn" id="closeAdminModalBtn">×</button>
-            </div>
-            <div class="modal-body">
-                <!-- 管理员登录 -->
-                <div class="admin-login" id="adminLogin">
+                <form id="post-form">
                     <div class="form-group">
-                        <label class="form-label">管理员密码</label>
-                        <input type="password" class="form-control" id="adminPwdInput" placeholder="请输入管理员密码">
+                        <label class="form-label">选择分区</label>
+                        <select class="form-select" id="post-category">
+                            <option value="fucai3d">福彩3D交流区</option>
+                            <option value="pailie3">排列三交流区</option>
+                        </select>
                     </div>
-                    <div class="modal-footer">
-                        <button class="cancel-btn" id="cancelAdminLoginBtn">取消</button>
-                        <button class="confirm-btn" id="doAdminLoginBtn">登录</button>
+                    <div class="form-group">
+                        <label class="form-label">帖子标题</label>
+                        <input type="text" class="form-input" id="post-title" placeholder="请输入帖子标题">
                     </div>
-                </div>
-
-                <!-- 管理员功能区 -->
-                <div class="admin-func" id="adminFunc">
-                    <!-- 封禁用户 -->
-                    <div class="func-group">
-                        <div class="func-title">用户管理</div>
-                        <div class="form-group">
-                            <label class="form-label">封禁用户（输入用户名）</label>
-                            <input type="text" class="form-control" id="banUserNameInput" placeholder="请输入要封禁的用户名">
-                        </div>
-                        <div class="admin-btn-group">
-                            <button class="admin-operate-btn ban-btn" id="doBanUserBtn">封禁用户</button>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">帖子摘要</label>
+                        <textarea class="form-textarea" id="post-excerpt" placeholder="请输入帖子摘要"></textarea>
                     </div>
-
-                    <!-- 删除帖子 -->
-                    <div class="func-group">
-                        <div class="func-title">帖子管理</div>
-                        <div class="form-group">
-                            <label class="form-label">删除帖子（输入帖子ID）</label>
-                            <input type="text" class="form-control" id="deletePostIdInput" placeholder="请输入要删除的帖子ID">
-                        </div>
-                        <div class="admin-btn-group">
-                            <button class="admin-operate-btn delete-btn" id="doDeletePostBtn">删除帖子</button>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">帖子内容</label>
+                        <textarea class="form-textarea" id="post-content" placeholder="请输入帖子内容"></textarea>
                     </div>
-
-                    <!-- 元宝充值/扣除 -->
-                    <div class="func-group">
-                        <div class="func-title">元宝管理</div>
-                        <div class="form-group">
-                            <label class="form-label">用户名</label>
-                            <input type="text" class="form-control" id="rechargeUserNameInput" placeholder="请输入用户名">
+                    <div class="form-group">
+                        <label class="form-label">售卖价格 (平台将抽取35%佣金)</label>
+                        <div class="price-options">
+                            <div class="price-option" data-price="0">免费</div>
+                            <div class="price-option" data-price="1">1 元宝</div>
+                            <div class="price-option" data-price="2">2 元宝</div>
+                            <div class="price-option" data-price="3">3 元宝</div>
+                            <div class="price-option" data-price="5.8">5.8 元宝</div>
+                            <div class="price-option" data-price="6.8">6.8 元宝</div>
+                            <div class="price-option" data-price="8.8">8.8 元宝</div>
+                            <div class="price-option" data-price="10.8">10.8 元宝</div>
+                            <div class="price-option" data-price="15.8">15.8 元宝</div>
+                            <div class="price-option" data-price="18.8">18.8 元宝</div>
+                            <div class="price-option" data-price="20.8">20.8 元宝</div>
+                            <div class="price-option" data-price="28.8">28.8 元宝</div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">元宝数量（正数充值/负数扣除）</label>
-                            <input type="number" step="0.1" class="form-control" id="rechargeGoldNumInput" placeholder="如：10（充值）、-5（扣除）">
-                        </div>
-                        <div class="admin-btn-group">
-                            <button class="admin-operate-btn recharge-btn" id="doRechargeGoldBtn">执行操作</button>
-                        </div>
+                        <input type="text" class="form-input" id="custom-price" placeholder="或输入自定义价格" style="margin-top: 10px;">
                     </div>
-
-                    <!-- 作者元宝查询 -->
-                    <div class="func-group">
-                        <div class="func-title">作者元宝查询</div>
-                        <div class="author-gold-list" id="authorGoldList">
-                            <!-- 脚本动态渲染 -->
-                        </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-post">取消</button>
+                        <button type="submit" class="btn btn-primary">发布帖子</button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
 
     <script>
-        // 全局常量
-        const ADMIN_PWD = '123456'; // 管理员密码
-        const COMMISSION_RATE = 0.35; // 平台抽成35%
-        const PRICE_OPTIONS = [0,1,2,3,5.8,6.8,8.8,10.8,15.8,18,18.8,20.8,28.8]; // 固定价格选项
-        const LEVEL_CONFIG = [
-            {level:1, min:0, max:100, title:'彩界萌新'},
-            {level:2, min:101, max:300, title:'趋势初探'},
-            {level:3, min:301, max:500, title:'缩水达人'},
-            {level:4, min:501, max:800, title:'数据先锋'},
-            {level:5, min:801, max:1200, title:'伪序专家'},
-            {level:6, min:1201, max:Infinity, title:'料码宗师'}
-        ]; // 等级配置
+        // 页面切换功能
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // 移除所有标签和内容区的active类
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.forum-section, .admin-panel').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // 为当前标签添加active类
+                this.classList.add('active');
+                
+                // 显示对应的内容区
+                const tabName = this.getAttribute('data-tab');
+                if (tabName === 'admin') {
+                    document.getElementById('admin-section').classList.add('active');
+                } else {
+                    document.getElementById(`${tabName}-section`).classList.add('active');
+                }
+            });
+        });
 
-        // 全局变量
-        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null; // 当前登录用户
-        let currentSection = ''; // 当前分区（3d/pl3）
-        let currentPostId = 0; // 当前查看帖子ID
-        let adminLoginStatus = false; // 管理员登录状态
+        // 后台管理标签切换
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.admin-tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                this.classList.add('active');
+                const tabName = this.getAttribute('data-admin-tab');
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+            });
+        });
 
-        // 初始化本地存储数据
-        function initLocalData() {
-            // 用户数据
-            if (!localStorage.getItem('forumUsers')) {
-                const initUsers = [
-                    {
-                        id:1, username:'十方料码', phone:'13800138000', pwd:'123456',
-                        isAuthor:true, isBanned:false,
-                        score:1250, level:6, title:'料码宗师',
-                        gold:2860.5, purchasedPosts:[1,3],
-                        regTime:'2025-10-01'
-                    },
-                    {
-                        id:2, username:'彩友123', phone:'13900139000', pwd:'123456',
-                        isAuthor:true, isBanned:false,
-                        score:850, level:5, title:'伪序专家',
-                        gold:1580.2, purchasedPosts:[1,2],
-                        regTime:'2025-10-15'
-                    },
-                    {
-                        id:3, username:'新手小白', phone:'13700137000', pwd:'123456',
-                        isAuthor:false, isBanned:false,
-                        score:60, level:1, title:'彩界萌新',
-                        gold:500, purchasedPosts:[4],
-                        regTime:'2025-11-01'
-                    },
-                    {
-                        id:4, username:'管理员', phone:'13600136000', pwd:ADMIN_PWD,
-                        isAuthor:true, isBanned:false, isAdmin:true,
-                        score:0, level:1, title:'彩界萌新',
-                        gold:0, purchasedPosts:[],
-                        regTime:'2025-09-01'
-                    }
-                ];
-                localStorage.setItem('forumUsers', JSON.stringify(initUsers));
-            }
+        // 发帖模态框控制
+        const postModal = document.getElementById('post-modal');
+        const newPostBtn = document.getElementById('new-post-btn');
+        const closeModal = document.querySelector('.close-modal');
+        const cancelPost = document.getElementById('cancel-post');
 
-            // 帖子数据
-            if (!localStorage.getItem('forumPosts')) {
-                const initPosts = [
-                    {
-                        id:1,
+        newPostBtn.addEventListener('click', function() {
+            postModal.style.display = 'flex';
+        });
+
+        closeModal.addEventListener('click', function() {
+            postModal.style.display = 'none';
+        });
+
+        cancelPost.addEventListener('click', function() {
+            postModal.style.display = 'none';
+        });
+
+        // 价格选项选择
+        document.querySelectorAll('.price-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.price-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                document.getElementById('custom-price').value = this.getAttribute('data-price');
+            });
+        });
+
+        // 自定义价格输入
+        document.getElementById('custom-price').addEventListener('input', function() {
+            document.querySelectorAll('.price-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+        });
+
+        // 表单提交
+        document.getElementById('post-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('帖子发布成功！');
+            postModal.style.display = 'none';
+            // 在实际应用中，这里应该发送数据到服务器
+        });
+
+        // 申请成为作者
+        document.getElementById('apply-author-btn').addEventListener('click', function() {
+            alert('已提交作者申请，请等待管理员审核！');
+        });
+
+        // 帖子点击事件
+        document.querySelectorAll('.post-item').forEach(post => {
+            post.addEventListener('click', function() {
+                // 在实际应用中，这里应该跳转到帖子详情页
+                alert('跳转到帖子详情页');
+            });
+        });
+    </script>
+</body>
+</html>

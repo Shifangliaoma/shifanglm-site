@@ -1,0 +1,10 @@
+// 发帖时选择价格
+const priceOptions = [0, 1, 2, 3, 5.8, 6.8, 8.8, 10.8, 15.8, 18, 18.8, 20.8, 28.8];
+
+// 售卖价格平台抽取35%佣金
+function calculateCommission(price) {
+    const commissionRate = 0.35;
+    const commission = price * commissionRate;
+    const authorEarnings = price - commission;
+    return { commission, authorEarnings };
+}

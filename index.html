@@ -3,269 +3,837 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>十方料码3D论坛</title>
+    <title>数字彩交流论坛 - 霓虹黑科技版</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:Arial,sans-serif;background:#0a0a16;color:#eee;line-height:1.6;}
-        :root{--neon-blue:#00f3ff;--neon-purple:#c774e8;--neon-pink:#ff2ec4;--neon-green:#00ff9d;--neon-gold:#ffd700;}
-        .neon-text-blue{text-shadow:0 0 5px var(--neon-blue);}
-        .neon-text-purple{text-shadow:0 0 5px var(--neon-purple);}
-        .neon-text-gold{text-shadow:0 0 5px var(--neon-gold);}
-        .neon-border-blue{box-shadow:0 0 5px var(--neon-blue);border:1px solid var(--neon-blue);}
-        .neon-border-purple{box-shadow:0 0 5px var(--neon-purple);border:1px solid var(--neon-purple);}
+        body{font-family:"Arial",sans-serif;background:#050517;color:#eee;line-height:1.6;overflow-x:hidden;}
+        /* 霓虹核心变量 */
+        :root{
+            --neon-primary:#00f3ff;/* 主霓虹蓝 */
+            --neon-secondary:#c774e8;/* 霓虹紫 */
+            --neon-accent:#ff2ec4;/* 霓虹粉 */
+            --neon-gold:#ffd700;/* 元宝金 */
+            --neon-green:#00ff9d;/* 等级绿 */
+            --dark-bg:#0a0a1f;/* 卡片背景 */
+            --border-bg:#121235;/* 边框背景 */
+        }
+        /* 霓虹通用样式 */
+        .neon-text-primary{text-shadow:0 0 5px var(--neon-primary),0 0 10px var(--neon-primary),0 0 20px var(--neon-primary);color:var(--neon-primary);}
+        .neon-text-secondary{text-shadow:0 0 5px var(--neon-secondary),0 0 10px var(--neon-secondary),0 0 20px var(--neon-secondary);color:var(--neon-secondary);}
+        .neon-text-gold{text-shadow:0 0 5px var(--neon-gold),0 0 10px var(--neon-gold),0 0 20px var(--neon-gold);color:var(--neon-gold);}
+        .neon-border-primary{box-shadow:0 0 8px var(--neon-primary),inset 0 0 4px var(--neon-primary);border:1px solid var(--neon-primary);}
+        .neon-border-secondary{box-shadow:0 0 8px var(--neon-secondary),inset 0 0 4px var(--neon-secondary);border:1px solid var(--neon-secondary);}
+        .neon-border-gold{box-shadow:0 0 8px var(--neon-gold),inset 0 0 4px var(--neon-gold);border:1px solid var(--neon-gold);}
         .container{width:100%;max-width:1200px;margin:0 auto;padding:0 15px;}
         
-        /* 顶部提示 */
-        .top-alert{background:rgba(231,76,60,0.2);border-bottom:1px solid var(--neon-pink);text-align:center;padding:8px 0;font-size:14px;position:sticky;top:0;z-index:100;}
+        /* 顶部合规提示（固定置顶） */
+        .top-alert{
+            background:rgba(231,76,60,0.15);
+            border-bottom:1px solid var(--neon-accent);
+            text-align:center;
+            padding:8px 0;
+            font-size:13px;
+            position:sticky;
+            top:0;
+            z-index:100;
+            color:#f0f0f0;
+        }
         
-        /* 导航栏 */
-        .header{background:rgba(10,10,22,0.8);padding:15px 0;position:sticky;top:34px;z-index:90;border-bottom:1px solid rgba(0,243,255,0.3);}
+        /* 导航栏（模糊背景+霓虹边框） */
+        .header{
+            background:rgba(5,5,23,0.85);
+            backdrop-filter:blur(10px);
+            padding:15px 0;
+            position:sticky;
+            top:34px;
+            z-index:90;
+            border-bottom:1px solid rgba(0,243,255,0.2);
+        }
         .nav-wrap{display:flex;justify-content:space-between;align-items:center;}
-        .logo{font-size:22px;font-weight:bold;color:var(--neon-blue);neon-text-blue;}
-        .user-info{display:flex;align-items:center;gap:10px;}
-        .gold-num{color:var(--neon-gold);font-size:14px;display:flex;align-items:center;neon-text-gold;}
+        .logo{font-size:22px;font-weight:bold;neon-text-primary;}
+        .user-operate{display:flex;align-items:center;gap:12px;}
+        .admin-btn{
+            font-size:14px;
+            color:var(--neon-green);
+            text-decoration:none;
+            padding:5px 10px;
+            border:1px solid var(--neon-green);
+            border-radius:4px;
+            transition:all 0.3s;
+        }
+        .admin-btn:hover{background:rgba(0,255,157,0.1);}
+        .user-info{display:flex;align-items:center;gap:8px;}
+        .gold-num{
+            color:var(--neon-gold);
+            font-size:14px;
+            display:flex;
+            align-items:center;
+            neon-text-gold;
+            display:none;
+        }
         .gold-icon{font-size:16px;margin-right:3px;}
-        .login-reg-btn,.admin-btn{font-size:14px;color:var(--neon-green);text-decoration:none;padding:5px 10px;border:1px solid var(--neon-green);border-radius:4px;}
-        .menu-btn{width:44px;height:44px;background:transparent;border:none;color:var(--neon-blue);font-size:24px;margin-left:10px;}
-        .nav-menu{position:fixed;top:92px;left:0;right:0;background:rgba(10,10,22,0.95);display:none;flex-direction:column;z-index:80;border-bottom:1px solid var(--neon-blue);}
+        .auth-btn{
+            font-size:14px;
+            color:var(--neon-secondary);
+            text-decoration:none;
+            padding:5px 10px;
+            border:1px solid var(--neon-secondary);
+            border-radius:4px;
+            transition:all 0.3s;
+        }
+        .auth-btn:hover{background:rgba(199,116,232,0.1);}
+        .menu-btn{
+            width:44px;height:44px;
+            background:transparent;
+            border:none;
+            color:var(--neon-primary);
+            font-size:24px;
+            cursor:pointer;
+        }
+        /* 侧边菜单 */
+        .nav-menu{
+            position:fixed;
+            top:92px;left:0;right:0;
+            background:rgba(5,5,23,0.95);
+            backdrop-filter:blur(10px);
+            display:none;
+            flex-direction:column;
+            z-index:80;
+            border-bottom:1px solid var(--neon-primary);
+            padding:10px 0;
+        }
         .nav-menu.active{display:flex;}
-        .nav-item{padding:15px 20px;border-bottom:1px solid rgba(0,243,255,0.1);}
-        .nav-item a{color:#eee;text-decoration:none;font-size:15px;}
-        .nav-item a:hover{color:var(--neon-blue);}
+        .nav-item{padding:12px 20px;border-bottom:1px solid rgba(0,243,255,0.1);}
+        .nav-item a{color:#eee;text-decoration:none;font-size:15px;transition:color 0.3s;}
+        .nav-item a:hover{color:var(--neon-primary);}
+        .nav-item .author-apply{color:var(--neon-gold);}
+        .nav-item .level-title{color:var(--neon-green);font-size:13px;margin-left:8px;}
+        .logout-btn{color:var(--neon-accent)!important;}
         
         /* 公告栏 */
-        .notice{background:rgba(17,24,39,0.6);border-radius:8px;padding:15px;margin:15px 0;display:flex;align-items:center;neon-border-blue;}
-        .notice-icon{color:var(--neon-blue);font-size:18px;margin-right:10px;}
-        .notice-text{font-size:14px;flex:1;}
-        .notice-more{color:var(--neon-blue);font-size:14px;text-decoration:none;}
+        .notice{
+            background:var(--dark-bg);
+            border-radius:8px;
+            padding:15px;
+            margin:15px 0;
+            display:flex;
+            align-items:center;
+            neon-border-primary;
+        }
+        .notice-icon{color:var(--neon-primary);font-size:18px;margin-right:10px;}
+        .notice-text{font-size:14px;flex:1;color:#f0f0f0;}
+        .notice-more{color:var(--neon-primary);font-size:14px;text-decoration:none;}
         
-        /* 分区入口 */
-        .section-title{font-size:18px;margin:20px 0 15px;font-weight:bold;color:var(--neon-purple);neon-text-purple;}
-        .forum-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
-        .forum-card{background:rgba(17,24,39,0.6);border-radius:8px;padding:18px;text-align:center;transition:transform 0.3s;neon-border-purple;cursor:pointer;}
-        .forum-card:hover{transform:scale(1.02);}
-        .forum-icon{font-size:28px;margin-bottom:10px;}
-        .icon-trend{color:var(--neon-blue);}
-        .icon-shrink{color:var(--neon-purple);}
-        .icon-theory{color:var(--neon-pink);}
-        .icon-qa{color:var(--neon-green);}
-        .forum-name{font-size:15px;font-weight:bold;margin-bottom:5px;}
+        /* 分区入口（卡片式+霓虹hover） */
+        .section-title{
+            font-size:18px;
+            margin:25px 0 15px;
+            font-weight:bold;
+            neon-text-secondary;
+        }
+        .forum-list{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:15px;
+            margin-bottom:30px;
+        }
+        .forum-card{
+            background:var(--dark-bg);
+            border-radius:10px;
+            padding:20px;
+            text-align:center;
+            neon-border-secondary;
+            cursor:pointer;
+            transition:transform 0.3s,box-shadow 0.3s;
+        }
+        .forum-card:hover{
+            transform:scale(1.03);
+            box-shadow:0 0 12px var(--neon-secondary);
+        }
+        .forum-icon{font-size:32px;margin-bottom:12px;}
+        .icon-3d{color:var(--neon-primary);}
+        .icon-pl3{color:var(--neon-secondary);}
+        .forum-name{font-size:16px;font-weight:bold;margin-bottom:5px;}
         .forum-desc{font-size:13px;color:#aaa;}
         
-        /* 最新发帖 */
-        .new-posts{background:rgba(17,24,39,0.6);border-radius:8px;padding:18px;margin-bottom:20px;neon-border-blue;}
-        .topic-item{padding:12px 0;border-bottom:1px solid rgba(0,243,255,0.1);cursor:pointer;}
-        .topic-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
-        .topic-author{font-size:12px;color:var(--neon-green);}
-        .topic-level{font-size:11px;background:rgba(0,255,157,0.2);border:1px solid var(--neon-green);border-radius:3px;padding:1px 5px;margin-left:5px;}
-        .topic-time{font-size:12px;color:#aaa;}
-        .topic-title{font-size:15px;margin-bottom:5px;display:flex;align-items:center;}
-        .topic-title:hover{color:var(--neon-blue);}
-        .topic-price{color:var(--neon-gold);font-size:12px;margin-left:8px;background:rgba(255,215,0,0.1);padding:1px 5px;border-radius:3px;neon-text-gold;}
-        .topic-info{font-size:13px;color:#aaa;display:flex;justify-content:space-between;}
-        .topic-section{color:var(--neon-purple);background:rgba(199,116,232,0.1);padding:1px 5px;border-radius:3px;font-size:12px;}
-        .topic-sold{color:var(--neon-gold);}
+        /* 帖子列表（简洁排版+等级标注） */
+        .posts-container{
+            background:var(--dark-bg);
+            border-radius:8px;
+            padding:20px;
+            margin-bottom:30px;
+            neon-border-primary;
+        }
+        .posts-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
+        .posts-header-title{font-size:16px;neon-text-secondary;}
+        .post-btn{
+            padding:6px 12px;
+            background:var(--neon-primary);
+            color:#050517;
+            border:none;
+            border-radius:4px;
+            font-size:14px;
+            cursor:pointer;
+            neon-text-primary;
+            display:none;
+        }
+        .post-btn.show{display:block;}
+        /* 帖子项 */
+        .post-item{
+            padding:15px 0;
+            border-bottom:1px solid rgba(0,243,255,0.1);
+            cursor:pointer;
+            transition:background 0.3s;
+        }
+        .post-item:hover{background:rgba(0,243,255,0.05);}
+        .post-item:last-child{border-bottom:none;}
+        .post-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+        .post-author{font-size:13px;color:var(--neon-green);}
+        .post-author .level-tag{
+            background:rgba(0,255,157,0.1);
+            border:1px solid var(--neon-green);
+            border-radius:3px;
+            padding:1px 5px;
+            font-size:11px;
+            margin-left:5px;
+        }
+        .post-time{font-size:12px;color:#aaa;}
+        .post-title{
+            font-size:15px;
+            margin-bottom:8px;
+            display:flex;
+            align-items:center;
+        }
+        .post-title:hover{color:var(--neon-primary);}
+        .post-price{
+            margin-left:8px;
+            font-size:12px;
+            color:var(--neon-gold);
+            background:rgba(255,215,0,0.1);
+            border:1px solid var(--neon-gold);
+            border-radius:3px;
+            padding:1px 6px;
+            neon-text-gold;
+        }
+        .post-meta{
+            font-size:13px;
+            color:#aaa;
+            display:flex;
+            justify-content:space-between;
+        }
+        .post-section{
+            color:var(--neon-secondary);
+            background:rgba(199,116,232,0.1);
+            padding:1px 6px;
+            border-radius:3px;
+            font-size:12px;
+        }
+        .post-sold{color:var(--neon-gold);font-size:12px;}
+        .no-posts{text-align:center;padding:30px 0;color:#aaa;font-size:14px;}
         
-        /* 分区/详情页 */
-        .section-posts,.post-detail{display:none;padding:15px 0;}
-        .back-btn{display:inline-block;padding:8px 15px;background:rgba(0,243,255,0.2);color:var(--neon-blue);border-radius:5px;margin-bottom:15px;text-decoration:none;font-size:14px;}
-        .detail-header{padding:15px;background:rgba(17,24,39,0.6);border-radius:8px;margin-bottom:15px;neon-border-blue;}
-        .detail-title{font-size:18px;color:var(--neon-blue);neon-text-blue;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
-        .detail-price-tag{color:var(--neon-gold);font-size:14px;background:rgba(255,215,0,0.1);padding:3px 8px;border-radius:4px;neon-text-gold;}
-        .detail-meta{display:flex;justify-content:space-between;font-size:13px;color:#aaa;margin-bottom:8px;}
+        /* 帖子详情页 */
+        .post-detail{display:none;padding:15px 0;}
+        .back-btn{
+            display:inline-block;
+            padding:8px 15px;
+            background:rgba(0,243,255,0.1);
+            color:var(--neon-primary);
+            border-radius:5px;
+            margin-bottom:15px;
+            text-decoration:none;
+            font-size:14px;
+            neon-border-primary;
+        }
+        .detail-header{
+            background:var(--dark-bg);
+            border-radius:8px;
+            padding:20px;
+            margin-bottom:15px;
+            neon-border-primary;
+        }
+        .detail-title{
+            font-size:18px;
+            neon-text-primary;
+            margin-bottom:12px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .detail-price{
+            font-size:14px;
+            color:var(--neon-gold);
+            background:rgba(255,215,0,0.1);
+            padding:4px 10px;
+            border-radius:4px;
+            neon-text-gold;
+            border:1px solid var(--neon-gold);
+        }
+        .detail-meta{
+            display:flex;
+            justify-content:space-between;
+            font-size:13px;
+            color:#aaa;
+            margin-bottom:10px;
+        }
         .detail-author{color:var(--neon-green);}
-        .detail-content{padding:15px;background:rgba(17,24,39,0.6);border-radius:8px;margin-bottom:15px;neon-border-purple;line-height:1.8;}
-        .buy-btn{display:block;width:100%;padding:12px 0;background:var(--neon-gold);color:#0a0a16;font-size:16px;border:none;border-radius:8px;cursor:pointer;neon-text-gold;text-align:center;margin-bottom:20px;}
-        .reply-section{padding:15px;background:rgba(17,24,39,0.6);border-radius:8px;neon-border-blue;}
-        .reply-header{margin-bottom:15px;}
-        .reply-title{font-size:16px;color:var(--neon-purple);neon-text-purple;}
-        .reply-input{width:100%;padding:10px;border-radius:5px;background:rgba(255,255,255,0.05);border:1px solid var(--neon-blue);color:#eee;outline:none;margin-bottom:10px;min-height:80px;}
-        .reply-submit{padding:8px 20px;background:var(--neon-blue);color:#0a0a16;border:none;border-radius:5px;cursor:pointer;neon-text-blue;}
-        .reply-list{margin-top:15px;}
-        .reply-item{padding:12px 0;border-bottom:1px solid rgba(0,243,255,0.1);}
-        .reply-author{font-size:13px;color:var(--neon-green);margin-bottom:5px;}
-        .reply-content{font-size:14px;}
+        .detail-author .level-tag{
+            background:rgba(0,255,157,0.1);
+            border:1px solid var(--neon-green);
+            border-radius:3px;
+            padding:1px 5px;
+            font-size:11px;
+            margin-left:5px;
+        }
+        .detail-section{
+            color:var(--neon-secondary);
+            background:rgba(199,116,232,0.1);
+            padding:1px 6px;
+            border-radius:3px;
+            font-size:12px;
+        }
+        /* 摘要区 */
+        .detail-excerpt{
+            background:var(--dark-bg);
+            border-radius:8px;
+            padding:15px;
+            margin-bottom:15px;
+            border-left:3px solid var(--neon-secondary);
+        }
+        .excerpt-title{font-size:15px;color:var(--neon-secondary);margin-bottom:8px;}
+        .excerpt-content{font-size:14px;color:#f0f0f0;line-height:1.7;}
+        /* 正文区（付费隐藏） */
+        .detail-content{
+            background:var(--dark-bg);
+            border-radius:8px;
+            padding:20px;
+            margin-bottom:20px;
+            neon-border-secondary;
+            display:none;
+        }
+        .detail-content.show{display:block;}
+        .content-empty{
+            text-align:center;
+            padding:40px 0;
+            color:#aaa;
+            font-size:14px;
+        }
+        /* 购买按钮 */
+        .buy-btn{
+            display:block;
+            width:100%;
+            padding:14px 0;
+            background:var(--neon-gold);
+            color:#050517;
+            border:none;
+            border-radius:8px;
+            font-size:16px;
+            cursor:pointer;
+            neon-text-gold;
+            margin-bottom:20px;
+            transition:box-shadow 0.3s;
+        }
+        .buy-btn:hover{box-shadow:0 0 12px var(--neon-gold);}
+        .buy-btn.hide{display:none;}
+        /* 评论区 */
+        .comment-section{
+            background:var(--dark-bg);
+            border-radius:8px;
+            padding:20px;
+            neon-border-primary;
+        }
+        .comment-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:15px;
+        }
+        .comment-title{font-size:16px;neon-text-secondary;}
+        .comment-input{
+            width:100%;
+            padding:12px;
+            background:var(--border-bg);
+            border:1px solid var(--neon-primary);
+            border-radius:6px;
+            color:#eee;
+            outline:none;
+            margin-bottom:10px;
+            min-height:80px;
+            resize:none;
+            font-size:14px;
+        }
+        .comment-input:disabled{background:#1a1a3a;opacity:0.6;cursor:not-allowed;}
+        .comment-submit{
+            padding:8px 20px;
+            background:var(--neon-primary);
+            color:#050517;
+            border:none;
+            border-radius:4px;
+            font-size:14px;
+            cursor:pointer;
+            neon-text-primary;
+        }
+        .comment-submit:disabled{opacity:0.6;cursor:not-allowed;}
+        .comment-list{margin-top:20px;}
+        .comment-item{
+            padding:15px 0;
+            border-bottom:1px solid rgba(0,243,255,0.1);
+        }
+        .comment-item:last-child{border-bottom:none;}
+        .comment-author{
+            font-size:13px;
+            color:var(--neon-green);
+            margin-bottom:8px;
+            display:flex;
+            justify-content:space-between;
+        }
+        .comment-time{color:#aaa;font-size:12px;}
+        .comment-content{font-size:14px;color:#f0f0f0;line-height:1.7;}
+        .no-comment{text-align:center;padding:20px 0;color:#aaa;font-size:14px;}
         
-        /* 发帖按钮 */
-        .post-btn{position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:var(--neon-blue);border-radius:50%;color:#0a0a16;font-size:24px;border:none;display:none;align-items:center;justify-content:center;box-shadow:0 0 10px var(--neon-blue);z-index:80;}
+        /* 底部信息 */
+        .footer{
+            background:var(--dark-bg);
+            padding:20px 0;
+            margin-top:30px;
+            border-top:1px solid rgba(0,243,255,0.2);
+        }
+        .footer-info{
+            font-size:13px;
+            text-align:center;
+            line-height:1.8;
+            color:#aaa;
+        }
+        .footer-info a{color:var(--neon-primary);text-decoration:none;}
         
-        /* 底部 */
-        .footer{background:rgba(10,10,22,0.8);padding:20px 0;margin-top:30px;border-top:1px solid rgba(0,243,255,0.3);}
-        .footer-info{font-size:13px;text-align:center;line-height:1.8;color:#aaa;}
-        .footer-info a{color:var(--neon-blue);text-decoration:none;}
-        
-        /* 弹窗通用 */
-        .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,10,22,0.9);display:none;align-items:center;justify-content:center;padding:0 15px;z-index:200;}
+        /* 通用弹窗样式（居中+霓虹边框） */
+        .modal{
+            position:fixed;
+            top:0;left:0;right:0;bottom:0;
+            background:rgba(5,5,23,0.85);
+            backdrop-filter:blur(5px);
+            display:none;
+            align-items:center;
+            justify-content:center;
+            padding:0 15px;
+            z-index:200;
+        }
         .modal.active{display:flex;}
-        .modal-content{width:100%;max-width:600px;background:rgba(17,24,39,0.8);border-radius:10px;neon-border-blue;overflow:hidden;}
-        .modal-header{padding:15px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,243,255,0.1);}
-        .modal-title{font-size:18px;color:var(--neon-blue);neon-text-blue;}
-        .close-btn{background:transparent;border:none;color:#aaa;font-size:22px;cursor:pointer;}
-        .modal-body{padding:15px;}
-        .form-group{margin-bottom:15px;}
-        .form-label{display:block;font-size:14px;margin-bottom:8px;color:var(--neon-purple);}
-        .form-control{width:100%;padding:10px;border-radius:5px;background:rgba(255,255,255,0.05);border:1px solid var(--neon-blue);color:#eee;outline:none;}
+        .modal-content{
+            width:100%;
+            max-width:500px;
+            background:var(--dark-bg);
+            border-radius:10px;
+            neon-border-primary;
+            overflow:hidden;
+        }
+        .modal-header{
+            padding:15px 20px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            border-bottom:1px solid rgba(0,243,255,0.1);
+        }
+        .modal-title{font-size:18px;neon-text-primary;}
+        .close-btn{
+            background:transparent;
+            border:none;
+            color:#aaa;
+            font-size:22px;
+            cursor:pointer;
+            transition:color 0.3s;
+        }
+        .close-btn:hover{color:var(--neon-accent);}
+        .modal-body{padding:20px;}
+        .form-group{margin-bottom:20px;}
+        .form-label{
+            display:block;
+            font-size:14px;
+            margin-bottom:8px;
+            color:var(--neon-secondary);
+        }
+        .form-control{
+            width:100%;
+            padding:12px;
+            background:var(--border-bg);
+            border:1px solid var(--neon-primary);
+            border-radius:6px;
+            color:#eee;
+            outline:none;
+            font-size:14px;
+        }
+        .form-control:focus{box-shadow:0 0 8px var(--neon-primary);}
+        .modal-footer{
+            padding:15px 20px;
+            display:flex;
+            justify-content:flex-end;
+            gap:10px;
+            border-top:1px solid rgba(0,243,255,0.1);
+        }
+        .cancel-btn{
+            padding:8px 16px;
+            background:var(--border-bg);
+            color:#aaa;
+            border:1px solid #333;
+            border-radius:4px;
+            cursor:pointer;
+            font-size:14px;
+        }
+        .confirm-btn{
+            padding:8px 16px;
+            background:var(--neon-primary);
+            color:#050517;
+            border:none;
+            border-radius:4px;
+            cursor:pointer;
+            font-size:14px;
+            neon-text-primary;
+        }
         
-        /* 发帖弹窗 */
-        .editor-toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:rgba(10,10,22,0.7);border-radius:5px;margin-bottom:10px;neon-border-purple;}
-        .tool-btn{padding:5px 10px;border:none;border-radius:3px;background:rgba(255,255,255,0.05);color:#eee;cursor:pointer;}
-        .tool-btn:hover{background:rgba(0,243,255,0.2);color:var(--neon-blue);}
-        .color-btn{width:24px;height:24px;border:none;border-radius:3px;cursor:pointer;}
-        .color-blue{background:var(--neon-blue);}
-        .color-purple{background:var(--neon-purple);}
-        .color-pink{background:var(--neon-pink);}
-        .color-green{background:var(--neon-green);}
-        .emoji-btn{display:flex;gap:5px;padding:5px;}
-        .emoji{font-size:16px;cursor:pointer;}
-        #editor{min-height:150px;padding:10px;outline:none;border:1px solid var(--neon-blue);border-radius:5px;background:rgba(255,255,255,0.05);}
-        #editor b{font-weight:bold;}
-        #editor u{text-decoration:underline;}
-        #editor strike{text-decoration:line-through;}
-        .price-group{display:flex;align-items:center;gap:10px;}
-        .price-input{width:100px !important;}
-        .gold-label{color:var(--neon-gold);neon-text-gold;}
-        .modal-footer{padding:10px 15px;border-top:1px solid rgba(0,243,255,0.1);display:flex;justify-content:flex-end;gap:10px;}
-        .cancel-btn{padding:8px 15px;border:none;border-radius:5px;background:rgba(255,255,255,0.05);color:#aaa;cursor:pointer;}
-        .submit-btn{padding:8px 15px;border:none;border-radius:5px;background:var(--neon-blue);color:#0a0a16;cursor:pointer;neon-text-blue;}
-        
-        /* 登录注册弹窗 */
+        /* 登录注册弹窗（分tab） */
         .login-reg-modal .modal-content{max-width:400px;}
         .tab-group{display:flex;border-bottom:1px solid rgba(0,243,255,0.1);}
-        .tab-btn{flex:1;padding:12px;text-align:center;background:transparent;border:none;color:#aaa;cursor:pointer;}
-        .tab-btn.active{color:var(--neon-blue);border-bottom:2px solid var(--neon-blue);}
-        .tab-content{padding:15px 0;}
+        .tab-btn{
+            flex:1;
+            padding:12px;
+            text-align:center;
+            background:transparent;
+            border:none;
+            color:#aaa;
+            cursor:pointer;
+            font-size:15px;
+            transition:all 0.3s;
+        }
+        .tab-btn.active{
+            color:var(--neon-primary);
+            border-bottom:2px solid var(--neon-primary);
+        }
+        .tab-content{padding:20px 0;}
         .tab-panel{display:none;}
         .tab-panel.active{display:block;}
         .code-group{display:flex;gap:10px;}
         .code-input{flex:1;}
-        .get-code-btn{padding:0 15px;background:var(--neon-purple);color:#0a0a16;border:none;border-radius:5px;cursor:pointer;neon-text-purple;}
+        .get-code-btn{
+            padding:0 15px;
+            background:var(--neon-secondary);
+            color:#050517;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+            neon-text-secondary;
+        }
+        .auth-tip{font-size:13px;color:#aaa;margin-top:8px;}
+        .auth-tip a{color:var(--neon-primary);text-decoration:none;}
         
-        /* 管理员后台 */
-        .admin-modal{z-index:300;}
-        .admin-input{padding:10px;border-radius:5px;background:rgba(255,255,255,0.05);border:1px solid var(--neon-green);color:#eee;outline:none;}
-        .admin-btn-group{display:flex;gap:10px;}
-        .ban-btn{background:var(--neon-pink);color:#0a0a16;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;}
-        .delete-btn{background:var(--neon-purple);color:#0a0a16;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;}
-        .listen-btn{background:var(--neon-gold);color:#0a0a16;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;neon-text-gold;}
-        .gold-log-list{max-height:200px;overflow-y:auto;margin-top:10px;padding:10px;background:rgba(255,255,255,0.03);border-radius:5px;}
-        .gold-log-item{font-size:13px;padding:5px 0;border-bottom:1px solid rgba(0,243,255,0.05);}
+        /* 发帖弹窗（摘要+正文+固定价格） */
+        .post-modal .modal-content{max-width:600px;}
+        .price-select{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            margin-top:8px;
+        }
+        .price-option{
+            padding:6px 12px;
+            background:var(--border-bg);
+            border:1px solid var(--neon-primary);
+            border-radius:4px;
+            color:#eee;
+            cursor:pointer;
+            font-size:14px;
+            transition:all 0.3s;
+        }
+        .price-option.active{
+            background:var(--neon-primary);
+            color:#050517;
+            neon-text-primary;
+        }
+        .editor-toolbar{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            padding:10px;
+            background:var(--border-bg);
+            border-radius:6px;
+            margin-bottom:10px;
+            neon-border-secondary;
+        }
+        .tool-btn{
+            padding:5px 10px;
+            background:transparent;
+            border:none;
+            color:#eee;
+            cursor:pointer;
+            font-size:14px;
+            border-radius:4px;
+            transition:background 0.3s;
+        }
+        .tool-btn:hover{background:rgba(0,243,255,0.1);}
+        .editor{
+            min-height:120px;
+            padding:12px;
+            background:var(--border-bg);
+            border:1px solid var(--neon-primary);
+            border-radius:6px;
+            color:#eee;
+            outline:none;
+            font-size:14px;
+            line-height:1.7;
+        }
+        .editor[contenteditable]:empty:before{
+            content:attr(placeholder);
+            color:#aaa;
+            display:block;
+        }
+        .author-tip{
+            font-size:13px;
+            color:var(--neon-accent);
+            margin-top:8px;
+            display:none;
+        }
+        .author-tip.show{display:block;}
+        
+        /* 作者申请弹窗 */
+        .apply-modal .modal-content{max-width:400px;}
+        .apply-reason{min-height:100px;}
         
         /* 积分等级弹窗 */
         .level-modal .modal-content{max-width:400px;}
         .level-list{padding:10px 0;}
-        .level-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(0,243,255,0.1);}
-        .level-name{color:var(--neon-purple);}
-        .level-score{color:var(--neon-green);}
-        .level-title{font-size:11px;color:#aaa;margin-left:8px;}
+        .level-item{
+            display:flex;
+            justify-content:space-between;
+            padding:10px 0;
+            border-bottom:1px solid rgba(0,243,255,0.1);
+        }
+        .level-name{
+            color:var(--neon-secondary);
+            font-size:15px;
+        }
+        .level-name .title-tag{
+            font-size:13px;
+            color:var(--neon-gold);
+            margin-left:8px;
+            background:rgba(255,215,0,0.1);
+            padding:1px 6px;
+            border-radius:3px;
+        }
+        .level-score{color:var(--neon-green);font-size:14px;}
+        .level-rule{
+            margin-top:20px;
+            padding:15px;
+            background:var(--border-bg);
+            border-radius:6px;
+            neon-border-secondary;
+        }
+        .rule-title{font-size:15px;color:var(--neon-secondary);margin-bottom:10px;}
+        .rule-list{font-size:13px;color:#aaa;line-height:1.8;}
+        .rule-list li{margin-bottom:5px;}
         
+        /* 管理员后台弹窗（多功能分区） */
+        .admin-modal .modal-content{max-width:600px;}
+        .admin-login{margin-bottom:20px;}
+        .admin-func{display:none;}
+        .func-group{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(0,243,255,0.1);}
+        .func-title{font-size:16px;color:var(--neon-green);margin-bottom:15px;}
+        .func-operate{display:flex;gap:10px;}
+        .admin-btn-group{display:flex;gap:10px;margin-top:10px;}
+        .admin-operate-btn{
+            padding:8px 16px;
+            border:none;
+            border-radius:4px;
+            cursor:pointer;
+            font-size:14px;
+        }
+        .ban-btn{background:var(--neon-accent);color:#050517;}
+        .delete-btn{background:var(--neon-secondary);color:#050517;}
+        .recharge-btn{background:var(--neon-gold);color:#050517;neon-text-gold;}
+        .author-gold-list{
+            max-height:200px;
+            overflow-y:auto;
+            margin-top:10px;
+            padding:10px;
+            background:var(--border-bg);
+            border-radius:6px;
+        }
+        .author-gold-item{
+            display:flex;
+            justify-content:space-between;
+            padding:8px 0;
+            border-bottom:1px solid rgba(0,243,255,0.05);
+            font-size:14px;
+        }
+        .author-name{color:var(--neon-secondary);}
+        .author-gold{color:var(--neon-gold);}
+        
+        /* 响应式适配（手机优先） */
         @media (max-width:768px){
             .forum-list{grid-template-columns:1fr;}
-            .topic-title{font-size:14px;}
+            .price-select{gap:6px;}
+            .price-option{padding:5px 10px;font-size:13px;}
+            .tool-btn{padding:5px 8px;font-size:13px;}
+            .detail-title{font-size:16px;}
+            .post-item .post-title{font-size:14px;}
         }
     </style>
 </head>
 <body>
+    <!-- 顶部合规提示 -->
     <div class="top-alert">
-        理性购彩 量力而行 | 仅思路交流 无售彩承诺 | 元宝为虚拟积分 仅论坛内使用
+        理性购彩 量力而行 | 仅数字彩思路交流 无售彩/代买/包中承诺 | 元宝=1元（虚拟积分，仅论坛内使用）
     </div>
+
+    <!-- 导航栏 -->
     <header class="header">
         <div class="container nav-wrap">
-            <div class="logo neon-text-blue">十方料码3D论坛</div>
-            <div class="user-info">
+            <div class="logo neon-text-primary">数字彩交流论坛</div>
+            <div class="user-operate">
                 <a href="javascript:;" class="admin-btn" id="adminBtn">管理员后台</a>
-                <div class="gold-num" id="userGold" style="display:none;">
-                    <span class="gold-icon">💰</span>
-                    <span id="goldCount">0</span>
+                <div class="user-info">
+                    <div class="gold-num" id="userGold">
+                        <span class="gold-icon">💰</span>
+                        <span id="goldCount">0</span> 元宝
+                    </div>
+                    <a href="javascript:;" class="auth-btn" id="authBtn">登录/注册</a>
                 </div>
-                <a href="javascript:;" class="login-reg-btn" id="loginRegBtn">登录/注册</a>
                 <button class="menu-btn" id="menuBtn">☰</button>
             </div>
+            <!-- 侧边菜单 -->
             <div class="nav-menu" id="navMenu">
-                <div class="nav-item"><a href="javascript:;" onclick="showHome()">首页</a></div>
-                <div class="nav-item"><a href="javascript:;" onclick="showSection('trend')">趋势交流区</a></div>
-                <div class="nav-item"><a href="javascript:;" onclick="showSection('shrink')">缩水技巧区</a></div>
-                <div class="nav-item"><a href="javascript:;" onclick="showSection('theory')">伪序理论区</a></div>
-                <div class="nav-item"><a href="javascript:;" onclick="showLevelModal()">积分等级</a></div>
-                <div class="nav-item"><a href="#">新手引导</a></div>
-                <div class="nav-item"><a href="#">合规声明</a></div>
-                <div class="nav-item"><a href="#">联系我们</a></div>
-                <div class="nav-item"><a href="javascript:;" id="logoutBtn" style="display:none;color:var(--neon-pink);" onclick="logout()">退出登录</a></div>
+                <div class="nav-item">
+                    <a href="javascript:;" id="homeLink">首页</a>
+                </div>
+                <div class="nav-item">
+                    <a href="javascript:;" class="section-link" data-section="3d">福彩3D交流区</a>
+                </div>
+                <div class="nav-item">
+                    <a href="javascript:;" class="section-link" data-section="pl3">排列三交流区</a>
+                </div>
+                <div class="nav-item">
+                    <a href="javascript:;" id="levelLink">积分等级
+                        <span class="level-title" id="userLevelTitle">未登录</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="javascript:;" class="author-apply" id="authorApplyLink">作者申请</a>
+                </div>
+                <div class="nav-item">
+                    <a href="javascript:;" class="logout-btn" id="logoutLink" style="display:none;">退出登录</a>
+                </div>
             </div>
         </div>
     </header>
+
+    <!-- 主体内容 -->
     <div class="container">
+        <!-- 首页内容 -->
         <div id="homeContent">
+            <!-- 公告栏 -->
             <div class="notice">
                 <div class="notice-icon">📢</div>
-                <div class="notice-text">禁止涉赌/售彩内容，违规封禁账号并清零积分元宝</div>
+                <div class="notice-text">普通用户需申请作者权限方可发帖，违规发布涉赌/售彩内容将封禁账号并清零元宝</div>
                 <a href="#" class="notice-more">更多</a>
             </div>
-            <h2 class="section-title neon-text-purple">论坛分区</h2>
+
+            <!-- 分区入口 -->
+            <h2 class="section-title neon-text-secondary">论坛分区</h2>
             <div class="forum-list">
-                <div class="forum-card" onclick="showSection('trend')">
-                    <div class="forum-icon icon-trend">📊</div>
-                    <div class="forum-name">3D趋势交流区</div>
-                    <div class="forum-desc">数字走势探讨·数据复盘</div>
+                <div class="forum-card section-card" data-section="3d">
+                    <div class="forum-icon icon-3d">📊</div>
+                    <div class="forum-name">福彩3D交流区</div>
+                    <div class="forum-desc">数字走势·缩水思路·实战心得</div>
                 </div>
-                <div class="forum-card" onclick="showSection('shrink')">
-                    <div class="forum-icon icon-shrink">🔍</div>
-                    <div class="forum-name">缩水技巧分享区</div>
-                    <div class="forum-desc">选号逻辑·实战心得</div>
-                </div>
-                <div class="forum-card" onclick="showSection('theory')">
-                    <div class="forum-icon icon-theory">📚</div>
-                    <div class="forum-name">伪序理论专版</div>
-                    <div class="forum-desc">理论探讨·成果验证</div>
-                </div>
-                <div class="forum-card" onclick="showSection('qa')">
-                    <div class="forum-icon icon-qa">❓</div>
-                    <div class="forum-name">新手答疑区</div>
-                    <div class="forum-desc">基础问题·规则咨询</div>
+                <div class="forum-card section-card" data-section="pl3">
+                    <div class="forum-icon icon-pl3">🔢</div>
+                    <div class="forum-name">排列三交流区</div>
+                    <div class="forum-desc">规律分析·选号技巧·经验分享</div>
                 </div>
             </div>
-            <h2 class="section-title neon-text-purple">最新发帖</h2>
-            <div class="new-posts" id="newPostsList"></div>
+
+            <!-- 最新帖子 -->
+            <h2 class="section-title neon-text-secondary">最新发帖</h2>
+            <div class="posts-container" id="latestPostsContainer">
+                <div class="posts-header">
+                    <div class="posts-header-title neon-text-secondary">全论坛最新帖子</div>
+                    <button class="post-btn" id="latestPostBtn">发布帖子</button>
+                </div>
+                <div id="latestPostsList" class="posts-list">
+                    <!-- 脚本动态渲染 -->
+                </div>
+            </div>
         </div>
 
-        <div class="section-posts" id="sectionPosts">
-            <a href="javascript:;" class="back-btn" onclick="showHome()">← 返回首页</a>
-            <h2 class="section-title neon-text-purple" id="sectionTitle"></h2>
-            <div class="new-posts" id="sectionPostsList"></div>
+        <!-- 分区帖子列表 -->
+        <div id="sectionPostsContent" style="display:none;">
+            <a href="javascript:;" class="back-btn" id="backHomeBtn">← 返回首页</a>
+            <div class="posts-container" id="sectionPostsContainer">
+                <div class="posts-header">
+                    <div class="posts-header-title neon-text-secondary" id="sectionPostsTitle">福彩3D交流区</div>
+                    <button class="post-btn" id="sectionPostBtn">发布帖子</button>
+                </div>
+                <div id="sectionPostsList" class="posts-list">
+                    <!-- 脚本动态渲染 -->
+                </div>
+            </div>
         </div>
 
-        <div class="post-detail" id="postDetail">
-            <a href="javascript:;" class="back-btn" onclick="showLastSection()">← 返回列表</a>
+        <!-- 帖子详情页 -->
+        <div id="postDetailContent" style="display:none;">
+            <a href="javascript:;" class="back-btn" id="backSectionBtn">← 返回列表</a>
             <div class="detail-header">
                 <div class="detail-title">
-                    <span id="detailTitleText"></span>
-                    <span class="detail-price-tag" id="detailPriceTag"></span>
+                    <span id="detailPostTitle">帖子标题</span>
+                    <span class="detail-price" id="detailPostPrice">0 元宝</span>
                 </div>
                 <div class="detail-meta">
-                    <span class="detail-author">作者：<span id="detailAuthor"></span> <span id="detailAuthorLevel"></span></span>
-                    <span class="detail-time" id="detailTime"></span>
+                    <span class="detail-author">
+                        作者：<span id="detailPostAuthor">匿名用户</span>
+                        <span class="level-tag" id="detailAuthorLevel">Lv.1 彩界萌新</span>
+                    </span>
+                    <span class="detail-time" id="detailPostTime">2025-11-27</span>
                 </div>
                 <div class="detail-meta">
-                    <span class="detail-section" id="detailSection"></span>
-                    <span class="detail-sold" id="detailSold"></span>
+                    <span class="detail-section" id="detailPostSection">福彩3D交流区</span>
+                    <span class="detail-sold" id="detailPostSold">已售：0 次</span>
                 </div>
             </div>
-            <div class="detail-content" id="detailContent"></div>
-            <button class="buy-btn" id="buyPostBtn" onclick="buyPost()">购买查看</button>
-            <div class="reply-section">
-                <div class="reply-header">
-                    <h3 class="reply-title neon-text-purple">评论区</h3>
+
+            <!-- 摘要区 -->
+            <div class="detail-excerpt">
+                <div class="excerpt-title">帖子摘要</div>
+                <div class="excerpt-content" id="detailPostExcerpt">帖子摘要内容...</div>
+            </div>
+
+            <!-- 正文区（付费隐藏） -->
+            <div class="detail-content" id="detailPostContent">
+                <!-- 脚本动态渲染 -->
+            </div>
+
+            <!-- 购买按钮 -->
+            <button class="buy-btn" id="detailBuyBtn">购买查看（0 元宝）</button>
+
+            <!-- 评论区 -->
+            <div class="comment-section">
+                <div class="comment-header">
+                    <div class="comment-title neon-text-secondary">评论交流</div>
                 </div>
-                <textarea class="reply-input" id="replyInput" placeholder="请输入评论内容" disabled></textarea>
-                <button class="reply-submit" id="replySubmitBtn" onclick="submitReply()" disabled>提交评论</button>
-                <div class="reply-list" id="replyList"></div>
+                <textarea class="comment-input" id="commentInput" placeholder="请登录后发表评论..." disabled></textarea>
+                <button class="comment-submit" id="commentSubmitBtn" disabled>提交评论</button>
+                <div class="comment-list" id="commentList">
+                    <!-- 脚本动态渲染 -->
+                </div>
             </div>
         </div>
     </div>
-    <button class="post-btn" id="postBtn" onclick="showPostModal()">✍️</button>
+
+    <!-- 发帖按钮（固定底部） -->
+    <button class="post-btn" id="fixedPostBtn" style="display:none;position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;font-size:24px;">✍️</button>
+
+    <!-- 底部信息 -->
     <footer class="footer">
         <div class="container footer-info">
-            <p>© 2025 十方料码3D论坛 版权所有</p>
-            <p>ICP备XXXXXXXX号-1 | 理性购彩 快乐常在</p>
+            <p>© 2025 数字彩交流论坛 版权所有 | 理性购彩 快乐常在</p>
+            <p>ICP备案号：粤ICP备XXXXXXXX号-1 | 元宝为虚拟积分 仅论坛内使用 与人民币1:1等价</p>
+            <p><a href="#">合规声明</a> | <a href="#">联系我们</a></p>
         </div>
     </footer>
 
@@ -273,15 +841,16 @@
     <div class="modal login-reg-modal" id="loginRegModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title neon-text-blue">登录/注册</h3>
-                <button class="close-btn" onclick="closeModal('loginRegModal')">×</button>
+                <h3 class="modal-title neon-text-primary">用户登录/注册</h3>
+                <button class="close-btn" id="closeLoginRegBtn">×</button>
             </div>
             <div class="tab-group">
-                <button class="tab-btn active" onclick="switchTab('login')">登录</button>
-                <button class="tab-btn" onclick="switchTab('register')">注册</button>
+                <button class="tab-btn active" data-tab="login">登录</button>
+                <button class="tab-btn" data-tab="register">注册</button>
             </div>
             <div class="modal-body">
                 <div class="tab-content">
+                    <!-- 登录面板 -->
                     <div class="tab-panel active" id="loginPanel">
                         <div class="form-group">
                             <label class="form-label">手机号</label>
@@ -289,25 +858,33 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">密码</label>
-                            <input type="password" class="form-control" id="loginPwd" placeholder="请输入密码">
+                            <input type="password" class="form-control" id="loginPwd" placeholder="请输入密码（6-16位）">
                         </div>
-                        <button class="submit-btn" style="width:100%;" onclick="login()">登录</button>
+                        <div class="auth-tip">还没有账号？<a href="javascript:;" class="switch-register">立即注册</a></div>
+                        <div class="modal-footer">
+                            <button class="cancel-btn" id="cancelLoginBtn">取消</button>
+                            <button class="confirm-btn" id="doLoginBtn">登录</button>
+                        </div>
                     </div>
+                    <!-- 注册面板 -->
                     <div class="tab-panel" id="registerPanel">
                         <div class="form-group">
                             <label class="form-label">手机号</label>
                             <input type="tel" class="form-control" id="regPhone" placeholder="请输入手机号" maxlength="11">
                         </div>
                         <div class="form-group code-group">
-                            <label class="form-label" style="display:block;">验证码</label>
                             <input type="text" class="form-control code-input" id="regCode" placeholder="请输入验证码">
-                            <button class="get-code-btn" id="getCodeBtn" onclick="getCode()">获取验证码</button>
+                            <button class="get-code-btn" id="getRegCodeBtn">获取验证码</button>
                         </div>
                         <div class="form-group">
                             <label class="form-label">密码</label>
                             <input type="password" class="form-control" id="regPwd" placeholder="请设置密码（6-16位）">
                         </div>
-                        <button class="submit-btn" style="width:100%;" onclick="register()">注册</button>
+                        <div class="auth-tip">已有账号？<a href="javascript:;" class="switch-login">立即登录</a></div>
+                        <div class="modal-footer">
+                            <button class="cancel-btn" id="cancelRegBtn">取消</button>
+                            <button class="confirm-btn" id="doRegBtn">注册</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -315,94 +892,84 @@
     </div>
 
     <!-- 发帖弹窗 -->
-    <div class="modal" id="postModal">
+    <div class="modal post-modal" id="postModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title neon-text-blue">发布新帖</h3>
-                <button class="close-btn" onclick="closeModal('postModal')">×</button>
+                <h3 class="modal-title neon-text-primary">发布帖子</h3>
+                <button class="close-btn" id="closePostModalBtn">×</button>
             </div>
             <div class="modal-body">
+                <div class="author-tip show" id="postAuthorTip">仅作者可发布帖子，请先申请作者权限</div>
                 <div class="form-group">
                     <label class="form-label">帖子标题</label>
-                    <input type="text" class="form-control" id="postTitle" placeholder="请输入标题（≤50字）">
+                    <input type="text" class="form-control" id="postTitleInput" placeholder="请输入帖子标题（不超过50字）">
                 </div>
                 <div class="form-group">
                     <label class="form-label">选择分区</label>
-                    <select class="form-control" id="postSection">
-                        <option value="trend">3D趋势交流区</option>
-                        <option value="shrink">缩水技巧分享区</option>
-                        <option value="theory">伪序理论专版</option>
-                        <option value="qa">新手答疑区</option>
+                    <select class="form-control" id="postSectionSelect">
+                        <option value="3d">福彩3D交流区</option>
+                        <option value="pl3">排列三交流区</option>
                     </select>
                 </div>
-                <div class="form-group price-group">
-                    <label class="form-label gold-label">帖子定价</label>
-                    <input type="number" class="form-control price-input" id="postPrice" min="0" value="10">
-                    <span class="gold-label">元宝（0为免费）</span>
+                <div class="form-group">
+                    <label class="form-label">帖子定价（元宝）</label>
+                    <div class="price-select" id="priceSelect">
+                        <div class="price-option active" data-price="0">0（免费）</div>
+                        <div class="price-option" data-price="1">1</div>
+                        <div class="price-option" data-price="2">2</div>
+                        <div class="price-option" data-price="3">3</div>
+                        <div class="price-option" data-price="5.8">5.8</div>
+                        <div class="price-option" data-price="6.8">6.8</div>
+                        <div class="price-option" data-price="8.8">8.8</div>
+                        <div class="price-option" data-price="10.8">10.8</div>
+                        <div class="price-option" data-price="15.8">15.8</div>
+                        <div class="price-option" data-price="18">18</div>
+                        <div class="price-option" data-price="18.8">18.8</div>
+                        <div class="price-option" data-price="20.8">20.8</div>
+                        <div class="price-option" data-price="28.8">28.8</div>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">帖子内容</label>
+                    <label class="form-label">帖子摘要（必填）</label>
+                    <div class="editor" id="postExcerptEditor" contenteditable="true" placeholder="请输入帖子摘要（吸引用户查看，不超过150字）"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">帖子正文（必填）</label>
                     <div class="editor-toolbar">
-                        <button type="button" class="tool-btn" onclick="execCmd('bold')">粗体</button>
-                        <button type="button" class="tool-btn" onclick="execCmd('underline')">下划线</button>
-                        <button type="button" class="tool-btn" onclick="execCmd('strikeThrough')">删除线</button>
-                        <span>颜色：</span>
-                        <button type="button" class="color-btn color-blue" onclick="execCmd('foreColor','#00f3ff')"></button>
-                        <button type="button" class="color-btn color-purple" onclick="execCmd('foreColor','#c774e8')"></button>
-                        <button type="button" class="color-btn color-pink" onclick="execCmd('foreColor','#ff2ec4')"></button>
-                        <button type="button" class="color-btn color-green" onclick="execCmd('foreColor','#00ff9d')"></button>
-                        <span>表情：</span>
-                        <div class="emoji-btn">
-                            <span class="emoji" onclick="insertEmoji('👍')">👍</span>
-                            <span class="emoji" onclick="insertEmoji('👏')">👏</span>
-                            <span class="emoji" onclick="insertEmoji('💡')">💡</span>
-                            <span class="emoji" onclick="insertEmoji('📊')">📊</span>
-                        </div>
+                        <button class="tool-btn" data-cmd="bold">粗体</button>
+                        <button class="tool-btn" data-cmd="underline">下划线</button>
+                        <button class="tool-btn" data-cmd="strikeThrough">删除线</button>
+                        <button class="tool-btn" data-cmd="foreColor" data-val="#00f3ff">蓝</button>
+                        <button class="tool-btn" data-cmd="foreColor" data-val="#c774e8">紫</button>
+                        <button class="tool-btn" data-cmd="foreColor" data-val="#ff2ec4">粉</button>
                     </div>
-                    <div id="editor" contenteditable="true"></div>
+                    <div class="editor" id="postContentEditor" contenteditable="true" placeholder="请输入帖子正文内容，支持格式编辑"></div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="cancel-btn" onclick="closeModal('postModal')">取消</button>
-                <button class="submit-btn" onclick="submitPost()">发布</button>
+                <button class="cancel-btn" id="cancelPostBtn">取消</button>
+                <button class="confirm-btn" id="doPostBtn">发布帖子</button>
             </div>
         </div>
     </div>
 
-    <!-- 管理员后台 -->
-    <div class="modal admin-modal" id="adminModal">
+    <!-- 作者申请弹窗 -->
+    <div class="modal apply-modal" id="authorApplyModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title neon-text-blue">管理员后台</h3>
-                <button class="close-btn" onclick="closeModal('adminModal')">×</button>
+                <h3 class="modal-title neon-text-primary">作者权限申请</h3>
+                <button class="close-btn" id="closeApplyModalBtn">×</button>
             </div>
             <div class="modal-body">
-                <div id="adminLogin">
-                    <div class="form-group">
-                        <label class="form-label">管理员密码</label>
-                        <input type="password" class="admin-input" id="adminPwd" placeholder="请输入密码">
-                    </div>
-                    <button class="login-btn" onclick="adminLogin()">登录</button>
+                <div class="form-group">
+                    <label class="form-label">申请理由</label>
+                    <div class="editor apply-reason" id="applyReasonEditor" contenteditable="true" placeholder="请说明申请作者权限的理由（如：分享3D缩水思路、排列三实战经验等）"></div>
                 </div>
-                <div id="adminFunc" style="display:none;">
-                    <div class="form-group">
-                        <label class="form-label">封禁用户（用户名）</label>
-                        <input type="text" class="admin-input" id="banUser" placeholder="输入用户名">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">删除帖子（帖子ID）</label>
-                        <input type="text" class="admin-input" id="deletePost" placeholder="输入帖子ID">
-                    </div>
-                    <div class="admin-btn-group">
-                        <button class="ban-btn" onclick="banUser()">封禁用户</button>
-                        <button class="delete-btn" onclick="deletePost()">删除帖子</button>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">元宝数据监听（近20条）</label>
-                        <button class="listen-btn" onclick="loadGoldLogs()">刷新记录</button>
-                        <div class="gold-log-list" id="goldLogList"></div>
-                    </div>
-                </div>
+                <div class="auth-tip">申请提交后将自动通过，请注意遵守论坛规则，违规将收回权限</div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" id="cancelApplyBtn">取消</button>
+                <button class="confirm-btn" id="doApplyBtn">提交申请</button>
             </div>
         </div>
     </div>
@@ -411,336 +978,182 @@
     <div class="modal level-modal" id="levelModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title neon-text-blue">积分等级体系</h3>
-                <button class="close-btn" onclick="closeModal('levelModal')">×</button>
+                <h3 class="modal-title neon-text-primary">积分等级体系</h3>
+                <button class="close-btn" id="closeLevelModalBtn">×</button>
             </div>
             <div class="modal-body">
                 <div class="level-list">
                     <div class="level-item">
-                        <span class="level-name">Lv.1 新手入门 <span class="level-title">【彩界萌新】</span></span>
-                        <span class="level-score">0-100积分</span>
+                        <div class="level-name">Lv.1 新手入门 <span class="title-tag">彩界萌新</span></div>
+                        <div class="level-score">0 - 100 积分</div>
                     </div>
                     <div class="level-item">
-                        <span class="level-name">Lv.2 进阶学者 <span class="level-title">【趋势初探】</span></span>
-                        <span class="level-score">101-300积分</span>
+                        <div class="level-name">Lv.2 进阶学者 <span class="title-tag">趋势初探</span></div>
+                        <div class="level-score">101 - 300 积分</div>
                     </div>
                     <div class="level-item">
-                        <span class="level-name">Lv.3 实战能手 <span class="level-title">【缩水达人】</span></span>
-                        <span class="level-score">301-500积分</span>
+                        <div class="level-name">Lv.3 实战能手 <span class="title-tag">缩水达人</span></div>
+                        <div class="level-score">301 - 500 积分</div>
                     </div>
                     <div class="level-item">
-                        <span class="level-name">Lv.4 资深玩家 <span class="level-title">【数据先锋】</span></span>
-                        <span class="level-score">501-800积分</span>
+                        <div class="level-name">Lv.4 资深玩家 <span class="title-tag">数据先锋</span></div>
+                        <div class="level-score">501 - 800 积分</div>
                     </div>
                     <div class="level-item">
-                        <span class="level-name">Lv.5 理论大师 <span class="level-title">【伪序专家】</span></span>
-                        <span class="level-score">801-1200积分</span>
+                        <div class="level-name">Lv.5 理论大师 <span class="title-tag">伪序专家</span></div>
+                        <div class="level-score">801 - 1200 积分</div>
                     </div>
                     <div class="level-item">
-                        <span class="level-name">Lv.6 顶尖专家 <span class="level-title">【料码宗师】</span></span>
-                        <span class="level-score">1201+积分</span>
+                        <div class="level-name">Lv.6 顶尖专家 <span class="title-tag">料码宗师</span></div>
+                        <div class="level-score">1201+ 积分</div>
                     </div>
                 </div>
-                <div style="margin-top:15px;padding:10px;background:rgba(0,255,157,0.1);border-radius:5px;">
-                    <p style="font-size:14px;color:var(--neon-green);">📌 积分规则：发帖+5分/篇，回复+2分/条，点赞+1分/个</p>
-                    <p style="font-size:13px;color:#eee;">⚠️ 违规扣50分/次，封禁清零积分元宝</p>
+                <div class="level-rule">
+                    <div class="rule-title neon-text-secondary">积分获取规则</div>
+                    <ul class="rule-list">
+                        <li>1. 发布帖子：+5 积分/篇（优质帖额外+10积分）</li>
+                        <li>2. 回复评论：+2 积分/条（有效回复，无灌水）</li>
+                        <li>3. 帖子被购买：+1 积分/次（作者专属）</li>
+                        <li>4. 违规扣除：涉禁内容扣50积分/次，封禁账号清零积分</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 管理员后台弹窗 -->
+    <div class="modal admin-modal" id="adminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title neon-text-primary">管理员后台</h3>
+                <button class="close-btn" id="closeAdminModalBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- 管理员登录 -->
+                <div class="admin-login" id="adminLogin">
+                    <div class="form-group">
+                        <label class="form-label">管理员密码</label>
+                        <input type="password" class="form-control" id="adminPwdInput" placeholder="请输入管理员密码">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="cancel-btn" id="cancelAdminLoginBtn">取消</button>
+                        <button class="confirm-btn" id="doAdminLoginBtn">登录</button>
+                    </div>
+                </div>
+
+                <!-- 管理员功能区 -->
+                <div class="admin-func" id="adminFunc">
+                    <!-- 封禁用户 -->
+                    <div class="func-group">
+                        <div class="func-title">用户管理</div>
+                        <div class="form-group">
+                            <label class="form-label">封禁用户（输入用户名）</label>
+                            <input type="text" class="form-control" id="banUserNameInput" placeholder="请输入要封禁的用户名">
+                        </div>
+                        <div class="admin-btn-group">
+                            <button class="admin-operate-btn ban-btn" id="doBanUserBtn">封禁用户</button>
+                        </div>
+                    </div>
+
+                    <!-- 删除帖子 -->
+                    <div class="func-group">
+                        <div class="func-title">帖子管理</div>
+                        <div class="form-group">
+                            <label class="form-label">删除帖子（输入帖子ID）</label>
+                            <input type="text" class="form-control" id="deletePostIdInput" placeholder="请输入要删除的帖子ID">
+                        </div>
+                        <div class="admin-btn-group">
+                            <button class="admin-operate-btn delete-btn" id="doDeletePostBtn">删除帖子</button>
+                        </div>
+                    </div>
+
+                    <!-- 元宝充值/扣除 -->
+                    <div class="func-group">
+                        <div class="func-title">元宝管理</div>
+                        <div class="form-group">
+                            <label class="form-label">用户名</label>
+                            <input type="text" class="form-control" id="rechargeUserNameInput" placeholder="请输入用户名">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">元宝数量（正数充值/负数扣除）</label>
+                            <input type="number" step="0.1" class="form-control" id="rechargeGoldNumInput" placeholder="如：10（充值）、-5（扣除）">
+                        </div>
+                        <div class="admin-btn-group">
+                            <button class="admin-operate-btn recharge-btn" id="doRechargeGoldBtn">执行操作</button>
+                        </div>
+                    </div>
+
+                    <!-- 作者元宝查询 -->
+                    <div class="func-group">
+                        <div class="func-title">作者元宝查询</div>
+                        <div class="author-gold-list" id="authorGoldList">
+                            <!-- 脚本动态渲染 -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // 全局常量
+        const ADMIN_PWD = '123456'; // 管理员密码
+        const COMMISSION_RATE = 0.35; // 平台抽成35%
+        const PRICE_OPTIONS = [0,1,2,3,5.8,6.8,8.8,10.8,15.8,18,18.8,20.8,28.8]; // 固定价格选项
+        const LEVEL_CONFIG = [
+            {level:1, min:0, max:100, title:'彩界萌新'},
+            {level:2, min:101, max:300, title:'趋势初探'},
+            {level:3, min:301, max:500, title:'缩水达人'},
+            {level:4, min:501, max:800, title:'数据先锋'},
+            {level:5, min:801, max:1200, title:'伪序专家'},
+            {level:6, min:1201, max:Infinity, title:'料码宗师'}
+        ]; // 等级配置
+
         // 全局变量
-        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-        let lastSection = ''; // 记录上一个分区
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null; // 当前登录用户
+        let currentSection = ''; // 当前分区（3d/pl3）
         let currentPostId = 0; // 当前查看帖子ID
-        const ADMIN_PWD = '123456';
-        const COMMISSION_RATE = 0.3; // 30%抽成
+        let adminLoginStatus = false; // 管理员登录状态
 
-        // 初始化数据
-        function initData() {
-            if(!localStorage.getItem('forumUsers')){
-                localStorage.setItem('forumUsers',JSON.stringify([
-                    {username:'十方料码',phone:'13800138000',pwd:'123456',level:5,score:920,gold:1000,isBanned:false,title:'伪序专家',purchasedPosts:[]},
-                    {username:'彩友123',phone:'13900139000',pwd:'123456',level:3,score:350,gold:500,isBanned:false,title:'缩水达人',purchasedPosts:[]},
-                    {username:'新手小白',phone:'13700137000',pwd:'123456',level:1,score:45,gold:200,isBanned:false,title:'彩界萌新',purchasedPosts:[]}
-                ]));
+        // 初始化本地存储数据
+        function initLocalData() {
+            // 用户数据
+            if (!localStorage.getItem('forumUsers')) {
+                const initUsers = [
+                    {
+                        id:1, username:'十方料码', phone:'13800138000', pwd:'123456',
+                        isAuthor:true, isBanned:false,
+                        score:1250, level:6, title:'料码宗师',
+                        gold:2860.5, purchasedPosts:[1,3],
+                        regTime:'2025-10-01'
+                    },
+                    {
+                        id:2, username:'彩友123', phone:'13900139000', pwd:'123456',
+                        isAuthor:true, isBanned:false,
+                        score:850, level:5, title:'伪序专家',
+                        gold:1580.2, purchasedPosts:[1,2],
+                        regTime:'2025-10-15'
+                    },
+                    {
+                        id:3, username:'新手小白', phone:'13700137000', pwd:'123456',
+                        isAuthor:false, isBanned:false,
+                        score:60, level:1, title:'彩界萌新',
+                        gold:500, purchasedPosts:[4],
+                        regTime:'2025-11-01'
+                    },
+                    {
+                        id:4, username:'管理员', phone:'13600136000', pwd:ADMIN_PWD,
+                        isAuthor:true, isBanned:false, isAdmin:true,
+                        score:0, level:1, title:'彩界萌新',
+                        gold:0, purchasedPosts:[],
+                        regTime:'2025-09-01'
+                    }
+                ];
+                localStorage.setItem('forumUsers', JSON.stringify(initUsers));
             }
-            if(!localStorage.getItem('forumPosts')){
-                localStorage.setItem('forumPosts',JSON.stringify([
-                    {id:1,title:'3D百位走势规律浅析',author:'十方料码',section:'trend',sectionName:'3D趋势交流区',time:'2025-11-27 15:30',score:5,goldPrice:10,soldCount:3,content:'<b>百位冷热交替</b>，<span style="color:#00f3ff;">重点关注0-3</span>',replies:[]},
-                    {id:2,title:'缩水实战案例',author:'彩友123',section:'shrink',sectionName:'缩水技巧分享区',time:'2025-11-27 14:15',score:5,goldPrice:8,soldCount:2,content:'<u>跨度过滤+和值筛选</u> 优化缩水',replies:[]},
-                    {id:3,title:'伪序理论核心拆解',author:'十方料码',section:'theory',sectionName:'伪序理论专版',time:'2025-11-27 10:00',score:5,goldPrice:15,soldCount:5,content:'突破传统排序，抓数字隐性关联',replies:[]},
-                    {id:4,title:'新手如何看走势图',author:'新手小白',section:'qa',sectionName:'新手答疑区',time:'2025-11-26 18:20',score:5,goldPrice:0,soldCount:0,content:'求大神指导走势图读法',replies:[]},
-                    {id:5,title:'十位冷热号判断',author:'十方料码',section:'trend',sectionName:'3D趋势交流区',time:'2025-11-26 16:40',score:5,goldPrice:10,soldCount:1,content:'转换周期7-10期',replies:[]}
-                ]));
-            }
-            if(!localStorage.getItem('goldLogs')){
-                localStorage.setItem('goldLogs',JSON.stringify([
-                    {time:'2025-11-27 16:00',type:'购买帖子',user:'彩友123',target:'百位走势',gold:-10,balance:490},
-                    {time:'2025-11-27 15:30',type:'发帖收益',user:'十方料码',target:'百位走势',gold:7,balance:1007},
-                    {time:'2025-11-27 15:00',type:'购买帖子',user:'新手小白',target:'伪序理论',gold:-15,balance:185}
-                ]));
-            }
-        }
 
-        // 页面加载完成
-        window.onload = function() {
-            initData();
-            renderNewPosts();
-            updateUserStatus();
-        };
-
-        // 更新用户状态
-        function updateUserStatus() {
-            const loginRegBtn = document.getElementById('loginRegBtn');
-            const userGold = document.getElementById('userGold');
-            const goldCount = document.getElementById('goldCount');
-            const postBtn = document.getElementById('postBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const replyInput = document.getElementById('replyInput');
-            const replySubmitBtn = document.getElementById('replySubmitBtn');
-
-            if(currentUser) {
-                loginRegBtn.style.display = 'none';
-                userGold.style.display = 'flex';
-                goldCount.textContent = currentUser.gold;
-                postBtn.style.display = 'flex';
-                logoutBtn.style.display = 'block';
-                replyInput.disabled = false;
-                replySubmitBtn.disabled = false;
-            } else {
-                loginRegBtn.style.display = 'block';
-                userGold.style.display = 'none';
-                postBtn.style.display = 'none';
-                logoutBtn.style.display = 'none';
-                replyInput.disabled = true;
-                replySubmitBtn.disabled = true;
-            }
-        }
-
-        // 显示首页
-        function showHome() {
-            document.getElementById('homeContent').style.display = 'block';
-            document.getElementById('sectionPosts').style.display = 'none';
-            document.getElementById('postDetail').style.display = 'none';
-            renderNewPosts();
-        }
-
-        // 显示分区
-        function showSection(section) {
-            lastSection = section;
-            const posts = JSON.parse(localStorage.getItem('forumPosts')).filter(p => p.section === section);
-            const sectionNames = {trend:'3D趋势交流区',shrink:'缩水技巧分享区',theory:'伪序理论专版',qa:'新手答疑区'};
-            document.getElementById('sectionTitle').textContent = sectionNames[section];
-            let html = '';
-            posts.forEach(post => {
-                const user = JSON.parse(localStorage.getItem('forumUsers')).find(u => u.username === post.author);
-                html += `<div class="topic-item" onclick="showPostDetail(${post.id})">
-                    <div class="topic-header">
-                        <span class="topic-author">${post.author} <span class="topic-level">Lv.${user.level} ${user.title}</span></span>
-                        <span class="topic-time">${post.time}</span>
-                    </div>
-                    <div class="topic-title">${post.title} ${post.goldPrice>0?'<span class="topic-price">'+post.goldPrice+'元宝</span>':''}</div>
-                    <div class="topic-info">
-                        <span class="topic-section">${post.sectionName}</span>
-                        <span class="topic-sold">已售${post.soldCount}次</span>
-                    </div>
-                </div>`;
-            });
-            document.getElementById('sectionPostsList').innerHTML = html || '<p style="text-align:center;padding:20px;">暂无帖子</p>';
-            document.getElementById('homeContent').style.display = 'none';
-            document.getElementById('sectionPosts').style.display = 'block';
-            document.getElementById('postDetail').style.display = 'none';
-        }
-
-        // 显示帖子详情
-        function showPostDetail(postId) {
-            currentPostId = postId;
-            const post = JSON.parse(localStorage.getItem('forumPosts')).find(p => p.id === postId);
-            if(!post) return alert('帖子不存在');
-            const user = JSON.parse(localStorage.getItem('forumUsers')).find(u => u.username === post.author);
-            
-            document.getElementById('detailTitleText').textContent = post.title;
-            document.getElementById('detailPriceTag').textContent = post.goldPrice>0?post.goldPrice+'元宝':'免费';
-            document.getElementById('detailAuthor').textContent = post.author;
-            document.getElementById('detailAuthorLevel').textContent = 'Lv.'+user.level+' '+user.title;
-            document.getElementById('detailTime').textContent = post.time;
-            document.getElementById('detailSection').textContent = post.sectionName;
-            document.getElementById('detailSold').textContent = '已售：'+post.soldCount+'次';
-            
-            // 免费/已购买则显示内容
-            const isFree = post.goldPrice === 0;
-            const hasPurchased = currentUser && currentUser.purchasedPosts.includes(postId);
-            if(isFree || hasPurchased) {
-                document.getElementById('detailContent').innerHTML = post.content;
-                document.getElementById('buyPostBtn').style.display = 'none';
-            } else {
-                document.getElementById('detailContent').innerHTML = '<p style="text-align:center;padding:30px;">需购买后查看</p>';
-                document.getElementById('buyPostBtn').style.display = 'block';
-                document.getElementById('buyPostBtn').textContent = '购买查看（'+post.goldPrice+'元宝）';
-            }
-            
-            // 渲染评论
-            renderReplies(postId);
-            
-            document.getElementById('sectionPosts').style.display = 'none';
-            document.getElementById('postDetail').style.display = 'block';
-        }
-
-        // 返回上一分区
-        function showLastSection() {
-            if(lastSection) showSection(lastSection);
-            else showHome();
-        }
-
-        // 渲染最新发帖（前10条）
-        function renderNewPosts() {
-            let posts = JSON.parse(localStorage.getItem('forumPosts'));
-            posts.sort((a,b) => new Date(b.time) - new Date(a.time));
-            posts = posts.slice(0,10);
-            let html = '';
-            posts.forEach(post => {
-                const user = JSON.parse(localStorage.getItem('forumUsers')).find(u => u.username === post.author);
-                html += `<div class="topic-item" onclick="showPostDetail(${post.id})">
-                    <div class="topic-header">
-                        <span class="topic-author">${post.author} <span class="topic-level">Lv.${user.level} ${user.title}</span></span>
-                        <span class="topic-time">${post.time}</span>
-                    </div>
-                    <div class="topic-title">${post.title} ${post.goldPrice>0?'<span class="topic-price">'+post.goldPrice+'元宝</span>':''}</div>
-                    <div class="topic-info">
-                        <span class="topic-section">${post.sectionName}</span>
-                        <span class="topic-sold">已售${post.soldCount}次</span>
-                    </div>
-                </div>`;
-            });
-            document.getElementById('newPostsList').innerHTML = html || '<p style="text-align:center;padding:20px;">暂无帖子</p>';
-        }
-
-        // 渲染评论
-        function renderReplies(postId) {
-            const post = JSON.parse(localStorage.getItem('forumPosts')).find(p => p.id === postId);
-            let html = '';
-            post.replies.forEach(reply => {
-                const user = JSON.parse(localStorage.getItem('forumUsers')).find(u => u.username === reply.author);
-                html += `<div class="reply-item">
-                    <div class="reply-author">${reply.author}（Lv.${user.level} ${user.title}） ${reply.time}</div>
-                    <div class="reply-content">${reply.content}</div>
-                </div>`;
-            });
-            document.getElementById('replyList').innerHTML = html || '<p style="text-align:center;padding:10px;">暂无评论</p>';
-        }
-
-        // 提交评论
-        function submitReply() {
-            if(!currentUser) return alert('请先登录');
-            const content = document.getElementById('replyInput').value.trim();
-            if(!content) return alert('请输入评论内容');
-            
-            const posts = JSON.parse(localStorage.getItem('forumPosts'));
-            const postIndex = posts.findIndex(p => p.id === currentPostId);
-            posts[postIndex].replies.push({
-                author: currentUser.username,
-                content: content,
-                time: new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})
-            });
-            localStorage.setItem('forumPosts',JSON.stringify(posts));
-            
-            // 评论积分+2
-            const users = JSON.parse(localStorage.getItem('forumUsers'));
-            const userIndex = users.findIndex(u => u.username === currentUser.username);
-            users[userIndex].score += 2;
-            updateUserLevel(users[userIndex]);
-            currentUser = users[userIndex];
-            localStorage.setItem('forumUsers',JSON.stringify(users));
-            localStorage.setItem('currentUser',JSON.stringify(currentUser));
-            updateUserStatus();
-            
-            renderReplies(currentPostId);
-            document.getElementById('replyInput').value = '';
-            alert('评论成功，积分+2');
-        }
-
-        // 购买帖子
-        function buyPost() {
-            if(!currentUser) return alert('请先登录');
-            const post = JSON.parse(localStorage.getItem('forumPosts')).find(p => p.id === currentPostId);
-            if(currentUser.gold < post.goldPrice) return alert('元宝不足，无法购买');
-            if(currentUser.purchasedPosts.includes(currentPostId)) return alert('已购买该帖子');
-            
-            const users = JSON.parse(localStorage.getItem('forumUsers'));
-            const buyerIndex = users.findIndex(u => u.username === currentUser.username);
-            const sellerIndex = users.findIndex(u => u.username === post.author);
-            
-            // 买家扣元宝
-            users[buyerIndex].gold -= post.goldPrice;
-            users[buyerIndex].purchasedPosts.push(currentPostId);
-            // 卖家得元宝（扣30%抽成）
-            const sellerGold = Math.floor(post.goldPrice * (1 - COMMISSION_RATE));
-            users[sellerIndex].gold += sellerGold;
-            
-            // 帖子销量+1
-            const posts = JSON.parse(localStorage.getItem('forumPosts'));
-            const postIndex = posts.findIndex(p => p.id === currentPostId);
-            posts[postIndex].soldCount += 1;
-            
-            // 记录元宝日志
-            const goldLogs = JSON.parse(localStorage.getItem('goldLogs'));
-            goldLogs.unshift({
-                time: new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}),
-                type: '购买帖子',
-                user: currentUser.username,
-                target: post.title,
-                gold: -post.goldPrice,
-                balance: users[buyerIndex].gold
-            });
-            goldLogs.unshift({
-                time: new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}),
-                type: '发帖收益',
-                user: post.author,
-                target: post.title,
-                gold: sellerGold,
-                balance: users[sellerIndex].gold
-            });
-            
-            // 保存数据
-            localStorage.setItem('forumUsers',JSON.stringify(users));
-            localStorage.setItem('forumPosts',JSON.stringify(posts));
-            localStorage.setItem('goldLogs',JSON.stringify(goldLogs));
-            currentUser = users[buyerIndex];
-            localStorage.setItem('currentUser',JSON.stringify(currentUser));
-            updateUserStatus();
-            
-            // 刷新详情页
-            showPostDetail(currentPostId);
-            alert('购买成功，已扣除'+post.goldPrice+'元宝');
-        }
-
-        // 发布帖子
-        function submitPost() {
-            const title = document.getElementById('postTitle').value.trim();
-            const section = document.getElementById('postSection').value;
-            const goldPrice = parseInt(document.getElementById('postPrice').value) || 0;
-            const content = document.getElementById('editor').innerHTML.trim();
-            
-            if(!title || !content) return alert('标题和内容不能为空');
-            
-            const posts = JSON.parse(localStorage.getItem('forumPosts'));
-            const newId = posts.length > 0 ? Math.max(...posts.map(p=>p.id)) + 1 : 1;
-            const sectionNames = {trend:'3D趋势交流区',shrink:'缩水技巧分享区',theory:'伪序理论专版',qa:'新手答疑区'};
-            posts.unshift({
-                id: newId,
-                title: title,
-                author: currentUser.username,
-                section: section,
-                sectionName: sectionNames[section],
-                time: new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}),
-                score: 5,
-                goldPrice: goldPrice,
-                soldCount: 0,
-                content: content,
-                replies: []
-            });
-            localStorage.setItem('forumPosts',JSON.stringify(posts));
-            
-           
+            // 帖子数据
+            if (!localStorage.getItem('forumPosts')) {
+                const initPosts = [
+                    {
+                        id:1,

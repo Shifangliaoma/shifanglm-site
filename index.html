@@ -958,7 +958,7 @@
                 </div>
             </div>
             <div class="copyright">
-                <p>© 2025 十方料码论坛 - 粉丝互动社区</p>
+                <p>© 2024 十方料论坛 - 粉丝互动社区</p>
             </div>
         </div>
     </footer>
@@ -1036,9 +1036,9 @@
                     <select class="form-control" id="postCategoryInput">
                         <option value="福彩3D交流">福彩3D交流</option>
                         <option value="排列三交流">排列三交流</option>
-                        <option value="胆码推荐">胆码分析</option>
-                        <option value="复式推荐">复式分析</option>
-                        <option value="定制工具">双飞分析</option>
+                        <option value="胆码分析">胆码分析</option>
+                        <option value="复式分析">复式分析</option>
+                        <option value="双飞分析">双飞分析</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -1051,7 +1051,7 @@
                         <button class="editor-btn" data-command="insertOrderedList" title="有序列表"><i class="fas fa-list-ol"></i></button>
                         <button class="editor-btn" id="postEmojiBtn" title="表情">😀</button>
                     </div>
-                    <div class="editor-content" id="postContentInput" contenteditable="true" placeholder="请输入帖子内容..."></div>
+                    <div class="editor-content" id="postContentEditor" contenteditable="true" placeholder="请输入帖子内容..."></div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">标签 (用逗号分隔)</label>
@@ -1127,6 +1127,36 @@
                             replies: 5,
                             isSticky: false,
                             isEssence: false
+                        },
+                        {
+                            id: 4,
+                            title: '胆码分析技巧分享',
+                            content: '<p><strong>胆码分析</strong>是彩票选号的重要方法之一。</p><p><u>技巧提示：</u>选择胆码时要结合近期热号、冷号和遗漏值综合分析。</p><p>建议选择1-2个胆码，结合其他号码组成复式投注。</p>',
+                            category: '胆码分析',
+                            tags: ['胆码', '分析', '技巧'],
+                            author: 'admin',
+                            authorId: 1,
+                            date: new Date('2024-01-12').toISOString(),
+                            views: 65,
+                            likes: 8,
+                            replies: 3,
+                            isSticky: false,
+                            isEssence: true
+                        },
+                        {
+                            id: 5,
+                            title: '复式投注的优缺点分析',
+                            content: '<p><strong>复式投注</strong>可以增加中奖概率，但也会增加投注金额。</p><p><u>优点：</u>覆盖号码多，中奖概率高。</p><p><u>缺点：</u>投注金额较大，需要合理控制。</p>',
+                            category: '复式分析',
+                            tags: ['复式', '投注', '分析'],
+                            author: '十方料码',
+                            authorId: 2,
+                            date: new Date('2024-01-11').toISOString(),
+                            views: 88,
+                            likes: 10,
+                            replies: 4,
+                            isSticky: false,
+                            isEssence: false
                         }
                     ];
                     localStorage.setItem('forumPosts', JSON.stringify(defaultPosts));
@@ -1157,7 +1187,7 @@
                             id: 3,
                             postId: 2,
                             content: '<p>这个复式技巧很实用，谢谢分享！</p>',
-                            author: '十方料码',
+                            author: '十方料料码',
                             authorId: 2,
                             date: new Date('2024-01-14T14:20:00').toISOString(),
                             likes: 2
@@ -1640,11 +1670,11 @@
             
             // 初始化事件
             initEvents() {
-                // 分类点击事件
+                // 分类点击事件 - 修复版
                 document.getElementById('categoryList').addEventListener('click', (e) => {
+                    e.preventDefault();
                     const categoryLink = e.target.closest('.category-link');
                     if (categoryLink) {
-                        e.preventDefault();
                         const category = categoryLink.getAttribute('data-category');
                         const posts = this.getPostsByCategory(category);
                         this.renderFilteredPosts(posts, `${category} 分类的帖子`);
@@ -1821,6 +1851,10 @@
                         return;
                     }
                     this.showModal('newPostModal');
+                    // 初始化编辑器焦点
+                    setTimeout(() => {
+                        document.getElementById('postContentEditor').focus();
+                    }, 100);
                 });
                 
                 document.getElementById('closeNewPost').addEventListener('click', () => {
@@ -1909,7 +1943,7 @@
                 document.getElementById('submitNewPost').addEventListener('click', () => {
                     const title = document.getElementById('postTitleInput').value;
                     const category = document.getElementById('postCategoryInput').value;
-                    const content = document.getElementById('postContentInput').innerHTML;
+                    const content = document.getElementById('postContentEditor').innerHTML;
                     const tags = document.getElementById('postTagsInput').value;
                     
                     if (!title || !content) {
@@ -1935,7 +1969,7 @@
                     this.hideModal('newPostModal');
                     // 清空表单
                     document.getElementById('postTitleInput').value = '';
-                    document.getElementById('postContentInput').innerHTML = '';
+                    document.getElementById('postContentEditor').innerHTML = '';
                     document.getElementById('postTagsInput').value = '';
                 });
                 
@@ -1979,77 +2013,110 @@
                 });
             },
             
-            // 初始化编辑器功能
+            // 初始化编辑器功能 - 修复版
             initEditors() {
-                // 为编辑器按钮添加功能
-                document.querySelectorAll('.editor-btn[data-command]').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const command = btn.getAttribute('data-command');
-                        document.execCommand(command, false, null);
-                    });
-                });
-                
-                // 表情按钮
-                document.getElementById('emojiBtn').addEventListener('click', () => {
-                    const emojis = ['😀', '😂', '🤣', '😍', '😎', '👍', '❤️', '🔥', '✨', '🎉'];
-                    let emojiHTML = '';
-                    emojis.forEach(emoji => {
-                        emojiHTML += `<span class="editor-btn" style="font-size: 1.2rem;">${emoji}</span>`;
-                    });
-                    
-                    // 创建表情选择器
-                    let emojiPicker = document.getElementById('emojiPicker');
-                    if (!emojiPicker) {
-                        emojiPicker = document.createElement('div');
-                        emojiPicker.id = 'emojiPicker';
-                        emojiPicker.style.cssText = `
-                            position: absolute;
-                            background: white;
-                            border: 1px solid var(--border);
-                            border-radius: 6px;
-                            padding: 10px;
-                            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-                            z-index: 1000;
-                            display: grid;
-                            grid-template-columns: repeat(5, 1fr);
-                            gap: 5px;
-                        `;
-                        document.body.appendChild(emojiPicker);
-                    }
-                    
-                    emojiPicker.innerHTML = emojiHTML;
-                    
-                    // 定位表情选择器
-                    const btnRect = document.getElementById('emojiBtn').getBoundingClientRect();
-                    emojiPicker.style.top = `${btnRect.bottom + window.scrollY}px`;
-                    emojiPicker.style.left = `${btnRect.left + window.scrollX}px`;
-                    
-                    // 显示表情选择器
-                    emojiPicker.style.display = 'grid';
-                    
-                    // 表情点击事件
-                    emojiPicker.querySelectorAll('.editor-btn').forEach(emojiBtn => {
-                        emojiBtn.addEventListener('click', () => {
-                            document.execCommand('insertHTML', false, emojiBtn.textContent);
-                            emojiPicker.style.display = 'none';
+                // 为编辑器按钮添加功能 - 修复版
+                const initEditorButtons = (toolbar, editor) => {
+                    toolbar.querySelectorAll('.editor-btn[data-command]').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            // 确保编辑器获得焦点
+                            editor.focus();
+                            const command = btn.getAttribute('data-command');
+                            document.execCommand(command, false, null);
+                            // 重新聚焦到编辑器
+                            editor.focus();
                         });
                     });
+                };
+                
+                // 初始化发帖编辑器
+                const postToolbar = document.querySelector('#newPostModal .editor-toolbar');
+                const postEditor = document.getElementById('postContentEditor');
+                if (postToolbar && postEditor) {
+                    initEditorButtons(postToolbar, postEditor);
+                }
+                
+                // 初始化回复编辑器
+                const replyToolbar = document.querySelector('#postDetailPage .editor-toolbar');
+                const replyEditor = document.getElementById('replyEditor');
+                if (replyToolbar && replyEditor) {
+                    initEditorButtons(replyToolbar, replyEditor);
+                }
+                
+                // 表情按钮功能 - 修复版
+                const initEmojiButton = (buttonId, editorId) => {
+                    const emojiBtn = document.getElementById(buttonId);
+                    const editor = document.getElementById(editorId);
                     
-                    // 点击其他地方关闭表情选择器
-                    setTimeout(() => {
-                        document.addEventListener('click', function closeEmojiPicker(e) {
-                            if (!emojiPicker.contains(e.target) && e.target !== document.getElementById('emojiBtn')) {
-                                emojiPicker.style.display = 'none';
-                                document.removeEventListener('click', closeEmojiPicker);
+                    if (emojiBtn && editor) {
+                        emojiBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            // 确保编辑器获得焦点
+                            editor.focus();
+                            
+                            const emojis = ['😀', '😂', '🤣', '😍', '😎', '👍', '❤️', '🔥', '✨', '🎉'];
+                            let emojiHTML = '';
+                            emojis.forEach(emoji => {
+                                emojiHTML += `<span class="editor-btn" style="font-size: 1.2rem; cursor: pointer; padding: 5px;">${emoji}</span>`;
+                            });
+                            
+                            // 创建表情选择器
+                            let emojiPicker = document.getElementById('emojiPicker');
+                            if (!emojiPicker) {
+                                emojiPicker = document.createElement('div');
+                                emojiPicker.id = 'emojiPicker';
+                                emojiPicker.style.cssText = `
+                                    position: absolute;
+                                    background: white;
+                                    border: 1px solid var(--border);
+                                    border-radius: 6px;
+                                    padding: 10px;
+                                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                                    z-index: 1000;
+                                    display: grid;
+                                    grid-template-columns: repeat(5, 1fr);
+                                    gap: 5px;
+                                `;
+                                document.body.appendChild(emojiPicker);
                             }
+                            
+                            emojiPicker.innerHTML = emojiHTML;
+                            
+                            // 定位表情选择器
+                            const btnRect = emojiBtn.getBoundingClientRect();
+                            emojiPicker.style.top = `${btnRect.bottom + window.scrollY}px`;
+                            emojiPicker.style.left = `${btnRect.left + window.scrollX}px`;
+                            
+                            // 显示表情选择器
+                            emojiPicker.style.display = 'grid';
+                            
+                            // 表情点击事件
+                            emojiPicker.querySelectorAll('.editor-btn').forEach(emojiBtn => {
+                                emojiBtn.addEventListener('click', () => {
+                                    document.execCommand('insertHTML', false, emojiBtn.textContent);
+                                    emojiPicker.style.display = 'none';
+                                    // 重新聚焦到编辑器
+                                    editor.focus();
+                                });
+                            });
+                            
+                            // 点击其他地方关闭表情选择器
+                            setTimeout(() => {
+                                document.addEventListener('click', function closeEmojiPicker(e) {
+                                    if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) {
+                                        emojiPicker.style.display = 'none';
+                                        document.removeEventListener('click', closeEmojiPicker);
+                                    }
+                                });
+                            }, 0);
                         });
-                    }, 0);
-                });
+                    }
+                };
                 
-                // 帖子编辑器的表情按钮
-                document.getElementById('postEmojiBtn').addEventListener('click', () => {
-                    document.getElementById('emojiBtn').click();
-                });
+                // 初始化两个编辑器的表情按钮
+                initEmojiButton('postEmojiBtn', 'postContentEditor');
+                initEmojiButton('emojiBtn', 'replyEditor');
             }
         };
 

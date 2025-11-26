@@ -1,105 +1,190 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>十方料码-伪序趋势数据！</title>
-  <meta name="description" content="十方料码的个人页：展示伪序趋势数据、趋势思路与联系方式。仅供参考学习交流使用。" />
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>十方料码的个人博客</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            color: white;
+        }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin: 0 auto 20px;
+            background: linear-gradient(45deg, #ffd89b, #19547b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #4a5568;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .post {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .post h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .post-date {
+            color: #718096;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .link-card {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: #2d3748;
+            transition: all 0.3s ease;
+        }
+        
+        .link-card:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px 0;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 600px) {
+            .links {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="#home">十方料码</a>
-      <nav class="site-nav">
-        <a href="#about">关于</a>
-        <a href="#visual">伪序趋势</a>
-        <a href="#works">思路/作品</a>
-        <a href="#contact">联系</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <section id="home" class="hero">
-      <div class="container hero-inner">
-        <div class="hero-left">
-          <h1>十方料码</h1>
-          <p class="lead">伪序趋势数据 · 主攻福彩3D综合缩水/趋势思路</p>
-          <p class="muted">仅供参考学习交流使用，不作为任何投注建议或决策依据。</p>
-          <div class="actions">
-            <a class="btn" href="#visual">生成伪序趋势</a>
-            <a class="btn outline" href="#contact">联系我</a>
-          </div>
-        </div>
-        <div class="hero-right">
-          <div class="card">
-            <div class="avatar">十方料码</div>
-            <ul class="meta">
-              <li><strong>方向</strong><span>福彩3D缩水/趋势思路</span></li>
-              <li><strong>内容</strong><span>伪序趋势数据、思路分享</span></li>
-              <li><strong>用途</strong><span>学习交流 / 数据演示</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="about" class="section container">
-      <h2>关于我</h2>
-      <p>我关注数据与趋势的表达与分析，擅长通过简单模型生成伪序趋势数据用于可视化、思路验证与教学演示。所展示内容为算法模拟与研究演示，仅供学习交流使用。</p>
-    </section>
-
-    <section id="visual" class="section alt container">
-      <h2>伪序趋势演示</h2>
-      <p>点击下方按钮可生成一组伪序趋势数据（自回归 + 周期 + 偶发跳变 ），并在画布中展示。支持导出 CSV。</p>
-
-      <div class="controls">
-        <label>点数：
-          <input id="count" type="number" min="10" max="5000" value="300" />
-        </label>
-        <label>周期：
-          <input id="period" type="number" min="5" max="1000" value="50" />
-        </label>
-        <label>趋势：
-          <input id="noise" type="number" min="0" max="20" step="0.1" value="1.0" />
-        </label>
-        <button id="generate" class="btn">生成并绘制</button>
-        <button id="export-csv" class="btn outline">导出 CSV</button>
-      </div>
-
-      <div class="chart-wrap">
-        <canvas id="trend-canvas" width="1200" height="360" aria-label="伪序趋势图"></canvas>
-      </div>
-      <p class="muted small">提示：这是基于随机过程生成的演示数据，非真实历史或预测。</p>
-    </section>
-
-    <section id="works" class="section container">
-      <h2>思路与作品</h2>
-      <ul class="works-list">
-        <li>伪序趋势生成器 — 用于验证趋势可视化与信号检测的教学工具</li>
-        <li>综合缩水思路笔记 — 数据筛选、热度统计与候选压缩（仅思路分享）</li>
-        <li>可视化展示组件 — 自动绘图与数据导出</li>
-      </ul>
-    </section>
-
-    <section id="contact" class="section alt container">
-      <h2>联系</h2>
-      <p>如需交流或合作，请通过下面方式联系我。：</p>
-      <ul class="contact-info">
-        <li><strong>QQ：</strong><span id="qq">921913231</span> <button id="copy-qq" class="btn tiny">复制</button></li>
-        <li><strong>邮箱：</strong><span id="email">shifangliaoma@163.com</span> <button id="copy-email" class="btn tiny">复制</button></li>
-      </ul>
-      <p class="disclaimer"><strong>声明：</strong>页面内容为个人展示页，不作任何推荐建议。</p>
-    </section>
-  </main>
-
-  <footer class="site-footer">
     <div class="container">
-      <p>© <span id="year"></span> 十方料码。仅供参考学习交流使用。</p>
+        <header>
+            <div class="avatar">十</div>
+            <h1>十方料码</h1>
+            <p class="subtitle">技术 · 思考 · 成长</p>
+        </header>
+        
+        <div class="main-content">
+            <section class="section">
+                <h2>关于我</h2>
+                <p>你好！我是十方料码，一名热爱技术的开发者。在这里记录我的学习历程、技术思考和生活中的点滴感悟。</p>
+            </section>
+            
+            <section class="section">
+                <h2>最新文章</h2>
+                
+                <div class="post">
+                    <h3>我的第一个博客上线了！</h3>
+                    <div class="post-date">2024年1月 · 技术随笔</div>
+                    <p>今天终于把个人博客搭建起来了！从域名注册到代码部署，虽然过程中遇到了不少挑战，但看到最终成果的那一刻，所有的努力都值得了。</p>
+                </div>
+                
+                <div class="post">
+                    <h3>移动端开发的思考</h3>
+                    <div class="post-date">2024年1月 · 技术思考</div>
+                    <p>在手机上进行开发确实有很多限制，但也让我更加理解了响应式设计和用户体验的重要性。</p>
+                </div>
+                
+                <div class="post">
+                    <h3>GitHub Pages 使用心得</h3>
+                    <div class="post-date">2024年1月 · 工具分享</div>
+                    <p>GitHub Pages 真是个好东西！免费、稳定，还能自定义域名，非常适合个人博客的部署。</p>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h2>联系我</h2>
+                <div class="links">
+                    <a href="mailto:your-email@example.com" class="link-card">📧 邮箱</a>
+                    <a href="https://github.com/yourusername" class="link-card">💻 GitHub</a>
+                    <a href="https://twitter.com/yourusername" class="link-card">🐦 Twitter</a>
+                    <a href="https://weibo.com/yourusername" class="link-card">📱 微博</a>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>© 2024 十方料码的个人博客 · 由 ❤️ 驱动</p>
+        </footer>
     </div>
-  </footer>
-
-  <script src="script.js"></script>
 </body>
 </html>

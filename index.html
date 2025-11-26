@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>十方论坛 - 专业开发者社区</title>
+    <title>十方料论坛</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -236,7 +236,7 @@
         .category-link {
             display: flex;
             align-items: center;
-            justify-content: between;
+            justify-content: space-between;
             color: var(--dark);
             text-decoration: none;
             transition: all 0.3s ease;
@@ -263,59 +263,6 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-        }
-        
-        /* 统计卡片 */
-        .stats-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-            padding: 20px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-size: 1.5rem;
-        }
-        
-        .stat-icon.primary {
-            background: rgba(74, 108, 247, 0.1);
-            color: var(--primary);
-        }
-        
-        .stat-icon.success {
-            background: rgba(40, 167, 69, 0.1);
-            color: var(--success);
-        }
-        
-        .stat-icon.warning {
-            background: rgba(255, 193, 7, 0.1);
-            color: var(--warning);
-        }
-        
-        .stat-info h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        .stat-info p {
-            color: var(--gray);
-            font-size: 0.9rem;
         }
         
         /* 帖子列表 */
@@ -420,6 +367,7 @@
             margin-bottom: 5px;
             text-decoration: none;
             display: block;
+            cursor: pointer;
         }
         
         .post-title:hover {
@@ -475,6 +423,7 @@
             align-items: center;
             color: var(--gray);
             font-size: 0.85rem;
+            cursor: pointer;
         }
         
         .post-stat i {
@@ -507,7 +456,7 @@
             background: white;
             border-radius: 10px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             overflow: hidden;
         }
@@ -564,7 +513,7 @@
         }
         
         textarea.form-control {
-            min-height: 120px;
+            min-height: 150px;
             resize: vertical;
         }
         
@@ -573,6 +522,131 @@
             justify-content: flex-end;
             gap: 10px;
             margin-top: 20px;
+        }
+        
+        /* 编辑器工具栏 */
+        .editor-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: var(--light);
+            border-radius: 6px;
+        }
+        
+        .editor-btn {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .editor-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .editor-content {
+            min-height: 200px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            background: white;
+        }
+        
+        /* 帖子详情页面 */
+        .post-detail {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .post-detail-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .post-detail-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .post-detail-content {
+            line-height: 1.7;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+        }
+        
+        .post-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            color: var(--primary);
+        }
+        
+        .action-btn.liked {
+            color: var(--primary);
+        }
+        
+        /* 回复区域 */
+        .replies-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            padding: 25px;
+        }
+        
+        .reply-item {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .reply-item:last-child {
+            border-bottom: none;
+        }
+        
+        .reply-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .reply-content {
+            margin-left: 52px;
+            line-height: 1.6;
+        }
+        
+        .reply-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            margin-left: 52px;
         }
         
         /* 页脚样式 */
@@ -642,10 +716,6 @@
             .sidebar {
                 position: static;
             }
-            
-            .stats-cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
         }
         
         @media (max-width: 768px) {
@@ -677,10 +747,6 @@
             
             .search-box input {
                 width: 100%;
-            }
-            
-            .stats-cards {
-                grid-template-columns: 1fr;
             }
             
             .post-header {
@@ -721,6 +787,11 @@
         .fade-in {
             animation: fadeIn 0.5s ease forwards;
         }
+        
+        /* 隐藏元素 */
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -733,24 +804,22 @@
                         <i class="fas fa-comments"></i>
                     </div>
                     <div class="logo-text">
-                        <h1>十方论坛</h1>
-                        <p>专业开发者社区</p>
+                        <h1>十方料论坛</h1>
+                        <p>粉丝互动社区</p>
                     </div>
                 </div>
                 
                 <div class="navbar">
                     <ul class="nav-links">
-                        <li><a href="#" class="active">首页</a></li>
-                        <li><a href="#">热门</a></li>
-                        <li><a href="#">问答</a></li>
-                        <li><a href="#">教程</a></li>
-                        <li><a href="#">资源</a></li>
+                        <li><a href="#" class="active" id="navHome">首页</a></li>
+                        <li><a href="#" id="navHot">热门</a></li>
+                        <li><a href="#" id="navQa">问答</a></li>
                     </ul>
                     
                     <div class="user-controls">
                         <div class="search-box">
                             <i class="fas fa-search"></i>
-                            <input type="text" placeholder="搜索帖子...">
+                            <input type="text" placeholder="搜索帖子..." id="searchInput">
                         </div>
                         <button class="btn btn-outline" id="loginBtn">登录</button>
                         <button class="btn btn-primary" id="registerBtn">注册</button>
@@ -761,139 +830,117 @@
     </header>
 
     <div class="container">
-        <div class="main-content">
-            <!-- 侧边栏 -->
-            <div class="sidebar">
-                <div class="sidebar-card">
-                    <div class="card-header">
-                        <i class="fas fa-list"></i>
-                        <h3>论坛分类</h3>
+        <!-- 首页内容 -->
+        <div id="homePage">
+            <div class="main-content">
+                <!-- 侧边栏 -->
+                <div class="sidebar">
+                    <div class="sidebar-card">
+                        <div class="card-header">
+                            <i class="fas fa-list"></i>
+                            <h3>论坛分类</h3>
+                        </div>
+                        <ul class="category-list" id="categoryList">
+                            <!-- 分类将通过JavaScript动态加载 -->
+                        </ul>
                     </div>
-                    <ul class="category-list">
-                        <li class="category-item">
-                            <a href="#" class="category-link">
-                                <span class="category-name">前端开发</span>
-                                <span class="category-count">128</span>
-                            </a>
-                        </li>
-                        <li class="category-item">
-                            <a href="#" class="category-link">
-                                <span class="category-name">后端开发</span>
-                                <span class="category-count">96</span>
-                            </a>
-                        </li>
-                        <li class="category-item">
-                            <a href="#" class="category-link">
-                                <span class="category-name">移动开发</span>
-                                <span class="category-count">74</span>
-                            </a>
-                        </li>
-                        <li class="category-item">
-                            <a href="#" class="category-link">
-                                <span class="category-name">人工智能</span>
-                                <span class="category-count">52</span>
-                            </a>
-                        </li>
-                        <li class="category-item">
-                            <a href="#" class="category-link">
-                                <span class="category-name">数据库</span>
-                                <span class="category-count">43</span>
-                            </a>
-                        </li>
-                        <li class="category-item">
-                            <a href="#" class="category-link">
-                                <span class="category-name">DevOps</span>
-                                <span class="category-count">38</span>
-                            </a>
-                        </li>
-                        <li class="category-item">
-                            <a href="#" class="category-link">
-                                <span class="category-name">求职招聘</span>
-                                <span class="category-count">65</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="sidebar-card">
-                    <div class="card-header">
-                        <i class="fas fa-chart-line"></i>
-                        <h3>热门标签</h3>
-                    </div>
-                    <div class="post-tags" style="margin-top: 0;">
-                        <span class="tag primary">JavaScript</span>
-                        <span class="tag">Python</span>
-                        <span class="tag">React</span>
-                        <span class="tag">Vue</span>
-                        <span class="tag">Node.js</span>
-                        <span class="tag">Java</span>
-                        <span class="tag">Docker</span>
-                        <span class="tag">机器学习</span>
+                    
+                    <div class="sidebar-card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>热门标签</h3>
+                        </div>
+                        <div class="post-tags" style="margin-top: 0;" id="hotTags">
+                            <!-- 热门标签将通过JavaScript动态加载 -->
+                        </div>
                     </div>
                 </div>
                 
-                <div class="sidebar-card">
-                    <div class="card-header">
-                        <i class="fas fa-users"></i>
-                        <h3>在线用户</h3>
+                <!-- 论坛内容 -->
+                <div class="forum-content">
+                    <!-- 帖子列表 -->
+                    <div class="posts-section fade-in">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="fas fa-fire"></i>
+                                <h2>热门帖子</h2>
+                            </div>
+                            <div class="filter-options">
+                                <button class="filter-btn active" data-filter="latest">最新</button>
+                                <button class="filter-btn" data-filter="hot">热门</button>
+                                <button class="filter-btn" data-filter="essence">精华</button>
+                                <button class="btn btn-primary" id="newPostBtn">
+                                    <i class="fas fa-plus"></i> 发帖
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <ul class="posts-list" id="postsList">
+                            <!-- 帖子将通过JavaScript动态加载 -->
+                        </ul>
                     </div>
-                    <p style="color: var(--gray); font-size: 0.9rem;">当前有 <strong>128</strong> 位用户在线</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 帖子详情页面 -->
+        <div id="postDetailPage" class="hidden">
+            <div class="post-detail fade-in">
+                <div class="post-detail-header">
+                    <h1 class="post-detail-title" id="postDetailTitle"></h1>
+                    <div class="post-meta">
+                        <span><i class="fas fa-user"></i> <span id="postDetailAuthor"></span></span>
+                        <span><i class="fas fa-clock"></i> <span id="postDetailDate"></span></span>
+                        <span><i class="fas fa-folder"></i> <span id="postDetailCategory"></span></span>
+                        <span><i class="fas fa-eye"></i> <span id="postDetailViews">0</span></span>
+                    </div>
+                    <div class="post-tags" id="postDetailTags"></div>
+                </div>
+                
+                <div class="post-detail-content" id="postDetailContent"></div>
+                
+                <div class="post-actions">
+                    <button class="action-btn" id="likePostBtn">
+                        <i class="far fa-heart"></i> <span id="postLikesCount">0</span>
+                    </button>
+                    <button class="action-btn" id="replyToPostBtn">
+                        <i class="far fa-comment"></i> 回复
+                    </button>
+                    <button class="btn btn-outline" id="backToHomeBtn">
+                        <i class="fas fa-arrow-left"></i> 返回首页
+                    </button>
                 </div>
             </div>
             
-            <!-- 论坛内容 -->
-            <div class="forum-content">
-                <!-- 统计卡片 -->
-                <div class="stats-cards">
-                    <div class="stat-card fade-in">
-                        <div class="stat-icon primary">
-                            <i class="fas fa-comment-dots"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="totalPosts">0</h3>
-                            <p>帖子总数</p>
-                        </div>
-                    </div>
-                    <div class="stat-card fade-in">
-                        <div class="stat-icon success">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="totalUsers">0</h3>
-                            <p>注册用户</p>
-                        </div>
-                    </div>
-                    <div class="stat-card fade-in">
-                        <div class="stat-icon warning">
-                            <i class="fas fa-reply"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="totalReplies">0</h3>
-                            <p>回复总数</p>
-                        </div>
+            <!-- 回复列表 -->
+            <div class="replies-section fade-in">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-comments"></i>
+                        <h2>回复</h2>
                     </div>
                 </div>
                 
-                <!-- 帖子列表 -->
-                <div class="posts-section fade-in">
-                    <div class="section-header">
-                        <div class="section-title">
-                            <i class="fas fa-fire"></i>
-                            <h2>热门帖子</h2>
-                        </div>
-                        <div class="filter-options">
-                            <button class="filter-btn active">最新</button>
-                            <button class="filter-btn">热门</button>
-                            <button class="filter-btn">精华</button>
-                            <button class="btn btn-primary" id="newPostBtn">
-                                <i class="fas fa-plus"></i> 发帖
-                            </button>
-                        </div>
+                <div id="repliesList">
+                    <!-- 回复将通过JavaScript动态加载 -->
+                </div>
+                
+                <!-- 回复编辑器 -->
+                <div class="form-group" style="margin-top: 30px;">
+                    <label class="form-label">发表回复</label>
+                    <div class="editor-toolbar">
+                        <button class="editor-btn" data-command="bold" title="加粗"><i class="fas fa-bold"></i></button>
+                        <button class="editor-btn" data-command="italic" title="斜体"><i class="fas fa-italic"></i></button>
+                        <button class="editor-btn" data-command="underline" title="下划线"><i class="fas fa-underline"></i></button>
+                        <button class="editor-btn" data-command="insertUnorderedList" title="无序列表"><i class="fas fa-list-ul"></i></button>
+                        <button class="editor-btn" data-command="insertOrderedList" title="有序列表"><i class="fas fa-list-ol"></i></button>
+                        <button class="editor-btn" id="emojiBtn" title="表情">😀</button>
                     </div>
-                    
-                    <ul class="posts-list" id="postsList">
-                        <!-- 帖子将通过JavaScript动态加载 -->
-                    </ul>
+                    <div class="editor-content" id="replyEditor" contenteditable="true"></div>
+                </div>
+                <div class="form-footer">
+                    <button class="btn btn-outline" id="cancelReplyBtn">取消</button>
+                    <button class="btn btn-primary" id="submitReplyBtn">发表回复</button>
                 </div>
             </div>
         </div>
@@ -909,16 +956,6 @@
                         <li><a href="#">论坛简介</a></li>
                         <li><a href="#">管理团队</a></li>
                         <li><a href="#">使用条款</a></li>
-                        <li><a href="#">隐私政策</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>帮助中心</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">新手指南</a></li>
-                        <li><a href="#">常见问题</a></li>
-                        <li><a href="#">反馈建议</a></li>
-                        <li><a href="#">联系我们</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -927,21 +964,11 @@
                         <li><a href="#">精华帖子</a></li>
                         <li><a href="#">每周热门</a></li>
                         <li><a href="#">用户排行</a></li>
-                        <li><a href="#">活动专区</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>关注我们</h4>
-                    <ul class="footer-links">
-                        <li><a href="#"><i class="fab fa-github"></i> GitHub</a></li>
-                        <li><a href="#"><i class="fab fa-weibo"></i> 微博</a></li>
-                        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
-                        <li><a href="#"><i class="fas fa-envelope"></i> 邮箱订阅</a></li>
                     </ul>
                 </div>
             </div>
             <div class="copyright">
-                <p>© 2024 十方论坛 - 专业开发者社区. 保留所有权利.</p>
+                <p>© 2024 十方料论坛 - 粉丝互动社区</p>
             </div>
         </div>
     </footer>
@@ -1017,22 +1044,28 @@
                 <div class="form-group">
                     <label class="form-label">分类</label>
                     <select class="form-control" id="postCategoryInput">
-                        <option value="前端开发">前端开发</option>
-                        <option value="后端开发">后端开发</option>
-                        <option value="移动开发">移动开发</option>
-                        <option value="人工智能">人工智能</option>
-                        <option value="数据库">数据库</option>
-                        <option value="DevOps">DevOps</option>
-                        <option value="求职招聘">求职招聘</option>
+                        <option value="福彩3D交流">福彩3D交流</option>
+                        <option value="排列三交流">排列三交流</option>
+                        <option value="胆码分析">胆码分析</option>
+                        <option value="复式分析">复式分析</option>
+                        <option value="双飞分析">双飞分析</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">内容</label>
-                    <textarea class="form-control" id="postContentInput" placeholder="请输入帖子内容"></textarea>
+                    <div class="editor-toolbar">
+                        <button class="editor-btn" data-command="bold" title="加粗"><i class="fas fa-bold"></i></button>
+                        <button class="editor-btn" data-command="italic" title="斜体"><i class="fas fa-italic"></i></button>
+                        <button class="editor-btn" data-command="underline" title="下划线"><i class="fas fa-underline"></i></button>
+                        <button class="editor-btn" data-command="insertUnorderedList" title="无序列表"><i class="fas fa-list-ul"></i></button>
+                        <button class="editor-btn" data-command="insertOrderedList" title="有序列表"><i class="fas fa-list-ol"></i></button>
+                        <button class="editor-btn" id="postEmojiBtn" title="表情">😀</button>
+                    </div>
+                    <div class="editor-content" id="postContentInput" contenteditable="true" placeholder="请输入帖子内容..."></div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">标签 (用逗号分隔)</label>
-                    <input type="text" class="form-control" id="postTagsInput" placeholder="例如: JavaScript, React, 前端">
+                    <input type="text" class="form-control" id="postTagsInput" placeholder="例如: 福彩3D, 胆码, 预测">
                 </div>
                 <div class="form-footer">
                     <button class="btn btn-outline" id="closeNewPost">取消</button>
@@ -1062,58 +1095,152 @@
                     const defaultPosts = [
                         {
                             id: 1,
-                            title: 'Vue 3.0 响应式原理深度解析',
-                            content: 'Vue 3.0 使用 Proxy 替代了 Object.defineProperty 来实现响应式系统，这带来了哪些优势？本文将深度解析 Vue 3.0 的响应式原理。',
-                            category: '前端开发',
-                            tags: ['Vue', 'JavaScript', '前端'],
+                            title: '今日福彩3D胆码分析：重点关注3、6、9',
+                            content: '<p>根据近期走势分析，今天福彩3D的胆码建议重点关注3、6、9这三个数字。</p><p><strong>理由：</strong></p><ul><li>3号已经连续5期未出</li><li>6号在十位有较强回补趋势</li><li>9号在个位有热出迹象</li></ul><p>建议大家结合自己的判断进行投注！</p>',
+                            category: '福彩3D交流',
+                            tags: ['福彩3D', '胆码', '分析'],
                             author: '十方料码',
                             authorId: 2,
                             date: new Date('2024-01-15').toISOString(),
                             views: 142,
                             likes: 28,
                             replies: 12,
-                            isSticky: true
+                            isSticky: true,
+                            isEssence: true
                         },
                         {
                             id: 2,
-                            title: 'Node.js 高性能最佳实践',
-                            content: '如何优化 Node.js 应用的性能？本文总结了从代码优化到架构设计的一系列最佳实践。',
-                            category: '后端开发',
-                            tags: ['Node.js', '性能优化', '后端'],
+                            title: '排列三组选复式投注技巧分享',
+                            content: '<p>今天和大家分享一下排列三组选复式的投注技巧。</p><p><u>重点提示：</u>在选择复式号码时，要注意冷热号的搭配，不要全部选择热号或冷号。</p><p>建议选择2个热号+1个温号+1个冷号的组合方式，这样中奖概率会更高。</p>',
+                            category: '排列三交流',
+                            tags: ['排列三', '复式', '技巧'],
                             author: 'admin',
                             authorId: 1,
                             date: new Date('2024-01-14').toISOString(),
                             views: 98,
                             likes: 15,
                             replies: 7,
-                            isSticky: false
+                            isSticky: false,
+                            isEssence: true
                         },
                         {
                             id: 3,
-                            title: 'React Hooks 使用中的常见陷阱',
-                            content: 'React Hooks 虽然强大，但使用不当会导致性能问题和难以调试的bug。本文总结了几个常见的陷阱和避免方法。',
-                            category: '前端开发',
-                            tags: ['React', 'Hooks', '前端'],
+                            title: '双飞组合分析：05、16、27值得关注',
+                            content: '<p>本期双飞组合分析，05、16、27这三个组合值得重点关注。</p><p><strong>分析依据：</strong></p><ol><li>05组合已经间隔15期未出</li><li>16组合在近30期内出现频率较高</li><li>27组合有较强的互补性</li></ol><p>以上仅为个人观点，仅供参考！</p>',
+                            category: '双飞分析',
+                            tags: ['双飞', '组合', '分析'],
                             author: '十方料码',
                             authorId: 2,
                             date: new Date('2024-01-13').toISOString(),
                             views: 76,
                             likes: 12,
                             replies: 5,
-                            isSticky: false
+                            isSticky: false,
+                            isEssence: false
                         }
                     ];
                     localStorage.setItem('forumPosts', JSON.stringify(defaultPosts));
                 }
                 
                 if (!localStorage.getItem('forumReplies')) {
-                    localStorage.setItem('forumReplies', JSON.stringify([]));
+                    // 初始化默认回复
+                    const defaultReplies = [
+                        {
+                            id: 1,
+                            postId: 1,
+                            content: '<p>感谢分享！我也觉得3号今天很有机会。</p>',
+                            author: 'admin',
+                            authorId: 1,
+                            date: new Date('2024-01-15T10:30:00').toISOString(),
+                            likes: 3
+                        },
+                        {
+                            id: 2,
+                            postId: 1,
+                            content: '<p><strong>同意楼主观点</strong>，6号在十位确实有回补趋势。</p>',
+                            author: '彩票新手',
+                            authorId: 3,
+                            date: new Date('2024-01-15T11:15:00').toISOString(),
+                            likes: 1
+                        },
+                        {
+                            id: 3,
+                            postId: 2,
+                            content: '<p>这个复式技巧很实用，谢谢分享！</p>',
+                            author: '十方料码',
+                            authorId: 2,
+                            date: new Date('2024-01-14T14:20:00').toISOString(),
+                            likes: 2
+                        }
+                    ];
+                    localStorage.setItem('forumReplies', JSON.stringify(defaultReplies));
                 }
                 
-                // 更新统计数据
-                this.updateStats();
+                if (!localStorage.getItem('forumLikes')) {
+                    localStorage.setItem('forumLikes', JSON.stringify([]));
+                }
+                
+                // 初始化分类和标签
+                this.initCategoriesAndTags();
                 // 加载帖子列表
                 this.loadPosts();
+                // 初始化事件
+                this.initEvents();
+            },
+            
+            // 初始化分类和标签
+            initCategoriesAndTags() {
+                const categories = [
+                    { name: '福彩3D交流', count: this.getPostsByCategory('福彩3D交流').length },
+                    { name: '排列三交流', count: this.getPostsByCategory('排列三交流').length },
+                    { name: '胆码分析', count: this.getPostsByCategory('胆码分析').length },
+                    { name: '复式分析', count: this.getPostsByCategory('复式分析').length },
+                    { name: '双飞分析', count: this.getPostsByCategory('双飞分析').length }
+                ];
+                
+                const categoryList = document.getElementById('categoryList');
+                let categoryHTML = '';
+                
+                categories.forEach(cat => {
+                    categoryHTML += `
+                        <li class="category-item">
+                            <a href="#" class="category-link" data-category="${cat.name}">
+                                <span class="category-name">${cat.name}</span>
+                                <span class="category-count">${cat.count}</span>
+                            </a>
+                        </li>
+                    `;
+                });
+                
+                categoryList.innerHTML = categoryHTML;
+                
+                // 热门标签
+                const allTags = [];
+                this.getPosts().forEach(post => {
+                    post.tags.forEach(tag => {
+                        allTags.push(tag);
+                    });
+                });
+                
+                const tagCounts = {};
+                allTags.forEach(tag => {
+                    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                });
+                
+                const sortedTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a]).slice(0, 8);
+                const hotTags = document.getElementById('hotTags');
+                let tagsHTML = '';
+                
+                sortedTags.forEach(tag => {
+                    tagsHTML += `<span class="tag primary">${tag}</span>`;
+                });
+                
+                hotTags.innerHTML = tagsHTML;
+            },
+            
+            // 根据分类获取帖子
+            getPostsByCategory(category) {
+                return this.getPosts().filter(post => post.category === category);
             },
             
             // 获取所有用户
@@ -1129,6 +1256,11 @@
             // 获取所有回复
             getReplies() {
                 return JSON.parse(localStorage.getItem('forumReplies') || '[]');
+            },
+            
+            // 获取所有点赞
+            getLikes() {
+                return JSON.parse(localStorage.getItem('forumLikes') || '[]');
             },
             
             // 添加新用户
@@ -1154,31 +1286,54 @@
                 post.likes = 0;
                 post.replies = 0;
                 post.isSticky = false;
+                post.isEssence = false;
                 posts.unshift(post); // 新帖子放在最前面
                 localStorage.setItem('forumPosts', JSON.stringify(posts));
                 
-                // 更新统计数据
-                this.updateStats();
+                // 更新分类和标签
+                this.initCategoriesAndTags();
                 // 重新加载帖子列表
                 this.loadPosts();
                 
                 return post;
             },
             
-            // 更新统计数据
-            updateStats() {
-                const posts = this.getPosts();
-                const users = this.getUsers();
+            // 添加回复
+            addReply(reply) {
                 const replies = this.getReplies();
+                // 生成新ID
+                const newId = replies.length > 0 ? Math.max(...replies.map(r => r.id)) + 1 : 1;
+                reply.id = newId;
+                reply.date = new Date().toISOString();
+                reply.likes = 0;
+                replies.push(reply);
+                localStorage.setItem('forumReplies', JSON.stringify(replies));
                 
-                document.getElementById('totalPosts').textContent = posts.length;
-                document.getElementById('totalUsers').textContent = users.length;
-                document.getElementById('totalReplies').textContent = replies.length;
+                // 更新帖子的回复数
+                const posts = this.getPosts();
+                const postIndex = posts.findIndex(p => p.id === reply.postId);
+                if (postIndex !== -1) {
+                    posts[postIndex].replies++;
+                    localStorage.setItem('forumPosts', JSON.stringify(posts));
+                }
+                
+                return reply;
             },
             
             // 加载帖子列表
-            loadPosts() {
-                const posts = this.getPosts();
+            loadPosts(filter = 'latest') {
+                let posts = this.getPosts();
+                
+                // 应用筛选
+                if (filter === 'hot') {
+                    posts = posts.sort((a, b) => b.views - a.views);
+                } else if (filter === 'essence') {
+                    posts = posts.filter(post => post.isEssence);
+                } else {
+                    // 最新帖子
+                    posts = posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+                }
+                
                 const postsList = document.getElementById('postsList');
                 
                 if (posts.length === 0) {
@@ -1197,6 +1352,10 @@
                 posts.forEach(post => {
                     const postDate = new Date(post.date);
                     const timeAgo = this.getTimeAgo(postDate);
+                    const currentUser = this.getCurrentUser();
+                    const isLiked = currentUser ? this.getLikes().some(like => 
+                        like.postId === post.id && like.userId === currentUser.id && like.type === 'post'
+                    ) : false;
                     
                     postsHTML += `
                         <li class="post-item">
@@ -1205,7 +1364,11 @@
                                     ${post.author.substring(0, 1)}
                                 </div>
                                 <div class="post-info">
-                                    <a href="#" class="post-title">${post.isSticky ? '<i class="fas fa-thumbtack" style="color: var(--warning); margin-right: 5px;"></i>' : ''}${post.title}</a>
+                                    <a class="post-title" data-post-id="${post.id}">
+                                        ${post.isSticky ? '<i class="fas fa-thumbtack" style="color: var(--warning); margin-right: 5px;"></i>' : ''}
+                                        ${post.isEssence ? '<i class="fas fa-gem" style="color: var(--primary); margin-right: 5px;"></i>' : ''}
+                                        ${post.title}
+                                    </a>
                                     <div class="post-meta">
                                         <span><i class="fas fa-user"></i> ${post.author}</span>
                                         <span><i class="fas fa-clock"></i> ${timeAgo}</span>
@@ -1217,11 +1380,11 @@
                                 </div>
                             </div>
                             <div class="post-stats">
-                                <div class="post-stat">
-                                    <i class="fas fa-eye"></i> ${post.views}
+                                <div class="post-stat ${isLiked ? 'liked' : ''}" data-post-id="${post.id}" data-type="post">
+                                    <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> ${post.likes}
                                 </div>
                                 <div class="post-stat">
-                                    <i class="fas fa-heart"></i> ${post.likes}
+                                    <i class="fas fa-eye"></i> ${post.views}
                                 </div>
                                 <div class="post-stat">
                                     <i class="fas fa-comment"></i> ${post.replies}
@@ -1232,6 +1395,192 @@
                 });
                 
                 postsList.innerHTML = postsHTML;
+            },
+            
+            // 显示帖子详情
+            showPostDetail(postId) {
+                const post = this.getPosts().find(p => p.id == postId);
+                if (!post) {
+                    alert('帖子不存在！');
+                    return;
+                }
+                
+                // 增加浏览量
+                post.views++;
+                const posts = this.getPosts();
+                const postIndex = posts.findIndex(p => p.id == postId);
+                if (postIndex !== -1) {
+                    posts[postIndex] = post;
+                    localStorage.setItem('forumPosts', JSON.stringify(posts));
+                }
+                
+                // 更新帖子详情页面
+                document.getElementById('postDetailTitle').textContent = post.title;
+                document.getElementById('postDetailAuthor').textContent = post.author;
+                document.getElementById('postDetailDate').textContent = new Date(post.date).toLocaleDateString();
+                document.getElementById('postDetailCategory').textContent = post.category;
+                document.getElementById('postDetailViews').textContent = post.views;
+                document.getElementById('postDetailContent').innerHTML = post.content;
+                document.getElementById('postLikesCount').textContent = post.likes;
+                
+                // 更新标签
+                const tagsContainer = document.getElementById('postDetailTags');
+                tagsContainer.innerHTML = '';
+                post.tags.forEach(tag => {
+                    const tagEl = document.createElement('span');
+                    tagEl.className = 'tag';
+                    tagEl.textContent = tag;
+                    tagsContainer.appendChild(tagEl);
+                });
+                
+                // 更新点赞按钮状态
+                const currentUser = this.getCurrentUser();
+                const isLiked = currentUser ? this.getLikes().some(like => 
+                    like.postId === post.id && like.userId === currentUser.id && like.type === 'post'
+                ) : false;
+                
+                const likeBtn = document.getElementById('likePostBtn');
+                likeBtn.className = isLiked ? 'action-btn liked' : 'action-btn';
+                likeBtn.innerHTML = `<i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> <span id="postLikesCount">${post.likes}</span>`;
+                
+                // 加载回复
+                this.loadReplies(postId);
+                
+                // 切换到帖子详情页面
+                document.getElementById('homePage').classList.add('hidden');
+                document.getElementById('postDetailPage').classList.remove('hidden');
+            },
+            
+            // 加载回复
+            loadReplies(postId) {
+                const replies = this.getReplies().filter(reply => reply.postId == postId)
+                    .sort((a, b) => new Date(a.date) - new Date(b.date));
+                
+                const repliesList = document.getElementById('repliesList');
+                
+                if (replies.length === 0) {
+                    repliesList.innerHTML = `
+                        <div style="text-align: center; padding: 30px; color: var(--gray);">
+                            <i class="fas fa-comment-slash" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;"></i>
+                            <p>暂无回复，快来发表第一个回复吧！</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let repliesHTML = '';
+                replies.forEach(reply => {
+                    const replyDate = new Date(reply.date);
+                    const timeAgo = this.getTimeAgo(replyDate);
+                    const currentUser = this.getCurrentUser();
+                    const isLiked = currentUser ? this.getLikes().some(like => 
+                        like.replyId === reply.id && like.userId === currentUser.id && like.type === 'reply'
+                    ) : false;
+                    
+                    repliesHTML += `
+                        <div class="reply-item">
+                            <div class="reply-header">
+                                <div class="user-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                    ${reply.author.substring(0, 1)}
+                                </div>
+                                <div style="margin-left: 10px;">
+                                    <div style="font-weight: 500;">${reply.author}</div>
+                                    <div style="font-size: 0.8rem; color: var(--gray);">${timeAgo}</div>
+                                </div>
+                            </div>
+                            <div class="reply-content">
+                                ${reply.content}
+                            </div>
+                            <div class="reply-actions">
+                                <button class="action-btn ${isLiked ? 'liked' : ''}" data-reply-id="${reply.id}" data-type="reply">
+                                    <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> ${reply.likes}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                repliesList.innerHTML = repliesHTML;
+            },
+            
+            // 点赞/取消点赞
+            toggleLike(itemId, type) {
+                const currentUser = this.getCurrentUser();
+                if (!currentUser) {
+                    alert('请先登录！');
+                    ModalManager.showModal('loginModal');
+                    return;
+                }
+                
+                const likes = this.getLikes();
+                const existingLikeIndex = likes.findIndex(like => 
+                    like.userId === currentUser.id && 
+                    ((type === 'post' && like.postId === itemId) || (type === 'reply' && like.replyId === itemId))
+                );
+                
+                if (existingLikeIndex !== -1) {
+                    // 取消点赞
+                    likes.splice(existingLikeIndex, 1);
+                    
+                    // 更新帖子或回复的点赞数
+                    if (type === 'post') {
+                        const posts = this.getPosts();
+                        const postIndex = posts.findIndex(p => p.id === itemId);
+                        if (postIndex !== -1) {
+                            posts[postIndex].likes--;
+                            localStorage.setItem('forumPosts', JSON.stringify(posts));
+                        }
+                    } else {
+                        const replies = this.getReplies();
+                        const replyIndex = replies.findIndex(r => r.id === itemId);
+                        if (replyIndex !== -1) {
+                            replies[replyIndex].likes--;
+                            localStorage.setItem('forumReplies', JSON.stringify(replies));
+                        }
+                    }
+                } else {
+                    // 添加点赞
+                    const newLike = {
+                        id: likes.length > 0 ? Math.max(...likes.map(l => l.id)) + 1 : 1,
+                        userId: currentUser.id,
+                        type: type,
+                        date: new Date().toISOString()
+                    };
+                    
+                    if (type === 'post') {
+                        newLike.postId = itemId;
+                        
+                        // 更新帖子的点赞数
+                        const posts = this.getPosts();
+                        const postIndex = posts.findIndex(p => p.id === itemId);
+                        if (postIndex !== -1) {
+                            posts[postIndex].likes++;
+                            localStorage.setItem('forumPosts', JSON.stringify(posts));
+                        }
+                    } else {
+                        newLike.replyId = itemId;
+                        
+                        // 更新回复的点赞数
+                        const replies = this.getReplies();
+                        const replyIndex = replies.findIndex(r => r.id === itemId);
+                        if (replyIndex !== -1) {
+                            replies[replyIndex].likes++;
+                            localStorage.setItem('forumReplies', JSON.stringify(replies));
+                        }
+                    }
+                    
+                    likes.push(newLike);
+                }
+                
+                localStorage.setItem('forumLikes', JSON.stringify(likes));
+                
+                // 刷新当前页面
+                if (document.getElementById('postDetailPage').classList.contains('hidden')) {
+                    this.loadPosts();
+                } else {
+                    const postId = document.querySelector('.post-title[data-post-id]').getAttribute('data-post-id');
+                    this.showPostDetail(postId);
+                }
             },
             
             // 计算时间差
@@ -1297,6 +1646,146 @@
             logout() {
                 sessionStorage.removeItem('currentUser');
                 location.reload();
+            },
+            
+            // 初始化事件
+            initEvents() {
+                // 分类点击事件
+                document.getElementById('categoryList').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('category-link')) {
+                        e.preventDefault();
+                        const category = e.target.getAttribute('data-category');
+                        const posts = this.getPostsByCategory(category);
+                        this.renderFilteredPosts(posts, `${category} 分类的帖子`);
+                    }
+                });
+                
+                // 帖子标题点击事件
+                document.getElementById('postsList').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('post-title')) {
+                        e.preventDefault();
+                        const postId = e.target.getAttribute('data-post-id');
+                        this.showPostDetail(postId);
+                    }
+                });
+                
+                // 点赞点击事件
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.post-stat') && (e.target.closest('.post-stat').getAttribute('data-type') === 'post' || 
+                        e.target.closest('.post-stat').getAttribute('data-type') === 'reply')) {
+                        const element = e.target.closest('.post-stat');
+                        const itemId = parseInt(element.getAttribute('data-post-id') || element.getAttribute('data-reply-id'));
+                        const type = element.getAttribute('data-type');
+                        this.toggleLike(itemId, type);
+                    }
+                });
+                
+                // 帖子点赞按钮
+                document.getElementById('likePostBtn').addEventListener('click', () => {
+                    const postId = parseInt(document.querySelector('.post-title[data-post-id]').getAttribute('data-post-id'));
+                    this.toggleLike(postId, 'post');
+                });
+                
+                // 返回首页按钮
+                document.getElementById('backToHomeBtn').addEventListener('click', () => {
+                    document.getElementById('homePage').classList.remove('hidden');
+                    document.getElementById('postDetailPage').classList.add('hidden');
+                    this.loadPosts();
+                });
+                
+                // 筛选按钮
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.loadPosts(btn.getAttribute('data-filter'));
+                    });
+                });
+                
+                // 搜索功能
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    if (query.length < 2) {
+                        this.loadPosts();
+                        return;
+                    }
+                    
+                    const posts = this.getPosts().filter(post => 
+                        post.title.toLowerCase().includes(query) || 
+                        post.content.toLowerCase().includes(query) ||
+                        post.tags.some(tag => tag.toLowerCase().includes(query))
+                    );
+                    
+                    this.renderFilteredPosts(posts, `搜索结果: ${query}`);
+                });
+            },
+            
+            // 渲染筛选后的帖子
+            renderFilteredPosts(posts, title) {
+                const postsList = document.getElementById('postsList');
+                
+                if (posts.length === 0) {
+                    postsList.innerHTML = `
+                        <li class="post-item">
+                            <div style="text-align: center; padding: 40px 20px; color: var(--gray);">
+                                <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                                <p>没有找到相关帖子</p>
+                            </div>
+                        </li>
+                    `;
+                    return;
+                }
+                
+                let postsHTML = '';
+                posts.forEach(post => {
+                    const postDate = new Date(post.date);
+                    const timeAgo = this.getTimeAgo(postDate);
+                    const currentUser = this.getCurrentUser();
+                    const isLiked = currentUser ? this.getLikes().some(like => 
+                        like.postId === post.id && like.userId === currentUser.id && like.type === 'post'
+                    ) : false;
+                    
+                    postsHTML += `
+                        <li class="post-item">
+                            <div class="post-header">
+                                <div class="user-avatar">
+                                    ${post.author.substring(0, 1)}
+                                </div>
+                                <div class="post-info">
+                                    <a class="post-title" data-post-id="${post.id}">
+                                        ${post.isSticky ? '<i class="fas fa-thumbtack" style="color: var(--warning); margin-right: 5px;"></i>' : ''}
+                                        ${post.isEssence ? '<i class="fas fa-gem" style="color: var(--primary); margin-right: 5px;"></i>' : ''}
+                                        ${post.title}
+                                    </a>
+                                    <div class="post-meta">
+                                        <span><i class="fas fa-user"></i> ${post.author}</span>
+                                        <span><i class="fas fa-clock"></i> ${timeAgo}</span>
+                                        <span><i class="fas fa-folder"></i> ${post.category}</span>
+                                    </div>
+                                    <div class="post-tags">
+                                        ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-stats">
+                                <div class="post-stat ${isLiked ? 'liked' : ''}" data-post-id="${post.id}" data-type="post">
+                                    <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> ${post.likes}
+                                </div>
+                                <div class="post-stat">
+                                    <i class="fas fa-eye"></i> ${post.views}
+                                </div>
+                                <div class="post-stat">
+                                    <i class="fas fa-comment"></i> ${post.replies}
+                                </div>
+                            </div>
+                        </li>
+                    `;
+                });
+                
+                postsList.innerHTML = postsHTML;
+                
+                // 更新标题
+                document.querySelector('.section-title h2').textContent = title;
             }
         };
 
@@ -1429,7 +1918,7 @@
                 document.getElementById('submitNewPost').addEventListener('click', () => {
                     const title = document.getElementById('postTitleInput').value;
                     const category = document.getElementById('postCategoryInput').value;
-                    const content = document.getElementById('postContentInput').value;
+                    const content = document.getElementById('postContentInput').innerHTML;
                     const tags = document.getElementById('postTagsInput').value;
                     
                     if (!title || !content) {
@@ -1455,8 +1944,120 @@
                     this.hideModal('newPostModal');
                     // 清空表单
                     document.getElementById('postTitleInput').value = '';
-                    document.getElementById('postContentInput').value = '';
+                    document.getElementById('postContentInput').innerHTML = '';
                     document.getElementById('postTagsInput').value = '';
+                });
+                
+                // 回复表单提交
+                document.getElementById('submitReplyBtn').addEventListener('click', () => {
+                    const content = document.getElementById('replyEditor').innerHTML;
+                    
+                    if (!content || content === '<br>') {
+                        alert('请填写回复内容！');
+                        return;
+                    }
+                    
+                    const currentUser = ForumManager.getCurrentUser();
+                    if (!currentUser) {
+                        alert('请先登录！');
+                        this.showModal('loginModal');
+                        return;
+                    }
+                    
+                    const postId = parseInt(document.querySelector('.post-title[data-post-id]').getAttribute('data-post-id'));
+                    
+                    const newReply = {
+                        postId: postId,
+                        content: content,
+                        author: currentUser.username,
+                        authorId: currentUser.id
+                    };
+                    
+                    ForumManager.addReply(newReply);
+                    
+                    alert('回复发表成功！');
+                    document.getElementById('replyEditor').innerHTML = '';
+                    
+                    // 刷新回复列表
+                    ForumManager.loadReplies(postId);
+                });
+                
+                // 取消回复
+                document.getElementById('cancelReplyBtn').addEventListener('click', () => {
+                    document.getElementById('replyEditor').innerHTML = '';
+                });
+            },
+            
+            // 初始化编辑器功能
+            initEditors() {
+                // 为编辑器按钮添加功能
+                document.querySelectorAll('.editor-btn[data-command]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const command = btn.getAttribute('data-command');
+                        document.execCommand(command, false, null);
+                    });
+                });
+                
+                // 表情按钮
+                document.getElementById('emojiBtn').addEventListener('click', () => {
+                    const emojis = ['😀', '😂', '🤣', '😍', '😎', '👍', '❤️', '🔥', '✨', '🎉'];
+                    let emojiHTML = '';
+                    emojis.forEach(emoji => {
+                        emojiHTML += `<span class="editor-btn" style="font-size: 1.2rem;">${emoji}</span>`;
+                    });
+                    
+                    // 创建表情选择器
+                    let emojiPicker = document.getElementById('emojiPicker');
+                    if (!emojiPicker) {
+                        emojiPicker = document.createElement('div');
+                        emojiPicker.id = 'emojiPicker';
+                        emojiPicker.style.cssText = `
+                            position: absolute;
+                            background: white;
+                            border: 1px solid var(--border);
+                            border-radius: 6px;
+                            padding: 10px;
+                            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                            z-index: 1000;
+                            display: grid;
+                            grid-template-columns: repeat(5, 1fr);
+                            gap: 5px;
+                        `;
+                        document.body.appendChild(emojiPicker);
+                    }
+                    
+                    emojiPicker.innerHTML = emojiHTML;
+                    
+                    // 定位表情选择器
+                    const btnRect = document.getElementById('emojiBtn').getBoundingClientRect();
+                    emojiPicker.style.top = `${btnRect.bottom + window.scrollY}px`;
+                    emojiPicker.style.left = `${btnRect.left + window.scrollX}px`;
+                    
+                    // 显示表情选择器
+                    emojiPicker.style.display = 'grid';
+                    
+                    // 表情点击事件
+                    emojiPicker.querySelectorAll('.editor-btn').forEach(emojiBtn => {
+                        emojiBtn.addEventListener('click', () => {
+                            document.execCommand('insertHTML', false, emojiBtn.textContent);
+                            emojiPicker.style.display = 'none';
+                        });
+                    });
+                    
+                    // 点击其他地方关闭表情选择器
+                    setTimeout(() => {
+                        document.addEventListener('click', function closeEmojiPicker(e) {
+                            if (!emojiPicker.contains(e.target) && e.target !== document.getElementById('emojiBtn')) {
+                                emojiPicker.style.display = 'none';
+                                document.removeEventListener('click', closeEmojiPicker);
+                            }
+                        });
+                    }, 0);
+                });
+                
+                // 帖子编辑器的表情按钮
+                document.getElementById('postEmojiBtn').addEventListener('click', () => {
+                    document.getElementById('emojiBtn').click();
                 });
             }
         };
@@ -1492,6 +2093,7 @@
             // 初始化模态框
             ModalManager.initModals();
             ModalManager.initForms();
+            ModalManager.initEditors();
             
             // 更新用户界面
             updateUserUI();
@@ -1511,7 +2113,7 @@
                 });
             }, observerOptions);
             
-            document.querySelectorAll('.stat-card, .posts-section').forEach(el => {
+            document.querySelectorAll('.posts-section').forEach(el => {
                 observer.observe(el);
             });
         });

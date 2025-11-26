@@ -3,188 +3,789 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>十方料码的个人博客</title>
+    <title>十方料码 | 个人博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #4A44B5;
+            --accent: #FF6584;
+            --dark: #2A2D3E;
+            --light: #F7F9FC;
+            --gray: #8C8E9A;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--light);
+            color: var(--dark);
             line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            overflow-x: hidden;
         }
         
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 20px;
         }
         
+        /* 头部样式 */
         header {
-            text-align: center;
-            padding: 40px 0;
+            background: var(--gradient);
             color: white;
+            padding: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,192C1248,192,1344,128,1392,96L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
         }
         
         .avatar {
-            width: 120px;
-            height: 120px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            border: 4px solid white;
-            margin: 0 auto 20px;
-            background: linear-gradient(45deg, #ffd89b, #19547b);
+            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
-            color: white;
+            margin-right: 15px;
+            font-size: 28px;
+            color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        .site-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
         }
         
-        .subtitle {
-            font-size: 1.2em;
+        .site-title p {
             opacity: 0.9;
+            font-size: 0.9rem;
         }
         
+        /* 导航样式 */
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav li {
+            margin-left: 20px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        nav a:hover, nav a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* 主要内容区域 */
         .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        /* 卡片样式 */
+        .card {
             background: white;
             border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
-        .section {
-            margin-bottom: 30px;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
         
-        h2 {
-            color: #4a5568;
-            border-left: 4px solid #667eea;
-            padding-left: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .post {
-            background: #f7fafc;
-            padding: 20px;
-            border-radius: 10px;
+        .card-header {
+            display: flex;
+            align-items: center;
             margin-bottom: 20px;
-            border-left: 4px solid #667eea;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .card-header i {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        .card-header h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+        }
+        
+        /* 文章样式 */
+        .post {
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .post:last-child {
+            border-bottom: none;
         }
         
         .post h3 {
-            color: #2d3748;
+            color: var(--dark);
             margin-bottom: 10px;
+            font-size: 1.3rem;
         }
         
-        .post-date {
-            color: #718096;
-            font-size: 0.9em;
-            margin-bottom: 10px;
+        .post-meta {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: var(--gray);
+            font-size: 0.9rem;
         }
         
-        .links {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
+        .post-meta span {
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
         }
         
-        .link-card {
-            background: #edf2f7;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
+        .post-meta i {
+            margin-right: 5px;
+        }
+        
+        .post-content {
+            color: #555;
+            line-height: 1.7;
+        }
+        
+        .read-more {
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--primary);
+            font-weight: 500;
             text-decoration: none;
-            color: #2d3748;
             transition: all 0.3s ease;
         }
         
-        .link-card:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
+        .read-more:hover {
+            color: var(--secondary);
         }
         
-        footer {
-            text-align: center;
+        /* 侧边栏样式 */
+        .sidebar .card {
+            position: sticky;
+            top: 20px;
+        }
+        
+        /* 音乐播放器样式 */
+        .music-player {
+            background: var(--gradient);
             color: white;
-            padding: 20px 0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .player-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .player-header h3 {
+            font-size: 1.2rem;
+        }
+        
+        .player-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        
+        .control-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+        
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            background: white;
+            color: var(--primary);
+        }
+        
+        .progress-bar {
+            height: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: white;
+            width: 30%;
+            border-radius: 5px;
+        }
+        
+        .song-info {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .song-cover {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .song-details h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .song-details p {
+            font-size: 0.8rem;
             opacity: 0.8;
         }
         
-        @media (max-width: 600px) {
-            .links {
+        /* 文章编辑器样式 */
+        .editor-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        
+        .editor-input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .editor-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+            outline: none;
+        }
+        
+        .editor-textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+        
+        .editor-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+            outline: none;
+        }
+        
+        .publish-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .publish-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(108, 99, 255, 0.3);
+        }
+        
+        .publish-btn i {
+            margin-right: 8px;
+        }
+        
+        .success-message {
+            background: #E8F5E9;
+            color: #2E7D32;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+        
+        /* 页脚样式 */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .social-links {
+            display: flex;
+            margin: 20px 0;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            margin-top: 20px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .main-content {
                 grid-template-columns: 1fr;
             }
             
-            h1 {
-                font-size: 2em;
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo {
+                margin-bottom: 15px;
+            }
+            
+            nav ul {
+                justify-content: center;
+                margin-top: 15px;
+            }
+            
+            nav li {
+                margin: 0 10px;
             }
         }
+        
+        @media (max-width: 576px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .post-meta {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .post-meta span {
+                margin-bottom: 5px;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="avatar">十</div>
-            <h1>十方料码</h1>
-            <p class="subtitle">技术 · 思考 · 成长</p>
-        </header>
-        
-        <div class="main-content">
-            <section class="section">
-                <h2>关于我</h2>
-                <p>你好！我是十方料码，一名热爱技术的开发者。在这里记录我的学习历程、技术思考和生活中的点滴感悟。</p>
-            </section>
-            
-            <section class="section">
-                <h2>最新文章</h2>
-                
-                <div class="post">
-                    <h3>我的第一个博客上线了！</h3>
-                    <div class="post-date">2024年1月 · 技术随笔</div>
-                    <p>今天终于把个人博客搭建起来了！从域名注册到代码部署，虽然过程中遇到了不少挑战，但看到最终成果的那一刻，所有的努力都值得了。</p>
+    <!-- 头部 -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="avatar">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="site-title">
+                        <h1>十方料码</h1>
+                        <p>技术 · 思考 · 创造</p>
+                    </div>
                 </div>
-                
-                <div class="post">
-                    <h3>移动端开发的思考</h3>
-                    <div class="post-date">2024年1月 · 技术思考</div>
-                    <p>在手机上进行开发确实有很多限制，但也让我更加理解了响应式设计和用户体验的重要性。</p>
-                </div>
-                
-                <div class="post">
-                    <h3>GitHub Pages 使用心得</h3>
-                    <div class="post-date">2024年1月 · 工具分享</div>
-                    <p>GitHub Pages 真是个好东西！免费、稳定，还能自定义域名，非常适合个人博客的部署。</p>
-                </div>
-            </section>
-            
-            <section class="section">
-                <h2>联系我</h2>
-                <div class="links">
-                    <a href="mailto:your-email@example.com" class="link-card">📧 邮箱</a>
-                    <a href="https://github.com/yourusername" class="link-card">💻 GitHub</a>
-                    <a href="https://twitter.com/yourusername" class="link-card">🐦 Twitter</a>
-                    <a href="https://weibo.com/yourusername" class="link-card">📱 微博</a>
-                </div>
-            </section>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active">首页</a></li>
+                        <li><a href="#">文章</a></li>
+                        <li><a href="#">项目</a></li>
+                        <li><a href="#">关于</a></li>
+                        <li><a href="#">联系</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-        
-        <footer>
-            <p>© 2024 十方料码的个人博客 · 由 ❤️ 驱动</p>
-        </footer>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- 左侧内容 -->
+            <div class="content-left">
+                <!-- 文章编辑器 -->
+                <section class="editor-section fade-in">
+                    <div class="card-header">
+                        <i class="fas fa-edit"></i>
+                        <h2>写新文章</h2>
+                    </div>
+                    <input type="text" class="editor-input" id="postTitle" placeholder="文章标题">
+                    <input type="text" class="editor-input" id="postCategory" placeholder="分类（如：技术随笔）">
+                    <textarea class="editor-textarea" id="postContent" placeholder="写下你的想法..."></textarea>
+                    <button class="publish-btn" onclick="savePost()">
+                        <i class="fas fa-paper-plane"></i> 发布文章
+                    </button>
+                    <div class="success-message" id="successMessage"></div>
+                </section>
+
+                <!-- 最新文章 -->
+                <section class="card fade-in delay-1">
+                    <div class="card-header">
+                        <i class="fas fa-newspaper"></i>
+                        <h2>最新文章</h2>
+                    </div>
+                    <div id="postsContainer">
+                        <!-- 文章将通过JavaScript动态加载 -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- 右侧侧边栏 -->
+            <div class="sidebar">
+                <!-- 音乐播放器 -->
+                <div class="music-player fade-in delay-2">
+                    <div class="player-header">
+                        <h3>背景音乐</h3>
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div class="song-info">
+                        <div class="song-cover">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="song-details">
+                            <h4>宁静的午后</h4>
+                            <p>轻音乐 · 放松</p>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress"></div>
+                    </div>
+                    <div class="player-controls">
+                        <button class="control-btn">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button class="control-btn play-btn" id="playBtn">
+                            <i class="fas fa-play" id="playIcon"></i>
+                        </button>
+                        <button class="control-btn">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 个人简介 -->
+                <div class="card fade-in delay-3">
+                    <div class="card-header">
+                        <i class="fas fa-user"></i>
+                        <h2>关于我</h2>
+                    </div>
+                    <p>你好！我是十方料码，一名热爱技术的开发者。在这里记录我的学习历程、技术思考和生活中的点滴感悟。</p>
+                    <div style="margin-top: 15px;">
+                        <a href="#" class="read-more">了解更多 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <!-- 分类 -->
+                <div class="card fade-in delay-3">
+                    <div class="card-header">
+                        <i class="fas fa-folder"></i>
+                        <h2>文章分类</h2>
+                    </div>
+                    <ul style="list-style: none;">
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                            <a href="#" class="read-more">技术随笔 (5)</a>
+                        </li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                            <a href="#" class="read-more">生活感悟 (3)</a>
+                        </li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                            <a href="#" class="read-more">项目经验 (2)</a>
+                        </li>
+                        <li style="padding: 10px 0;">
+                            <a href="#" class="read-more">学习笔记 (7)</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <div class="avatar">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="site-title">
+                        <h1>十方料码</h1>
+                        <p>探索技术的无限可能</p>
+                    </div>
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-weibo"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
+                </div>
+                <p class="copyright">© 2024 十方料码的个人博客. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 音频元素 -->
+    <audio id="backgroundMusic" loop>
+        <!-- 这里可以替换为你喜欢的音乐URL -->
+        <source src="https://example.com/background-music.mp3" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
+
+    <script>
+        // 音乐播放器功能
+        const audio = document.getElementById('backgroundMusic');
+        const playBtn = document.getElementById('playBtn');
+        const playIcon = document.getElementById('playIcon');
+        let isPlaying = false;
+
+        // 尝试自动播放音乐
+        window.addEventListener('load', function() {
+            audio.play().then(() => {
+                isPlaying = true;
+                playIcon.classList.remove('fa-play');
+                playIcon.classList.add('fa-pause');
+            }).catch(error => {
+                console.log('自动播放被阻止，需要用户交互');
+            });
+        });
+
+        // 播放/暂停控制
+        playBtn.addEventListener('click', function() {
+            if (isPlaying) {
+                audio.pause();
+                playIcon.classList.remove('fa-pause');
+                playIcon.classList.add('fa-play');
+            } else {
+                audio.play();
+                playIcon.classList.remove('fa-play');
+                playIcon.classList.add('fa-pause');
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // 文章管理功能
+        function savePost() {
+            const title = document.getElementById('postTitle').value;
+            const category = document.getElementById('postCategory').value;
+            const content = document.getElementById('postContent').value;
+            
+            if (!title || !content) {
+                alert('请填写标题和内容！');
+                return;
+            }
+            
+            // 创建新文章对象
+            const newPost = {
+                title: title,
+                category: category || '未分类',
+                content: content,
+                date: new Date().toLocaleDateString('zh-CN'),
+                timestamp: new Date().getTime()
+            };
+            
+            // 保存到本地存储
+            let posts = JSON.parse(localStorage.getItem('blogPosts') || '[]');
+            posts.unshift(newPost);
+            localStorage.setItem('blogPosts', JSON.stringify(posts));
+            
+            // 清空表单
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postCategory').value = '';
+            document.getElementById('postContent').value = '';
+            
+            // 显示成功消息
+            const successMsg = document.getElementById('successMessage');
+            successMsg.style.display = 'block';
+            successMsg.innerHTML = `
+                <i class="fas fa-check-circle"></i> 文章已保存到本地存储！
+                <br><br>
+                <strong>要永久保存，请将以下代码添加到GitHub的index.html中：</strong>
+                <textarea style="width:100%; height:120px; margin:10px 0; padding:10px; font-size:12px; border-radius:5px; border:1px solid #ddd;">
+<div class="post">
+    <h3>${title}</h3>
+    <div class="post-meta">
+        <span><i class="far fa-calendar"></i> ${new Date().toLocaleDateString('zh-CN')}</span>
+        <span><i class="far fa-folder"></i> ${category || '未分类'}</span>
+    </div>
+    <div class="post-content">
+        <p>${content.replace(/\n/g, '</p><p>')}</p>
+    </div>
+    <a href="#" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
+</div>
+                </textarea>
+            `;
+            
+            // 更新页面显示
+            loadPosts();
+        }
+        
+        // 加载文章
+        function loadPosts() {
+            const postsContainer = document.getElementById('postsContainer');
+            const posts = JSON.parse(localStorage.getItem('blogPosts') || '[]');
+            
+            // 如果没有文章，显示默认内容
+            if (posts.length === 0) {
+                postsContainer.innerHTML = `
+                    <div class="post">
+                        <h3>欢迎来到我的博客！</h3>
+                        <div class="post-meta">
+                            <span><i class="far fa-calendar"></i> ${new Date().toLocaleDateString('zh-CN')}</span>
+                            <span><i class="far fa-folder"></i> 欢迎</span>
+                        </div>
+                        <div class="post-content">
+                            <p>这是我的个人博客，我会在这里分享技术文章、生活感悟和学习笔记。</p>
+                            <p>使用上方的编辑器发布你的第一篇文章吧！</p>
+                        </div>
+                        <a href="#" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 显示保存的文章
+            let postsHTML = '';
+            posts.forEach(post => {
+                postsHTML += `
+                    <div class="post">
+                        <h3>${post.title}</h3>
+                        <div class="post-meta">
+                            <span><i class="far fa-calendar"></i> ${post.date}</span>
+                            <span><i class="far fa-folder"></i> ${post.category}</span>
+                        </div>
+                        <div class="post-content">
+                            <p>${post.content.replace(/\n/g, '</p><p>')}</p>
+                        </div>
+                        <a href="#" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                `;
+            });
+            
+            postsContainer.innerHTML = postsHTML;
+        }
+        
+        // 页面加载时显示已保存的文章
+        document.addEventListener('DOMContentLoaded', loadPosts);
+    </script>
 </body>
 </html>

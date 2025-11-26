@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>十方料码论坛</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 头部 -->
+    <header class="neon-header">
+        <div class="container">
+            <h1 class="neon-title">十方料码论坛</h1>
+            <p class="neon-slogan">专业料码交流平台</p>
+        </div>
+    </header>
+
+    <!-- 导航 -->
+    <nav class="neon-nav">
+        <div class="container">
+            <ul>
+                <li><a href="index.html" class="neon-link">首页</a></li>
+                <li><a href="login.html" class="neon-link">登录</a></li>
+                <li><a href="register.html" class="neon-link">注册</a></li>
+                <li><a href="profile.html" class="neon-link">我的账户</a></li>
+                <li><a href="admin.html" class="neon-link admin-link">后台管理</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="container">
+        <section class="forum-categories">
+            <div class="category-card" onclick="window.location='category.html?cat=fc3d'">
+                <div class="category-icon">福彩3D</div>
+                <h3>福彩3D交流区</h3>
+                <p>专业福彩3D料码交流</p>
+                <div class="category-stats">帖子: 156 | 用户: 89</div>
+            </div>
+
+            <div class="category-card" onclick="window.location='category.html?cat=pl3'">
+                <div class="category-icon">排列三</div>
+                <h3>排列三交流区</h3>
+                <p>排列三料码技术分享</p>
+                <div class="category-stats">帖子: 123 | 用户: 76</div>
+            </div>
+        </section>
+
+        <section class="featured-posts">
+            <h2 class="section-title">热门帖子</h2>
+            <div class="posts-grid">
+                <!-- 帖子将通过JavaScript动态加载 -->
+                <div class="post-card" onclick="window.location='post.html?id=1'">
+                    <div class="post-header">
+                        <h3>福彩3D精准预测方法分享</h3>
+                        <span class="post-price">¥8.8</span>
+                    </div>
+                    <div class="post-meta">
+                        <span class="author">作者: user123</span>
+                        <span class="date">2025-11-26</span>
+                        <span class="views">浏览: 156</span>
+                    </div>
+                    <div class="post-excerpt">
+                        本文分享了最新的福彩3D预测算法，结合历史数据分析，准确率可达75%以上...
+                    </div>
+                    <div class="post-tags">
+                        <span class="tag">福彩3D</span>
+                        <span class="tag">预测</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="neon-footer">
+        <div class="container">
+            <p>&copy; 2025 十方料码论坛. 保留所有权利.</p>
+            <p>1元宝 = 1元，平台佣金35%</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

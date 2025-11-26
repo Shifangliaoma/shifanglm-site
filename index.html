@@ -39,7 +39,7 @@
         /* 分区入口 */
         .section-title{font-size:18px;margin:20px 0 15px;font-weight:bold;color:var(--neon-purple);neon-text-purple;}
         .forum-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
-        .forum-card{background:rgba(17,24,39,0.6);border-radius:8px;padding:18px;text-align:center;transition:transform 0.3s;neon-border-purple;}
+        .forum-card{background:rgba(17,24,39,0.6);border-radius:8px;padding:18px;text-align:center;transition:transform 0.3s;neon-border-purple;cursor:pointer;}
         .forum-card:hover{transform:scale(1.02);}
         .forum-icon{font-size:28px;margin-bottom:10px;}
         .icon-trend{color:var(--neon-blue);}
@@ -49,18 +49,17 @@
         .forum-name{font-size:15px;font-weight:bold;margin-bottom:5px;}
         .forum-desc{font-size:13px;color:#aaa;}
         
-        /* 热门话题 */
-        .hot-topic{background:rgba(17,24,39,0.6);border-radius:8px;padding:18px;margin-bottom:20px;neon-border-blue;}
-        .topic-item{padding:12px 0;border-bottom:1px solid rgba(0,243,255,0.1);display:flex;flex-direction:column;}
+        /* 最新发帖 */
+        .new-posts{background:rgba(17,24,39,0.6);border-radius:8px;padding:18px;margin-bottom:20px;neon-border-blue;}
+        .topic-item{padding:12px 0;border-bottom:1px solid rgba(0,243,255,0.1);display:flex;flex-direction:column;cursor:pointer;}
         .topic-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
         .topic-author{font-size:12px;color:var(--neon-green);}
         .topic-level{font-size:11px;background:rgba(0,255,157,0.2);border:1px solid var(--neon-green);border-radius:3px;padding:1px 5px;margin-left:5px;}
-        .topic-time{font-size:12px;color:#aaa;}
         .topic-title{font-size:15px;margin-bottom:5px;transition:color 0.3s;}
         .topic-title:hover{color:var(--neon-blue);}
         .topic-info{font-size:13px;color:#aaa;display:flex;justify-content:space-between;}
-        .topic-reply{color:var(--neon-purple);}
-        .topic-score{color:var(--neon-pink);}
+        .topic-section{color:var(--neon-purple);}
+        .topic-time{color:var(--neon-pink);}
         
         /* 发帖按钮 */
         .post-btn{position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:var(--neon-blue);border-radius:50%;color:#0a0a16;font-size:24px;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px var(--neon-blue);z-index:80;transition:background 0.3s;}
@@ -95,7 +94,11 @@
         .color-green{background:var(--neon-green);}
         .emoji-btn{display:flex;flex-wrap:gap;gap:5px;padding:5px;}
         .emoji{font-size:16px;cursor:pointer;}
-        #editor{min-height:150px;padding:10px;resize:none;}
+        #editor{min-height:150px;padding:10px;resize:none;outline:none;}
+        /* 富文本内容样式兼容 */
+        #editor b{font-weight:bold;color:inherit;}
+        #editor u{text-decoration:underline;color:inherit;}
+        #editor strike{text-decoration:line-through;color:inherit;}
         
         .modal-footer{padding:10px 15px;border-top:1px solid rgba(0,243,255,0.1);display:flex;justify-content:flex-end;gap:10px;}
         .cancel-btn{padding:8px 15px;border:none;border-radius:5px;background:rgba(255,255,255,0.05);color:#aaa;cursor:pointer;}
@@ -116,6 +119,39 @@
         .level-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(0,243,255,0.1);}
         .level-name{color:var(--neon-purple);}
         .level-score{color:var(--neon-green);}
+        .level-title{color:var(--neon-blue);font-size:12px;margin-left:5px;}
+        
+        /* 分区详情页 */
+        .section-detail{display:none;padding:15px;background:rgba(17,24,39,0.6);border-radius:8px;margin-bottom:20px;neon-border-purple;}
+        .section-detail.active{display:block;}
+        .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
+        .section-name{font-size:18px;color:var(--neon-purple);neon-text-purple;}
+        .back-btn{color:var(--neon-blue);text-decoration:none;font-size:14px;}
+        
+        /* 帖子详情页 */
+        .post-detail{display:none;padding:15px;background:rgba(17,24,39,0.6);border-radius:8px;margin-bottom:20px;neon-border-blue;}
+        .post-detail.active{display:block;}
+        .post-detail-header{margin-bottom:15px;}
+        .post-detail-title{font-size:20px;color:var(--neon-blue);neon-text-blue;margin-bottom:10px;}
+        .post-detail-meta{display:flex;justify-content:space-between;font-size:13px;color:#aaa;margin-bottom:10px;}
+        .post-detail-content{line-height:1.8;font-size:15px;padding:15px;background:rgba(10,10,22,0.5);border-radius:5px;margin-bottom:15px;white-space:pre-wrap;}
+        .post-detail-actions{display:flex;gap:10px;margin-bottom:20px;}
+        .reply-btn{padding:8px 15px;border:none;border-radius:5px;background:var(--neon-purple);color:#0a0a16;cursor:pointer;}
+        .like-btn{padding:8px 15px;border:none;border-radius:5px;background:rgba(255,255,255,0.05);color:var(--neon-pink);cursor:pointer;}
+        .reply-section{margin-top:20px;}
+        .reply-title{font-size:16px;color:var(--neon-green);margin-bottom:10px;}
+        .reply-item{padding:10px;background:rgba(10,10,22,0.5);border-radius:5px;margin-bottom:10px;}
+        .reply-author{font-size:13px;color:var(--neon-green);margin-bottom:5px;}
+        .reply-content{font-size:14px;}
+        
+        /* 音乐播放器 */
+        .music-player{position:fixed;bottom:80px;left:20px;z-index:70;background:rgba(17,24,39,0.8);neon-border-purple;border-radius:50px;padding:8px 15px;display:flex;align-items:center;gap:10px;}
+        .music-icon{color:var(--neon-purple);font-size:20px;}
+        .music-info{flex:1;}
+        .music-title{font-size:13px;color:#eee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .music-controls{display:flex;gap:8px;}
+        .music-btn{background:transparent;border:none;color:var(--neon-purple);font-size:16px;cursor:pointer;}
+        audio{display:none;}
         
         /* 响应式适配 */
         @media (max-width:768px){
@@ -123,6 +159,8 @@
             .topic-title{font-size:14px;}
             .editor-toolbar{gap:5px;}
             .tool-btn{padding:5px 8px;font-size:12px;}
+            .post-detail-title{font-size:18px;}
+            .music-player{width:calc(100% - 40px);justify-content:space-between;}
         }
     </style>
 </head>
@@ -140,10 +178,10 @@
                 <button class="menu-btn" id="menuBtn">☰</button>
             </div>
             <div class="nav-menu" id="navMenu">
-                <div class="nav-item"><a href="#">首页</a></div>
-                <div class="nav-item"><a href="#">趋势交流区</a></div>
-                <div class="nav-item"><a href="#">缩水技巧区</a></div>
-                <div class="nav-item"><a href="#">伪序理论区</a></div>
+                <div class="nav-item"><a href="javascript:;" id="homeBtn">首页</a></div>
+                <div class="nav-item"><a href="javascript:;" class="section-nav" data-section="trend">趋势交流区</a></div>
+                <div class="nav-item"><a href="javascript:;" class="section-nav" data-section="shrink">缩水技巧区</a></div>
+                <div class="nav-item"><a href="javascript:;" class="section-nav" data-section="theory">伪序理论区</a></div>
                 <div class="nav-item"><a href="javascript:;" id="levelBtn">积分等级</a></div>
                 <div class="nav-item"><a href="#">新手引导</a></div>
                 <div class="nav-item"><a href="#">合规声明</a></div>
@@ -153,76 +191,96 @@
     </header>
     <!-- 主体内容 -->
     <div class="container">
-        <!-- 公告栏 -->
-        <div class="notice">
-            <div class="notice-icon">📢</div>
-            <div class="notice-text">论坛禁止发布涉赌、售彩、虚假承诺内容，违规将封禁账号并扣除积分</div>
-            <a href="#" class="notice-more">更多</a>
+        <!-- 首页内容 -->
+        <div id="homeContent">
+            <!-- 公告栏 -->
+            <div class="notice">
+                <div class="notice-icon">📢</div>
+                <div class="notice-text">论坛禁止发布涉赌、售彩、虚假承诺内容，违规将封禁账号并扣除积分</div>
+                <a href="#" class="notice-more">更多</a>
+            </div>
+            <!-- 分区入口 -->
+            <h2 class="section-title neon-text-purple">论坛分区</h2>
+            <div class="forum-list">
+                <div class="forum-card section-card" data-section="trend">
+                    <div class="forum-icon icon-trend">📊</div>
+                    <div class="forum-name">3D趋势交流区</div>
+                    <div class="forum-desc">数字走势探讨·数据复盘</div>
+                </div>
+                <div class="forum-card section-card" data-section="shrink">
+                    <div class="forum-icon icon-shrink">🔍</div>
+                    <div class="forum-name">缩水技巧分享区</div>
+                    <div class="forum-desc">选号逻辑·实战心得</div>
+                </div>
+                <div class="forum-card section-card" data-section="theory">
+                    <div class="forum-icon icon-theory">📚</div>
+                    <div class="forum-name">伪序理论专版</div>
+                    <div class="forum-desc">理论探讨·成果验证</div>
+                </div>
+                <div class="forum-card section-card" data-section="qa">
+                    <div class="forum-icon icon-qa">❓</div>
+                    <div class="forum-name">新手答疑区</div>
+                    <div class="forum-desc">基础问题·规则咨询</div>
+                </div>
+            </div>
+            <!-- 最新发帖（替换热门话题，显最近10条） -->
+            <h2 class="section-title neon-text-purple">最新发帖</h2>
+            <div class="new-posts" id="newPostsList">
+                <!-- JS动态渲染最近10条帖子 -->
+            </div>
         </div>
-        <!-- 分区入口 -->
-        <h2 class="section-title neon-text-purple">论坛分区</h2>
-        <div class="forum-list">
-            <div class="forum-card">
-                <div class="forum-icon icon-trend">📊</div>
-                <div class="forum-name">3D趋势交流区</div>
-                <div class="forum-desc">数字走势探讨·数据复盘</div>
+
+        <!-- 分区详情页（4个分区共用） -->
+        <div class="section-detail" id="sectionDetail">
+            <div class="section-header">
+                <h3 class="section-name" id="sectionDetailName">3D趋势交流区</h3>
+                <a href="javascript:;" class="back-btn" id="backToHome">返回首页</a>
             </div>
-            <div class="forum-card">
-                <div class="forum-icon icon-shrink">🔍</div>
-                <div class="forum-name">缩水技巧分享区</div>
-                <div class="forum-desc">选号逻辑·实战心得</div>
-            </div>
-            <div class="forum-card">
-                <div class="forum-icon icon-theory">📚</div>
-                <div class="forum-name">伪序理论专版</div>
-                <div class="forum-desc">理论探讨·成果验证</div>
-            </div>
-            <div class="forum-card">
-                <div class="forum-icon icon-qa">❓</div>
-                <div class="forum-name">新手答疑区</div>
-                <div class="forum-desc">基础问题·规则咨询</div>
+            <div id="sectionPostsList">
+                <!-- JS动态渲染对应分区帖子 -->
             </div>
         </div>
-        <!-- 热门话题 -->
-        <h2 class="section-title neon-text-purple">热门话题</h2>
-        <div class="hot-topic">
-            <div class="topic-item" data-id="1">
-                <div class="topic-header">
-                    <span class="topic-author">十方料码 <span class="topic-level">Lv.5 理论大师</span></span>
-                    <span class="topic-time">2025-11-26</span>
-                </div>
-                <div class="topic-title">近期3D百位数字走势规律浅析</div>
-                <div class="topic-info">
-                    <span class="topic-reply">回复：28</span>
-                    <span class="topic-score">积分：+56</span>
+
+        <!-- 帖子详情页 -->
+        <div class="post-detail" id="postDetail">
+            <div class="post-detail-header">
+                <h3 class="post-detail-title" id="postDetailTitle"></h3>
+                <div class="post-detail-meta">
+                    <span id="postDetailAuthor"></span>
+                    <span id="postDetailTime"></span>
                 </div>
             </div>
-            <div class="topic-item" data-id="2">
-                <div class="topic-header">
-                    <span class="topic-author">彩友123 <span class="topic-level">Lv.3 实战能手</span></span>
-                    <span class="topic-time">2025-11-25</span>
-                </div>
-                <div class="topic-title">缩水思路实战案例分享（附逻辑）</div>
-                <div class="topic-info">
-                    <span class="topic-reply">回复：19</span>
-                    <span class="topic-score">积分：+38</span>
+            <div class="post-detail-content" id="postDetailContent"></div>
+            <div class="post-detail-actions">
+                <button class="reply-btn" id="postReplyBtn">回复</button>
+                <button class="like-btn" id="postLikeBtn">👍 点赞(0)</button>
+            </div>
+            <div class="reply-section">
+                <h4 class="reply-title">回复列表</h4>
+                <div id="replyList">
+                    <!-- JS动态渲染回复 -->
                 </div>
             </div>
-            <div class="topic-item" data-id="3">
-                <div class="topic-header">
-                    <span class="topic-author">十方料码 <span class="topic-level">Lv.5 理论大师</span></span>
-                    <span class="topic-time">2025-11-24</span>
-                </div>
-                <div class="topic-title">伪序理论核心逻辑拆解（一）</div>
-                <div class="topic-info">
-                    <span class="topic-reply">回复：35</span>
-                    <span class="topic-score">积分：+70</span>
-                </div>
-            </div>
+            <a href="javascript:;" class="back-btn" id="backToSection">返回分区</a>
         </div>
     </div>
     <!-- 发帖按钮 -->
     <button class="post-btn" id="postBtn">✍️</button>
+    <!-- 音乐播放器 -->
+    <div class="music-player">
+        <div class="music-icon">🎵</div>
+        <div class="music-info">
+            <div class="music-title">论坛背景音 - 霓虹氛围</div>
+        </div>
+        <div class="music-controls">
+            <button class="music-btn" id="musicPlayBtn">▶️</button>
+            <button class="music-btn" id="musicPauseBtn" style="display:none;">⏸️</button>
+        </div>
+        <audio id="musicPlayer" loop>
+            <source src="https://cdn.jsdelivr.net/npm/neon-music@1.0.0/sample.mp3" type="audio/mpeg">
+            您的浏览器不支持音频播放
+        
+    </div>
     <!-- 底部 -->
     <footer class="footer">
         <div class="container footer-info">
@@ -243,11 +301,11 @@
                 <form class="post-form" id="postForm">
                     <div class="form-group">
                         <label class="form-label">帖子标题</label>
-                        <input type="text" class="form-control" placeholder="请输入帖子标题（不超过50字）" required>
+                        <input type="text" class="form-control" id="postTitle" placeholder="请输入帖子标题（不超过50字）" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">选择分区</label>
-                        <select class="form-control" required>
+                        <select class="form-control" id="postSection" required>
                             <option value="">请选择分区</option>
                             <option value="trend">3D趋势交流区</option>
                             <option value="shrink">缩水技巧分享区</option>
@@ -275,7 +333,8 @@
                                 <span class="emoji" data-emoji="📊">📊</span>
                             </div>
                         </div>
-                        <textarea class="form-control" id="editor" placeholder="请输入帖子内容，支持文档粘贴" required></textarea>
+                        <!-- 富文本编辑区（改用div可编辑，修复格式问题） -->
+                        <div class="form-control" id="editor" contenteditable="true" placeholder="请输入帖子内容，支持文档粘贴"></div>
                     </div>
                 </form>
             </div>
@@ -304,7 +363,7 @@
                         <label class="form-label">封禁用户（输入用户名）</label>
                         <input type="text" class="admin-input" id="banUser" placeholder="请输入要封禁的用户名">
                         <label class="form-label">删除帖子（输入帖子ID）</label>
-                        <input type="text" class="admin-input" id="deletePost" placeholder="帖子ID可在热门话题列表查看">
+                        <input type="text" class="admin-input" id="deletePost" placeholder="帖子ID可在帖子列表查看">
                         <div class="admin-btn-group">
                             <button type="button" class="ban-btn" id="submitBanBtn">封禁用户</button>
                             <button type="button" class="delete-btn" id="submitDeleteBtn">删除帖子</button>
@@ -319,59 +378,91 @@
     <div class="modal level-modal" id="levelModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title neon-text-blue">积分等级体系</h3>
+                <h3 class="modal-title neon-text-blue">积分等级称号体系</h3>
                 <button class="close-btn" id="closeLevelBtn">×</button>
             </div>
             <div class="modal-body">
                 <div class="level-list">
                     <div class="level-item">
-                        <span class="level-name">Lv.1 新手入门</span>
+                        <span class="level-name">Lv.1 新手入门 <span class="level-title">[初探门径]</span></span>
                         <span class="level-score">0-100积分</span>
                     </div>
                     <div class="level-item">
-                        <span class="level-name">Lv.2 进阶学者</span>
+                        <span class="level-name">Lv.2 进阶学者 <span class="level-title">[略懂皮毛]</span></span>
                         <span class="level-score">101-300积分</span>
                     </div>
                     <div class="level-item">
-                        <span class="level-name">Lv.3 实战能手</span>
+                        <span class="level-name">Lv.3 实战能手 <span class="level-title">[实战先锋]</span></span>
                         <span class="level-score">301-500积分</span>
                     </div>
                     <div class="level-item">
-                        <span class="level-name">Lv.4 资深玩家</span>
+                        <span class="level-name">Lv.4 资深玩家 <span class="level-title">[资深达人]</span></span>
                         <span class="level-score">501-800积分</span>
                     </div>
                     <div class="level-item">
-                        <span class="level-name">Lv.5 理论大师</span>
+                        <span class="level-name">Lv.5 理论大师 <span class="level-title">[理论翘楚]</span></span>
                         <span class="level-score">801-1200积分</span>
                     </div>
                     <div class="level-item">
-                        <span class="level-name">Lv.6 顶尖专家</span>
+                        <span class="level-name">Lv.6 顶尖专家 <span class="level-title">[行业泰斗]</span></span>
                         <span class="level-score">1201+积分</span>
                     </div>
                 </div>
                 <div style="margin-top:15px;padding:10px;background:rgba(0,255,157,0.1);border-radius:5px;">
-                    <p style="font-size:14px;color:var(--neon-green);">积分获取规则：发帖+2积分/篇，回复+1积分/条，热门帖额外+10积分</p>
+                    <p style="font-size:14px;color:var(--neon-green);">积分获取规则：发帖+5积分/篇，回复+2积分/条，点赞+1积分/次，热门帖额外+20积分</p>
+                    <p style="font-size:14px;color:var(--neon-pink);margin-top:5px;">积分扣除：违规发帖扣50积分，封禁账号冻结积分</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 回复弹窗 -->
+    <div class="modal" id="replyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title neon-text-blue">回复帖子</h3>
+                <button class="close-btn" id="closeReplyBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">回复内容</label>
+                    <div class="form-control" id="replyEditor" contenteditable="true" placeholder="请输入回复内容"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" id="cancelReplyBtn">取消</button>
+                <button class="submit-btn" id="submitReplyBtn">提交回复</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 本地存储模拟数据（用户、帖子、积分）
+        // 本地存储模拟数据（用户、帖子、回复、积分）
         if(!localStorage.getItem('forumUsers')){
             localStorage.setItem('forumUsers',JSON.stringify([
-                {username:'十方料码',level:5,score:920,isBanned:false},
-                {username:'彩友123',level:3,score:350,isBanned:false},
-                {username:'新手小白',level:1,score:45,isBanned:false}
+                {username:'十方料码',level:5,score:920,title:'理论翘楚',isBanned:false},
+                {username:'彩友123',level:3,score:350,title:'实战先锋',isBanned:false},
+                {username:'新手小白',level:1,score:45,title:'初探门径',isBanned:false}
             ]));
         }
         if(!localStorage.getItem('forumPosts')){
             localStorage.setItem('forumPosts',JSON.stringify([
-                {id:1,title:'近期3D百位数字走势规律浅析',author:'十方料码',time:'2025-11-26',reply:28,score:56,content:'百位数字近期呈现...'},
-                {id:2,title:'缩水思路实战案例分享（附逻辑）',author:'彩友123',time:'2025-11-25',reply:19,score:38,content:'实战中可通过...'},
-                {id:3,title:'伪序理论核心逻辑拆解（一）',author:'十方料码',time:'2025-11-24',reply:35,score:70,content:'伪序理论的核心是...'}
+                {id:1,title:'近期3D百位数字走势规律浅析',author:'十方料码',section:'trend',sectionName:'3D趋势交流区',time:new Date('2025-11-26').getTime(),content:'<b>百位数字近期呈现奇偶交替趋势</b>，<span style="color:#00f3ff;">近10期奇数出现6次</span>，可重点关注偶数回补',like:28,replyCount:12},
+                {id:2,title:'缩水思路实战案例分享（附逻辑）',author:'彩友123',section:'shrink',sectionName:'缩水技巧分享区',time:new Date('2025-11-25').getTime(),content:'<u>实战中可通过跨度过滤缩水</u>，排除跨度小于3的组合，<span style="color:#c774e8;">命中率提升约20%</span>',like:19,replyCount:8},
+                {id:3,title:'伪序理论核心逻辑拆解（一）',author:'十方料码',section:'theory',sectionName:'伪序理论专版',time:new Date('2025-11-24').getTime(),content:'<strike>传统序位分析存在局限性</strike>，伪序理论核心是<span style="color:#ff2ec4;">数字出现频率的隐性关联</span>，后续将逐步拆解',like:35,replyCount:15},
+                {id:4,title:'新手如何快速看懂3D走势图？',author:'新手小白',section:'qa',sectionName:'新手答疑区',time:new Date('2025-11-23').getTime(),content:'刚接触3D，不知道走势图该看哪些指标，求大神指点👍',like:12,replyCount:5}
             ]));
         }
+        if(!localStorage.getItem('forumReplies')){
+            localStorage.setItem('forumReplies',JSON.stringify([
+                {id:1,postId:4,author:'十方料码',content:'先看百位、十位、个位单独走势，再看和值、跨度，循序渐进',time:new Date('2025-11-23').getTime()},
+                {id:2,postId:2,author:'十方料码',content:'跨度过滤很实用，补充一点：可结合奇偶组合进一步缩水',time:new Date('2025-11-25').getTime()}
+            ]));
+        }
+
+        // 全局变量
+        let currentSection = ''; // 当前分区
+        let currentPostId = ''; // 当前帖子ID
 
         // 导航菜单切换
         const menuBtn = document.getElementById('menuBtn');
@@ -380,7 +471,185 @@
             navMenu.classList.toggle('active');
         });
 
-        // 弹窗控制（发帖、管理员、积分等级）
+        // 页面切换（首页-分区-帖子详情）
+        const homeBtn = document.getElementById('homeBtn');
+        const homeContent = document.getElementById('homeContent');
+        const sectionDetail = document.getElementById('sectionDetail');
+        const postDetail = document.getElementById('postDetail');
+        const backToHome = document.getElementById('backToHome');
+        const backToSection = document.getElementById('backToSection');
+        const sectionCards = document.querySelectorAll('.section-card');
+        const sectionNavs = document.querySelectorAll('.section-nav');
+
+        // 首页
+        homeBtn.addEventListener('click',()=>{
+            homeContent.style.display = 'block';
+            sectionDetail.style.display = 'none';
+            postDetail.style.display = 'none';
+            renderNewPosts(); // 渲染最新发帖
+        });
+
+        // 进入分区（卡片点击）
+        sectionCards.forEach(card=>{
+            card.addEventListener('click',()=>{
+                const section = card.getAttribute('data-section');
+                goToSection(section);
+            });
+        });
+
+        // 进入分区（导航点击）
+        sectionNavs.forEach(nav=>{
+            nav.addEventListener('click',()=>{
+                const section = nav.getAttribute('data-section');
+                goToSection(section);
+                navMenu.classList.remove('active'); // 关闭导航菜单
+            });
+        });
+
+        // 返回首页
+        backToHome.addEventListener('click',()=>{
+            homeContent.style.display = 'block';
+            sectionDetail.style.display = 'none';
+            postDetail.style.display = 'none';
+        });
+
+        // 返回分区
+        backToSection.addEventListener('click',()=>{
+            homeContent.style.display = 'none';
+            sectionDetail.style.display = 'block';
+            postDetail.style.display = 'none';
+            renderSectionPosts(currentSection); // 重新渲染分区帖子
+        });
+
+        // 进入分区通用函数
+        function goToSection(section){
+            currentSection = section;
+            homeContent.style.display = 'none';
+            sectionDetail.style.display = 'block';
+            postDetail.style.display = 'none';
+            
+            // 设置分区名称
+            const sectionNames = {
+                trend: '3D趋势交流区',
+                shrink: '缩水技巧分享区',
+                theory: '伪序理论专版',
+                qa: '新手答疑区'
+            };
+            document.getElementById('sectionDetailName').textContent = sectionNames[section];
+            
+            // 渲染分区帖子
+            renderSectionPosts(section);
+        }
+
+        // 渲染最新发帖（最近10条，按时间倒序）
+        function renderNewPosts(){
+            const posts = JSON.parse(localStorage.getItem('forumPosts'));
+            const users = JSON.parse(localStorage.getItem('forumUsers'));
+            
+            // 按时间倒序排序，取前10条
+            posts.sort((a,b)=>b.time - a.time);
+            const newPosts = posts.slice(0,10);
+            
+            let html = '';
+            newPosts.forEach(post=>{
+                const user = users.find(u=>u.username === post.author);
+                html += `
+                    <div class="topic-item" data-id="${post.id}">
+                        <div class="topic-header">
+                            <span class="topic-author">${post.author} <span class="topic-level">Lv.${user.level} ${user.title}</span></span>
+                        </div>
+                        <div class="topic-title">${post.title}</div>
+                        <div class="topic-info">
+                            <span class="topic-section">${post.sectionName}</span>
+                            <span class="topic-time">${formatTime(post.time)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('newPostsList').innerHTML = html;
+            
+            // 绑定帖子点击事件（进入详情）
+            document.querySelectorAll('.topic-item').forEach(item=>{
+                item.addEventListener('click',()=>{
+                    const postId = parseInt(item.getAttribute('data-id'));
+                    goToPostDetail(postId);
+                });
+            });
+        }
+
+        // 渲染分区帖子
+        function renderSectionPosts(section){
+            const posts = JSON.parse(localStorage.getItem('forumPosts'));
+            const users = JSON.parse(localStorage.getItem('forumUsers'));
+            
+            // 筛选当前分区帖子，按时间倒序
+            const sectionPosts = posts.filter(post=>post.section === section).sort((a,b)=>b.time - a.time);
+            
+            let html = '';
+            sectionPosts.forEach(post=>{
+                const user = users.find(u=>u.username === post.author);
+                html += `
+                    <div class="topic-item" data-id="${post.id}">
+                        <div class="topic-header">
+                            <span class="topic-author">${post.author} <span class="topic-level">Lv.${user.level} ${user.title}</span></span>
+                        </div>
+                        <div class="topic-title">${post.title}</div>
+                        <div class="topic-info">
+                            <span class="topic-section">点赞: ${post.like} | 回复: ${post.replyCount}</span>
+                            <span class="topic-time">${formatTime(post.time)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('sectionPostsList').innerHTML = html;
+            
+            // 绑定帖子点击事件（进入详情）
+            document.querySelectorAll('.topic-item').forEach(item=>{
+                item.addEventListener('click',()=>{
+                    const postId = parseInt(item.getAttribute('data-id'));
+                    goToPostDetail(postId);
+                });
+            });
+        }
+
+        // 进入帖子详情
+        function goToPostDetail(postId){
+            currentPostId = postId;
+            homeContent.style.display = 'none';
+            sectionDetail.style.display = 'none';
+            postDetail.style.display = 'block';
+            
+            const posts = JSON.parse(localStorage.getItem('forumPosts'));
+            const users = JSON.parse(localStorage.getItem('forumUsers'));
+            const replies = JSON.parse(localStorage.getItem('forumReplies'));
+            
+            const post = posts.find(p=>p.id === postId);
+            const user = users.find(u=>u.username === post.author);
+            const postReplies = replies.filter(r=>r.postId === postId).sort((a,b)=>b.time - a.time);
+            
+            // 填充帖子详情
+            document.getElementById('postDetailTitle').textContent = post.title;
+            document.getElementById('postDetailAuthor').textContent = `${post.author} (Lv.${user.level} ${user.title})`;
+            document.getElementById('postDetailTime').textContent = formatTime(post.time);
+            document.getElementById('postDetailContent').innerHTML = post.content;
+            document.getElementById('postLikeBtn').innerHTML = `👍 点赞(${post.like})`;
+            
+            // 填充回复列表
+            let replyHtml = '';
+            postReplies.forEach(reply=>{
+                replyHtml += `
+                    <div class="reply-item">
+                        <div class="reply-author">${reply.author} · ${formatTime(reply.time)}</div>
+                        <div class="reply-content">${reply.content}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('replyList').innerHTML = replyHtml || '<div style="text-align:center;color:#aaa;">暂无回复，快来抢沙发～</div>';
+        }
+
+        // 弹窗控制（发帖、管理员、积分等级、回复）
         const postBtn = document.getElementById('postBtn');
         const postModal = document.getElementById('postModal');
         const closePostBtn = document.getElementById('closePostBtn');
@@ -391,15 +660,27 @@
         const levelBtn = document.getElementById('levelBtn');
         const levelModal = document.getElementById('levelModal');
         const closeLevelBtn = document.getElementById('closeLevelBtn');
+        const postReplyBtn = document.getElementById('postReplyBtn');
+        const replyModal = document.getElementById('replyModal');
+        const closeReplyBtn = document.getElementById('closeReplyBtn');
+        const cancelReplyBtn = document.getElementById('cancelReplyBtn');
 
         postBtn.addEventListener('click',()=>postModal.classList.add('active'));
-        [closePostBtn,cancelPostBtn].forEach(btn=>btn.addEventListener('click',()=>postModal.classList.remove('active')));
+        [closePostBtn,cancelPostBtn].forEach(btn=>btn.addEventListener('click',()=>{
+            postModal.classList.remove('active');
+            document.getElementById('editor').innerHTML = ''; // 清空编辑区
+        }));
         adminBtn.addEventListener('click',()=>adminModal.classList.add('active'));
         closeAdminBtn.addEventListener('click',()=>adminModal.classList.remove('active'));
         levelBtn.addEventListener('click',()=>levelModal.classList.add('active'));
         closeLevelBtn.addEventListener('click',()=>levelModal.classList.remove('active'));
+        postReplyBtn.addEventListener('click',()=>replyModal.classList.add('active'));
+        [closeReplyBtn,cancelReplyBtn].forEach(btn=>btn.addEventListener('click',()=>{
+            replyModal.classList.remove('active');
+            document.getElementById('replyEditor').innerHTML = ''; // 清空回复区
+        }));
 
-        // 管理员登录（默认密码123456，可修改）
+        // 管理员登录（默认密码123456，可改）
         const adminLoginBtn = document.getElementById('adminLoginBtn');
         const adminPwd = document.getElementById('adminPwd');
         const adminLogin = document.getElementById('adminLogin');
@@ -440,13 +721,19 @@
             if(index === -1) return alert('帖子不存在');
             posts = posts.filter(p=>p.id !== postId);
             localStorage.setItem('forumPosts',JSON.stringify(posts));
+            // 删除关联回复
+            let replies = JSON.parse(localStorage.getItem('forumReplies'));
+            replies = replies.filter(r=>r.postId !== postId);
+            localStorage.setItem('forumReplies',JSON.stringify(replies));
             alert(`帖子ID${postId}已删除`);
             deletePost.value = '';
-            // 刷新页面更新列表（实际项目可局部刷新）
-            location.reload();
+            // 刷新当前页面
+            if(currentPostId === postId) backToSection.click();
+            else if(currentSection) renderSectionPosts(currentSection);
+            else renderNewPosts();
         });
 
-        // 富文本编辑功能
+        // 富文本编辑功能（修复格式问题，改用contenteditable div）
         const editor = document.getElementById('editor');
         const toolBtns = document.querySelectorAll('.tool-btn[data-action]');
         const emojiBtns = document.querySelectorAll('.emoji');
@@ -475,28 +762,26 @@
         emojiBtns.forEach(emoji=>{
             emoji.addEventListener('click',()=>{
                 const emojiText = emoji.getAttribute('data-emoji');
-                const start = editor.selectionStart;
-                const end = editor.selectionEnd;
-                const value = editor.value;
-                editor.value = value.substring(0,start) + emojiText + value.substring(end);
+                document.execCommand('insertText',false,emojiText);
                 editor.focus();
             });
         });
 
-        // 文档粘贴支持（自动保留基础格式）
+        // 文档粘贴支持（保留格式）
         editor.addEventListener('paste',(e)=>{
             e.preventDefault();
-            const text = e.clipboardData.getData('text/plain');
-            document.execCommand('insertText',false,text);
+            const html = e.clipboardData.getData('text/html');
+            document.execCommand('insertHTML',false,html);
         });
 
         // 发布帖子（积分累加）
         const submitPostBtn = document.getElementById('submitPostBtn');
-        const postForm = document.getElementById('postForm');
+        const postTitle = document.getElementById('postTitle');
+        const postSection = document.getElementById('postSection');
         submitPostBtn.addEventListener('click',()=>{
-            const title = postForm.querySelector('input[type="text"]').value.trim();
-            const section = postForm.querySelector('select').value;
-            const content = editor.value.trim();
+            const title = postTitle.value.trim();
+            const section = postSection.value;
+            const content = editor.innerHTML.trim();
             if(!title || !section || !content) return alert('请完善帖子信息');
             
             // 模拟当前用户（实际项目需登录）
@@ -504,40 +789,34 @@
             const users = JSON.parse(localStorage.getItem('forumUsers'));
             const userIndex = users.findIndex(u=>u.username === currentUser);
             if(userIndex === -1) return alert('用户不存在');
+            if(users[userIndex].isBanned) return alert('账号已封禁，无法发帖');
             
-            // 积分累加（发帖+2）
-            users[userIndex].score += 2;
-            // 等级升级（按积分区间）
-            const score = users[userIndex].score;
-            if(score >= 1201) users[userIndex].level = 6;
-            else if(score >= 801) users[userIndex].level = 5;
-            else if(score >= 501) users[userIndex].level = 4;
-            else if(score >= 301) users[userIndex].level = 3;
-            else if(score >= 101) users[userIndex].level = 2;
-            else users[userIndex].level = 1;
+            // 积分累加（发帖+5）
+            users[userIndex].score += 5;
+            // 等级&称号升级（按积分区间）
+            updateUserLevel(users[userIndex]);
             localStorage.setItem('forumUsers',JSON.stringify(users));
             
             // 新增帖子
             const posts = JSON.parse(localStorage.getItem('forumPosts'));
+            const sectionNames = {
+                trend: '3D趋势交流区',
+                shrink: '缩水技巧分享区',
+                theory: '伪序理论专版',
+                qa: '新手答疑区'
+            };
             const newPost = {
                 id: posts.length > 0 ? Math.max(...posts.map(p=>p.id)) + 1 : 1,
                 title,
                 author: currentUser,
-                time: new Date().toLocaleDateString(),
-                reply: 0,
-                score: 2,
-                content
+                section,
+                sectionName: sectionNames[section],
+                time: new Date().getTime(),
+                content,
+                like: 0,
+                replyCount: 0
             };
             posts.unshift(newPost);
             localStorage.setItem('forumPosts',JSON.stringify(posts));
             
-            alert('帖子发布成功，积分+2');
-            postModal.classList.remove('active');
-            postForm.reset();
-            editor.value = '';
-            // 刷新页面更新列表
-            location.reload();
-        });
-    </script>
-</body>
-</html>
+            alert(`帖子发布成功，积分+5

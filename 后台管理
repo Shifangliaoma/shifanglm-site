@@ -1,0 +1,63 @@
+class AdminSystem {
+    constructor() {
+        this.userSystem = new UserSystem();
+        this.postSystem = new PostSystem();
+    }
+    
+    banUser(userId) {
+        const user = this.userSystem.users.find(u => u.id === userId);
+        if (user) {
+            user.status = 'banned';
+            this.userSystem.saveUsers();
+            return true;
+        }
+        return false;
+    }
+    
+    unbanUser(userId) {
+        const user = this.userSystem.users.find(u => u.id === userId);
+        if (user) {
+            user.status = 'active';
+            this.userSystem.saveUsers();
+            return true;
+        }
+        return false;
+    }
+    
+    deletePost(postId) {
+        const post = this.postSystem.posts.find(p => p.id === postId);
+        if (post) {
+            post.status = 'deleted';
+            this.postSystem.savePosts();
+            return true;
+        }
+        return false;
+    }
+    
+    rechargeYuanbao(userId, amount) {
+        const user = this.userSystem.users.find(u => u.id === userId);
+        if (user) {
+            user.points = (user.points || 0) + amount;
+            const levelInfo = this.userSystem.getLevelInfo(user.points);
+            user.level = Math.floor(Math.log(user.points + 1) / Math.log(10)) + 1;
+            user.title = levelInfo.title;
+            
+            this.userSystem.saveUsers();
+            return true;
+        }
+        return false;
+    }
+    
+    getAuthorAccounts() {
+        return this.userSystem.users
+            .filter(u => u.role === 'author')
+            .map(u => ({
+                id: u.id,
+                username: u.username,
+                points: u.points,
+                level: u.level,
+                title: u.title,
+                status: u.status
+            }));
+    }
+}

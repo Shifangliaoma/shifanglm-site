@@ -3,79 +3,729 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>十方料码论坛</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>十方料码论坛 - 专业的福彩3D与排列三交流平台</title>
+    <style>
+        :root {
+            --primary: #0ff;
+            --secondary: #f0f;
+            --accent: #ff0;
+            --dark-bg: #111;
+            --darker-bg: #050505;
+            --text: #eee;
+            --neon-glow: 0 0 5px, 0 0 10px, 0 0 15px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--darker-bg);
+            color: var(--text);
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 255, 0.05) 0%, transparent 20%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 头部样式 */
+        header {
+            background-color: rgba(5, 5, 5, 0.8);
+            border-bottom: 1px solid var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-shadow: var(--neon-glow) var(--primary);
+            letter-spacing: 2px;
+        }
+        
+        .logo span {
+            color: var(--secondary);
+            text-shadow: var(--neon-glow) var(--secondary);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 20px;
+        }
+        
+        nav ul li a {
+            color: var(--text);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        nav ul li a:hover {
+            color: var(--primary);
+            text-shadow: 0 0 5px var(--primary);
+        }
+        
+        nav ul li a.active {
+            color: var(--primary);
+            background-color: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 5px var(--primary);
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            color: var(--dark-bg);
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--dark-bg);
+            box-shadow: 0 0 5px var(--primary);
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 0 15px var(--primary);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+            box-shadow: 0 0 5px var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 0 15px var(--secondary);
+        }
+        
+        /* 主要内容区 */
+        main {
+            display: flex;
+            margin-top: 30px;
+            gap: 20px;
+        }
+        
+        .content {
+            flex: 3;
+        }
+        
+        .sidebar {
+            flex: 1;
+        }
+        
+        .card {
+            background-color: rgba(20, 20, 20, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .card-title {
+            color: var(--primary);
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px var(--primary);
+        }
+        
+        /* 帖子列表 */
+        .post-list {
+            list-style: none;
+        }
+        
+        .post-item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .post-item:hover {
+            background-color: rgba(0, 255, 255, 0.05);
+        }
+        
+        .post-title {
+            color: var(--text);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            display: block;
+            text-decoration: none;
+        }
+        
+        .post-title:hover {
+            color: var(--primary);
+        }
+        
+        .post-meta {
+            display: flex;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        
+        .post-author {
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-badge {
+            background-color: var(--accent);
+            color: var(--dark-bg);
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+        
+        .post-stats {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .stat {
+            display: flex;
+            align-items: center;
+        }
+        
+        .stat i {
+            margin-right: 5px;
+            color: var(--secondary);
+        }
+        
+        /* 侧边栏 */
+        .stats-card {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+        }
+        
+        .stat-item {
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-shadow: 0 0 5px var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        
+        .trending-list {
+            list-style: none;
+        }
+        
+        .trending-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .trending-item a {
+            color: var(--text);
+            text-decoration: none;
+        }
+        
+        .trending-item a:hover {
+            color: var(--primary);
+        }
+        
+        /* 底部 */
+        footer {
+            margin-top: 50px;
+            padding: 20px 0;
+            text-align: center;
+            border-top: 1px solid rgba(0, 255, 255, 0.3);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: var(--dark-bg);
+            border-radius: 8px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 4px;
+            color: var(--text);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 5px var(--primary);
+        }
+        
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .switch-form {
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 5px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header class="neon-header">
+    <!-- 头部 -->
+    <header>
         <div class="container">
-            <h1 class="neon-title">十方料码论坛</h1>
-            <p class="neon-slogan">专业料码交流平台</p>
+            <div class="header-content">
+                <div class="logo">十方<span>料码</span>论坛</div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active">首页</a></li>
+                        <li><a href="#">福彩3D</a></li>
+                        <li><a href="#">排列三</a></li>
+                        <li><a href="#">高手推荐</a></li>
+                        <li><a href="#">数据统计</a></li>
+                    </ul>
+                </nav>
+                <div class="user-actions">
+                    <div class="user-info">
+                        <div class="user-avatar">访</div>
+                        <div>
+                            <div>游客</div>
+                            <div style="font-size: 0.8rem; color: #aaa;">0 元宝</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="loginBtn">登录/注册</button>
+                </div>
+            </div>
         </div>
     </header>
 
-    <nav class="neon-nav">
-        <div class="container">
-            <ul>
-                <li><a href="index.html" class="neon-link">首页</a></li>
-                <li><a href="login.html" class="neon-link">登录</a></li>
-                <li><a href="register.html" class="neon-link">注册</a></li>
-                <li><a href="profile.html" class="neon-link">我的账户</a></li>
-                <li><a href="admin.html" class="neon-link admin-link">后台管理</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <main class="container">
-        <section class="forum-categories">
-            <div class="category-card" onclick="window.location='category.html?cat=fc3d'">
-                <div class="category-icon">福彩3D</div>
-                <h3>福彩3D交流区</h3>
-                <p>专业福彩3D料码交流</p>
-                <div class="category-stats">帖子: 156 | 用户: 89</div>
-            </div>
-
-            <div class="category-card" onclick="window.location='category.html?cat=pl3'">
-                <div class="category-icon">排列三</div>
-                <h3>排列三交流区</h3>
-                <p>排列三料码技术分享</p>
-                <div class="category-stats">帖子: 123 | 用户: 76</div>
-            </div>
-        </section>
-
-        <section class="featured-posts">
-            <h2 class="section-title">热门帖子</h2>
-            <div class="posts-grid">
-                <div class="post-card" onclick="window.location='post.html?id=1'">
-                    <div class="post-header">
-                        <h3>福彩3D精准预测方法分享</h3>
-                        <span class="post-price">¥8.8</span>
+    <!-- 主要内容 -->
+    <div class="container">
+        <main>
+            <div class="content">
+                <!-- 热门帖子 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">热门帖子</h2>
+                        <button class="btn btn-secondary" id="newPostBtn">发新帖</button>
                     </div>
-                    <div class="post-meta">
-                        <span class="author">作者: user123</span>
-                        <span class="date">2025-11-26</span>
-                        <span class="views">浏览: 156</span>
-                    </div>
-                    <div class="post-excerpt">
-                        本文分享了最新的福彩3D预测算法，结合历史数据分析，准确率可达75%以上...
-                    </div>
-                    <div class="post-tags">
-                        <span class="tag">福彩3D</span>
-                        <span class="tag">预测</span>
-                    </div>
+                    <ul class="post-list">
+                        <li class="post-item">
+                            <a href="#" class="post-title">【福彩3D】2025年11月27日预测：关注和值15点</a>
+                            <div class="post-meta">
+                                <div class="post-author">
+                                    彩神之王 <span class="author-badge">认证作者</span>
+                                </div>
+                                <div class="post-stats">
+                                    <div class="stat"><i>📅</i> 2小时前</div>
+                                    <div class="stat"><i>👁️</i> 342</div>
+                                    <div class="stat"><i>💬</i> 28</div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="post-item">
+                            <a href="#" class="post-title">【排列三】近期组三形态分析，重点关注55对子</a>
+                            <div class="post-meta">
+                                <div class="post-author">
+                                    数字玩家 <span class="author-badge">认证作者</span>
+                                </div>
+                                <div class="post-stats">
+                                    <div class="stat"><i>📅</i> 5小时前</div>
+                                    <div class="stat"><i>👁️</i> 215</div>
+                                    <div class="stat"><i>💬</i> 16</div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="post-item">
+                            <a href="#" class="post-title">分享一个稳定的3D选号方法，连续5期中奖</a>
+                            <div class="post-meta">
+                                <div class="post-author">
+                                    幸运星
+                                </div>
+                                <div class="post-stats">
+                                    <div class="stat"><i>📅</i> 昨天</div>
+                                    <div class="stat"><i>👁️</i> 587</div>
+                                    <div class="stat"><i>💬</i> 42</div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="post-item">
+                            <a href="#" class="post-title">【数据统计】近100期3D冷热号分析图表</a>
+                            <div class="post-meta">
+                                <div class="post-author">
+                                    数据分析师 <span class="author-badge">认证作者</span>
+                                </div>
+                                <div class="post-stats">
+                                    <div class="stat"><i>📅</i> 2天前</div>
+                                    <div class="stat"><i>👁️</i> 421</div>
+                                    <div class="stat"><i>💬</i> 33</div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="post-item">
+                            <a href="#" class="post-title">排列三形态走势预测：关注大小大组合</a>
+                            <div class="post-meta">
+                                <div class="post-author">
+                                    形态专家
+                                </div>
+                                <div class="post-stats">
+                                    <div class="stat"><i>📅</i> 3天前</div>
+                                    <div class="stat"><i>👁️</i> 298</div>
+                                    <div class="stat"><i>💬</i> 19</div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </section>
-    </main>
 
-    <footer class="neon-footer">
+            <!-- 侧边栏 -->
+            <div class="sidebar">
+                <!-- 论坛统计 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">论坛统计</h2>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stat-item">
+                            <div class="stat-value">8,542</div>
+                            <div class="stat-label">会员数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">24,687</div>
+                            <div class="stat-label">帖子数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">156,324</div>
+                            <div class="stat-label">回帖数</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 热门标签 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">热门标签</h2>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <span style="background-color: rgba(0, 255, 255, 0.2); padding: 5px 10px; border-radius: 15px; font-size: 0.85rem;">和值分析</span>
+                        <span style="background-color: rgba(255, 0, 255, 0.2); padding: 5px 10px; border-radius: 15px; font-size: 0.85rem;">跨度预测</span>
+                        <span style="background-color: rgba(255, 255, 0, 0.2); padding: 5px 10px; border-radius: 15px; font-size: 0.85rem;">组选推荐</span>
+                        <span style="background-color: rgba(0, 255, 255, 0.2); padding: 5px 10px; border-radius: 15px; font-size: 0.85rem;">胆码分析</span>
+                        <span style="background-color: rgba(255, 0, 255, 0.2); padding: 5px 10px; border-radius: 15px; font-size: 0.85rem;">杀号技巧</span>
+                    </div>
+                </div>
+
+                <!-- 今日热门 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">今日热门</h2>
+                    </div>
+                    <ul class="trending-list">
+                        <li class="trending-item">
+                            <a href="#">3D第2025311期开奖结果：5 8 2</a>
+                        </li>
+                        <li class="trending-item">
+                            <a href="#">排列三第2025311期开奖结果：3 7 1</a>
+                        </li>
+                        <li class="trending-item">
+                            <a href="#">【活动】元宝兑换现金活动开启</a>
+                        </li>
+                        <li class="trending-item">
+                            <a href="#">新用户注册送50元宝</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
         <div class="container">
-            <p>&copy; 2025 十方料码论坛. 保留所有权利.</p>
-            <p>1元宝 = 1元，平台佣金35%</p>
+            <p>© 2025 十方料码论坛 - 专业的福彩3D与排列三交流平台</p>
+            <p style="margin-top: 10px; font-size: 0.8rem;">本网站内容仅供交流参考，不构成任何投资建议</p>
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <!-- 登录/注册模态框 -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">用户登录</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" class="form-control" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" class="form-control" placeholder="请输入密码">
+                </div>
+                <div class="form-group" id="confirmPasswordGroup" style="display: none;">
+                    <label for="confirmPassword">确认密码</label>
+                    <input type="password" id="confirmPassword" class="form-control" placeholder="请再次输入密码">
+                </div>
+                <div class="form-footer">
+                    <span class="switch-form" id="switchForm">没有账号？立即注册</span>
+                    <button type="submit" class="btn btn-primary">登录</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 发帖模态框 -->
+    <div class="modal" id="postModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">发布新帖</h2>
+                <button class="close-btn" id="closePostModal">&times;</button>
+            </div>
+            <form id="postForm">
+                <div class="form-group">
+                    <label for="postTitle">帖子标题</label>
+                    <input type="text" id="postTitle" class="form-control" placeholder="请输入帖子标题">
+                </div>
+                <div class="form-group">
+                    <label for="postCategory">分类</label>
+                    <select id="postCategory" class="form-control">
+                        <option value="3d">福彩3D</option>
+                        <option value="pl3">排列三</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="postContent">帖子内容</label>
+                    <textarea id="postContent" class="form-control" rows="6" placeholder="请输入帖子内容"></textarea>
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-primary">发布帖子</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 登录/注册模态框控制
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeModal = document.getElementById('closeModal');
+        const switchForm = document.getElementById('switchForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
+        const loginForm = document.getElementById('loginForm');
+        
+        let isLoginMode = true;
+        
+        loginBtn.addEventListener('click', () => {
+            loginModal.style.display = 'flex';
+        });
+        
+        closeModal.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+        });
+        
+        switchForm.addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            if (isLoginMode) {
+                modalTitle.textContent = '用户登录';
+                switchForm.textContent = '没有账号？立即注册';
+                confirmPasswordGroup.style.display = 'none';
+                loginForm.querySelector('button[type="submit"]').textContent = '登录';
+            } else {
+                modalTitle.textContent = '用户注册';
+                switchForm.textContent = '已有账号？立即登录';
+                confirmPasswordGroup.style.display = 'block';
+                loginForm.querySelector('button[type="submit"]').textContent = '注册';
+            }
+        });
+        
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (isLoginMode) {
+                alert('登录成功！');
+            } else {
+                alert('注册成功！');
+            }
+            loginModal.style.display = 'none';
+        });
+        
+        // 发帖模态框控制
+        const newPostBtn = document.getElementById('newPostBtn');
+        const postModal = document.getElementById('postModal');
+        const closePostModal = document.getElementById('closePostModal');
+        const postForm = document.getElementById('postForm');
+        
+        newPostBtn.addEventListener('click', () => {
+            postModal.style.display = 'flex';
+        });
+        
+        closePostModal.addEventListener('click', () => {
+            postModal.style.display = 'none';
+        });
+        
+        postForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('帖子发布成功！');
+            postModal.style.display = 'none';
+        });
+        
+        // 点击模态框外部关闭
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.style.display = 'none';
+            }
+            if (e.target === postModal) {
+                postModal.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

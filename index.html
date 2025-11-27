@@ -45,6 +45,7 @@
         .nav-btn:hover {
             background: #0088ff;
         }
+        /* 管理员后台整体隐藏，仅管理员可见 */
         #admin-panel {
             background: #111;
             padding: 20px;
@@ -52,16 +53,57 @@
             border-radius: 8px;
             margin: 20px auto;
             width: 90%;
-            max-width: 600px;
+            max-width: 1000px;
+            display: none;
         }
-        #admin-panel h2 {
+        .admin-tab {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .admin-tab-btn {
+            background: #0066cc;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .admin-tab-btn.active {
+            background: #00cc00;
+        }
+        .admin-content {
+            display: none;
+            margin-top: 15px;
+        }
+        .admin-content.active {
+            display: block;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            background: #222;
+        }
+        .admin-table th, .admin-table td {
+            border: 1px solid #666;
+            padding: 8px;
+            text-align: center;
+        }
+        .admin-table th {
+            background: #0066cc;
+            color: #fff;
+        }
+        #admin-panel h2, #admin-panel h3 {
             color: #0ff;
             margin-bottom: 15px;
+            text-align: center;
         }
         #admin-panel input, #admin-panel select {
             margin: 8px 0;
             padding: 8px;
-            width: 250px;
             background: #222;
             color: #fff;
             border: 1px solid #666;
@@ -79,7 +121,7 @@
         #admin-panel button:hover {
             background: #00cc00;
         }
-        #member-result {
+        #member-result, #oper-result {
             margin-top: 15px;
             padding: 10px;
             background: #222;
@@ -99,8 +141,9 @@
             border-radius: 8px;
             width: 90%;
             max-width: 1200px;
+            display: none;
         }
-        .login-box {
+        .auth-box {
             background: #111;
             padding: 20px;
             border-radius: 8px;
@@ -108,7 +151,7 @@
             margin: 20px auto;
             text-align: center;
         }
-        .login-box input {
+        .auth-box input {
             width: 100%;
             padding: 8px;
             margin: 8px 0;
@@ -117,7 +160,7 @@
             border: 1px solid #666;
             border-radius: 4px;
         }
-        .login-box button {
+        .auth-box button {
             width: 100%;
             padding: 8px;
             background: #0066cc;
@@ -125,11 +168,26 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin: 5px 0;
+        }
+        .auth-box .switch-btn {
+            background: #666;
+            font-size: 12px;
+            padding: 5px;
         }
         .tips {
             color: #ff6600;
             margin: 10px 0;
             font-size: 14px;
+        }
+        .ban-btn {
+            background: #ff3300 !important;
+        }
+        .unban-btn {
+            background: #00cc00 !important;
+        }
+        .edit-btn {
+            background: #ff9900 !important;
         }
     </style>
 </head>
@@ -144,35 +202,121 @@
         </div>
     </div>
 
-    <!-- 登录模块（移除明文账号密码） -->
-    <div id="login-module" class="login-box">
-        <h3>用户登录</h3>
-        <input type="text" id="login-username" placeholder="请输入用户名">
-        <input type="password" id="login-pwd" placeholder="请输入密码">
-        <button onclick="login()">登录</button>
-        <div class="tips">请输入您的账号密码登录</div>
+    <!-- 登录/注册切换模块 -->
+    <div id="auth-container">
+        <!-- 登录面板 -->
+        <div id="login-panel" class="auth-box">
+            <h3>用户登录</h3>
+            <input type="text" id="login-username" placeholder="请输入用户名">
+            <input type="password" id="login-pwd" placeholder="请输入密码">
+            <button onclick="login()">登录</button>
+            <button class="switch-btn" onclick="switchToRegister()">没有账号？点击注册</button>
+            <div class="tips">请输入您的账号密码登录</div>
+        </div>
+
+        <!-- 注册面板（默认隐藏） -->
+        <div id="register-panel" class="auth-box" style="display:none;">
+            <h3>用户注册</h3>
+            <input type="text" id="reg-username" placeholder="请设置用户名">
+            <input type="password" id="reg-pwd" placeholder="请设置密码">
+            <input type="password" id="reg-pwd-confirm" placeholder="请确认密码">
+            <button onclick="register()">注册</button>
+            <button class="switch-btn" onclick="switchToLogin()">已有账号？点击登录</button>
+            <div class="tips">注册后请联系管理员开通会员</div>
+        </div>
     </div>
 
-    <!-- 管理员会员管理面板（默认隐藏） -->
-    <div id="admin-panel" style="display:none;">
-        <h2>会员管理后台</h2>
-        <div>
-            <label>目标用户名：</label>
-            <input type="text" id="target-username" placeholder="输入要操作的用户名">
-            <br>
-            <label>会员类型：</label>
-            <select id="member-type">
-                <option value="day">日会员（24小时）</option>
-                <option value="week">周会员（7天）</option>
-                <option value="month">月会员（30天）</option>
-                <option value="year">年会员（365天）</option>
-            </select>
-            <br>
-            <button onclick="handleMember()">办理会员</button>
-            <button onclick="queryMember()">查询会员信息</button>
-            <button onclick="clearMember()">清空会员（恢复普通用户）</button>
+    <!-- 管理员后台（默认隐藏，普通用户永远看不到） -->
+    <div id="admin-panel">
+        <!-- 后台标签页 -->
+        <div class="admin-tab">
+            <button class="admin-tab-btn active" onclick="switchAdminTab('user-list')">注册用户名单</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('member-list')">会员名单</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('member-manage')">办理/调整会员</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('ban-manage')">用户封禁</button>
         </div>
-        <div id="member-result" style="margin-top:10px;"></div>
+
+        <!-- 1. 注册用户名单 -->
+        <div id="user-list" class="admin-content active">
+            <h3>所有注册用户名单</h3>
+            <table class="admin-table">
+                <tr>
+                    <<th>用户名</</th>
+                    <<th>注册状态</</th>
+                    <<th>是否封禁</</th>
+                    <<th>操作</</th>
+                </tr>
+                <tbody id="user-list-body"></tbody>
+            </table>
+        </div>
+
+        <!-- 2. 会员名单（显示详细信息） -->
+        <div id="member-list" class="admin-content">
+            <h3>会员明细名单</h3>
+            <table class="admin-table">
+                <tr>
+                    <<th>用户名</</th>
+                    <<th>会员等级</</th>
+                    <<th>开通时间</</th>
+                    <<th>截止时间</</th>
+                    <<th>剩余天数</</th>
+                    <<th>状态</</th>
+                </tr>
+                <tbody id="member-list-body"></tbody>
+            </table>
+        </div>
+
+        <!-- 3. 办理/调整会员 -->
+        <div id="member-manage" class="admin-content">
+            <h3>会员办理/时长调整</h3>
+            <div>
+                <label>目标用户名：</label>
+                <input type="text" id="target-username" placeholder="输入用户名">
+                <br>
+                <label>会员类型：</label>
+                <select id="member-type">
+                    <option value="day">日会员（24小时）</option>
+                    <option value="week">周会员（7天）</option>
+                    <option value="month">月会员（30天）</option>
+                    <option value="year">年会员（365天）</option>
+                </select>
+                <br>
+                <label>调整类型：</label>
+                <select id="adjust-type">
+                    <option value="new">新开通会员</option>
+                    <option value="extend">延长会员时长</option>
+                    <option value="modify">修改截止时间</option>
+                </select>
+                <br>
+                <!-- 延长时长输入框 -->
+                <div id="extend-day-box" style="display:none;">
+                    <label>延长天数：</label>
+                    <input type="number" id="extend-days" placeholder="输入延长天数" min="1">
+                    <br>
+                </div>
+                <!-- 修改截止时间输入框 -->
+                <div id="modify-time-box" style="display:none;">
+                    <label>新截止时间：</label>
+                    <input type="datetime-local" id="new-end-time">
+                    <br>
+                </div>
+                <button onclick="handleMember()">确认操作</button>
+                <div id="member-result"></div>
+            </div>
+        </div>
+
+        <!-- 4. 用户封禁 -->
+        <div id="ban-manage" class="admin-content">
+            <h3>用户封禁/解封</h3>
+            <div>
+                <label>目标用户名：</label>
+                <input type="text" id="ban-username" placeholder="输入用户名">
+                <br>
+                <button class="ban-btn" onclick="banUser()">封禁用户</button>
+                <button class="unban-btn" onclick="unbanUser()">解封用户</button>
+                <div id="ban-result"></div>
+            </div>
+        </div>
     </div>
 
     <!-- 会员信息提示（普通用户可见） -->
@@ -195,6 +339,75 @@
         let isAdmin = false;
         let loginUser = {};
 
+        // ===================== 基础切换函数 =====================
+        // 登录/注册面板切换
+        function switchToRegister() {
+            document.getElementById('login-panel').style.display = 'none';
+            document.getElementById('register-panel').style.display = 'block';
+        }
+        function switchToLogin() {
+            document.getElementById('register-panel').style.display = 'none';
+            document.getElementById('login-panel').style.display = 'block';
+        }
+
+        // 管理员后台标签切换
+        function switchAdminTab(tabId) {
+            // 切换按钮样式
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            // 切换内容
+            document.querySelectorAll('.admin-content').forEach(cont => cont.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            // 刷新列表数据
+            if (tabId === 'user-list') loadUserList();
+            if (tabId === 'member-list') loadMemberList();
+        }
+
+        // 调整类型切换显示
+        document.getElementById('adjust-type').addEventListener('change', function() {
+            const type = this.value;
+            document.getElementById('extend-day-box').style.display = 'none';
+            document.getElementById('modify-time-box').style.display = 'none';
+            if (type === 'extend') document.getElementById('extend-day-box').style.display = 'block';
+            if (type === 'modify') document.getElementById('modify-time-box').style.display = 'block';
+        });
+
+        // ===================== 用户注册/登录 =====================
+        // 注册函数
+        function register() {
+            const username = document.getElementById('reg-username').value.trim();
+            const pwd = document.getElementById('reg-pwd').value.trim();
+            const pwdConfirm = document.getElementById('reg-pwd-confirm').value.trim();
+
+            if (!username || !pwd) {
+                alert('用户名和密码不能为空');
+                return;
+            }
+            if (pwd !== pwdConfirm) {
+                alert('两次密码不一致');
+                return;
+            }
+
+            // 读取已有用户
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            // 检查用户名是否重复
+            if (users.some(u => u.name === username)) {
+                alert('用户名已存在');
+                return;
+            }
+
+            // 新增用户（默认未封禁）
+            users.push({
+                name: username,
+                pwd: pwd,
+                isBanned: false,
+                registerTime: new Date().toLocaleString()
+            });
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            alert('注册成功！请联系管理员开通会员');
+            switchToLogin();
+        }
+
         // 登录函数
         function login() {
             const username = document.getElementById('login-username').value.trim();
@@ -205,83 +418,145 @@
                 return;
             }
 
-            // 简化登录逻辑（实际项目需对接后端，此处仅前端演示）
-            loginUser = { name: username, pwd: pwd };
+            // 验证管理员
             isAdmin = username === '十方料码' && pwd === '7446265';
-            
-            // 隐藏登录框，显示退出按钮
-            document.getElementById('login-module').style.display = 'none';
-            document.getElementById('logout-btn').style.display = 'block';
-
-            // 管理员显示后台面板
             if (isAdmin) {
+                loginUser = { name: username, isAdmin: true };
+                // 管理员登录：隐藏登录框，显示后台
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'block';
                 document.getElementById('admin-panel').style.display = 'block';
                 document.getElementById('tool-area').style.display = 'block';
                 document.getElementById('member-tips').innerText = '您是管理员，已解锁所有功能';
-            } else {
-                // 普通用户检查会员状态
-                checkMemberStatus();
+                // 加载后台数据
+                loadUserList();
+                loadMemberList();
+                return;
             }
+
+            // 验证普通用户
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const user = users.find(u => u.name === username && u.pwd === pwd);
+            if (!user) {
+                alert('用户名或密码错误');
+                return;
+            }
+            if (user.isBanned) {
+                alert('您的账号已被封禁，无法登录');
+                return;
+            }
+
+            // 普通用户登录：隐藏登录框，检查会员
+            loginUser = { name: username, isAdmin: false };
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('logout-btn').style.display = 'block';
+            checkMemberStatus();
         }
 
         // 退出登录
         function logout() {
             loginUser = {};
             isAdmin = false;
-            document.getElementById('login-module').style.display = 'block';
+            document.getElementById('auth-container').style.display = 'block';
+            document.getElementById('login-panel').style.display = 'block';
+            document.getElementById('register-panel').style.display = 'none';
             document.getElementById('logout-btn').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'none';
             document.getElementById('tool-area').style.display = 'none';
             document.getElementById('member-tips').innerText = '';
         }
 
-        // 检查普通用户会员状态
+        // ===================== 普通用户会员检查 =====================
         function checkMemberStatus() {
             const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
-            
-            // 验证会员有效期
             const now = new Date();
             const endDate = new Date(memberInfo.end);
 
-            if (memberInfo.type !== 'none' && now < endDate) {
-                // 计算剩余天数
+            // 自动清理到期会员
+            if (memberInfo.type !== 'none' && now > endDate) {
+                localStorage.setItem(`member_${loginUser.name}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
+                document.getElementById('member-tips').innerText = '您的会员已到期，恢复为普通用户';
+                document.getElementById('tool-area').style.display = 'none';
+                alert('您的会员已到期，需联系管理员续费');
+                return;
+            }
+
+            // 有效会员
+            if (memberInfo.type !== 'none') {
                 const leftDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
                 memberInfo.leftDays = leftDays;
                 localStorage.setItem(`member_${loginUser.name}`, JSON.stringify(memberInfo));
-                
-                // 显示会员信息，解锁工具
-                document.getElementById('member-tips').innerText = `当前会员类型：${getMemberTypeName(memberInfo.type)} | 起始时间：${memberInfo.start} | 截止时间：${memberInfo.end} | 剩余天数：${leftDays}天`;
+                document.getElementById('member-tips').innerText = `当前会员类型：${getMemberTypeName(memberInfo.type)} | 开通时间：${memberInfo.start} | 截止时间：${memberInfo.end} | 剩余天数：${leftDays}天`;
                 document.getElementById('tool-area').style.display = 'block';
             } else {
-                // 无会员/到期，锁定工具
-                document.getElementById('member-tips').innerText = '您当前是普通用户，需办理会员后使用工具';
+                // 无会员
+                document.getElementById('member-tips').innerText = '您当前是普通用户，需联系管理员开通会员';
                 document.getElementById('tool-area').style.display = 'none';
                 alert('需办理会员后使用');
             }
         }
 
-        // 计算会员有效期
-        function calcMemberTime(type) {
-            const start = new Date();
-            let end = new Date();
-            
-            switch(type) {
-                case 'day': end.setHours(start.getHours() + 24); break;
-                case 'week': end.setDate(start.getDate() + 7); break;
-                case 'month': end.setDate(start.getDate() + 30); break;
-                case 'year': end.setFullYear(start.getFullYear() + 1); break;
+        // ===================== 管理员后台功能 =====================
+        // 1. 加载注册用户名单
+        function loadUserList() {
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const tbody = document.getElementById('user-list-body');
+            tbody.innerHTML = '';
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">暂无注册用户</td></tr>';
+                return;
             }
 
-            const leftDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-            return {
-                type,
-                start: start.toLocaleString(),
-                end: end.toLocaleString(),
-                leftDays
-            };
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>已注册</td>
+                    <td>${user.isBanned ? '已封禁' : '正常'}</td>
+                    <td>
+                        <button class="${user.isBanned ? 'unban-btn' : 'ban-btn'}" onclick="${user.isBanned ? 'unbanUser(\''+user.name+'\')' : 'banUser(\''+user.name+'\')'}">
+                            ${user.isBanned ? '解封' : '封禁'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        // 办理会员（管理员专属）
+        // 2. 加载会员名单（显示详细信息）
+        function loadMemberList() {
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const tbody = document.getElementById('member-list-body');
+            tbody.innerHTML = '';
+
+            let hasMember = false;
+            users.forEach(user => {
+                const memberInfo = JSON.parse(localStorage.getItem(`member_${user.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+                if (memberInfo.type !== 'none') {
+                    hasMember = true;
+                    const now = new Date();
+                    const endDate = new Date(memberInfo.end);
+                    const leftDays = now > endDate ? 0 : Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.name}</td>
+                        <td>${getMemberTypeName(memberInfo.type)}</td>
+                        <td>${memberInfo.start}</td>
+                        <td>${memberInfo.end}</td>
+                        <td>${leftDays}天</td>
+                        <td>${leftDays > 0 ? '有效' : '已到期'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+
+            if (!hasMember) {
+                tbody.innerHTML = '<tr><td colspan="6">暂无会员用户</td></tr>';
+            }
+        }
+
+        // 3. 办理/调整会员
         function handleMember() {
             if (!isAdmin) {
                 alert('无管理员权限');
@@ -289,82 +564,157 @@
             }
 
             const username = document.getElementById('target-username').value.trim();
-            if (!username) {
-                alert('请输入目标用户名');
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            if (!username || !users.some(u => u.name === username)) {
+                alert('用户名不存在，请先确认注册用户名单');
                 return;
             }
 
-            const type = document.getElementById('member-type').value;
-            const memberInfo = calcMemberTime(type);
-            
-            localStorage.setItem(`member_${username}`, JSON.stringify(memberInfo));
-            document.getElementById('member-result').innerText = `
-✅ 办理成功！
-用户名：${username}
-会员类型：${getMemberTypeName(type)}
-起始时间：${memberInfo.start}
-截止时间：${memberInfo.end}
-剩余天数：${memberInfo.leftDays}天
-            `;
+            const adjustType = document.getElementById('adjust-type').value;
+            const memberType = document.getElementById('member-type').value;
+            let memberInfo = JSON.parse(localStorage.getItem(`member_${username}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+            let resultText = '';
+
+            // 新开通会员
+            if (adjustType === 'new') {
+                const newMember = calcMemberTime(memberType);
+                localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
+                resultText = `✅ 为${username}新开通${getMemberTypeName(memberType)}
+开通时间：${newMember.start}
+截止时间：${newMember.end}
+剩余天数：${newMember.leftDays}天`;
+            }
+
+            // 延长会员时长
+            if (adjustType === 'extend') {
+                const extendDays = parseInt(document.getElementById('extend-days').value);
+                if (isNaN(extendDays) || extendDays < 1) {
+                    alert('请输入有效的延长天数');
+                    return;
+                }
+                const now = new Date();
+                let endDate = memberInfo.type === 'none' ? now : new Date(memberInfo.end);
+                endDate.setDate(endDate.getDate() + extendDays);
+                const newMember = {
+                    type: memberInfo.type === 'none' ? memberType : memberInfo.type,
+                    start: memberInfo.start || now.toLocaleString(),
+                    end: endDate.toLocaleString(),
+                    leftDays: Math.ceil((endDate - now) / (1000 * 60 * 60 * 24))
+                };
+                localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
+                resultText = `✅ 为${username}延长${extendDays}天会员
+当前会员类型：${getMemberTypeName(newMember.type)}
+新截止时间：${newMember.end}
+剩余天数：${newMember.leftDays}天`;
+            }
+
+            // 修改截止时间
+            if (adjustType === 'modify') {
+                const newEndTime = document.getElementById('new-end-time').value;
+                if (!newEndTime) {
+                    alert('请选择新的截止时间');
+                    return;
+                }
+                const endDate = new Date(newEndTime);
+                const now = new Date();
+                const newMember = {
+                    type: memberInfo.type === 'none' ? memberType : memberInfo.type,
+                    start: memberInfo.start || now.toLocaleString(),
+                    end: endDate.toLocaleString(),
+                    leftDays: Math.ceil((endDate - now) / (1000 * 60 * 60 * 24))
+                };
+                localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
+                resultText = `✅ 已修改${username}会员截止时间
+当前会员类型：${getMemberTypeName(newMember.type)}
+新截止时间：${newMember.end}
+剩余天数：${newMember.leftDays}天`;
+            }
+
+            document.getElementById('member-result').innerText = resultText;
+            loadMemberList(); // 刷新会员名单
         }
 
-        // 查询会员信息（管理员专属）
-        function queryMember() {
+        // 4. 封禁/解封用户
+        function banUser(username) {
             if (!isAdmin) {
                 alert('无管理员权限');
                 return;
             }
-
-            const username = document.getElementById('target-username').value.trim();
-            if (!username) {
-                alert('请输入目标用户名');
+            // 优先使用输入框用户名，其次是传参
+            const targetName = username || document.getElementById('ban-username').value.trim();
+            if (!targetName) {
+                alert('请输入要封禁的用户名');
                 return;
             }
 
-            const memberInfo = JSON.parse(localStorage.getItem(`member_${username}`) || '{"type":"none","start":"无","end":"无","leftDays":0}');
-            document.getElementById('member-result').innerText = `
-🔍 查询结果：
-用户名：${username}
-会员类型：${memberInfo.type === 'none' ? '普通用户' : getMemberTypeName(memberInfo.type)}
-起始时间：${memberInfo.start}
-截止时间：${memberInfo.end}
-剩余天数：${memberInfo.leftDays}天
-            `;
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === targetName);
+            if (userIndex === -1) {
+                alert('用户名不存在');
+                return;
+            }
+
+            users[userIndex].isBanned = true;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            document.getElementById('ban-result').innerText = `✅ 已封禁用户：${targetName}`;
+            loadUserList(); // 刷新用户名单
         }
 
-        // 清空会员（恢复普通用户）
-        function clearMember() {
+        function unbanUser(username) {
             if (!isAdmin) {
                 alert('无管理员权限');
                 return;
             }
-
-            const username = document.getElementById('target-username').value.trim();
-            if (!username) {
-                alert('请输入目标用户名');
+            const targetName = username || document.getElementById('ban-username').value.trim();
+            if (!targetName) {
+                alert('请输入要解封的用户名');
                 return;
             }
 
-            localStorage.setItem(`member_${username}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
-            document.getElementById('member-result').innerText = `🗑️ 已清空${username}的会员信息，恢复为普通用户`;
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === targetName);
+            if (userIndex === -1) {
+                alert('用户名不存在');
+                return;
+            }
+
+            users[userIndex].isBanned = false;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            document.getElementById('ban-result').innerText = `✅ 已解封用户：${targetName}`;
+            loadUserList(); // 刷新用户名单
+        }
+
+        // ===================== 辅助函数 =====================
+        // 计算会员时间
+        function calcMemberTime(type) {
+            const start = new Date();
+            let end = new Date();
+            switch(type) {
+                case 'day': end.setHours(start.getHours() + 24); break;
+                case 'week': end.setDate(start.getDate() + 7); break;
+                case 'month': end.setDate(start.getDate() + 30); break;
+                case 'year': end.setFullYear(start.getFullYear() + 1); break;
+            }
+            const leftDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            return { type, start: start.toLocaleString(), end: end.toLocaleString(), leftDays };
         }
 
         // 会员类型名称转换
         function getMemberTypeName(type) {
             switch(type) {
-                case 'day': return '日会员（24小时）';
-                case 'week': return '周会员（7天）';
-                case 'month': return '月会员（30天）';
-                case 'year': return '年会员（365天）';
+                case 'day': return '日会员';
+                case 'week': return '周会员';
+                case 'month': return '月会员';
+                case 'year': return '年会员';
                 default: return '普通用户';
             }
         }
 
-        // 页面导航函数（占位）
+        // 页面导航占位
         function showHome() { alert('首页内容（可自定义）'); }
         function showToolCenter() { 
             if (document.getElementById('tool-area').style.display === 'none') {
-                alert('需登录并办理会员后查看');
+                alert('需登录并开通会员后查看');
             }
         }
         function showUserCenter() { 
@@ -375,18 +725,15 @@
             }
         }
 
-        // 页面加载时检查会员到期状态
+        // 页面加载：自动清理到期会员
         window.onload = function() {
-            // 遍历所有用户会员信息，自动清理到期会员
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('member_')) {
-                    const memberInfo = JSON.parse(localStorage.getItem(key));
-                    if (memberInfo.type !== 'none' && new Date() > new Date(memberInfo.end)) {
-                        localStorage.setItem(key, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
-                    }
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            users.forEach(user => {
+                const memberInfo = JSON.parse(localStorage.getItem(`member_${user.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+                if (memberInfo.type !== 'none' && new Date() > new Date(memberInfo.end)) {
+                    localStorage.setItem(`member_${user.name}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
                 }
-            }
+            });
         };
     </script>
 </body>

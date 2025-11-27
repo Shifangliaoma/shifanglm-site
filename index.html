@@ -760,3 +760,680 @@
         <h3>请先登录，查看个人中心内容</h3>
         <button class="login-btn" onclick="switchToLogin()">立即登录</button>
     </div>
+
+    <script>
+        let isAdmin = false;
+        let loginUser = {};
+
+        // ===================== 基础切换函数 =====================
+        // 登录/注册面板切换
+        function switchToRegister() {
+            document.getElementById('login-panel').style.display = 'none';
+            document.getElementById('register-panel').style.display = 'block';
+        }
+        function switchToLogin() {
+            document.getElementById('register-panel').style.display = 'none';
+            document.getElementById('login-panel').style.display = 'block';
+        }
+
+        // 管理员后台标签切换（修复点击无反应）
+        function switchAdminTab(tabId) {
+            const targetBtn = event ? event.target : document.querySelector(`.admin-tab-btn[onclick="switchAdminTab('${tabId}')"]`);
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+            if (targetBtn) targetBtn.classList.add('active');
+            document.querySelectorAll('.admin-content').forEach(cont => cont.classList.remove('active'));
+            const targetCont = document.getElementById(tabId);
+            if (targetCont) targetCont.classList.add('active');
+            if (tabId === 'user-list') loadUserList();
+            if (tabId === 'member-list') loadMemberList();
+        }
+
+        // ===================== 用户注册/登录 =====================
+        // 注册函数
+        function register() {
+            const username = document.getElementById('reg-username').value.trim();
+            const pwd = document.getElementById('reg-pwd').value.trim();
+            const pwdConfirm = document.getElementById('reg-pwd-confirm').value.trim();
+
+            if (!username || !pwd) {
+                alert('用户名和密码不能为空');
+                return;
+            }
+            if (pwd !== pwdConfirm) {
+                alert('两次密码不一致');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            if (users.some(u => u.name === username)) {
+                alert('用户名已存在');
+                return;
+            }
+
+            users.push({
+                name: username,
+                pwd: pwd,
+                isBanned: false,
+                registerTime: new Date().toLocaleString(),
+                nickname: username,
+                gender: '未知',
+                signature: '暂无个性签名'
+            });
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            alert('注册成功！请联系管理员开通会员');
+            switchToLogin();
+        }
+
+        // 登录函数（管理员登录显示悬浮导入按钮）
+        function login() {
+            const username = document.getElementById('login-username').value.trim();
+            const pwd = document.getElementById('login-pwd').value.trim();
+            
+            if (!username || !pwd) {
+                alert('请输入用户名和密码');
+                return;
+            }
+
+            // 验证管理员
+            isAdmin = username === '十方料码' && pwd === '7446265';
+            if (isAdmin) {
+                loginUser = { name: username, isAdmin: true };
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'block';
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('tool-area').style.display = 'block';
+                document.getElementById('member-tips').innerText = '您是管理员，已解锁所有功能';
+                document.getElementById('admin-import-btn').style.display = 'block'; // 显示悬浮按钮
+                loadUserList();
+                loadMemberList();
+                initUserCenter();
+                return;
+            }
+
+            // 验证普通用户
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const user = users.find(u => u.name === username && u.pwd === pwd);
+            if (!user) {
+                alert('用户名或密码错误');
+                return;
+            }
+            if (user.isBanned) {
+                alert('您的账号已被封禁，无法登录');
+                return;
+            }
+
+            // 普通用户登录（隐藏悬浮按钮）
+            loginUser = { name: username, isAdmin: false, ...user };
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('logout-btn').style.display = 'block';
+            document.getElementById('admin-import-btn').style.display = 'none';
+            checkMemberStatus();
+            initUserCenter();
+        }
+
+        // 退出登录（隐藏悬浮导入按钮）
+        function logout() {
+            loginUser = {};
+            isAdmin = false;
+            document.getElementById('auth-container').style.display = 'block';
+            document.getElementById('login-panel').style.display = 'block';
+            document.getElementById('register-panel').style.display = 'none';
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('tool-area').style.display = 'none';
+            document.getElementById('member-tips').innerText = '';
+            document.getElementById('admin-import-btn').style.display = 'none';
+            document.getElementById('page-container').style.display = 'none';
+            document.getElementById('no-login-tip').style.display = 'none';
+        }
+
+        // ===================== 普通用户会员检查 =====================
+        function checkMemberStatus() {
+            const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+            const now = new Date();
+            const endDate = new Date(memberInfo.end);
+
+            if (memberInfo.type !== 'none' && now > endDate) {
+                localStorage.setItem(`member_${loginUser.name}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
+                document.getElementById('member-tips').innerText = '您的会员已到期，恢复为普通用户';
+                document.getElementById('tool-area').style.display = 'none';
+                alert('您的会员已到期，需联系管理员续费');
+                return;
+            }
+
+            if (memberInfo.type !== 'none') {
+                const leftDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                memberInfo.leftDays = leftDays;
+                localStorage.setItem(`member_${loginUser.name}`, JSON.stringify(memberInfo));
+                document.getElementById('member-tips').innerText = `当前会员类型：${getMemberTypeName(memberInfo.type)} | 开通时间：${memberInfo.start} | 截止时间：${memberInfo.end} | 剩余天数：${leftDays}天`;
+                document.getElementById('tool-area').style.display = 'block';
+            } else {
+                document.getElementById('member-tips').innerText = '您当前是普通用户，需联系管理员开通会员';
+                document.getElementById('tool-area').style.display = 'none';
+                alert('需办理会员后使用');
+            }
+        }
+
+        // ===================== 管理员后台功能 =====================
+        // 1. 加载注册用户名单
+        function loadUserList() {
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const tbody = document.getElementById('user-list-body');
+            tbody.innerHTML = '';
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">暂无注册用户</td></tr>';
+                return;
+            }
+
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>已注册</td>
+                    <td>${user.isBanned ? '已封禁' : '正常'}</td>
+                    <td>
+                        <button class="${user.isBanned ? 'unban-btn' : 'ban-btn'}" onclick="${user.isBanned ? 'unbanUser(\''+user.name+'\')' : 'banUser(\''+user.name+'\')'}">
+                            ${user.isBanned ? '解封' : '封禁'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 2. 加载会员名单（显示详细信息）
+        function loadMemberList() {
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const tbody = document.getElementById('member-list-body');
+            tbody.innerHTML = '';
+
+            let hasMember = false;
+            users.forEach(user => {
+                const memberInfo = JSON.parse(localStorage.getItem(`member_${user.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+                if (memberInfo.type !== 'none') {
+                    hasMember = true;
+                    const now = new Date();
+                    const endDate = new Date(memberInfo.end);
+                    const leftDays = now > endDate ? 0 : Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.name}</td>
+                        <td>${getMemberTypeName(memberInfo.type)}</td>
+                        <td>${memberInfo.start}</td>
+                        <td>${memberInfo.end}</td>
+                        <td>${leftDays}天</td>
+                        <td>${leftDays > 0 ? '有效' : '已到期'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+
+            if (!hasMember) {
+                tbody.innerHTML = '<tr><td colspan="6">暂无会员用户</td></tr>';
+            }
+        }
+
+        // 3. 办理/调整会员
+        function handleMember() {
+            if (!isAdmin) {
+                alert('无管理员权限');
+                return;
+            }
+
+            const username = document.getElementById('target-username').value.trim();
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            if (!username || !users.some(u => u.name === username)) {
+                alert('用户名不存在，请先确认注册用户名单');
+                return;
+            }
+
+            const adjustType = document.getElementById('adjust-type').value;
+            const memberType = document.getElementById('member-type').value;
+            let memberInfo = JSON.parse(localStorage.getItem(`member_${username}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+            let resultText = '';
+
+            // 新开通会员
+            if (adjustType === 'new') {
+                const newMember = calcMemberTime(memberType);
+                localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
+                resultText = `✅ 为${username}新开通${getMemberTypeName(memberType)}
+开通时间：${newMember.start}
+截止时间：${newMember.end}
+剩余天数：${newMember.leftDays}天`;
+            }
+
+            // 延长会员时长
+            if (adjustType === 'extend') {
+                const extendDays = parseInt(document.getElementById('extend-days').value);
+                if (isNaN(extendDays) || extendDays < 1) {
+                    alert('请输入有效的延长天数');
+                    return;
+                }
+                const now = new Date();
+                let endDate = memberInfo.type === 'none' ? now : new Date(memberInfo.end);
+                endDate.setDate(endDate.getDate() + extendDays);
+                const newMember = {
+                    type: memberInfo.type === 'none' ? memberType : memberInfo.type,
+                    start: memberInfo.start || now.toLocaleString(),
+                    end: endDate.toLocaleString(),
+                    leftDays: Math.ceil((endDate - now) / (1000 * 60 * 60 * 24))
+                };
+                localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
+                resultText = `✅ 为${username}延长${extendDays}天会员
+当前会员类型：${getMemberTypeName(newMember.type)}
+新截止时间：${newMember.end}
+剩余天数：${newMember.leftDays}天`;
+            }
+
+            // 修改截止时间
+            if (adjustType === 'modify') {
+                const newEndTime = document.getElementById('new-end-time').value;
+                if (!newEndTime) {
+                    alert('请选择新的截止时间');
+                    return;
+                }
+                const endDate = new Date(newEndTime);
+                const now = new Date();
+                const newMember = {
+                    type: memberInfo.type === 'none' ? memberType : memberInfo.type,
+                    start: memberInfo.start || now.toLocaleString(),
+                    end: endDate.toLocaleString(),
+                    leftDays: Math.ceil((endDate - now) / (1000 * 60 * 60 * 24))
+                };
+                localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
+                resultText = `✅ 已修改${username}会员截止时间
+当前会员类型：${getMemberTypeName(newMember.type)}
+新截止时间：${newMember.end}
+剩余天数：${newMember.leftDays}天`;
+            }
+
+            document.getElementById('member-result').innerText = resultText;
+            loadMemberList();
+        }
+
+        // 4. 封禁/解封用户
+        function banUser(username) {
+            if (!isAdmin) {
+                alert('无管理员权限');
+                return;
+            }
+            let targetName = username || document.getElementById('ban-username').value.trim();
+            if (!targetName) {
+                alert('请输入要封禁的用户名');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === targetName);
+            if (userIndex === -1) {
+                alert('用户名不存在');
+                return;
+            }
+
+            users[userIndex].isBanned = true;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            document.getElementById('ban-result').innerText = `✅ 已封禁用户：${targetName}`;
+            loadUserList();
+        }
+
+        function unbanUser(username) {
+            if (!isAdmin) {
+                alert('无管理员权限');
+                return;
+            }
+            let targetName = username || document.getElementById('ban-username').value.trim();
+            if (!targetName) {
+                alert('请输入要解封的用户名');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === targetName);
+            if (userIndex === -1) {
+                alert('用户名不存在');
+                return;
+            }
+
+            users[userIndex].isBanned = false;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            document.getElementById('ban-result').innerText = `✅ 已解封用户：${targetName}`;
+            loadUserList();
+        }
+
+        // ===================== 悬浮按钮+导入核心功能 =====================
+        // 读取本地HTML文件
+        function readHtmlFile() {
+            const fileInput = document.getElementById('html-file-import');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            if (file.size > 1 * 1024 * 1024) {
+                alert('文件过大，最大支持1MB');
+                fileInput.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.readAsText(file, 'utf-8');
+            reader.onload = function(e) {
+                const htmlContent = e.target.result.trim();
+                showHtmlPreview(htmlContent);
+                fileInput.value = '';
+            };
+            reader.onerror = function() {
+                alert('文件读取失败，请重试');
+            };
+        }
+
+        // 显示HTML预览
+        function showHtmlPreview(content) {
+            const previewContainer = document.getElementById('preview-container');
+            const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+            const previewContent = bodyMatch ? bodyMatch[1] : content;
+            const safePreview = previewContent.replace(/<script[\s\S]*?<\/script>/gi, '[已过滤脚本内容]');
+            previewContainer.innerHTML = safePreview || '无有效工具内容';
+            localStorage.setItem('tempHtmlImportContent', content);
+            document.getElementById('html-import-preview').style.display = 'block';
+        }
+
+        // 直接粘贴代码预览
+        document.getElementById('html-code-input')?.addEventListener('blur', function() {
+            const code = this.value.trim();
+            if (code) showHtmlPreview(code);
+        });
+
+        // 确认导入HTML/代码
+        function confirmHtmlImport() {
+            const content = localStorage.getItem('tempHtmlImportContent');
+            if (!content) {
+                alert('无导入内容，请先选择文件或粘贴代码');
+                return;
+            }
+
+            const importedContent = document.getElementById('imported-content');
+            const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+            const toolContent = bodyMatch ? bodyMatch[1] : content;
+            importedContent.innerHTML = toolContent;
+
+            // 重新执行脚本
+            const scripts = importedContent.querySelectorAll('script');
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                newScript.textContent = oldScript.textContent;
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+
+            alert('导入成功！工具已添加到"导入的工具"区域');
+            localStorage.removeItem('tempHtmlImportContent');
+            document.getElementById('html-code-input').value = '';
+            document.getElementById('html-import-preview').style.display = 'none';
+        }
+
+        // 隐藏预览
+        function hideHtmlPreview() {
+            document.getElementById('html-import-preview').style.display = 'none';
+            document.getElementById('html-code-input').value = '';
+            localStorage.removeItem('tempHtmlImportContent');
+        }
+
+        // ===================== 用户中心核心功能 =====================
+        // 初始化用户中心数据
+        function initUserCenter() {
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const currentUser = users.find(u => u.name === loginUser.name) || loginUser;
+            
+            // 填充左侧用户信息
+            document.getElementById('user-name').innerText = currentUser.nickname || currentUser.name;
+            document.getElementById('user-reg-time').innerText = `注册时间：${currentUser.registerTime || new Date().toLocaleString()}`;
+            
+            // 设置用户身份标识
+            if (isAdmin) {
+                document.getElementById('user-role').className = 'user-role role-admin';
+                document.getElementById('user-role').innerText = '管理员';
+                document.getElementById('vip-status').innerHTML = `
+                    <div class="status-info">
+                        身份：管理员<br>
+                        会员状态：永久有效<br>
+                        权益：解锁平台所有功能，含工具导入、用户管理权限
+                    </div>
+                `;
+            } else {
+                const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+                const now = new Date();
+                const endDate = new Date(memberInfo.end);
+                const leftDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                
+                if (memberInfo.type !== 'none' && leftDays > 0) {
+                    document.getElementById('user-role').className = 'user-role role-vip';
+                    document.getElementById('user-role').innerText = getMemberTypeName(memberInfo.type);
+                    document.getElementById('vip-status').innerHTML = `
+                        <div class="status-info">
+                            会员等级：${getMemberTypeName(memberInfo.type)}<br>
+                            开通时间：${memberInfo.start}<br>
+                            截止时间：${memberInfo.end}<br>
+                            剩余天数：${leftDays}天
+                        </div>
+                        <button class="renew-btn" onclick="alert('请联系管理员续费')">立即续费</button>
+                    `;
+                } else {
+                    document.getElementById('user-role').className = 'user-role role-normal';
+                    document.getElementById('user-role').innerText = '普通用户';
+                    document.getElementById('vip-status').innerHTML = `
+                        <div class="status-info">
+                            当前为普通用户，未开通会员<br>
+                            开通会员可解锁全部3D分析工具与选号技巧
+                        </div>
+                        <button class="renew-btn" onclick="alert('请联系管理员开通会员')">开通会员</button>
+                    `;
+                }
+            }
+
+            // 填充个人资料编辑模块
+            document.getElementById('edit-username').value = currentUser.name;
+            document.getElementById('edit-nickname').value = currentUser.nickname || currentUser.name;
+            document.getElementById('edit-gender').value = currentUser.gender || '未知';
+            document.getElementById('edit-signature').value = currentUser.signature || '暂无个性签名';
+        }
+
+        // 切换用户中心标签
+        function switchUserTab(tabId) {
+            // 切换左侧导航激活状态
+            document.querySelectorAll('.user-nav-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 切换右侧内容显示
+            document.querySelectorAll('.content-module').forEach(module => module.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // 保存个人资料
+        function saveProfile() {
+            const nickname = document.getElementById('edit-nickname').value.trim();
+            const gender = document.getElementById('edit-gender').value;
+            const signature = document.getElementById('edit-signature').value.trim();
+            
+            if (!nickname || nickname.length < 2 || nickname.length > 10) {
+                alert('昵称需2-10字');
+                return;
+            }
+            if (signature.length > 20) {
+                alert('个性签名不超过20字');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === loginUser.name);
+            if (userIndex !== -1) {
+                users[userIndex].nickname = nickname;
+                users[userIndex].gender = gender;
+                users[userIndex].signature = signature;
+                localStorage.setItem('registeredUsers', JSON.stringify(users));
+                loginUser.nickname = nickname;
+                document.getElementById('user-name').innerText = nickname;
+                alert('资料保存成功');
+            }
+        }
+
+        // 修改密码
+        function changePassword() {
+            const oldPwd = prompt('请输入原密码');
+            if (!oldPwd) return;
+            
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === loginUser.name);
+            if (userIndex === -1 || users[userIndex].pwd !== oldPwd) {
+                alert('原密码错误');
+                return;
+            }
+
+            const newPwd = prompt('请输入新密码');
+            if (!newPwd || newPwd.length < 6) {
+                alert('新密码需至少6位');
+                return;
+            }
+            const confirmPwd = prompt('请确认新密码');
+            if (newPwd !== confirmPwd) {
+                alert('两次密码不一致');
+                return;
+            }
+
+            users[userIndex].pwd = newPwd;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            alert('密码修改成功，请重新登录');
+            logout();
+        }
+
+        // 显示用户中心
+        function showUserCenter() {
+            // 隐藏其他模块
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('tool-area').style.display = 'none';
+            document.getElementById('member-tips').style.display = 'none';
+            document.getElementById('auth-container').style.display = 'none';
+            
+            if (Object.keys(loginUser).length === 0) {
+                // 未登录显示提示
+                document.getElementById('no-login-tip').style.display = 'block';
+                document.getElementById('page-container').style.display = 'none';
+            } else {
+                // 已登录显示用户中心
+                document.getElementById('no-login-tip').style.display = 'none';
+                document.getElementById('page-container').style.display = 'block';
+                initUserCenter();
+            }
+        }
+
+        // ===================== 辅助函数 =====================
+        // 计算会员时间
+        function calcMemberTime(type) {
+            const start = new Date();
+            let end = new Date();
+            switch(type) {
+                case 'day': end.setHours(start.getHours() + 24); break;
+                case 'week': end.setDate(start.getDate() + 7); break;
+                case 'month': end.setDate(start.getDate() + 30); break;
+                case 'year': end.setFullYear(start.getFullYear() + 1); break;
+            }
+            const leftDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            return { type, start: start.toLocaleString(), end: end.toLocaleString(), leftDays };
+        }
+
+        // 会员类型名称转换
+        function getMemberTypeName(type) {
+            switch(type) {
+                case 'day': return '日会员';
+                case 'week': return '周会员';
+                case 'month': return '月会员';
+                case 'year': return '年会员';
+                default: return '普通用户';
+            }
+        }
+
+        // 工具中心点击事件
+        function showToolCenter() {
+            // 隐藏用户中心相关模块
+            document.getElementById('page-container').style.display = 'none';
+            document.getElementById('no-login-tip').style.display = 'none';
+            
+            if (Object.keys(loginUser).length === 0) {
+                alert('请先登录');
+                return;
+            }
+            if (isAdmin || (loginUser.isAdmin !== true && JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}').type !== 'none')) {
+                document.getElementById('tool-area').style.display = 'block';
+                document.getElementById('import-module').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('需登录并开通会员后查看');
+            }
+        }
+
+        // 页面导航占位
+        function showHome() { 
+            // 隐藏其他模块
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('tool-area').style.display = 'none';
+            document.getElementById('page-container').style.display = 'none';
+            document.getElementById('no-login-tip').style.display = 'none';
+            
+            if (Object.keys(loginUser).length === 0) {
+                document.getElementById('auth-container').style.display = 'block';
+            } else {
+                document.getElementById('auth-container').style.display = 'none';
+                alert('首页内容可自定义添加3D走势公告、研究成果等内容');
+            }
+        }
+
+        // 页面加载：绑定所有事件（核心修复）
+        window.onload = function() {
+            // 1. 清理到期会员
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            users.forEach(user => {
+                const memberInfo = JSON.parse(localStorage.getItem(`member_${user.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+                if (memberInfo.type !== 'none' && new Date() > new Date(memberInfo.end)) {
+                    localStorage.setItem(`member_${user.name}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
+                }
+            });
+
+            // 2. 绑定管理员标签按钮事件
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.onclick = function() {
+                    const tabId = this.getAttribute('onclick').match(/switchAdminTab\('(.*?)'\)/)[1];
+                    switchAdminTab(tabId);
+                };
+            });
+
+            // 3. 绑定导航按钮事件
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                const btnText = btn.textContent.trim();
+                if (btnText === '工具中心') btn.onclick = showToolCenter;
+                else if (btnText === '首页') btn.onclick = showHome;
+                else if (btnText === '用户中心') btn.onclick = showUserCenter;
+                else if (btnText === '退出登录') btn.onclick = logout;
+            });
+
+            // 4. 绑定调整类型切换事件
+            const adjustTypeSelect = document.getElementById('adjust-type');
+            if (adjustTypeSelect) {
+                adjustTypeSelect.onchange = function() {
+                    const type = this.value;
+                    document.getElementById('extend-day-box').style.display = 'none';
+                    document.getElementById('modify-time-box').style.display = 'none';
+                    if (type === 'extend') document.getElementById('extend-day-box').style.display = 'block';
+                    if (type === 'modify') document.getElementById('modify-time-box').style.display = 'block';
+                };
+            }
+
+            // 5. 绑定悬浮导入按钮点击事件（核心修复：确保100%生效）
+            const importBtn = document.getElementById('admin-import-btn');
+            if (importBtn) {
+                importBtn.onclick = function() {
+                    document.getElementById('tool-area').style.display = 'block';
+                    document.getElementById('import-module').scrollIntoView({ behavior: 'smooth' });
+                };
+            }
+        };
+    </script>
+</body>
+</html>

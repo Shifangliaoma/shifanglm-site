@@ -19,6 +19,27 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            padding-top: 80px; /* 给悬浮按钮留空间 */
+        }
+        /* 管理员专属悬浮导入按钮 */
+        .admin-import-btn {
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            background: #00cc00;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            z-index: 9999;
+            display: none; /* 默认隐藏，仅管理员显示 */
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        .admin-import-btn:hover {
+            background: #009900;
         }
         .header {
             border-bottom: 2px solid #0ff;
@@ -214,6 +235,9 @@
     </style>
 </head>
 <body>
+    <!-- 管理员专属悬浮导入按钮 -->
+    <button class="admin-import-btn" id="admin-import-btn" onclick="jumpToImport()">📤 导入工具</button>
+
     <div class="header">
         <h1>十方料码 - 3D趋势分析与缩水工具平台</h1>
         <div class="nav">
@@ -263,10 +287,10 @@
             <h3>所有注册用户名单</h3>
             <table class="admin-table">
                 <tr>
-                    <th>用户名</th>
-                    <th>注册状态</th>
-                    <th>是否封禁</th>
-                    <th>操作</th>
+                    <<th>用户名</</th>
+                    <<th>注册状态</</th>
+                    <<th>是否封禁</</th>
+                    <<th>操作</</th>
                 </tr>
                 <tbody id="user-list-body"></tbody>
             </table>
@@ -277,12 +301,12 @@
             <h3>会员明细名单</h3>
             <table class="admin-table">
                 <tr>
-                    <th>用户名</th>
-                    <th>会员等级</th>
-                    <th>开通时间</th>
-                    <th>截止时间</th>
-                    <th>剩余天数</th>
-                    <th>状态</th>
+                    <<th>用户名</</th>
+                    <<th>会员等级</</th>
+                    <<th>开通时间</</th>
+                    <<th>截止时间</</th>
+                    <<th>剩余天数</</th>
+                    <<th>状态</</th>
                 </tr>
                 <tbody id="member-list-body"></tbody>
             </table>
@@ -357,7 +381,7 @@
         </div>
 
         <!-- HTML/代码导入功能（已整合到tool-area内） -->
-        <div style="margin: 20px 0; padding: 15px; border: 1px solid #333; border-radius: 8px;">
+        <div style="margin: 20px 0; padding: 15px; border: 1px solid #333; border-radius: 8px;" id="import-module">
             <h3>HTML文件/代码导入</h3>
             <!-- 文件导入 -->
             <div style="margin-bottom: 15px;">
@@ -401,21 +425,24 @@
             document.getElementById('login-panel').style.display = 'block';
         }
 
-        // 管理员后台标签切换
+        // 管理员后台标签切换（修复点击无反应）
         function switchAdminTab(tabId) {
+            // 强制获取触发事件的元素（兼容不同点击场景）
+            const targetBtn = event ? event.target : document.querySelector(`.admin-tab-btn[onclick="switchAdminTab('${tabId}')"]`);
             // 切换按钮样式
             document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (targetBtn) targetBtn.classList.add('active');
             // 切换内容
             document.querySelectorAll('.admin-content').forEach(cont => cont.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
+            const targetCont = document.getElementById(tabId);
+            if (targetCont) targetCont.classList.add('active');
             // 刷新列表数据
             if (tabId === 'user-list') loadUserList();
             if (tabId === 'member-list') loadMemberList();
         }
 
         // 调整类型切换显示
-        document.getElementById('adjust-type').addEventListener('change', function() {
+        document.getElementById('adjust-type')?.addEventListener('change', function() {
             const type = this.value;
             document.getElementById('extend-day-box').style.display = 'none';
             document.getElementById('modify-time-box').style.display = 'none';
@@ -459,7 +486,7 @@
             switchToLogin();
         }
 
-        // 登录函数
+        // 登录函数（新增：管理员登录显示悬浮导入按钮）
         function login() {
             const username = document.getElementById('login-username').value.trim();
             const pwd = document.getElementById('login-pwd').value.trim();
@@ -473,12 +500,14 @@
             isAdmin = username === '十方料码' && pwd === '7446265';
             if (isAdmin) {
                 loginUser = { name: username, isAdmin: true };
-                // 管理员登录：隐藏登录框，显示后台
+                // 管理员登录：隐藏登录框，显示后台+悬浮导入按钮
                 document.getElementById('auth-container').style.display = 'none';
                 document.getElementById('logout-btn').style.display = 'block';
                 document.getElementById('admin-panel').style.display = 'block';
                 document.getElementById('tool-area').style.display = 'block';
                 document.getElementById('member-tips').innerText = '您是管理员，已解锁所有功能';
+                // 显示管理员专属悬浮导入按钮
+                document.getElementById('admin-import-btn').style.display = 'block';
                 // 加载后台数据
                 loadUserList();
                 loadMemberList();
@@ -497,14 +526,15 @@
                 return;
             }
 
-            // 普通用户登录：隐藏登录框，检查会员
+            // 普通用户登录：隐藏登录框，检查会员（隐藏悬浮按钮）
             loginUser = { name: username, isAdmin: false };
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('logout-btn').style.display = 'block';
+            document.getElementById('admin-import-btn').style.display = 'none'; // 普通用户隐藏悬浮按钮
             checkMemberStatus();
         }
 
-        // 退出登录
+        // 退出登录（新增：隐藏悬浮导入按钮）
         function logout() {
             loginUser = {};
             isAdmin = false;
@@ -515,6 +545,7 @@
             document.getElementById('admin-panel').style.display = 'none';
             document.getElementById('tool-area').style.display = 'none';
             document.getElementById('member-tips').innerText = '';
+            document.getElementById('admin-import-btn').style.display = 'none'; // 退出后隐藏悬浮按钮
         }
 
         // ===================== 普通用户会员检查 =====================
@@ -685,14 +716,17 @@
             loadMemberList(); // 刷新会员名单
         }
 
-        // 4. 封禁/解封用户
+        // 4. 封禁/解封用户（修复点击无反应）
         function banUser(username) {
             if (!isAdmin) {
                 alert('无管理员权限');
                 return;
             }
-            // 优先使用输入框用户名，其次是传参
-            const targetName = username || document.getElementById('ban-username').value.trim();
+            // 优先获取传参，无传参则取输入框值（兼容按钮直接点击/表格操作）
+            let targetName = username;
+            if (!targetName) {
+                targetName = document.getElementById('ban-username').value.trim();
+            }
             if (!targetName) {
                 alert('请输入要封禁的用户名');
                 return;
@@ -716,7 +750,10 @@
                 alert('无管理员权限');
                 return;
             }
-            const targetName = username || document.getElementById('ban-username').value.trim();
+            let targetName = username;
+            if (!targetName) {
+                targetName = document.getElementById('ban-username').value.trim();
+            }
             if (!targetName) {
                 alert('请输入要解封的用户名');
                 return;
@@ -735,7 +772,13 @@
             loadUserList(); // 刷新用户名单
         }
 
-        // ===================== HTML/代码导入功能 =====================
+        // ===================== 悬浮按钮+导入核心功能 =====================
+        // 悬浮按钮点击直达导入模块
+        function jumpToImport() {
+            document.getElementById('tool-area').style.display = 'block';
+            document.getElementById('import-module').scrollIntoView({ behavior: 'smooth' });
+        }
+
         // 读取本地HTML文件
         function readHtmlFile() {
             const fileInput = document.getElementById('html-file-import');
@@ -780,7 +823,7 @@
         }
 
         // 直接粘贴代码预览（失去焦点时触发）
-        document.getElementById('html-code-input').addEventListener('blur', function() {
+        document.getElementById('html-code-input')?.addEventListener('blur', function() {
             const code = this.value.trim();
             if (code) {
                 showHtmlPreview(code);
@@ -853,13 +896,25 @@
             }
         }
 
-        // 页面导航占位
-        function showHome() { alert('首页内容（可自定义）'); }
-        function showToolCenter() { 
-            if (document.getElementById('tool-area').style.display === 'none') {
+        // 工具中心点击事件（强制显示工具区域，修复无反应）
+        function showToolCenter() {
+            // 1. 验证是否登录
+            if (Object.keys(loginUser).length === 0) {
+                alert('请先登录');
+                return;
+            }
+            // 2. 管理员/有效会员强制显示工具区域
+            if (isAdmin || (loginUser.isAdmin !== true && JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}').type !== 'none')) {
+                document.getElementById('tool-area').style.display = 'block';
+                // 滚动到导入模块位置（直接定位到导入功能）
+                document.getElementById('import-module').scrollIntoView({ behavior: 'smooth' });
+            } else {
                 alert('需登录并开通会员后查看');
             }
         }
+
+        // 页面导航占位
+        function showHome() { alert('首页内容（可自定义）'); }
         function showUserCenter() { 
             if (Object.keys(loginUser).length === 0) {
                 alert('请先登录');
@@ -868,8 +923,9 @@
             }
         }
 
-        // 页面加载：自动清理到期会员
+        // 页面加载：自动清理到期会员+重新绑定事件
         window.onload = function() {
+            // 自动清理到期会员
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
             users.forEach(user => {
                 const memberInfo = JSON.parse(localStorage.getItem(`member_${user.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
@@ -877,6 +933,40 @@
                     localStorage.setItem(`member_${user.name}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
                 }
             });
+
+            // 重新绑定管理员标签按钮点击事件
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.onclick = function() {
+                    const tabId = this.getAttribute('onclick').match(/switchAdminTab\('(.*?)'\)/)[1];
+                    switchAdminTab(tabId);
+                };
+            });
+
+            // 重新绑定导航按钮点击事件
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                const btnText = btn.textContent.trim();
+                if (btnText === '工具中心') {
+                    btn.onclick = showToolCenter;
+                } else if (btnText === '首页') {
+                    btn.onclick = showHome;
+                } else if (btnText === '用户中心') {
+                    btn.onclick = showUserCenter;
+                } else if (btnText === '退出登录') {
+                    btn.onclick = logout;
+                }
+            });
+
+            // 重新绑定调整类型切换事件
+            const adjustTypeSelect = document.getElementById('adjust-type');
+            if (adjustTypeSelect) {
+                adjustTypeSelect.onchange = function() {
+                    const type = this.value;
+                    document.getElementById('extend-day-box').style.display = 'none';
+                    document.getElementById('modify-time-box').style.display = 'none';
+                    if (type === 'extend') document.getElementById('extend-day-box').style.display = 'block';
+                    if (type === 'modify') document.getElementById('modify-time-box').style.display = 'block';
+                };
+            }
         };
     </script>
 </body>

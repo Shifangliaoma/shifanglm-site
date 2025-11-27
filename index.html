@@ -1,1 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>十方料码 - 3D趋势分析与缩水工具平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        body {
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .header {
+            border-bottom: 2px solid #0ff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 1200px;
+            text-align: center;
+        }
+        .nav {
+            margin: 10px 0;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .nav-btn {
+            background: #0066cc;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .nav-btn:hover {
+            background: #0088ff;
+        }
+        #admin-panel {
+            background: #111;
+            padding: 20px;
+            border: 1px solid #0ff;
+            border-radius: 8px;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
+        }
+        #admin-panel h2 {
+            color: #0ff;
+            margin-bottom: 15px;
+        }
+        #admin-panel input, #admin-panel select {
+            margin: 8px 0;
+            padding: 8px;
+            width: 250px;
+            background: #222;
+            color: #fff;
+            border: 1px solid #666;
+            border-radius: 4px;
+        }
+        #admin-panel button {
+            background: #009900;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        #admin-panel button:hover {
+            background: #00cc00;
+        }
+        #member-result {
+            margin-top: 15px;
+            padding: 10px;
+            background: #222;
+            border-radius: 4px;
+            color: #0ff;
+        }
+        #member-tips {
+            color: #0ff;
+            font-size: 16px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        #tool-area {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #666;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 1200px;
+        }
+        .login-box {
+            background: #111;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            background: #222;
+            color: #fff;
+            border: 1px solid #666;
+            border-radius: 4px;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 8px;
+            background: #0066cc;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .tips {
+            color: #ff6600;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>十方料码 - 3D趋势分析与缩水工具平台</h1>
+        <div class="nav">
+            <button class="nav-btn" onclick="showHome()">首页</button>
+            <button class="nav-btn" onclick="showToolCenter()">工具中心</button>
+            <button class="nav-btn" onclick="showUserCenter()">用户中心</button>
+            <button class="nav-btn" id="logout-btn" onclick="logout()" style="display:none;">退出登录</button>
+        </div>
+    </div>
 
+    <!-- 登录模块（移除明文账号密码） -->
+    <div id="login-module" class="login-box">
+        <h3>用户登录</h3>
+        <input type="text" id="login-username" placeholder="请输入用户名">
+        <input type="password" id="login-pwd" placeholder="请输入密码">
+        <button onclick="login()">登录</button>
+        <div class="tips">请输入您的账号密码登录</div>
+    </div>
+
+    <!-- 管理员会员管理面板（默认隐藏） -->
+    <div id="admin-panel" style="display:none;">
+        <h2>会员管理后台</h2>
+        <div>
+            <label>目标用户名：</label>
+            <input type="text" id="target-username" placeholder="输入要操作的用户名">
+            <br>
+            <label>会员类型：</label>
+            <select id="member-type">
+                <option value="day">日会员（24小时）</option>
+                <option value="week">周会员（7天）</option>
+                <option value="month">月会员（30天）</option>
+                <option value="year">年会员（365天）</option>
+            </select>
+            <br>
+            <button onclick="handleMember()">办理会员</button>
+            <button onclick="queryMember()">查询会员信息</button>
+            <button onclick="clearMember()">清空会员（恢复普通用户）</button>
+        </div>
+        <div id="member-result" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- 会员信息提示（普通用户可见） -->
+    <div id="member-tips"></div>
+
+    <!-- 工具区域（默认隐藏，仅会员/管理员可见） -->
+    <div id="tool-area" style="display:none;">
+        <h2>核心工具预览</h2>
+        <div>
+            <h3>3D伪序趋势分析工具</h3>
+            <p>基于伪序理论，可视化展示数字走势，辅助判断号码规律（会员专属）</p>
+        </div>
+        <div style="margin-top:15px;">
+            <h3>多条件缩水工具</h3>
+            <p>支持多维度条件筛选，精准缩小号码范围，提升选号效率（会员专属）</p>
+        </div>
+    </div>
+
+    <script>
+        let isAdmin = false;
+        let loginUser = {};
+
+        // 登录函数
+        function login() {
+            const username = document.getElementById('login-username').value.trim();
+            const pwd = document.getElementById('login-pwd').value.trim();
+            
+            if (!username || !pwd) {
+                alert('请输入用户名和密码');
+                return;
+            }
+
+            // 简化登录逻辑（实际项目需对接后端，此处仅前端演示）
+            loginUser = { name: username, pwd: pwd };
+            isAdmin = username === '十方料码' && pwd === '7446265';
+            
+            // 隐藏登录框，显示退出按钮
+            document.getElementById('login-module').style.display = 'none';
+            document.getElementById('logout-btn').style.display = 'block';
+
+            // 管理员显示后台面板
+            if (isAdmin) {
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('tool-area').style.display = 'block';
+                document.getElementById('member-tips').innerText = '您是管理员，已解锁所有功能';
+            } else {
+                // 普通用户检查会员状态
+                checkMemberStatus();
+            }
+        }
+
+        // 退出登录
+        function logout() {
+            loginUser = {};
+            isAdmin = false;
+            document.getElementById('login-module').style.display = 'block';
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('tool-area').style.display = 'none';
+            document.getElementById('member-tips').innerText = '';
+        }
+
+        // 检查普通用户会员状态
+        function checkMemberStatus() {
+            const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+            
+            // 验证会员有效期
+            const now = new Date();
+            const endDate = new Date(memberInfo.end);
+
+            if (memberInfo.type !== 'none' && now < endDate) {
+                // 计算剩余天数
+                const leftDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                memberInfo.leftDays = leftDays;
+                localStorage.setItem(`member_${loginUser.name}`, JSON.stringify(memberInfo));
+                
+                // 显示会员信息，解锁工具
+                document.getElementById('member-tips').innerText = `当前会员类型：${getMemberTypeName(memberInfo.type)} | 起始时间：${memberInfo.start} | 截止时间：${memberInfo.end} | 剩余天数：${leftDays}天`;
+                document.getElementById('tool-area').style.display = 'block';
+            } else {
+                // 无会员/到期，锁定工具
+                document.getElementById('member-tips').innerText = '您当前是普通用户，需办理会员后使用工具';
+                document.getElementById('tool-area').style.display = 'none';
+                alert('需办理会员后使用');
+            }
+        }
+
+        // 计算会员有效期
+        function calcMemberTime(type) {
+            const start = new Date();
+            let end = new Date();
+            
+            switch(type) {
+                case 'day': end.setHours(start.getHours() + 24); break;
+                case 'week': end.setDate(start.getDate() + 7); break;
+                case 'month': end.setDate(start.getDate() + 30); break;
+                case 'year': end.setFullYear(start.getFullYear() + 1); break;
+            }
+
+            const leftDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            return {
+                type,
+                start: start.toLocaleString(),
+                end: end.toLocaleString(),
+                leftDays
+            };
+        }
+
+        // 办理会员（管理员专属）
+        function handleMember() {
+            if (!isAdmin) {
+                alert('无管理员权限');
+                return;
+            }
+
+            const username = document.getElementById('target-username').value.trim();
+            if (!username) {
+                alert('请输入目标用户名');
+                return;
+            }
+
+            const type = document.getElementById('member-type').value;
+            const memberInfo = calcMemberTime(type);
+            
+            localStorage.setItem(`member_${username}`, JSON.stringify(memberInfo));
+            document.getElementById('member-result').innerText = `
+✅ 办理成功！
+用户名：${username}
+会员类型：${getMemberTypeName(type)}
+起始时间：${memberInfo.start}
+截止时间：${memberInfo.end}
+剩余天数：${memberInfo.leftDays}天
+            `;
+        }
+
+        // 查询会员信息（管理员专属）
+        function queryMember() {
+            if (!isAdmin) {
+                alert('无管理员权限');
+                return;
+            }
+
+            const username = document.getElementById('target-username').value.trim();
+            if (!username) {
+                alert('请输入目标用户名');
+                return;
+            }
+
+            const memberInfo = JSON.parse(localStorage.getItem(`member_${username}`) || '{"type":"none","start":"无","end":"无","leftDays":0}');
+            document.getElementById('member-result').innerText = `
+🔍 查询结果：
+用户名：${username}
+会员类型：${memberInfo.type === 'none' ? '普通用户' : getMemberTypeName(memberInfo.type)}
+起始时间：${memberInfo.start}
+截止时间：${memberInfo.end}
+剩余天数：${memberInfo.leftDays}天
+            `;
+        }
+
+        // 清空会员（恢复普通用户）
+        function clearMember() {
+            if (!isAdmin) {
+                alert('无管理员权限');
+                return;
+            }
+
+            const username = document.getElementById('target-username').value.trim();
+            if (!username) {
+                alert('请输入目标用户名');
+                return;
+            }
+
+            localStorage.setItem(`member_${username}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
+            document.getElementById('member-result').innerText = `🗑️ 已清空${username}的会员信息，恢复为普通用户`;
+        }
+
+        // 会员类型名称转换
+        function getMemberTypeName(type) {
+            switch(type) {
+                case 'day': return '日会员（24小时）';
+                case 'week': return '周会员（7天）';
+                case 'month': return '月会员（30天）';
+                case 'year': return '年会员（365天）';
+                default: return '普通用户';
+            }
+        }
+
+        // 页面导航函数（占位）
+        function showHome() { alert('首页内容（可自定义）'); }
+        function showToolCenter() { 
+            if (document.getElementById('tool-area').style.display === 'none') {
+                alert('需登录并办理会员后查看');
+            }
+        }
+        function showUserCenter() { 
+            if (Object.keys(loginUser).length === 0) {
+                alert('请先登录');
+            } else if (!isAdmin) {
+                checkMemberStatus();
+            }
+        }
+
+        // 页面加载时检查会员到期状态
+        window.onload = function() {
+            // 遍历所有用户会员信息，自动清理到期会员
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('member_')) {
+                    const memberInfo = JSON.parse(localStorage.getItem(key));
+                    if (memberInfo.type !== 'none' && new Date() > new Date(memberInfo.end)) {
+                        localStorage.setItem(key, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
+                    }
+                }
+            }
+        };
+    </script>
+</body>
+</html>

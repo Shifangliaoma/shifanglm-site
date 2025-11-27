@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>十方料码 - 3D趋势分析与缩水工具平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 简单图标占位（无需额外引入库，轻量） -->
+    <style>
+        .icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            position: relative;
+        }
+        .icon-home::after { content: "🏠"; font-size: 16px; }
+        .icon-tool::after { content: "🔧"; font-size: 16px; }
+        .icon-user::after { content: "👤"; font-size: 16px; }
+        .icon-login::after { content: "📲"; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-box">
+            <div class="logo">十方料码</div>
+            <div class="nav">
+                <a href="index.html"><span class="icon icon-home"></span> 首页</a>
+                <a href="tools.html"><span class="icon icon-tool"></span> 工具中心</a>
+                <a href="user-center.html" id="userLink"><span class="icon icon-user"></span> 用户中心</a>
+                <button class="btn btn-primary" id="loginBtn"><span class="icon icon-login"></span> 登录</button>
+            </div>
+        </div>
+    </header>
+
+    <section>
+        <div class="container">
+            <div class="card neon-border">
+                <h2 class="card-title">平台简介</h2>
+                <p style="line-height: 1.6; margin-bottom: 12px;">专注福彩3D趋势数据研究与缩水工具开发，提供专业分析思路与实用工具，助力精准选号。</p>
+                <p style="line-height: 1.6; color: #4299e1; font-weight: 500;">温馨提示：仅注册会员并充值虚拟积分后，可解锁全部缩水工具使用权限，普通用户仅可浏览。</p>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">核心工具预览</h2>
+                <div class="tool-item">
+                    <h3>3D伪序趋势分析工具</h3>
+                    <p>基于伪序理论，可视化展示数字走势，辅助判断号码规律（需会员充值后使用）</p>
+                </div>
+                <div class="tool-item">
+                    <h3>多条件缩水工具</h3>
+                    <p>支持多维度条件筛选，精准缩小号码范围，提升选号效率（需会员充值后使用）</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/common.js"></script>
+    <script>
+        // 登录状态切换（显示用户名/退出）
+        const user = getCurrentUser();
+        const loginBtn = document.getElementById('loginBtn');
+        const userLink = document.getElementById('userLink');
+        if (user) {
+            loginBtn.innerHTML = '<span class="icon icon-login"></span> 退出登录';
+            loginBtn.onclick = logout;
+            userLink.innerHTML = `<span class="icon icon-user"></span> 我的账户（${user.username}）`;
+        } else {
+            loginBtn.onclick = () => window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

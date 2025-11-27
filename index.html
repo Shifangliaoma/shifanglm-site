@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>十方料码 - 3D趋势分析与缩水工具平台</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>十方料码 - 3D工具平台</title>
     <style>
+        /* 网站基础样式（与工具完全隔离） */
         * {
             margin: 0;
             padding: 0;
@@ -20,7 +22,6 @@
             align-items: center;
             min-height: 100vh;
             padding-top: 80px;
-            overflow-x: hidden;
         }
         /* 管理员悬浮导入按钮 */
         .admin-import-btn {
@@ -43,6 +44,7 @@
             background: #009900;
             transform: scale(1.05);
         }
+        /* 头部导航 */
         .header {
             border-bottom: 2px solid #0ff;
             padding-bottom: 10px;
@@ -68,6 +70,44 @@
         }
         .nav-btn:hover {
             background: #0088ff;
+        }
+        /* 登录/注册面板 */
+        .auth-box {
+            background: #111;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        .auth-box input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            background: #222;
+            color: #fff;
+            border: 1px solid #666;
+            border-radius: 4px;
+        }
+        .auth-box button {
+            width: 100%;
+            padding: 8px;
+            background: #0066cc;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        .auth-box .switch-btn {
+            background: #666;
+            font-size: 12px;
+            padding: 5px;
+        }
+        .tips {
+            color: #ff6600;
+            margin: 10px 0;
+            font-size: 14px;
         }
         /* 管理员后台 */
         #admin-panel {
@@ -120,7 +160,7 @@
             background: #0066cc;
             color: #fff;
         }
-        #admin-panel h2, #admin-panel h3 {
+        #admin-panel h3 {
             color: #0ff;
             margin-bottom: 15px;
             text-align: center;
@@ -142,9 +182,6 @@
             cursor: pointer;
             margin: 5px 0;
         }
-        #admin-panel button:hover {
-            background: #00cc00;
-        }
         #member-result, #ban-result {
             margin-top: 15px;
             padding: 10px;
@@ -152,6 +189,13 @@
             border-radius: 4px;
             color: #0ff;
         }
+        .ban-btn {
+            background: #ff3300 !important;
+        }
+        .unban-btn {
+            background: #00cc00 !important;
+        }
+        /* 会员提示 */
         #member-tips {
             color: #0ff;
             font-size: 16px;
@@ -168,6 +212,7 @@
             max-width: 1200px;
             display: none;
         }
+        /* 工具列表 */
         .tool-list {
             display: flex;
             flex-wrap: wrap;
@@ -186,101 +231,18 @@
             background: #0066cc;
             transform: scale(1.05);
         }
-        /* 工具弹窗（核心：1:1还原，手机适配） */
-        .tool-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.95);
-            z-index: 99999;
-            display: none;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 0;
-            overflow-y: auto;
-        }
-        /* 弹窗内容：完全脱离网站样式，100%还原原HTML */
-        .tool-modal-content {
-            background: #fff;
-            border: none;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            max-width: 100vw;
-            max-height: 100vh;
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        /* 关闭按钮 */
-        .close-modal {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            background: #ff3300;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            z-index: 999999;
-            box-shadow: 0 0 10px rgba(0,0,0,0.8);
-        }
-        /* 登录/注册 */
-        .auth-box {
-            background: #111;
-            padding: 20px;
-            border-radius: 8px;
-            width: 300px;
-            margin: 20px auto;
-            text-align: center;
-        }
-        .auth-box input {
-            width: 100%;
-            padding: 8px;
-            margin: 8px 0;
-            background: #222;
-            color: #fff;
-            border: 1px solid #666;
-            border-radius: 4px;
-        }
-        .auth-box button {
-            width: 100%;
-            padding: 8px;
-            background: #0066cc;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 5px 0;
-        }
-        .auth-box .switch-btn {
-            background: #666;
-            font-size: 12px;
-            padding: 5px;
-        }
-        .tips {
-            color: #ff6600;
-            margin: 10px 0;
-            font-size: 14px;
-        }
-        .ban-btn {
-            background: #ff3300 !important;
-        }
-        .unban-btn {
-            background: #00cc00 !important;
-        }
-        /* 导入模块 */
+        /* 工具导入模块 */
         #import-module {
             display: none;
             margin: 20px 0;
             padding: 15px;
             border: 1px solid #333;
             border-radius: 8px;
+        }
+        .example {
+            margin-top: 8px;
+            color: #999;
+            font-size: 0.9rem;
         }
         #preview-container {
             width: 100%;
@@ -428,7 +390,6 @@
         .status-info {
             line-height: 1.6;
         }
-        /* 倒计时样式 */
         .countdown {
             color: #ff3300;
             font-size: 1.2rem;
@@ -517,34 +478,59 @@
             max-width: 600px;
             display: none;
         }
-        /* 手机适配优化 */
-        @media (max-width: 768px) {
-            .header {
-                width: 95%;
-            }
-            .nav {
-                gap: 10px;
-                width: 100%;
-            }
-            .nav-btn {
-                padding: 6px 12px;
-                font-size: 0.9rem;
-            }
-            #admin-panel, #tool-area, #page-container {
-                width: 95%;
-                padding: 15px;
-            }
-            .tool-item {
-                width: 100%;
-                text-align: center;
-            }
-            .close-modal {
-                width: 35px;
-                height: 35px;
-                font-size: 1rem;
-                top: 10px;
-                right: 10px;
-            }
+        /* 工具独立弹窗（核心：完全隔离网站样式） */
+        .tool-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.95);
+            z-index: 999999;
+            display: none;
+            overflow: auto;
+            padding: 0;
+            margin: 0;
+        }
+        /* 弹窗内工具容器：1:1还原，继承工具自身样式，无任何网站干扰 */
+        .tool-modal-content {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            overflow: auto;
+            /* 关键：禁用网站样式继承，让工具样式100%生效 */
+            all: initial;
+            display: block;
+        }
+        /* 弹窗关闭按钮（独立于工具容器） */
+        .close-modal {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #ff3300;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 9999999;
+            /* 避免被工具样式覆盖 */
+            all: unset;
+            background: #ff3300;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -552,8 +538,9 @@
     <!-- 管理员悬浮导入按钮 -->
     <button class="admin-import-btn" id="admin-import-btn">📤 导入工具</button>
 
+    <!-- 头部导航 -->
     <div class="header">
-        <h1>十方料码 - 3D趋势分析与缩水工具平台</h1>
+        <h1>十方料码 - 3D工具平台</h1>
         <div class="nav">
             <button class="nav-btn" onclick="showHome()">首页</button>
             <button class="nav-btn" onclick="showToolCenter()">工具中心</button>
@@ -562,7 +549,7 @@
         </div>
     </div>
 
-    <!-- 登录/注册模块 -->
+    <!-- 登录/注册面板 -->
     <div id="auth-container">
         <div id="login-panel" class="auth-box">
             <h3>用户登录</h3>
@@ -570,7 +557,7 @@
             <input type="password" id="login-pwd" placeholder="请输入密码">
             <button onclick="login()">登录</button>
             <button class="switch-btn" onclick="switchToRegister()">没有账号？点击注册</button>
-            <div class="tips">请输入您的账号密码登录</div>
+            <div class="tips">管理员账号：十方料码 / 7446265</div>
         </div>
         <div id="register-panel" class="auth-box" style="display:none;">
             <h3>用户注册</h3>
@@ -579,34 +566,34 @@
             <input type="password" id="reg-pwd-confirm" placeholder="请确认密码">
             <button onclick="register()">注册</button>
             <button class="switch-btn" onclick="switchToLogin()">已有账号？点击登录</button>
-            <div class="tips">注册后请联系管理员开通会员</div>
+            <div class="tips">注册后联系管理员开通会员</div>
         </div>
     </div>
 
     <!-- 管理员后台 -->
     <div id="admin-panel">
         <div class="admin-tab">
-            <button class="admin-tab-btn active" onclick="switchAdminTab('user-list')">注册用户名单</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('member-list')">会员名单</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('member-manage')">办理/调整会员</button>
+            <button class="admin-tab-btn active" onclick="switchAdminTab('user-list')">注册用户</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('member-list')">会员列表</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('member-manage')">办理会员</button>
             <button class="admin-tab-btn" onclick="switchAdminTab('ban-manage')">用户封禁</button>
         </div>
         <div id="user-list" class="admin-content active">
-            <h3>所有注册用户名单</h3>
+            <h3>所有注册用户</h3>
             <table class="admin-table">
-                <tr><<th>用户名</</th><<th>注册状态</</th><<th>是否封禁</</th><<th>操作</</th></tr>
+                <tr><<th>用户名</</th><<th>状态</</th><<th>是否封禁</</th><<th>操作</</th></tr>
                 <tbody id="user-list-body"></tbody>
             </table>
         </div>
         <div id="member-list" class="admin-content">
-            <h3>会员明细名单</h3>
+            <h3>会员明细</h3>
             <table class="admin-table">
-                <tr><<th>用户名</</th><<th>会员等级</</th><<th>开通时间</</th><<th>截止时间</</th><<th>剩余天数</</th><<th>状态</</th></tr>
+                <tr><<th>用户名</</th><<th>会员类型</</th><<th>开通时间</</th><<th>截止时间</</th><<th>剩余天数</</th><<th>状态</</th></tr>
                 <tbody id="member-list-body"></tbody>
             </table>
         </div>
         <div id="member-manage" class="admin-content">
-            <h3>会员办理/时长调整</h3>
+            <h3>办理/调整会员</h3>
             <div>
                 <label>目标用户名：</label>
                 <input type="text" id="target-username" placeholder="输入用户名"><br>
@@ -619,13 +606,13 @@
                 </select><br>
                 <label>调整类型：</label>
                 <select id="adjust-type" onchange="toggleAdjustBox()">
-                    <option value="new">新开通会员</option>
-                    <option value="extend">延长会员时长</option>
+                    <option value="new">新开通</option>
+                    <option value="extend">延长时长</option>
                     <option value="modify">修改截止时间</option>
                 </select><br>
                 <div id="extend-day-box" style="display:none;">
                     <label>延长天数：</label>
-                    <input type="number" id="extend-days" placeholder="输入延长天数" min="1"><br>
+                    <input type="number" id="extend-days" placeholder="输入天数" min="1"><br>
                 </div>
                 <div id="modify-time-box" style="display:none;">
                     <label>新截止时间：</label>
@@ -647,40 +634,36 @@
         </div>
     </div>
 
-    <!-- 会员信息提示 -->
+    <!-- 会员提示 -->
     <div id="member-tips"></div>
 
     <!-- 工具中心 -->
     <div id="tool-area">
-        <h2>核心工具平台</h2>
+        <h2>工具中心</h2>
         <div style="margin: 20px 0; padding: 15px; border: 1px solid #333; border-radius: 8px;">
-            <h3>3D伪序趋势分析工具</h3>
-            <p>基于伪序理论，可视化展示数字走势，辅助判断号码规律（会员专属）</p>
-        </div>
-        <div style="margin-top:15px; padding: 15px; border: 1px solid #333; border-radius: 8px;">
-            <h3>多条件缩水工具</h3>
-            <p>支持多维度条件筛选，精准缩小号码范围，提升选号效率（会员专属）</p>
+            <h3>基础3D分析工具</h3>
+            <p>会员专属基础工具（示例）</p>
         </div>
 
-        <!-- 管理员导入模块 -->
+        <!-- 管理员工具导入模块 -->
         <div id="import-module">
-            <h3>HTML文件/代码导入</h3>
+            <h3>导入HTML工具</h3>
             <div style="margin-bottom: 15px;">
                 <input type="file" id="html-file-import" accept=".html,.htm" style="display: none;" onchange="readHtmlFile()">
-                <button class="nav-btn" onclick="document.getElementById('html-file-import').click()">选择本地HTML文件导入</button>
-                <div class="example">支持.html/.htm格式文件</div>
+                <button class="nav-btn" onclick="document.getElementById('html-file-import').click()">选择本地HTML文件</button>
+                <div class="example">支持.html/.htm格式，导入后1:1还原</div>
             </div>
             <div style="margin-bottom: 15px;">
-                <h4 style="margin-bottom: 8px;">或直接粘贴HTML代码</h4>
+                <h4>或粘贴HTML代码</h4>
                 <textarea id="html-code-input" style="width: 100%; height: 150px; background: #222; color: #fff; border: 1px solid #666; border-radius: 4px; padding: 8px;" placeholder="粘贴完整HTML代码"></textarea>
-                <button class="nav-btn" style="margin-top: 8px;" onclick="previewHtmlCode()">预览代码导入</button>
+                <button class="nav-btn" style="margin-top: 8px;" onclick="previewHtmlCode()">预览代码</button>
             </div>
             <div style="margin-bottom: 15px;">
-                <label>工具名称（用户看到的名称）：</label>
+                <label>工具名称：</label>
                 <input type="text" id="tool-name-input" placeholder="如：定位复式大底计算器" style="background: #222; color: #fff; border: 1px solid #666; padding: 8px; border-radius: 4px;">
             </div>
             <div style="margin-top: 15px; display: none;" id="html-import-preview">
-                <h4 style="margin-bottom: 8px; color: #0ff;">导入预览</h4>
+                <h4 style="color: #0ff;">导入预览</h4>
                 <div id="preview-container"></div>
                 <button class="nav-btn" style="margin-top: 10px; margin-right: 10px;" onclick="confirmHtmlImport()">确认导入</button>
                 <button class="nav-btn" style="margin-top: 10px; background: #666;" onclick="hideHtmlPreview()">取消</button>
@@ -689,13 +672,14 @@
 
         <!-- 工具列表 -->
         <div class="tool-list" id="tool-list">
-            <!-- 导入的工具自动生成 -->
+            <div style="color:#999; width:100%; text-align:center; padding:20px;">暂无导入的工具</div>
         </div>
     </div>
 
-    <!-- 工具弹窗（1:1还原核心） -->
+    <!-- 工具独立弹窗（核心） -->
     <div class="tool-modal" id="tool-modal">
         <button class="close-modal" onclick="closeToolModal()">×</button>
+        <!-- 工具容器：all: initial 完全隔离网站样式 -->
         <div class="tool-modal-content" id="tool-modal-content"></div>
     </div>
 
@@ -704,7 +688,7 @@
         <div class="user-center">
             <div class="user-sidebar">
                 <div class="user-profile-card">
-                    <div class="avatar" id="user-avatar">👤</div>
+                    <div class="avatar">👤</div>
                     <div class="user-name" id="user-name">-</div>
                     <span class="user-role" id="user-role">-</span>
                     <div class="user-reg-time" id="user-reg-time">-</div>
@@ -723,9 +707,9 @@
                     </div>
                     <h4 style="margin-bottom: 10px; color: #ff9900;">会员专属权益</h4>
                     <div class="vip-benefit-list">
-                        <div class="benefit-item"><span class="benefit-icon">✅</span><span>无限制使用3D伪序趋势分析工具</span></div>
-                        <div class="benefit-item"><span class="benefit-icon">✅</span><span>解锁多条件缩水工具全功能</span></div>
-                        <div class="benefit-item"><span class="benefit-icon">✅</span><span>使用所有导入的专属工具</span></div>
+                        <div class="benefit-item"><span class="benefit-icon">✅</span><span>无限制使用所有导入工具</span></div>
+                        <div class="benefit-item"><span class="benefit-icon">✅</span><span>工具功能100%还原（含动态计算）</span></div>
+                        <div class="benefit-item"><span class="benefit-icon">✅</span><span>手机端适配优化</span></div>
                         <div class="benefit-item"><span class="benefit-icon">✅</span><span>专属客服支持</span></div>
                     </div>
                 </div>
@@ -738,7 +722,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">昵称</label>
-                            <input type="text" class="form-input" id="edit-nickname" placeholder="请输入昵称（2-10字）">
+                            <input type="text" class="form-input" id="edit-nickname" placeholder="2-10字">
                         </div>
                         <div class="form-group">
                             <label class="form-label">性别</label>
@@ -750,7 +734,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">个性签名</label>
-                            <input type="text" class="form-input" id="edit-signature" placeholder="请输入个性签名（不超过20字）">
+                            <input type="text" class="form-input" id="edit-signature" placeholder="不超过20字">
                         </div>
                         <button type="button" class="save-btn" onclick="saveProfile()">保存修改</button>
                     </form>
@@ -782,17 +766,18 @@
 
     <!-- 未登录提示 -->
     <div class="no-login-tip" id="no-login-tip">
-        <h3>请先登录，查看个人中心内容</h3>
+        <h3>请先登录查看用户中心</h3>
         <button class="nav-btn" onclick="switchToLogin()">立即登录</button>
     </div>
 
     <script>
+        // 全局变量
         let isAdmin = false;
         let loginUser = {};
         let importedTools = JSON.parse(localStorage.getItem('importedTools') || '[]');
         let countdownInterval = null;
 
-        // ===================== 页面基础控制 =====================
+        // ===================== 基础页面切换 =====================
         function showHome() {
             if (Object.keys(loginUser).length === 0) {
                 document.getElementById('auth-container').style.display = 'block';
@@ -806,6 +791,7 @@
                 document.getElementById('no-login-tip').style.display = 'none';
             }
         }
+
         function showToolCenter() {
             if (Object.keys(loginUser).length === 0) {
                 alert('请先登录');
@@ -815,13 +801,17 @@
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('page-container').style.display = 'none';
             document.getElementById('no-login-tip').style.display = 'none';
-            if (isAdmin || JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}').type !== 'none') {
+            
+            const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}');
+            if (isAdmin || memberInfo.type !== 'none') {
                 document.getElementById('tool-area').style.display = 'block';
+                renderToolList(); // 刷新工具列表
             } else {
                 document.getElementById('tool-area').style.display = 'none';
-                alert('需开通会员后使用工具中心');
+                alert('需开通会员使用工具中心');
             }
         }
+
         function showUserCenter() {
             if (Object.keys(loginUser).length === 0) {
                 document.getElementById('auth-container').style.display = 'none';
@@ -837,6 +827,7 @@
             loadUserProfile();
             loadVipStatus();
         }
+
         function switchUserTab(tabId) {
             document.querySelectorAll('.user-nav-item').forEach(item => item.classList.remove('active'));
             document.querySelectorAll('.content-module').forEach(module => module.classList.remove('active'));
@@ -845,20 +836,23 @@
             if (tabId === 'vip-benefit') loadVipStatus();
         }
 
-        // ===================== 登录/注册/退出（核心修复退出） =====================
+        // ===================== 登录/注册/退出 =====================
         function switchToRegister() {
             document.getElementById('login-panel').style.display = 'none';
             document.getElementById('register-panel').style.display = 'block';
         }
+
         function switchToLogin() {
             document.getElementById('register-panel').style.display = 'none';
             document.getElementById('login-panel').style.display = 'block';
         }
+
         function register() {
             const username = document.getElementById('reg-username').value.trim();
             const pwd = document.getElementById('reg-pwd').value.trim();
             const pwdConfirm = document.getElementById('reg-pwd-confirm').value.trim();
-            if (!username || !pwd) { alert('用户名和密码不能为空'); return; }
+            
+            if (!username || !pwd) { alert('用户名/密码不能为空'); return; }
             if (pwd !== pwdConfirm) { alert('两次密码不一致'); return; }
             
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
@@ -867,18 +861,20 @@
             users.push({
                 name: username, pwd: pwd, isBanned: false,
                 registerTime: new Date().toLocaleString(),
-                nickname: username, gender: '未知', signature: '暂无个性签名'
+                nickname: username, gender: '未知', signature: '暂无签名'
             });
             localStorage.setItem('registeredUsers', JSON.stringify(users));
-            alert('注册成功！请联系管理员开通会员');
+            alert('注册成功！联系管理员开通会员');
             switchToLogin();
         }
+
         function login() {
             const username = document.getElementById('login-username').value.trim();
             const pwd = document.getElementById('login-pwd').value.trim();
-            if (!username || !pwd) { alert('请输入用户名和密码'); return; }
+            
+            if (!username || !pwd) { alert('请输入账号密码'); return; }
 
-            // 管理员账号：十方料码 / 7446265
+            // 管理员验证
             isAdmin = username === '十方料码' && pwd === '7446265';
             if (isAdmin) {
                 loginUser = { name: username, isAdmin: true, registerTime: '管理员账号' };
@@ -886,7 +882,7 @@
                 document.getElementById('logout-btn').style.display = 'block';
                 document.getElementById('admin-panel').style.display = 'block';
                 document.getElementById('tool-area').style.display = 'block';
-                document.getElementById('member-tips').innerText = '您是管理员，已解锁所有功能';
+                document.getElementById('member-tips').innerText = '管理员：解锁所有功能';
                 document.getElementById('admin-import-btn').style.display = 'block';
                 document.getElementById('import-module').style.display = 'block';
                 loadUserList();
@@ -898,25 +894,28 @@
             // 普通用户验证
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
             const user = users.find(u => u.name === username && u.pwd === pwd);
-            if (!user) { alert('用户名或密码错误'); return; }
-            if (user.isBanned) { alert('您的账号已被封禁'); return; }
+            
+            if (!user) { alert('账号/密码错误'); return; }
+            if (user.isBanned) { alert('账号已封禁'); return; }
 
             loginUser = { name: username, isAdmin: false, ...user };
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('logout-btn').style.display = 'block';
             document.getElementById('admin-import-btn').style.display = 'none';
             document.getElementById('import-module').style.display = 'none';
+            
             checkMemberStatus();
             renderToolList();
         }
-        // 彻底修复退出登录：重置所有状态+清除定时器+关闭弹窗
+
+        // 修复退出登录（完全重置所有状态）
         function logout() {
-            // 清除倒计时定时器
+            // 清除倒计时
             if (countdownInterval) {
                 clearInterval(countdownInterval);
                 countdownInterval = null;
             }
-            // 重置核心变量
+            // 重置状态
             loginUser = {};
             isAdmin = false;
             // 隐藏所有模块
@@ -930,14 +929,11 @@
             document.getElementById('import-module').style.display = 'none';
             document.getElementById('page-container').style.display = 'none';
             document.getElementById('no-login-tip').style.display = 'none';
-            // 强制关闭工具弹窗
+            // 关闭工具弹窗
             closeToolModal();
-            // 清空输入框（可选，增强体验）
-            document.getElementById('login-username').value = '';
-            document.getElementById('login-pwd').value = '';
         }
 
-        // ===================== 会员相关（含倒计时） =====================
+        // ===================== 会员相关 =====================
         function checkMemberStatus() {
             const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
             const now = new Date();
@@ -945,9 +941,9 @@
 
             if (memberInfo.type !== 'none' && now > endDate) {
                 localStorage.setItem(`member_${loginUser.name}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
-                document.getElementById('member-tips').innerText = '您的会员已到期，恢复为普通用户';
+                document.getElementById('member-tips').innerText = '会员已到期，恢复为普通用户';
                 document.getElementById('tool-area').style.display = 'none';
-                alert('您的会员已到期，需联系管理员续费');
+                alert('会员已到期，请联系管理员续费');
                 return;
             }
 
@@ -955,23 +951,25 @@
                 const leftDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
                 memberInfo.leftDays = leftDays;
                 localStorage.setItem(`member_${loginUser.name}`, JSON.stringify(memberInfo));
-                document.getElementById('member-tips').innerText = `当前会员类型：${getMemberTypeName(memberInfo.type)} | 剩余天数：${leftDays}天`;
+                document.getElementById('member-tips').innerText = `当前${getMemberTypeName(memberInfo.type)}，剩余${leftDays}天`;
                 document.getElementById('tool-area').style.display = 'block';
             } else {
-                document.getElementById('member-tips').innerText = '您当前是普通用户，需联系管理员开通会员';
+                document.getElementById('member-tips').innerText = '普通用户：需开通会员使用工具';
                 document.getElementById('tool-area').style.display = 'none';
-                alert('需办理会员后使用工具中心');
+                alert('请联系管理员开通会员');
             }
         }
+
         function getMemberTypeName(type) {
             switch(type) {
-                case 'day': return '日会员'; 
+                case 'day': return '日会员';
                 case 'week': return '周会员';
-                case 'month': return '月会员'; 
+                case 'month': return '月会员';
                 case 'year': return '年会员';
                 default: return '普通用户';
             }
         }
+
         function calcMemberTime(type) {
             const start = new Date();
             let end = new Date();
@@ -984,6 +982,7 @@
             const leftDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
             return { type, start: start.toLocaleString(), end: end.toLocaleString(), leftDays };
         }
+
         function startCountdown(endTimeStr) {
             const endDate = new Date(endTimeStr);
             const countdownEl = document.getElementById('countdown-display');
@@ -996,38 +995,38 @@
                 
                 if (diff <= 0) {
                     clearInterval(countdownInterval);
-                    countdownInterval = null;
                     countdownEl.innerText = '会员已到期';
                     loadVipStatus();
                     return;
                 }
-                
+
                 const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
                 const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                let text = '';
+                if (months > 0) text += `${months}月`;
+                if (days > 0 || months > 0) text += `${days}天`;
+                text += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                 
-                let countdownText = '';
-                if (months > 0) countdownText += `${months}月`;
-                if (days > 0 || months > 0) countdownText += `${days}天`;
-                countdownText += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                
-                countdownEl.innerText = countdownText;
+                countdownEl.innerText = text;
             }, 1000);
         }
+
         function loadVipStatus() {
             const vipStatusEl = document.getElementById('vip-status');
-            const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+            const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}');
             const now = new Date();
             const endDate = new Date(memberInfo.end);
 
             if (memberInfo.type === 'none') {
                 vipStatusEl.innerHTML = `
                     <div class="status-info">
-                        <p>当前身份：普通用户</p>
+                        <p>身份：普通用户</p>
                         <p>会员状态：未开通</p>
-                        <p>提示：联系管理员开通会员后，可解锁所有工具功能</p>
+                        <p>提示：开通会员后解锁所有工具</p>
                     </div>
                 `;
                 return;
@@ -1036,11 +1035,11 @@
             if (now > endDate) {
                 vipStatusEl.innerHTML = `
                     <div class="status-info">
-                        <p>当前身份：${getMemberTypeName(memberInfo.type)}（已到期）</p>
+                        <p>身份：${getMemberTypeName(memberInfo.type)}（已到期）</p>
                         <p>开通时间：${memberInfo.start}</p>
                         <p>截止时间：${memberInfo.end}</p>
                         <p class="countdown" id="countdown-display">会员已到期</p>
-                        <button class="renew-btn" onclick="alert('请联系管理员续费')">立即续费</button>
+                        <button class="renew-btn" onclick="alert('联系管理员续费')">立即续费</button>
                     </div>
                 `;
                 return;
@@ -1048,11 +1047,11 @@
 
             vipStatusEl.innerHTML = `
                 <div class="status-info">
-                    <p>当前身份：${getMemberTypeName(memberInfo.type)}（有效）</p>
+                    <p>身份：${getMemberTypeName(memberInfo.type)}（有效）</p>
                     <p>开通时间：${memberInfo.start}</p>
                     <p>截止时间：${memberInfo.end}</p>
                     <p>剩余时长：<span class="countdown" id="countdown-display"></span></p>
-                    <button class="renew-btn" onclick="alert('请联系管理员续费')">续费会员</button>
+                    <button class="renew-btn" onclick="alert('联系管理员续费')">续费会员</button>
                 </div>
             `;
             startCountdown(memberInfo.end);
@@ -1060,25 +1059,30 @@
 
         // ===================== 管理员后台 =====================
         function switchAdminTab(tabId) {
-            const targetBtn = event.target;
             document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
-            targetBtn.classList.add('active');
+            event.target.classList.add('active');
             document.querySelectorAll('.admin-content').forEach(cont => cont.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             if (tabId === 'user-list') loadUserList();
             if (tabId === 'member-list') loadMemberList();
         }
+
         function toggleAdjustBox() {
             const type = document.getElementById('adjust-type').value;
             document.getElementById('extend-day-box').style.display = type === 'extend' ? 'block' : 'none';
             document.getElementById('modify-time-box').style.display = type === 'modify' ? 'block' : 'none';
         }
+
         function loadUserList() {
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
             const tbody = document.getElementById('user-list-body');
             tbody.innerHTML = '';
-            if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="4">暂无注册用户</td></tr>'; return; }
             
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">暂无注册用户</td></tr>';
+                return;
+            }
+
             users.forEach(user => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -1094,6 +1098,7 @@
                 tbody.appendChild(tr);
             });
         }
+
         function loadMemberList() {
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
             const tbody = document.getElementById('member-list-body');
@@ -1120,20 +1125,28 @@
                 }
             });
 
-            if (!hasMember) { tbody.innerHTML = '<tr><td colspan="6">暂无会员用户</td></tr>'; }
+            if (!hasMember) {
+                tbody.innerHTML = '<tr><td colspan="6">暂无会员用户</td></tr>';
+            }
         }
-        // 完整修复handleMember函数（无断点）
+
+        // 完整的会员办理/调整函数（修复所有语法错误）
         function handleMember() {
             if (!isAdmin) { alert('无管理员权限'); return; }
             const username = document.getElementById('target-username').value.trim();
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-            if (!username || !users.some(u => u.name === username)) { alert('用户名不存在'); return; }
+            
+            if (!username || !users.some(u => u.name === username)) {
+                alert('用户名不存在');
+                return;
+            }
 
             const adjustType = document.getElementById('adjust-type').value;
             const memberType = document.getElementById('member-type').value;
             let memberInfo = JSON.parse(localStorage.getItem(`member_${username}`) || '{"type":"none"}');
             let resultText = '';
 
+            // 新开通会员
             if (adjustType === 'new') {
                 const newMember = calcMemberTime(memberType);
                 localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
@@ -1142,26 +1155,40 @@
 截止时间：${newMember.end}
 剩余天数：${newMember.leftDays}天`;
             }
+
+            // 延长会员时长
             if (adjustType === 'extend') {
                 const extendDays = parseInt(document.getElementById('extend-days').value);
-                if (isNaN(extendDays) || extendDays < 1) { alert('请输入有效的延长天数'); return; }
+                if (isNaN(extendDays) || extendDays < 1) {
+                    alert('请输入有效的延长天数');
+                    return;
+                }
+
                 const now = new Date();
                 let endDate = memberInfo.type === 'none' ? now : new Date(memberInfo.end);
                 endDate.setDate(endDate.getDate() + extendDays);
+
                 const newMember = {
                     type: memberInfo.type === 'none' ? memberType : memberInfo.type,
                     start: memberInfo.start || now.toLocaleString(),
                     end: endDate.toLocaleString(),
                     leftDays: Math.ceil((endDate - now) / (1000 * 60 * 60 * 24))
                 };
+
                 localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
                 resultText = `✅ 为${username}延长${extendDays}天会员
 新截止时间：${newMember.end}
 剩余天数：${newMember.leftDays}天`;
             }
+
+            // 修改截止时间
             if (adjustType === 'modify') {
                 const newEndTime = document.getElementById('new-end-time').value;
-                if (!newEndTime) { alert('请选择新的截止时间'); return; }
+                if (!newEndTime) {
+                    alert('请选择新的截止时间');
+                    return;
+                }
+
                 const endDate = new Date(newEndTime);
                 const now = new Date();
                 const newMember = {
@@ -1170,8 +1197,9 @@
                     end: endDate.toLocaleString(),
                     leftDays: Math.ceil((endDate - now) / (1000 * 60 * 60 * 24))
                 };
+
                 localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
-                resultText = `✅ 已修改${username}会员截止时间
+                resultText = `✅ 修改${username}会员截止时间
 新截止时间：${newMember.end}
 剩余天数：${newMember.leftDays}天`;
             }
@@ -1179,41 +1207,52 @@
             document.getElementById('member-result').innerText = resultText;
             loadMemberList();
         }
-        function banUser(username) {
+
+        function banUser() {
             if (!isAdmin) { alert('无管理员权限'); return; }
-            const targetName = username || document.getElementById('ban-username').value.trim();
-            if (!targetName) { alert('请输入要封禁的用户名'); return; }
-            
+            const username = document.getElementById('ban-username').value.trim();
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-            const userIndex = users.findIndex(u => u.name === targetName);
-            if (userIndex === -1) { alert('用户名不存在'); return; }
+            const index = users.findIndex(u => u.name === username);
             
-            users[userIndex].isBanned = true;
+            if (index === -1) {
+                alert('用户名不存在');
+                return;
+            }
+
+            users[index].isBanned = true;
             localStorage.setItem('registeredUsers', JSON.stringify(users));
-            document.getElementById('ban-result').innerText = `✅ 已封禁用户：${targetName}`;
-            loadUserList();
-        }
-        function unbanUser(username) {
-            if (!isAdmin) { alert('无管理员权限'); return; }
-            const targetName = username || document.getElementById('ban-username').value.trim();
-            if (!targetName) { alert('请输入要解封的用户名'); return; }
-            
-            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-            const userIndex = users.findIndex(u => u.name === targetName);
-            if (userIndex === -1) { alert('用户名不存在'); return; }
-            
-            users[userIndex].isBanned = false;
-            localStorage.setItem('registeredUsers', JSON.stringify(users));
-            document.getElementById('ban-result').innerText = `✅ 已解封用户：${targetName}`;
+            document.getElementById('ban-result').innerText = `✅ 已封禁用户：${username}`;
             loadUserList();
         }
 
-        // ===================== 工具导入+1:1弹窗（核心） =====================
+        function unbanUser() {
+            if (!isAdmin) { alert('无管理员权限'); return; }
+            const username = document.getElementById('ban-username').value.trim();
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const index = users.findIndex(u => u.name === username);
+            
+            if (index === -1) {
+                alert('用户名不存在');
+                return;
+            }
+
+            users[index].isBanned = false;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            document.getElementById('ban-result').innerText = `✅ 已解封用户：${username}`;
+            loadUserList();
+        }
+
+        // ===================== 工具导入/弹窗（核心：1:1还原） =====================
         function readHtmlFile() {
             const fileInput = document.getElementById('html-file-import');
             const file = fileInput.files[0];
+            
             if (!file) return;
-            if (file.size > 1 * 1024 * 1024) { alert('文件过大，最大支持1MB'); fileInput.value = ''; return; }
+            if (file.size > 1 * 1024 * 1024) {
+                alert('文件过大（最大1MB）');
+                fileInput.value = '';
+                return;
+            }
 
             const reader = new FileReader();
             reader.readAsText(file, 'utf-8');
@@ -1222,43 +1261,59 @@
                 showHtmlPreview(htmlContent);
                 fileInput.value = '';
             };
-            reader.onerror = function() { alert('文件读取失败'); };
+            reader.onerror = function() {
+                alert('文件读取失败');
+            };
         }
+
         function previewHtmlCode() {
             const code = document.getElementById('html-code-input').value.trim();
-            if (!code) { alert('请粘贴HTML代码'); return; }
+            if (!code) {
+                alert('请粘贴HTML代码');
+                return;
+            }
             showHtmlPreview(code);
         }
+
         function showHtmlPreview(content) {
             const previewContainer = document.getElementById('preview-container');
+            // 仅预览body内容（过滤script避免执行）
             const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
             const previewContent = bodyMatch ? bodyMatch[1] : content;
-            previewContainer.innerHTML = previewContent.replace(/<script[\s\S]*?<\/script>/gi, '[脚本内容已过滤，导入后正常运行]');
+            previewContainer.innerHTML = previewContent.replace(/<script[\s\S]*?<\/script>/gi, '[脚本内容已过滤]');
+            
             localStorage.setItem('tempHtmlImportContent', content);
             document.getElementById('html-import-preview').style.display = 'block';
         }
+
         function hideHtmlPreview() {
             document.getElementById('html-import-preview').style.display = 'none';
             document.getElementById('html-code-input').value = '';
             localStorage.removeItem('tempHtmlImportContent');
         }
+
         function confirmHtmlImport() {
             const content = localStorage.getItem('tempHtmlImportContent');
             const toolName = document.getElementById('tool-name-input').value.trim();
+            
             if (!content) { alert('无导入内容'); return; }
             if (!toolName) { alert('请输入工具名称'); return; }
 
+            // 生成唯一ID
             const toolId = Date.now().toString();
             importedTools.push({ id: toolId, name: toolName, content: content });
             localStorage.setItem('importedTools', JSON.stringify(importedTools));
+            
             renderToolList();
-            alert(`✅ 工具「${toolName}」导入成功！用户可在工具列表点击打开`);
+            alert(`✅ 工具「${toolName}」导入成功！`);
             hideHtmlPreview();
             document.getElementById('tool-name-input').value = '';
         }
+
         function renderToolList() {
             const toolList = document.getElementById('tool-list');
             toolList.innerHTML = '';
+            
             if (importedTools.length === 0) {
                 toolList.innerHTML = '<div style="color:#999; width:100%; text-align:center; padding:20px;">暂无导入的工具</div>';
                 return;
@@ -1272,7 +1327,8 @@
                 toolList.appendChild(toolItem);
             });
         }
-        // 核心：1:1打开工具弹窗（完全还原，无样式干扰）
+
+        // 核心：打开工具弹窗（1:1还原，完全隔离网站样式）
         function openToolModal(toolId) {
             const tool = importedTools.find(t => t.id === toolId);
             if (!tool) return;
@@ -1280,37 +1336,44 @@
             const modal = document.getElementById('tool-modal');
             const modalContent = document.getElementById('tool-modal-content');
             
-            // 1:1插入原HTML内容（完全不修改）
+            // 1. 清空原有内容
+            modalContent.innerHTML = '';
+            // 2. 写入完整工具HTML（含head/body，1:1还原）
             modalContent.innerHTML = tool.content;
-            
-            // 重新执行脚本（保证工具功能正常）
+            // 3. 重新执行工具内的所有script（解决动态功能失效）
             const scripts = modalContent.querySelectorAll('script');
             scripts.forEach(oldScript => {
                 const newScript = document.createElement('script');
-                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                // 复制所有属性
+                Array.from(oldScript.attributes).forEach(attr => {
+                    newScript.setAttribute(attr.name, attr.value);
+                });
+                // 复制脚本内容
                 newScript.textContent = oldScript.textContent;
+                // 替换旧脚本（触发执行）
                 oldScript.parentNode.replaceChild(newScript, oldScript);
             });
-            
-            // 显示弹窗（适配手机）
-            modal.style.display = 'flex';
-            // 强制滚动到顶部（手机体验优化）
-            modalContent.scrollTop = 0;
+            // 4. 显示弹窗
+            modal.style.display = 'block';
+            // 适配手机屏幕：设置视口（继承工具自身的viewport）
+            modalContent.style.width = '100%';
+            modalContent.style.height = '100%';
         }
+
         function closeToolModal() {
             const modal = document.getElementById('tool-modal');
             const modalContent = document.getElementById('tool-modal-content');
             modal.style.display = 'none';
-            modalContent.innerHTML = '';
+            modalContent.innerHTML = ''; // 清空避免内存占用
         }
 
         // ===================== 用户中心 =====================
         function loadUserProfile() {
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-            const currentUser = users.find(u => u.name === loginUser.name) || loginUser;
+            const user = users.find(u => u.name === loginUser.name) || loginUser;
             
-            document.getElementById('user-name').innerText = currentUser.nickname || currentUser.name;
-            document.getElementById('user-reg-time').innerText = `注册时间：${currentUser.registerTime || new Date().toLocaleString()}`;
+            document.getElementById('user-name').innerText = user.nickname || user.name;
+            document.getElementById('user-reg-time').innerText = `注册时间：${user.registerTime || '未知'}`;
             
             if (isAdmin) {
                 document.getElementById('user-role').className = 'user-role role-admin';
@@ -1326,45 +1389,64 @@
                 }
             }
 
-            document.getElementById('edit-username').value = currentUser.name;
-            document.getElementById('edit-nickname').value = currentUser.nickname || currentUser.name;
-            document.getElementById('edit-gender').value = currentUser.gender || '未知';
-            document.getElementById('edit-signature').value = currentUser.signature || '暂无个性签名';
+            document.getElementById('edit-username').value = user.name;
+            document.getElementById('edit-nickname').value = user.nickname || user.name;
+            document.getElementById('edit-gender').value = user.gender || '未知';
+            document.getElementById('edit-signature').value = user.signature || '暂无签名';
         }
+
         function saveProfile() {
             const nickname = document.getElementById('edit-nickname').value.trim();
             const gender = document.getElementById('edit-gender').value;
             const signature = document.getElementById('edit-signature').value.trim();
             
-            if (!nickname || nickname.length < 2 || nickname.length > 10) { alert('昵称需2-10字'); return; }
-            if (signature.length > 20) { alert('个性签名不超过20字'); return; }
+            if (!nickname || nickname.length < 2 || nickname.length > 10) {
+                alert('昵称需2-10字');
+                return;
+            }
+            if (signature.length > 20) {
+                alert('个性签名不超过20字');
+                return;
+            }
 
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-            const userIndex = users.findIndex(u => u.name === loginUser.name);
-            if (userIndex !== -1) {
-                users[userIndex].nickname = nickname;
-                users[userIndex].gender = gender;
-                users[userIndex].signature = signature;
+            const index = users.findIndex(u => u.name === loginUser.name);
+            
+            if (index !== -1) {
+                users[index].nickname = nickname;
+                users[index].gender = gender;
+                users[index].signature = signature;
                 localStorage.setItem('registeredUsers', JSON.stringify(users));
                 loginUser.nickname = nickname;
                 document.getElementById('user-name').innerText = nickname;
                 alert('资料保存成功');
             }
         }
+
         function changePassword() {
             const oldPwd = prompt('请输入原密码');
             if (!oldPwd) return;
-            
+
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-            const userIndex = users.findIndex(u => u.name === loginUser.name);
-            if (userIndex === -1 || users[userIndex].pwd !== oldPwd) { alert('原密码错误'); return; }
+            const index = users.findIndex(u => u.name === loginUser.name);
+            
+            if (index === -1 || users[index].pwd !== oldPwd) {
+                alert('原密码错误');
+                return;
+            }
 
             const newPwd = prompt('请输入新密码（至少6位）');
-            if (!newPwd || newPwd.length < 6) { alert('新密码需至少6位'); return; }
+            if (!newPwd || newPwd.length < 6) {
+                alert('新密码至少6位');
+                return;
+            }
             const confirmPwd = prompt('请确认新密码');
-            if (newPwd !== confirmPwd) { alert('两次密码不一致'); return; }
+            if (newPwd !== confirmPwd) {
+                alert('两次密码不一致');
+                return;
+            }
 
-            users[userIndex].pwd = newPwd;
+            users[index].pwd = newPwd;
             localStorage.setItem('registeredUsers', JSON.stringify(users));
             alert('密码修改成功，请重新登录');
             logout();
@@ -1372,16 +1454,18 @@
 
         // ===================== 页面初始化 =====================
         window.onload = function() {
+            // 初始化调整类型弹窗
             toggleAdjustBox();
+            // 渲染工具列表
             renderToolList();
-            // 绑定导入按钮点击滚动
+            // 绑定导入按钮点击事件
             document.getElementById('admin-import-btn').onclick = function() {
                 document.getElementById('tool-area').style.display = 'block';
                 document.getElementById('import-module').scrollIntoView({ behavior: 'smooth' });
             };
-            // 手机适配：禁止弹窗缩放
-            document.getElementById('tool-modal-content').addEventListener('touchstart', function(e) {
-                if (e.touches.length > 1) e.preventDefault();
+            // 阻止弹窗滚动穿透
+            document.getElementById('tool-modal').addEventListener('touchmove', function(e) {
+                e.preventDefault();
             }, { passive: false });
         };
     </script>

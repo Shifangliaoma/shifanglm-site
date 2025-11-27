@@ -182,96 +182,34 @@
             padding: 15px 20px;
             cursor: pointer;
             transition: all 0.2s ease;
-            position: relative;
         }
         .tool-item:hover {
             background: #0066cc;
             transform: scale(1.05);
         }
-        /* 工具操作弹窗（修改名称/删除） */
-        .tool-operate-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.9);
-            z-index: 999999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-        }
-        .tool-operate-content {
-            background: #222;
-            border: 1px solid #0ff;
-            border-radius: 8px;
-            padding: 20px;
-            width: 90%;
-            max-width: 300px;
-            text-align: center;
-        }
-        .operate-title {
-            color: #0ff;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-        .operate-input {
-            width: 100%;
-            padding: 10px;
-            background: #333;
-            color: #fff;
-            border: 1px solid #666;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-        .operate-btn-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        .operate-btn {
-            padding: 8px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn-confirm {
-            background: #0066cc;
-            color: #fff;
-        }
-        .btn-delete {
-            background: #ff3300;
-            color: #fff;
-        }
-        .btn-cancel {
-            background: #666;
-            color: #fff;
-        }
-        /* 工具弹窗样式（全屏遮罩，弹窗内1:1显示工具） */
+        /* 工具弹窗样式（iframe沙箱运行，1:1还原原生环境） */
         .tool-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             z-index: 99999;
             display: none;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             padding: 10px;
+            overflow-y: auto;
         }
-        .tool-modal-content {
-            background: transparent;
+        .tool-modal-iframe {
+            width: 100%;
+            height: 100%;
             border: none;
-            padding: 0;
-            margin: 0;
-            width: auto;
-            height: auto;
-            max-width: 100%;
-            max-height: 100%;
-            overflow: auto;
+            background: #fff;
+            /* 还原工具原生尺寸（适配移动端） */
+            max-width: 750px;
+            min-height: 100vh;
         }
         .close-modal {
             position: fixed;
@@ -340,7 +278,7 @@
             font-size: 0.9rem;
         }
         #import-module {
-            display: none; /* 导入模块默认隐藏，仅管理员可见 */
+            display: none; /* 导入模块默认隐藏，仅管理员显示 */
             margin: 20px 0;
             padding: 15px;
             border: 1px solid #333;
@@ -715,7 +653,6 @@
             <div style="margin-bottom: 15px;">
                 <h4 style="margin-bottom: 8px;">或直接粘贴HTML代码</h4>
                 <textarea id="html-code-input" style="width: 100%; height: 150px; background: #222; color: #fff; border: 1px solid #666; border-radius: 4px; padding: 8px;" placeholder="粘贴完整HTML代码"></textarea>
-                <button class="nav-btn" style="margin-top: 8px;" onclick="previewHtmlCode()">预览代码导入</button>
             </div>
             <div style="margin-bottom: 15px;">
                 <label>工具名称（用户看到的名称）：</label>
@@ -735,23 +672,10 @@
         </div>
     </div>
 
-    <!-- 工具弹窗（独立显示，完全保留原样式） -->
+    <!-- 工具弹窗（iframe沙箱运行） -->
     <div class="tool-modal" id="tool-modal">
         <button class="close-modal" onclick="closeToolModal()">×</button>
-        <div class="tool-modal-content" id="tool-modal-content"></div>
-    </div>
-
-    <!-- 工具操作弹窗（修改名称/删除工具） -->
-    <div class="tool-operate-modal" id="tool-operate-modal">
-        <div class="tool-operate-content">
-            <div class="operate-title" id="operate-modal-title">操作工具</div>
-            <input type="text" class="operate-input" id="new-tool-name" placeholder="输入新的工具名称">
-            <div class="operate-btn-group">
-                <button class="operate-btn btn-confirm" onclick="confirmModifyToolName()">确认修改</button>
-                <button class="operate-btn btn-delete" onclick="confirmDeleteTool()">删除工具</button>
-                <button class="operate-btn btn-cancel" onclick="closeToolOperateModal()">取消</button>
-            </div>
-        </div>
+        <iframe class="tool-modal-iframe" id="tool-modal-iframe" src="about:blank"></iframe>
     </div>
 
     <!-- 用户中心 -->
@@ -846,11 +770,9 @@
         let loginUser = {};
         let importedTools = JSON.parse(localStorage.getItem('importedTools') || '[]');
         let countdownInterval = null; // 倒计时定时器
-        let currentOperateToolId = ''; // 当前操作的工具ID
 
         // ===================== 页面基础切换 =====================
         function showHome() {
-            // 首页逻辑：未登录显示登录面板，已登录显示会员提示+工具中心入口
             if (Object.keys(loginUser).length === 0) {
                 document.getElementById('auth-container').style.display = 'block';
                 document.getElementById('tool-area').style.display = 'none';
@@ -872,7 +794,6 @@
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('page-container').style.display = 'none';
             document.getElementById('no-login-tip').style.display = 'none';
-            // 会员/管理员显示工具中心，普通用户提示开通会员
             if (isAdmin || JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}').type !== 'none') {
                 document.getElementById('tool-area').style.display = 'block';
             } else {
@@ -892,9 +813,7 @@
             document.getElementById('tool-area').style.display = 'none';
             document.getElementById('no-login-tip').style.display = 'none';
             document.getElementById('page-container').style.display = 'block';
-            // 加载用户信息
             loadUserProfile();
-            // 加载会员状态（含倒计时）
             loadVipStatus();
         }
         function switchUserTab(tabId) {
@@ -902,7 +821,6 @@
             document.querySelectorAll('.content-module').forEach(module => module.classList.remove('active'));
             event.target.classList.add('active');
             document.getElementById(tabId).classList.add('active');
-            // 切换到会员权益时刷新倒计时
             if (tabId === 'vip-benefit') loadVipStatus();
         }
 
@@ -939,15 +857,10 @@
             const pwd = document.getElementById('login-pwd').value.trim();
             if (!username || !pwd) { alert('请输入用户名和密码'); return; }
 
-            // 管理员验证（默认账号：十方料码，密码：7446265）
+            // 管理员验证（账号：十方料码，密码：7446265）
             isAdmin = username === '十方料码' && pwd === '7446265';
             if (isAdmin) {
-                loginUser = { 
-                    name: username, 
-                    isAdmin: true, 
-                    registerTime: '管理员账号',
-                    memberType: 'admin' // 新增字段，避免权限判断异常
-                };
+                loginUser = { name: username, isAdmin: true, registerTime: '管理员账号' };
                 document.getElementById('auth-container').style.display = 'none';
                 document.getElementById('logout-btn').style.display = 'block';
                 document.getElementById('admin-panel').style.display = 'block';
@@ -972,22 +885,16 @@
             document.getElementById('logout-btn').style.display = 'block';
             document.getElementById('admin-import-btn').style.display = 'none';
             document.getElementById('import-module').style.display = 'none';
-            // 检查会员状态
             checkMemberStatus();
-            // 渲染工具列表
             renderToolList();
         }
-        // 修复退出登录功能（清除定时器+重置所有状态）
         function logout() {
-            // 清除倒计时定时器
             if (countdownInterval) {
                 clearInterval(countdownInterval);
                 countdownInterval = null;
             }
-            // 重置用户状态
             loginUser = {};
             isAdmin = false;
-            // 隐藏所有功能模块
             document.getElementById('auth-container').style.display = 'block';
             document.getElementById('login-panel').style.display = 'block';
             document.getElementById('logout-btn').style.display = 'none';
@@ -998,9 +905,7 @@
             document.getElementById('import-module').style.display = 'none';
             document.getElementById('page-container').style.display = 'none';
             document.getElementById('no-login-tip').style.display = 'none';
-            // 关闭工具弹窗（若打开）
             closeToolModal();
-            closeToolOperateModal();
         }
 
         // ===================== 会员相关（含倒计时） =====================
@@ -1010,7 +915,6 @@
             const endDate = new Date(memberInfo.end);
 
             if (memberInfo.type !== 'none' && now > endDate) {
-                // 会员已到期
                 localStorage.setItem(`member_${loginUser.name}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
                 document.getElementById('member-tips').innerText = '您的会员已到期，恢复为普通用户';
                 document.getElementById('tool-area').style.display = 'none';
@@ -1019,14 +923,12 @@
             }
 
             if (memberInfo.type !== 'none') {
-                // 会员有效
                 const leftDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
                 memberInfo.leftDays = leftDays;
                 localStorage.setItem(`member_${loginUser.name}`, JSON.stringify(memberInfo));
                 document.getElementById('member-tips').innerText = `当前会员类型：${getMemberTypeName(memberInfo.type)} | 剩余天数：${leftDays}天`;
                 document.getElementById('tool-area').style.display = 'block';
             } else {
-                // 非会员
                 document.getElementById('member-tips').innerText = '您当前是普通用户，需联系管理员开通会员';
                 document.getElementById('tool-area').style.display = 'none';
                 alert('需办理会员后使用工具中心');
@@ -1041,37 +943,42 @@
                 default: return '普通用户';
             }
         }
-        // 实时倒计时函数（月/天/时/分/秒）
+        function calcMemberTime(type) {
+            const start = new Date();
+            let end = new Date();
+            switch(type) {
+                case 'day': end.setHours(start.getHours() + 24); break;
+                case 'week': end.setDate(start.getDate() + 7); break;
+                case 'month': end.setDate(start.getDate() + 30); break;
+                case 'year': end.setFullYear(start.getFullYear() + 1); break;
+            }
+            const leftDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            return { type, start: start.toLocaleString(), end: end.toLocaleString(), leftDays };
+        }
         function startCountdown(endTimeStr) {
             const endDate = new Date(endTimeStr);
             const countdownEl = document.getElementById('countdown-display');
             
-            // 清除已有定时器
             if (countdownInterval) clearInterval(countdownInterval);
             
-            // 每秒更新一次
             countdownInterval = setInterval(() => {
                 const now = new Date();
                 const diff = endDate - now;
                 
                 if (diff <= 0) {
-                    // 倒计时结束
                     clearInterval(countdownInterval);
                     countdownInterval = null;
                     countdownEl.innerText = '会员已到期';
-                    // 刷新会员状态
                     loadVipStatus();
                     return;
                 }
                 
-                // 计算月（按30天估算）、天、时、分、秒
                 const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
                 const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
                 
-                // 拼接倒计时文本（只显示非零部分，补零优化）
                 let countdownText = '';
                 if (months > 0) countdownText += `${months}月`;
                 if (days > 0 || months > 0) countdownText += `${days}天`;
@@ -1080,7 +987,6 @@
                 countdownEl.innerText = countdownText;
             }, 1000);
         }
-        // 加载用户中心的会员状态（含倒计时）
         function loadVipStatus() {
             const vipStatusEl = document.getElementById('vip-status');
             const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
@@ -1099,7 +1005,6 @@
             }
 
             if (now > endDate) {
-                // 会员已到期
                 vipStatusEl.innerHTML = `
                     <div class="status-info">
                         <p>当前身份：${getMemberTypeName(memberInfo.type)}（已到期）</p>
@@ -1112,7 +1017,6 @@
                 return;
             }
 
-            // 会员有效，显示倒计时
             vipStatusEl.innerHTML = `
                 <div class="status-info">
                     <p>当前身份：${getMemberTypeName(memberInfo.type)}（有效）</p>
@@ -1122,7 +1026,6 @@
                     <button class="renew-btn" onclick="alert('请联系管理员续费')">续费会员</button>
                 </div>
             `;
-            // 启动倒计时
             startCountdown(memberInfo.end);
         }
 
@@ -1175,117 +1078,107 @@
                     const now = new Date();
                     const endDate = new Date(memberInfo.end);
                     const leftDays = now > endDate ? 0 : Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
-                    const status = now > endDate ? '已到期' : '正常';
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${user.name}</td>
                         <td>${getMemberTypeName(memberInfo.type)}</td>
                         <td>${memberInfo.start}</td>
                         <td>${memberInfo.end}</td>
-                        <td>${leftDays}</td>
-                        <td>${status}</td>
+                        <td>${leftDays}天</td>
+                        <td>${leftDays > 0 ? '有效' : '已到期'}</td>
                     `;
                     tbody.appendChild(tr);
                 }
             });
 
-            if (!hasMember) {
-                tbody.innerHTML = '<tr><td colspan="6">暂无会员数据</td></tr>';
-            }
+            if (!hasMember) { tbody.innerHTML = '<tr><td colspan="6">暂无会员用户</td></tr>'; }
         }
         function handleMember() {
+            if (!isAdmin) { alert('无管理员权限'); return; }
             const username = document.getElementById('target-username').value.trim();
-            const memberType = document.getElementById('member-type').value;
-            const adjustType = document.getElementById('adjust-type').value;
-            const resultEl = document.getElementById('member-result');
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-            const user = users.find(u => u.name === username);
+            if (!username || !users.some(u => u.name === username)) { alert('用户名不存在'); return; }
 
-            if (!username) {
-                resultEl.innerText = '请输入目标用户名';
-                return;
-            }
-            if (!user) {
-                resultEl.innerText = '该用户未注册';
-                return;
-            }
-
-            const now = new Date();
-            let memberInfo = JSON.parse(localStorage.getItem(`member_${username}`) || '{"type":"none","start":"","end":""}');
+            const adjustType = document.getElementById('adjust-type').value;
+            const memberType = document.getElementById('member-type').value;
+            let memberInfo = JSON.parse(localStorage.getItem(`member_${username}`) || '{"type":"none"}');
+            let resultText = '';
 
             if (adjustType === 'new') {
-                const start = now.toLocaleString();
-                let end = new Date();
-                end.setDate(end.getDate() + (memberType === 'day' ? 1 : memberType === 'week' ? 7 : memberType === 'month' ? 30 : 365));
-                memberInfo = { type: memberType, start, end: end.toLocaleString() };
-            } else if (adjustType === 'extend') {
-                if (memberInfo.type === 'none') {
-                    resultEl.innerText = '该用户未开通会员，无法延长时长';
-                    return;
-                }
+                const newMember = calcMemberTime(memberType);
+                localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
+                resultText = `✅ 为${username}新开通${getMemberTypeName(memberType)}
+开通时间：${newMember.start}
+截止时间：${newMember.end}
+剩余天数：${newMember.leftDays}天`;
+            }
+            if (adjustType === 'extend') {
                 const extendDays = parseInt(document.getElementById('extend-days').value);
-                if (isNaN(extendDays) || extendDays < 1) {
-                    resultEl.innerText = '请输入有效的延长天数';
-                    return;
-                }
-                const end = new Date(memberInfo.end);
-                end.setDate(end.getDate() + extendDays);
-                memberInfo.end = end.toLocaleString();
-            } else if (adjustType === 'modify') {
-                const newEnd = document.getElementById('new-end-time').value;
-                if (!newEnd) {
-                    resultEl.innerText = '请选择新的截止时间';
-                    return;
-                }
-                memberInfo.end = new Date(newEnd).toLocaleString();
+                if (isNaN(extendDays) || extendDays < 1) { alert('请输入有效的延长天数'); return; }
+                const now = new Date();
+                let endDate = memberInfo.type === 'none' ? now : new Date(memberInfo.end);
+                endDate.setDate(endDate.getDate() + extendDays);
+                const newMember = {
+                    type: memberInfo.type === 'none' ? memberType : memberInfo.type,
+                    start: memberInfo.start || now.toLocaleString(),
+                    end: endDate.toLocaleString(),
+                    leftDays: Math.ceil((endDate - now) / (1000 * 60 * 60 * 24))
+                };
+                localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
+                resultText = `✅ 为${username}延长${extendDays}天会员
+新截止时间：${newMember.end}
+剩余天数：${newMember.leftDays}天`;
+            }
+            if (adjustType === 'modify') {
+                const newEndTime = document.getElementById('new-end-time').value;
+                if (!newEndTime) { alert('请选择新的截止时间'); return; }
+                const endDate = new Date(newEndTime);
+                const now = new Date();
+                const newMember = {
+                    type: memberInfo.type === 'none' ? memberType : memberInfo.type,
+                    start: memberInfo.start || now.toLocaleString(),
+                    end: endDate.toLocaleString(),
+                    leftDays: Math.ceil((endDate - now) / (1000 * 60 * 60 * 24))
+                };
+                localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
+                resultText = `✅ 已修改${username}会员截止时间
+新截止时间：${newMember.end}
+剩余天数：${newMember.leftDays}天`;
             }
 
-            localStorage.setItem(`member_${username}`, JSON.stringify(memberInfo));
-            resultEl.innerText = '操作成功！';
+            document.getElementById('member-result').innerText = resultText;
             loadMemberList();
         }
-        function banUser(targetName) {
-            const username = targetName || document.getElementById('ban-username').value.trim();
-            const resultEl = document.getElementById('ban-result');
+        function banUser(username) {
+            if (!isAdmin) { alert('无管理员权限'); return; }
+            const targetName = username || document.getElementById('ban-username').value.trim();
+            if (!targetName) { alert('请输入要封禁的用户名'); return; }
+            
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-            const userIndex = users.findIndex(u => u.name === username);
-
-            if (!username) {
-                resultEl.innerText = '请输入目标用户名';
-                return;
-            }
-            if (userIndex === -1) {
-                resultEl.innerText = '该用户未注册';
-                return;
-            }
-
+            const userIndex = users.findIndex(u => u.name === targetName);
+            if (userIndex === -1) { alert('用户名不存在'); return; }
+            
             users[userIndex].isBanned = true;
             localStorage.setItem('registeredUsers', JSON.stringify(users));
-            resultEl.innerText = `已封禁用户：${username}`;
+            document.getElementById('ban-result').innerText = `✅ 已封禁用户：${targetName}`;
             loadUserList();
         }
-        function unbanUser(targetName) {
-            const username = targetName || document.getElementById('ban-username').value.trim();
-            const resultEl = document.getElementById('ban-result');
+        function unbanUser(username) {
+            if (!isAdmin) { alert('无管理员权限'); return; }
+            const targetName = username || document.getElementById('ban-username').value.trim();
+            if (!targetName) { alert('请输入要解封的用户名'); return; }
+            
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-            const userIndex = users.findIndex(u => u.name === username);
-
-            if (!username) {
-                resultEl.innerText = '请输入目标用户名';
-                return;
-            }
-            if (userIndex === -1) {
-                resultEl.innerText = '该用户未注册';
-                return;
-            }
-
+            const userIndex = users.findIndex(u => u.name === targetName);
+            if (userIndex === -1) { alert('用户名不存在'); return; }
+            
             users[userIndex].isBanned = false;
             localStorage.setItem('registeredUsers', JSON.stringify(users));
-            resultEl.innerText = `已解封用户：${username}`;
+            document.getElementById('ban-result').innerText = `✅ 已解封用户：${targetName}`;
             loadUserList();
         }
 
-        // ===================== 工具导入/弹窗 =====================
+        // ===================== 工具导入/弹窗（iframe沙箱运行） =====================
         function readHtmlFile() {
             const fileInput = document.getElementById('html-file-import');
             const file = fileInput.files[0];
@@ -1301,16 +1194,10 @@
             };
             reader.onerror = function() { alert('文件读取失败'); };
         }
-        function previewHtmlCode() {
-            const code = document.getElementById('html-code-input').value.trim();
-            if (!code) { alert('请粘贴HTML代码'); return; }
-            showHtmlPreview(code);
-        }
         function showHtmlPreview(content) {
             const previewContainer = document.getElementById('preview-container');
-            const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-            const previewContent = bodyMatch ? bodyMatch[1] : content;
-            previewContainer.innerHTML = previewContent.replace(/<script[\s\S]*?<\/script>/gi, '[已过滤脚本内容]');
+            const previewContent = content.replace(/<script[\s\S]*?<\/script>/gi, '<span style="color:#ff3300;">[脚本内容已过滤，导入后正常运行]</span>');
+            previewContainer.innerHTML = previewContent;
             localStorage.setItem('tempHtmlImportContent', content);
             document.getElementById('html-import-preview').style.display = 'block';
         }
@@ -1320,7 +1207,7 @@
             localStorage.removeItem('tempHtmlImportContent');
         }
         function confirmHtmlImport() {
-            const content = localStorage.getItem('tempHtmlImportContent');
+            const content = localStorage.getItem('tempHtmlImportContent') || document.getElementById('html-code-input').value.trim();
             const toolName = document.getElementById('tool-name-input').value.trim();
             if (!content) { alert('无导入内容'); return; }
             if (!toolName) { alert('请输入工具名称'); return; }
@@ -1329,7 +1216,7 @@
             importedTools.push({ id: toolId, name: toolName, content: content });
             localStorage.setItem('importedTools', JSON.stringify(importedTools));
             renderToolList();
-            alert(`✅ 工具「${toolName}」导入成功！用户可在工具列表点击打开`);
+            alert(`✅ 工具「${toolName}」导入成功！点击工具名称即可原生运行`);
             hideHtmlPreview();
             document.getElementById('tool-name-input').value = '';
         }
@@ -1345,18 +1232,7 @@
                 const toolItem = document.createElement('div');
                 toolItem.className = 'tool-item';
                 toolItem.innerText = tool.name;
-                // 点击工具名称弹出操作弹窗（管理员）/打开工具（普通会员）
-                toolItem.onclick = function(e) {
-                    if (isAdmin) {
-                        e.stopPropagation();
-                        currentOperateToolId = tool.id;
-                        document.getElementById('operate-modal-title').innerText = `操作：${tool.name}`;
-                        document.getElementById('new-tool-name').value = tool.name;
-                        document.getElementById('tool-operate-modal').style.display = 'flex';
-                    } else {
-                        openToolModal(tool.id);
-                    }
-                };
+                toolItem.onclick = () => openToolModal(tool.id);
                 toolList.appendChild(toolItem);
             });
         }
@@ -1365,72 +1241,27 @@
             if (!tool) return;
 
             const modal = document.getElementById('tool-modal');
-            const modalContent = document.getElementById('tool-modal-content');
-            // 直接插入原内容，无任何修改
-            modalContent.innerHTML = tool.content;
-            // 重新执行脚本
-            const scripts = modalContent.querySelectorAll('script');
-            scripts.forEach(oldScript => {
-                const newScript = document.createElement('script');
-                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                newScript.textContent = oldScript.textContent;
-                oldScript.parentNode.replaceChild(newScript, oldScript);
-            });
-            // 显示弹窗
+            const iframe = document.getElementById('tool-modal-iframe');
+            
+            iframe.src = 'about:blank';
+            
+            iframe.onload = function() {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                doc.open();
+                doc.write(tool.content);
+                doc.close();
+            };
+            
             modal.style.display = 'flex';
         }
         function closeToolModal() {
             const modal = document.getElementById('tool-modal');
-            const modalContent = document.getElementById('tool-modal-content');
+            const iframe = document.getElementById('tool-modal-iframe');
+            iframe.src = 'about:blank';
             modal.style.display = 'none';
-            modalContent.innerHTML = '';
-        }
-        // 打开工具操作弹窗
-        function openToolOperateModal(toolId) {
-            const tool = importedTools.find(t => t.id === toolId);
-            if (!tool) return;
-            currentOperateToolId = toolId;
-            document.getElementById('operate-modal-title').innerText = `操作：${tool.name}`;
-            document.getElementById('new-tool-name').value = tool.name;
-            document.getElementById('tool-operate-modal').style.display = 'flex';
-        }
-        // 关闭工具操作弹窗
-        function closeToolOperateModal() {
-            document.getElementById('tool-operate-modal').style.display = 'none';
-            currentOperateToolId = '';
-        }
-        // 确认修改工具名称
-        function confirmModifyToolName() {
-            const newName = document.getElementById('new-tool-name').value.trim();
-            if (!newName) { alert('工具名称不能为空'); return; }
-            if (newName === importedTools.find(t => t.id === currentOperateToolId).name) {
-                closeToolOperateModal();
-                return;
-            }
-
-            const toolIndex = importedTools.findIndex(t => t.id === currentOperateToolId);
-            importedTools[toolIndex].name = newName;
-            localStorage.setItem('importedTools', JSON.stringify(importedTools));
-            renderToolList();
-            closeToolOperateModal();
-            alert('✅ 工具名称修改成功！');
-        }
-        // 确认删除工具
-        function confirmDeleteTool() {
-            if (!confirm('确定删除该工具？删除后不可恢复！')) return;
-            importedTools = importedTools.filter(t => t.id !== currentOperateToolId);
-            localStorage.setItem('importedTools', JSON.stringify(importedTools));
-            renderToolList();
-            closeToolOperateModal();
-            alert('✅ 工具已删除！');
-        }
-        // 从操作弹窗启动运行工具（管理员）
-        function runToolFromOperate() {
-            closeToolOperateModal();
-            openToolModal(currentOperateToolId);
         }
 
-        // ===================== 用户中心-个人资料 =====================
+        // ===================== 用户资料 =====================
         function loadUserProfile() {
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
             const currentUser = users.find(u => u.name === loginUser.name) || loginUser;
@@ -1443,7 +1274,7 @@
                 document.getElementById('user-role').innerText = '管理员';
             } else {
                 const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}');
-                if (memberInfo.type !== 'none') {
+                if (memberInfo.type !== 'none' && new Date(memberInfo.end) > new Date()) {
                     document.getElementById('user-role').className = 'user-role role-vip';
                     document.getElementById('user-role').innerText = getMemberTypeName(memberInfo.type);
                 } else {
@@ -1496,13 +1327,10 @@
             logout();
         }
 
-        // ===================== 页面加载初始化 =====================
+        // ===================== 页面初始化 =====================
         window.onload = function() {
-            // 初始化调整类型弹窗
             toggleAdjustBox();
-            // 渲染工具列表
             renderToolList();
-            // 绑定悬浮导入按钮点击事件
             document.getElementById('admin-import-btn').onclick = function() {
                 document.getElementById('tool-area').style.display = 'block';
                 document.getElementById('import-module').scrollIntoView({ behavior: 'smooth' });

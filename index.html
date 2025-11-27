@@ -1,9 +1,9 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>十方料码 - 伪序趋势分析与缩水交流</title>
+    <title>十方料码 - 3D趋势分析与缩水工具平台</title>
     <style>
         * {
             margin: 0;
@@ -134,14 +134,14 @@
             margin: 10px 0;
             text-align: center;
         }
+        /* 工具区域强制初始隐藏，仅会员/管理员可见 */
         #tool-area {
             margin: 20px auto;
             padding: 20px;
-            border: 1px solid #666;
             border-radius: 8px;
             width: 90%;
             max-width: 1200px;
-            display: none;
+            display: none !important;
         }
         .auth-box {
             background: #111;
@@ -189,11 +189,221 @@
         .edit-btn {
             background: #ff9900 !important;
         }
+        /* 定位复式计算器工具样式（保留原样式，适配黑色背景） */
+        .tool-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .tool-header {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+        .tool-h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        .tool-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        .tool-section {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .tool-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        .tool-section-title i {
+            margin-right: 8px;
+            color: #e74c3c;
+        }
+        .tool-input-group {
+            margin-bottom: 15px;
+        }
+        .tool-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .tool-input, .tool-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .tool-textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+        .tool-example {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .tool-match-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .tool-match-option {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tool-match-option.selected {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+        .tool-tolerance-control {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .tool-tolerance-control .tool-input {
+            width: 70px;
+            margin: 0 10px;
+            text-align: center;
+        }
+        .tool-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .tool-button:hover {
+            background-color: #c0392b;
+        }
+        .tool-button.secondary {
+            background-color: #3498db;
+        }
+        .tool-button.secondary:hover {
+            background-color: #2980b9;
+        }
+        .tool-button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .tool-button-group .tool-button {
+            flex: 1;
+        }
+        .tool-results {
+            margin-top: 20px;
+        }
+        .tool-result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .tool-result-count {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e74c3c;
+        }
+        .tool-numbers-container {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .tool-numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+        .tool-number {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 4px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .tool-highlight {
+            background-color: #ffeaa7;
+        }
+        .tool-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .tool-modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+        .tool-modal-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .tool-modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .tool-modal-buttons .tool-button {
+            flex: 1;
+        }
+        .tool-footer {
+            text-align: center;
+            padding: 15px;
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+        @media (max-width: 400px) {
+            .tool-numbers-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>十方料码 - 伪序趋势数据分析与缩水技巧交流</h1>
+        <h1>十方料码 - 3D趋势分析与缩水工具平台</h1>
         <div class="nav">
             <button class="nav-btn" onclick="showHome()">首页</button>
             <button class="nav-btn" onclick="showToolCenter()">工具中心</button>
@@ -241,10 +451,10 @@
             <h3>所有注册用户名单</h3>
             <table class="admin-table">
                 <tr>
-                    <<th>用户名</</th>
-                    <<th>注册状态</</th>
-                    <<th>是否封禁</</th>
-                    <<th>操作</</th>
+                    <th>用户名</th>
+                    <th>注册状态</th>
+                    <th>是否封禁</th>
+                    <th>操作</th>
                 </tr>
                 <tbody id="user-list-body"></tbody>
             </table>
@@ -255,12 +465,12 @@
             <h3>会员明细名单</h3>
             <table class="admin-table">
                 <tr>
-                    <<th>用户名</</th>
-                    <<th>会员等级</</th>
-                    <<th>开通时间</</th>
-                    <<th>截止时间</</th>
-                    <<th>剩余天数</</th>
-                    <<th>状态</</th>
+                    <th>用户名</th>
+                    <th>会员等级</th>
+                    <th>开通时间</th>
+                    <th>截止时间</th>
+                    <th>剩余天数</th>
+                    <th>状态</th>
                 </tr>
                 <tbody id="member-list-body"></tbody>
             </table>
@@ -322,560 +532,280 @@
     <!-- 会员信息提示（普通用户可见） -->
     <div id="member-tips"></div>
 
-    <!-- 工具区域（默认隐藏，仅会员/管理员可见） -->
-    <div <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>十方料码
-    www.shifanglm.com</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
-            padding: 10px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
-        .container {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        
-        header {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            position: relative;
-        }
-        
-        h1 {
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-        
-        .subtitle {
-            font-size: 0.8rem;
-            opacity: 0.9;
-            margin-top: 5px;
-        }
-        
-        .section {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #2c3e50;
-            display: flex;
-            align-items: center;
-        }
-        
-        .section-title i {
-            margin-right: 8px;
-            color: #e74c3c;
-        }
-        
-        .input-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #555;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-        
-        textarea {
-            width: 100%;
-            height: 120px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            resize: vertical;
-        }
-        
-        .example {
-            font-size: 0.8rem;
-            color: #7f8c8d;
-            margin-top: 5px;
-        }
-        
-        .match-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        
-        .match-option {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            padding: 6px 12px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .match-option.selected {
-            background-color: #e74c3c;
-            color: white;
-            border-color: #e74c3c;
-        }
-        
-        .tolerance-control {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-        
-        .tolerance-control input {
-            width: 70px;
-            margin: 0 10px;
-            text-align: center;
-        }
-        
-        .button {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            width: 100%;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .button:hover {
-            background-color: #c0392b;
-        }
-        
-        .button.secondary {
-            background-color: #3498db;
-        }
-        
-        .button.secondary:hover {
-            background-color: #2980b9;
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .button-group .button {
-            flex: 1;
-        }
-        
-        .results {
-            margin-top: 20px;
-        }
-        
-        .result-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .result-count {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #e74c3c;
-        }
-        
-        .numbers-container {
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            padding: 15px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .numbers-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-        }
-        
-        .number {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 8px 4px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-        
-        .highlight {
-            background-color: #ffeaa7;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-        }
-        
-        .modal-title {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .modal-buttons .button {
-            flex: 1;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 15px;
-            color: #7f8c8d;
-            font-size: 0.8rem;
-        }
-        
-        @media (max-width: 400px) {
-            .numbers-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>定位复式大底专用计算器</h1>
-            <div class="subtitle">仅提供交流参考学习使用！</div>
-        </header>
-        
-        <div class="section">
-            <div class="section-title">
-                <i>📝</i> 定位复式输入
+    <!-- 工具区域（整合定位复式计算器，强制初始隐藏） -->
+    <div id="tool-area">
+        <div class="tool-container">
+            <div class="tool-header">
+                <h1 class="tool-h1">定位复式大底专用计算器</h1>
+                <div class="tool-subtitle">仅提供交流参考学习使用！</div>
             </div>
-            <div class="input-group">
-                <label for="positional-compound">输入多组定位复式 (格式: 6547-7569-3604)</label>
-                <textarea id="positional-compound" placeholder="每行一组，格式：百位数字-十位数字-个位数字
+            
+            <div class="tool-section">
+                <div class="tool-section-title">
+                    <i>📝</i> 定位复式输入
+                </div>
+                <div class="tool-input-group">
+                    <label class="tool-label" for="positional-compound">输入多组定位复式 (格式: 6547-7569-3604)</label>
+                    <textarea class="tool-textarea" id="positional-compound" placeholder="每行一组，格式：百位数字-十位数字-个位数字
 例如：
 6547-7569-3604
 0231-0182-9875
 2819-1423-8152">6547-7569-3604
 0231-0182-9875
 2819-1423-8152</textarea>
-                <div class="example">每组定位复式对应百位/十位/个位，用"-"分隔</div>
+                    <div class="tool-example">每组定位复式对应百位/十位/个位，用"-"分隔</div>
+                </div>
+                
+                <div class="tool-button-group">
+                    <button id="import-btn" class="tool-button secondary">导入数据</button>
+                    <button id="clear-btn" class="tool-button secondary">清除数据</button>
+                </div>
             </div>
             
-            <div class="button-group">
-                <button id="import-btn" class="button secondary">导入数据</button>
-                <button id="clear-btn" class="button secondary">清除数据</button>
+            <div class="tool-section">
+                <div class="tool-section-title">
+                    <i>🎯</i> 匹配设置
+                </div>
+                <div class="tool-input-group">
+                    <label class="tool-label">包含匹配开奖号位置数</label>
+                    <div class="tool-match-options">
+                        <div class="tool-match-option selected">2</div>
+                        <div class="tool-match-option selected">3</div>
+                        <div class="tool-match-option">0</div>
+                        <div class="tool-match-option">1</div>
+                        <div class="tool-match-option">01</div>
+                        <div class="tool-match-option">02</div>
+                        <div class="tool-match-option">03</div>
+                        <div class="tool-match-option">12</div>
+                        <div class="tool-match-option">13</div>
+                        <div class="tool-match-option">23</div>
+                        <div class="tool-match-option">123</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tool-section">
+                <div class="tool-section-title">
+                    <i>⚙️</i> 容错设置
+                </div>
+                <div class="tool-input-group">
+                    <label class="tool-label">全局容错范围</label>
+                    <div class="tool-tolerance-control">
+                        <span>容错</span>
+                        <input class="tool-input" type="number" id="tolerance-min" value="2" min="0" max="10">
+                        <span>到</span>
+                        <input class="tool-input" type="number" id="tolerance-max" value="4" min="0" max="10">
+                        <span>组</span>
+                    </div>
+                    <div class="tool-example">允许指定范围内的复式组不满足匹配条件</div>
+                </div>
+            </div>
+            
+            <div class="tool-section">
+                <button id="calculate-btn" class="tool-button">计算大底号码</button>
+            </div>
+            
+            <div class="tool-section tool-results" id="results-section" style="display: none;">
+                <div class="tool-result-header">
+                    <div class="tool-section-title">
+                        <i>📊</i> 计算结果
+                    </div>
+                    <div class="tool-result-count" id="result-count">0组</div>
+                </div>
+                <div class="tool-numbers-container">
+                    <div class="tool-numbers-grid" id="numbers-grid">
+                        <!-- 号码将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                <button id="copy-btn" class="tool-button secondary" style="margin-top: 15px;">复制提取号码</button>
             </div>
         </div>
         
-        <div class="section">
-            <div class="section-title">
-                <i>🎯</i> 匹配设置
-            </div>
-            <div class="input-group">
-                <label>包含匹配开奖号位置数</label>
-                <div class="match-options">
-                    <div class="match-option selected">2</div>
-                    <div class="match-option selected">3</div>
-                    <div class="match-option">0</div>
-                    <div class="match-option">1</div>
-                    <div class="match-option">01</div>
-                    <div class="match-option">02</div>
-                    <div class="match-option">03</div>
-                    <div class="match-option">12</div>
-                    <div class="match-option">13</div>
-                    <div class="match-option">23</div>
-                    <div class="match-option">123</div>
+        <!-- 导入数据模态框 -->
+        <div id="import-modal" class="tool-modal">
+            <div class="tool-modal-content">
+                <div class="tool-modal-title">导入数据</div>
+                <textarea class="tool-textarea" id="import-data" placeholder="请粘贴复式数据，每行一组，格式如：6547-7569-3604" style="width: 100%; height: 150px;"></textarea>
+                <div class="tool-modal-buttons">
+                    <button id="confirm-import" class="tool-button">确认导入</button>
+                    <button id="cancel-import" class="tool-button secondary">取消</button>
                 </div>
             </div>
         </div>
         
-        <div class="section">
-            <div class="section-title">
-                <i>⚙️</i> 容错设置
-            </div>
-            <div class="input-group">
-                <label>全局容错范围</label>
-                <div class="tolerance-control">
-                    <span>容错</span>
-                    <input type="number" id="tolerance-min" value="2" min="0" max="10">
-                    <span>到</span>
-                    <input type="number" id="tolerance-max" value="4" min="0" max="10">
-                    <span>组</span>
-                </div>
-                <div class="example">允许指定范围内的复式组不满足匹配条件</div>
-            </div>
+        <div class="tool-footer">
+            <p>www.shifanglm.com</p>
         </div>
-        
-        <div class="section">
-            <button id="calculate-btn" class="button">计算大底号码</button>
-        </div>
-        
-        <div class="section results" id="results-section" style="display: none;">
-            <div class="result-header">
-                <div class="section-title">
-                    <i>📊</i> 计算结果
-                </div>
-                <div class="result-count" id="result-count">0组</div>
-            </div>
-            <div class="numbers-container">
-                <div class="numbers-grid" id="numbers-grid">
-                    <!-- 号码将通过JavaScript动态生成 -->
-                </div>
-            </div>
-            <button id="copy-btn" class="button secondary" style="margin-top: 15px;">复制提取号码</button>
-        </div>
-    </div>
-    
-    <!-- 导入数据模态框 -->
-    <div id="import-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">导入数据</div>
-            <textarea id="import-data" placeholder="请粘贴复式数据，每行一组，格式如：6547-7569-3604" style="width: 100%; height: 150px;"></textarea>
-            <div class="modal-buttons">
-                <button id="confirm-import" class="button">确认导入</button>
-                <button id="cancel-import" class="button secondary">取消</button>
-            </div>
-        </div>
-    </div>
-    
-    <footer>
-        <p>www.shifanglm.com</p>
-    </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const calculateBtn = document.getElementById('calculate-btn');
-            const importBtn = document.getElementById('import-btn');
-            const clearBtn = document.getElementById('clear-btn');
-            const copyBtn = document.getElementById('copy-btn');
-            const confirmImportBtn = document.getElementById('confirm-import');
-            const cancelImportBtn = document.getElementById('cancel-import');
-            const importModal = document.getElementById('import-modal');
-            const resultsSection = document.getElementById('results-section');
-            const numbersGrid = document.getElementById('numbers-grid');
-            const resultCount = document.getElementById('result-count');
-            const matchOptions = document.querySelectorAll('.match-option');
-            
-            // 匹配选项选择逻辑
-            matchOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    this.classList.toggle('selected');
-                });
-            });
-            
-            // 计算按钮点击事件
-            calculateBtn.addEventListener('click', function() {
-                calculateResults();
-            });
-            
-            // 导入按钮点击事件
-            importBtn.addEventListener('click', function() {
-                document.getElementById('import-data').value = '';
-                importModal.style.display = 'flex';
-            });
-            
-            // 清除按钮点击事件
-            clearBtn.addEventListener('click', function() {
-                document.getElementById('positional-compound').value = '';
-            });
-            
-            // 确认导入按钮点击事件
-            confirmImportBtn.addEventListener('click', function() {
-                const importData = document.getElementById('import-data').value.trim();
-                if (importData) {
-                    document.getElementById('positional-compound').value = importData;
-                    importModal.style.display = 'none';
-                }
-            });
-            
-            // 取消导入按钮点击事件
-            cancelImportBtn.addEventListener('click', function() {
-                importModal.style.display = 'none';
-            });
-            
-            // 复制按钮点击事件
-            copyBtn.addEventListener('click', function() {
-                const numbers = Array.from(document.querySelectorAll('.number'))
-                    .map(el => el.textContent)
-                    .join(' ');
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const calculateBtn = document.getElementById('calculate-btn');
+                const importBtn = document.getElementById('import-btn');
+                const clearBtn = document.getElementById('clear-btn');
+                const copyBtn = document.getElementById('copy-btn');
+                const confirmImportBtn = document.getElementById('confirm-import');
+                const cancelImportBtn = document.getElementById('cancel-import');
+                const importModal = document.getElementById('import-modal');
+                const resultsSection = document.getElementById('results-section');
+                const numbersGrid = document.getElementById('numbers-grid');
+                const resultCount = document.getElementById('result-count');
+                const matchOptions = document.querySelectorAll('.tool-match-option');
                 
-                navigator.clipboard.writeText(numbers)
-                    .then(() => {
-                        alert('号码已复制到剪贴板！');
-                    })
-                    .catch(err => {
-                        console.error('复制失败: ', err);
+                // 匹配选项选择逻辑
+                matchOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        this.classList.toggle('selected');
                     });
-            });
-            
-            // 计算结果的函数
-            function calculateResults() {
-                // 获取输入的定位复式
-                const compoundInput = document.getElementById('positional-compound').value;
-                const compoundLines = compoundInput.trim().split('\n').filter(line => line.trim() !== '');
+                });
                 
-                // 获取容错设置
-                const toleranceMin = parseInt(document.getElementById('tolerance-min').value);
-                const toleranceMax = parseInt(document.getElementById('tolerance-max').value);
+                // 计算按钮点击事件
+                calculateBtn.addEventListener('click', function() {
+                    calculateResults();
+                });
                 
-                // 获取匹配设置
-                const selectedMatches = Array.from(document.querySelectorAll('.match-option.selected'))
-                    .map(el => el.textContent);
+                // 导入按钮点击事件
+                importBtn.addEventListener('click', function() {
+                    document.getElementById('import-data').value = '';
+                    importModal.style.display = 'flex';
+                });
                 
-                // 生成号码
-                const numbers = generateNumbers(compoundLines, selectedMatches, toleranceMin, toleranceMax);
+                // 清除按钮点击事件
+                clearBtn.addEventListener('click', function() {
+                    document.getElementById('positional-compound').value = '';
+                });
                 
-                // 显示结果
-                displayResults(numbers);
-            }
-            
-            // 生成号码的函数
-            function generateNumbers(compoundLines, selectedMatches, toleranceMin, toleranceMax) {
-                // 验证输入
-                if (compoundLines.length === 0) {
-                    alert('请输入定位复式数据！');
-                    return [];
-                }
-                
-                // 解析匹配条件
-                const matchConditions = [];
-                selectedMatches.forEach(match => {
-                    if (match.length === 1) {
-                        matchConditions.push(parseInt(match));
-                    } else {
-                        // 处理多位数匹配条件，如"01"、"23"等
-                        for (let i = 0; i < match.length; i++) {
-                            matchConditions.push(parseInt(match[i]));
-                        }
+                // 确认导入按钮点击事件
+                confirmImportBtn.addEventListener('click', function() {
+                    const importData = document.getElementById('import-data').value.trim();
+                    if (importData) {
+                        document.getElementById('positional-compound').value = importData;
+                        importModal.style.display = 'none';
                     }
                 });
                 
-                // 生成所有可能的3D号码
-                const allNumbers = [];
-                for (let i = 0; i < 1000; i++) {
-                    const num = i.toString().padStart(3, '0');
-                    allNumbers.push(num);
+                // 取消导入按钮点击事件
+                cancelImportBtn.addEventListener('click', function() {
+                    importModal.style.display = 'none';
+                });
+                
+                // 复制按钮点击事件
+                copyBtn.addEventListener('click', function() {
+                    const numbers = Array.from(document.querySelectorAll('.tool-number'))
+                        .map(el => el.textContent)
+                        .join(' ');
+                    
+                    navigator.clipboard.writeText(numbers)
+                        .then(() => {
+                            alert('号码已复制到剪贴板！');
+                        })
+                        .catch(err => {
+                            console.error('复制失败: ', err);
+                        });
+                });
+                
+                // 计算结果的函数
+                function calculateResults() {
+                    // 获取输入的定位复式
+                    const compoundInput = document.getElementById('positional-compound').value;
+                    const compoundLines = compoundInput.trim().split('\n').filter(line => line.trim() !== '');
+                    
+                    // 获取容错设置
+                    const toleranceMin = parseInt(document.getElementById('tolerance-min').value);
+                    const toleranceMax = parseInt(document.getElementById('tolerance-max').value);
+                    
+                    // 获取匹配设置
+                    const selectedMatches = Array.from(document.querySelectorAll('.tool-match-option.selected'))
+                        .map(el => el.textContent);
+                    
+                    // 生成号码
+                    const numbers = generateNumbers(compoundLines, selectedMatches, toleranceMin, toleranceMax);
+                    
+                    // 显示结果
+                    displayResults(numbers);
                 }
                 
-                // 过滤符合条件的号码
-                const validNumbers = allNumbers.filter(number => {
-                    // 统计符合条件的复式组数
-                    let validGroups = 0;
+                // 生成号码的函数
+                function generateNumbers(compoundLines, selectedMatches, toleranceMin, toleranceMax) {
+                    // 验证输入
+                    if (compoundLines.length === 0) {
+                        alert('请输入定位复式数据！');
+                        return [];
+                    }
                     
-                    compoundLines.forEach(line => {
-                        const parts = line.split('-');
-                        if (parts.length !== 3) return;
-                        
-                        const [hundreds, tens, units] = parts;
-                        
-                        // 计算匹配位置数
-                        let matchCount = 0;
-                        if (hundreds.includes(number[0])) matchCount++;
-                        if (tens.includes(number[1])) matchCount++;
-                        if (units.includes(number[2])) matchCount++;
-                        
-                        // 检查是否满足匹配条件
-                        if (matchConditions.includes(matchCount)) {
-                            validGroups++;
+                    // 解析匹配条件
+                    const matchConditions = [];
+                    selectedMatches.forEach(match => {
+                        if (match.length === 1) {
+                            matchConditions.push(parseInt(match));
+                        } else {
+                            // 处理多位数匹配条件，如"01"、"23"等
+                            for (let i = 0; i < match.length; i++) {
+                                matchConditions.push(parseInt(match[i]));
+                            }
                         }
                     });
                     
-                    // 计算错误组数
-                    const errorGroups = compoundLines.length - validGroups;
+                    // 生成所有可能的3D号码
+                    const allNumbers = [];
+                    for (let i = 0; i < 1000; i++) {
+                        const num = i.toString().padStart(3, '0');
+                        allNumbers.push(num);
+                    }
                     
-                    // 检查是否满足容错条件
-                    return errorGroups >= toleranceMin && errorGroups <= toleranceMax;
-                });
+                    // 过滤符合条件的号码
+                    const validNumbers = allNumbers.filter(number => {
+                        // 统计符合条件的复式组数
+                        let validGroups = 0;
+                        
+                        compoundLines.forEach(line => {
+                            const parts = line.split('-');
+                            if (parts.length !== 3) return;
+                            
+                            const [hundreds, tens, units] = parts;
+                            
+                            // 计算匹配位置数
+                            let matchCount = 0;
+                            if (hundreds.includes(number[0])) matchCount++;
+                            if (tens.includes(number[1])) matchCount++;
+                            if (units.includes(number[2])) matchCount++;
+                            
+                            // 检查是否满足匹配条件
+                            if (matchConditions.includes(matchCount)) {
+                                validGroups++;
+                            }
+                        });
+                        
+                        // 计算错误组数
+                        const errorGroups = compoundLines.length - validGroups;
+                        
+                        // 检查是否满足容错条件
+                        return errorGroups >= toleranceMin && errorGroups <= toleranceMax;
+                    });
+                    
+                    return validNumbers;
+                }
                 
-                return validNumbers;
-            }
-            
-            // 显示结果的函数
-            function displayResults(numbers) {
-                // 清空现有的号码
-                numbersGrid.innerHTML = '';
-                
-                // 添加号码到网格
-                numbers.forEach(number => {
-                    const numberElement = document.createElement('div');
-                    numberElement.className = 'number';
-                    numberElement.textContent = number;
-                    numbersGrid.appendChild(numberElement);
-                });
-                
-                // 更新结果计数
-                resultCount.textContent = `${numbers.length}组`;
-                
-                // 显示结果区域
-                resultsSection.style.display = 'block';
-            }
-        });
-    </script>
-</body>
-</html>
-        <div>
-            <h3>伪序趋势数据分析工具</h3>
-            <p>基于伪序理论，可视化展示数字走势，辅助判断号码规律（会员专属）</p>
-        </div>
-        <div style="margin-top:15px;">
-            <h3>多条件缩水工具</h3>
-            <p>支持多维度条件筛选，精准缩小号码范围，提升选号效率（会员专属）</p>
-        </div>
+                // 显示结果的函数
+                function displayResults(numbers) {
+                    // 清空现有的号码
+                    numbersGrid.innerHTML = '';
+                    
+                    // 添加号码到网格
+                    numbers.forEach(number => {
+                        const numberElement = document.createElement('div');
+                        numberElement.className = 'tool-number';
+                        numberElement.textContent = number;
+                        numbersGrid.appendChild(numberElement);
+                    });
+                    
+                    // 更新结果计数
+                    resultCount.textContent = `${numbers.length}组`;
+                    
+                    // 显示结果区域
+                    resultsSection.style.display = 'block';
+                }
+            });
+        </script>
     </div>
 
     <script>
@@ -965,7 +895,7 @@
             isAdmin = username === '十方料码' && pwd === '7446265';
             if (isAdmin) {
                 loginUser = { name: username, isAdmin: true };
-                // 管理员登录：隐藏登录框，显示后台
+                // 管理员登录：隐藏登录框，显示后台+工具
                 document.getElementById('auth-container').style.display = 'none';
                 document.getElementById('logout-btn').style.display = 'block';
                 document.getElementById('admin-panel').style.display = 'block';
@@ -1009,34 +939,26 @@
             document.getElementById('member-tips').innerText = '';
         }
 
-        // ===================== 普通用户会员检查 =====================
+        // ===================== 普通用户会员检查（核心权限控制） =====================
         function checkMemberStatus() {
             const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
             const now = new Date();
             const endDate = new Date(memberInfo.end);
 
-            // 自动清理到期会员
-            if (memberInfo.type !== 'none' && now > endDate) {
-                localStorage.setItem(`member_${loginUser.name}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
-                document.getElementById('member-tips').innerText = '您的会员已到期，恢复为普通用户';
-                document.getElementById('tool-area').style.display = 'none';
-                alert('您的会员已到期，需联系管理员续费');
+            // 到期/无会员：强制隐藏工具
+            if (memberInfo.type === 'none' || now > endDate) {
+                document.getElementById('tool-area').style.display = 'none !important';
+                document.getElementById('member-tips').innerText = '您当前是普通用户，需联系管理员开通会员';
+                alert('需办理会员后使用');
                 return;
             }
 
-            // 有效会员
-            if (memberInfo.type !== 'none') {
-                const leftDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
-                memberInfo.leftDays = leftDays;
-                localStorage.setItem(`member_${loginUser.name}`, JSON.stringify(memberInfo));
-                document.getElementById('member-tips').innerText = `当前会员类型：${getMemberTypeName(memberInfo.type)} | 开通时间：${memberInfo.start} | 截止时间：${memberInfo.end} | 剩余天数：${leftDays}天`;
-                document.getElementById('tool-area').style.display = 'block';
-            } else {
-                // 无会员
-                document.getElementById('member-tips').innerText = '您当前是普通用户，需联系管理员开通会员';
-                document.getElementById('tool-area').style.display = 'none';
-                alert('需办理会员后使用');
-            }
+            // 有效会员：仅此时显示工具
+            const leftDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+            memberInfo.leftDays = leftDays;
+            localStorage.setItem(`member_${loginUser.name}`, JSON.stringify(memberInfo));
+            document.getElementById('member-tips').innerText = `当前会员类型：${getMemberTypeName(memberInfo.type)} | 开通时间：${memberInfo.start} | 截止时间：${memberInfo.end} | 剩余天数：${leftDays}天`;
+            document.getElementById('tool-area').style.display = 'block';
         }
 
         // ===================== 管理员后台功能 =====================

@@ -190,6 +190,27 @@
         .edit-btn {
             background: #ff9900 !important;
         }
+        /* 导入功能样式补充 */
+        .example {
+            margin-top: 8px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+        #imported-tools-container {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #0ff;
+            border-radius: 8px;
+        }
+        #preview-container {
+            width: 100%;
+            background: #111;
+            border: 1px solid #666;
+            border-radius: 4px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -323,18 +344,46 @@
     <!-- 会员信息提示（普通用户可见） -->
     <div id="member-tips"></div>
 
-    <!-- 工具区域（强制初始隐藏，仅会员/管理员可见） -->
+    <!-- 工具区域（强制初始隐藏，仅会员/管理员可见）- 已包含导入功能 -->
     <div id="tool-area">
-        <h2>核心工具预览</h2>
-        <div>
+        <h2>核心工具平台</h2>
+        <div style="margin: 20px 0; padding: 15px; border: 1px solid #333; border-radius: 8px;">
             <h3>3D伪序趋势分析工具</h3>
             <p>基于伪序理论，可视化展示数字走势，辅助判断号码规律（会员专属）</p>
         </div>
-        <div style="margin-top:15px;">
+        <div style="margin-top:15px; padding: 15px; border: 1px solid #333; border-radius: 8px;">
             <h3>多条件缩水工具</h3>
             <p>支持多维度条件筛选，精准缩小号码范围，提升选号效率（会员专属）</p>
         </div>
-        <!-- 工具代码粘贴此处 -->
+
+        <!-- HTML/代码导入功能（已整合到tool-area内） -->
+        <div style="margin: 20px 0; padding: 15px; border: 1px solid #333; border-radius: 8px;">
+            <h3>HTML文件/代码导入</h3>
+            <!-- 文件导入 -->
+            <div style="margin-bottom: 15px;">
+                <input type="file" id="html-file-import" accept=".html,.htm" style="display: none;" onchange="readHtmlFile()">
+                <button class="nav-btn" onclick="document.getElementById('html-file-import').click()">选择本地HTML文件导入</button>
+                <div class="example">支持.html/.htm格式文件</div>
+            </div>
+            <!-- 代码粘贴导入 -->
+            <div style="margin-bottom: 15px;">
+                <h4 style="margin-bottom: 8px;">或直接粘贴HTML代码</h4>
+                <textarea id="html-code-input" style="width: 100%; height: 150px; background: #222; color: #fff; border: 1px solid #666; border-radius: 4px; padding: 8px;" placeholder="粘贴完整HTML代码（包含&lt;html&gt;&lt;/html&gt;或工具片段）"></textarea>
+            </div>
+            <!-- 导入预览与操作 -->
+            <div style="margin-top: 15px; display: none;" id="html-import-preview">
+                <h4 style="margin-bottom: 8px; color: #0ff;">导入预览（仅显示body内工具相关内容）</h4>
+                <div id="preview-container"></div>
+                <button class="nav-btn" style="margin-top: 10px; margin-right: 10px;" onclick="confirmHtmlImport()">确认导入到工具区域</button>
+                <button class="nav-btn" style="margin-top: 10px; background: #666;" onclick="hideHtmlPreview()">取消</button>
+            </div>
+        </div>
+
+        <!-- 导入后的工具容器（用于存放导入的工具） -->
+        <div id="imported-tools-container">
+            <h3>导入的工具</h3>
+            <div id="imported-content"></div>
+        </div>
     </div>
 
     <script>
@@ -684,6 +733,98 @@
             localStorage.setItem('registeredUsers', JSON.stringify(users));
             document.getElementById('ban-result').innerText = `✅ 已解封用户：${targetName}`;
             loadUserList(); // 刷新用户名单
+        }
+
+        // ===================== HTML/代码导入功能 =====================
+        // 读取本地HTML文件
+        function readHtmlFile() {
+            const fileInput = document.getElementById('html-file-import');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            // 验证文件大小（最大1MB）
+            if (file.size > 1 * 1024 * 1024) {
+                alert('文件过大，最大支持1MB');
+                fileInput.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.readAsText(file, 'utf-8');
+            reader.onload = function(e) {
+                const htmlContent = e.target.result.trim();
+                showHtmlPreview(htmlContent);
+                // 清空文件选择
+                fileInput.value = '';
+            };
+            reader.onerror = function() {
+                alert('文件读取失败，请重试');
+            };
+        }
+
+        // 显示HTML预览
+        function showHtmlPreview(content) {
+            const previewContainer = document.getElementById('preview-container');
+            // 提取body内内容（避免重复html标签冲突）
+            const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+            const previewContent = bodyMatch ? bodyMatch[1] : content;
+            
+            // 预览时过滤script标签（防止执行）
+            const safePreview = previewContent.replace(/<script[\s\S]*?<\/script>/gi, '[已过滤脚本内容]');
+            previewContainer.innerHTML = safePreview || '无有效工具内容';
+            
+            // 存储原始内容供导入使用
+            localStorage.setItem('tempHtmlImportContent', content);
+            // 显示预览区域
+            document.getElementById('html-import-preview').style.display = 'block';
+        }
+
+        // 直接粘贴代码预览（失去焦点时触发）
+        document.getElementById('html-code-input').addEventListener('blur', function() {
+            const code = this.value.trim();
+            if (code) {
+                showHtmlPreview(code);
+            }
+        });
+
+        // 确认导入HTML/代码
+        function confirmHtmlImport() {
+            const content = localStorage.getItem('tempHtmlImportContent');
+            if (!content) {
+                alert('无导入内容，请先选择文件或粘贴代码');
+                return;
+            }
+
+            const importedContent = document.getElementById('imported-content');
+            // 提取body内内容并保留script（工具功能需要）
+            const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+            const toolContent = bodyMatch ? bodyMatch[1] : content;
+            
+            // 导入并执行脚本
+            importedContent.innerHTML = toolContent;
+            // 重新执行导入内容中的脚本（解决动态加载脚本不执行问题）
+            const scripts = importedContent.querySelectorAll('script');
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => {
+                    newScript.setAttribute(attr.name, attr.value);
+                });
+                newScript.textContent = oldScript.textContent;
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+
+            alert('导入成功！工具已添加到"导入的工具"区域');
+            // 清空临时存储和输入框
+            localStorage.removeItem('tempHtmlImportContent');
+            document.getElementById('html-code-input').value = '';
+            document.getElementById('html-import-preview').style.display = 'none';
+        }
+
+        // 隐藏预览
+        function hideHtmlPreview() {
+            document.getElementById('html-import-preview').style.display = 'none';
+            document.getElementById('html-code-input').value = '';
+            localStorage.removeItem('tempHtmlImportContent');
         }
 
         // ===================== 辅助函数 =====================

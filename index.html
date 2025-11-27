@@ -340,7 +340,7 @@
             font-size: 0.9rem;
         }
         #import-module {
-            display: none; /* 导入模块默认隐藏，仅管理员显示 */
+            display: none; /* 导入模块默认隐藏，仅管理员可见 */
             margin: 20px 0;
             padding: 15px;
             border: 1px solid #333;
@@ -636,14 +636,14 @@
         <div id="user-list" class="admin-content active">
             <h3>所有注册用户名单</h3>
             <table class="admin-table">
-                <tr><th>用户名</th><th>注册状态</th><th>是否封禁</th><th>操作</th></tr>
+                <tr><<th>用户名</</th><<th>注册状态</</th><<th>是否封禁</</th><<th>操作</</th></tr>
                 <tbody id="user-list-body"></tbody>
             </table>
         </div>
         <div id="member-list" class="admin-content">
             <h3>会员明细名单</h3>
             <table class="admin-table">
-                <tr><th>用户名</th><th>会员等级</th><th>开通时间</th><th>截止时间</th><th>剩余天数</th><th>状态</th></tr>
+                <tr><<th>用户名</</th><<th>会员等级</</th><<th>开通时间</</th><<th>截止时间</</th><<th>剩余天数</</th><<th>状态</</th></tr>
                 <tbody id="member-list-body"></tbody>
             </table>
         </div>
@@ -1178,4 +1178,336 @@
                     const status = now > endDate ? '已到期' : '正常';
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${user.name}</td
+                        <td>${user.name}</td>
+                        <td>${getMemberTypeName(memberInfo.type)}</td>
+                        <td>${memberInfo.start}</td>
+                        <td>${memberInfo.end}</td>
+                        <td>${leftDays}</td>
+                        <td>${status}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+
+            if (!hasMember) {
+                tbody.innerHTML = '<tr><td colspan="6">暂无会员数据</td></tr>';
+            }
+        }
+        function handleMember() {
+            const username = document.getElementById('target-username').value.trim();
+            const memberType = document.getElementById('member-type').value;
+            const adjustType = document.getElementById('adjust-type').value;
+            const resultEl = document.getElementById('member-result');
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const user = users.find(u => u.name === username);
+
+            if (!username) {
+                resultEl.innerText = '请输入目标用户名';
+                return;
+            }
+            if (!user) {
+                resultEl.innerText = '该用户未注册';
+                return;
+            }
+
+            const now = new Date();
+            let memberInfo = JSON.parse(localStorage.getItem(`member_${username}`) || '{"type":"none","start":"","end":""}');
+
+            if (adjustType === 'new') {
+                const start = now.toLocaleString();
+                let end = new Date();
+                end.setDate(end.getDate() + (memberType === 'day' ? 1 : memberType === 'week' ? 7 : memberType === 'month' ? 30 : 365));
+                memberInfo = { type: memberType, start, end: end.toLocaleString() };
+            } else if (adjustType === 'extend') {
+                if (memberInfo.type === 'none') {
+                    resultEl.innerText = '该用户未开通会员，无法延长时长';
+                    return;
+                }
+                const extendDays = parseInt(document.getElementById('extend-days').value);
+                if (isNaN(extendDays) || extendDays < 1) {
+                    resultEl.innerText = '请输入有效的延长天数';
+                    return;
+                }
+                const end = new Date(memberInfo.end);
+                end.setDate(end.getDate() + extendDays);
+                memberInfo.end = end.toLocaleString();
+            } else if (adjustType === 'modify') {
+                const newEnd = document.getElementById('new-end-time').value;
+                if (!newEnd) {
+                    resultEl.innerText = '请选择新的截止时间';
+                    return;
+                }
+                memberInfo.end = new Date(newEnd).toLocaleString();
+            }
+
+            localStorage.setItem(`member_${username}`, JSON.stringify(memberInfo));
+            resultEl.innerText = '操作成功！';
+            loadMemberList();
+        }
+        function banUser(targetName) {
+            const username = targetName || document.getElementById('ban-username').value.trim();
+            const resultEl = document.getElementById('ban-result');
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === username);
+
+            if (!username) {
+                resultEl.innerText = '请输入目标用户名';
+                return;
+            }
+            if (userIndex === -1) {
+                resultEl.innerText = '该用户未注册';
+                return;
+            }
+
+            users[userIndex].isBanned = true;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            resultEl.innerText = `已封禁用户：${username}`;
+            loadUserList();
+        }
+        function unbanUser(targetName) {
+            const username = targetName || document.getElementById('ban-username').value.trim();
+            const resultEl = document.getElementById('ban-result');
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === username);
+
+            if (!username) {
+                resultEl.innerText = '请输入目标用户名';
+                return;
+            }
+            if (userIndex === -1) {
+                resultEl.innerText = '该用户未注册';
+                return;
+            }
+
+            users[userIndex].isBanned = false;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            resultEl.innerText = `已解封用户：${username}`;
+            loadUserList();
+        }
+
+        // ===================== 工具导入/弹窗 =====================
+        function readHtmlFile() {
+            const fileInput = document.getElementById('html-file-import');
+            const file = fileInput.files[0];
+            if (!file) return;
+            if (file.size > 1 * 1024 * 1024) { alert('文件过大，最大支持1MB'); fileInput.value = ''; return; }
+
+            const reader = new FileReader();
+            reader.readAsText(file, 'utf-8');
+            reader.onload = function(e) {
+                const htmlContent = e.target.result.trim();
+                showHtmlPreview(htmlContent);
+                fileInput.value = '';
+            };
+            reader.onerror = function() { alert('文件读取失败'); };
+        }
+        function previewHtmlCode() {
+            const code = document.getElementById('html-code-input').value.trim();
+            if (!code) { alert('请粘贴HTML代码'); return; }
+            showHtmlPreview(code);
+        }
+        function showHtmlPreview(content) {
+            const previewContainer = document.getElementById('preview-container');
+            const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+            const previewContent = bodyMatch ? bodyMatch[1] : content;
+            previewContainer.innerHTML = previewContent.replace(/<script[\s\S]*?<\/script>/gi, '[已过滤脚本内容]');
+            localStorage.setItem('tempHtmlImportContent', content);
+            document.getElementById('html-import-preview').style.display = 'block';
+        }
+        function hideHtmlPreview() {
+            document.getElementById('html-import-preview').style.display = 'none';
+            document.getElementById('html-code-input').value = '';
+            localStorage.removeItem('tempHtmlImportContent');
+        }
+        function confirmHtmlImport() {
+            const content = localStorage.getItem('tempHtmlImportContent');
+            const toolName = document.getElementById('tool-name-input').value.trim();
+            if (!content) { alert('无导入内容'); return; }
+            if (!toolName) { alert('请输入工具名称'); return; }
+
+            const toolId = Date.now().toString();
+            importedTools.push({ id: toolId, name: toolName, content: content });
+            localStorage.setItem('importedTools', JSON.stringify(importedTools));
+            renderToolList();
+            alert(`✅ 工具「${toolName}」导入成功！用户可在工具列表点击打开`);
+            hideHtmlPreview();
+            document.getElementById('tool-name-input').value = '';
+        }
+        function renderToolList() {
+            const toolList = document.getElementById('tool-list');
+            toolList.innerHTML = '';
+            if (importedTools.length === 0) {
+                toolList.innerHTML = '<div style="color:#999; width:100%; text-align:center; padding:20px;">暂无导入的工具</div>';
+                return;
+            }
+
+            importedTools.forEach(tool => {
+                const toolItem = document.createElement('div');
+                toolItem.className = 'tool-item';
+                toolItem.innerText = tool.name;
+                // 点击工具名称弹出操作弹窗（管理员）/打开工具（普通会员）
+                toolItem.onclick = function(e) {
+                    if (isAdmin) {
+                        e.stopPropagation();
+                        currentOperateToolId = tool.id;
+                        document.getElementById('operate-modal-title').innerText = `操作：${tool.name}`;
+                        document.getElementById('new-tool-name').value = tool.name;
+                        document.getElementById('tool-operate-modal').style.display = 'flex';
+                    } else {
+                        openToolModal(tool.id);
+                    }
+                };
+                toolList.appendChild(toolItem);
+            });
+        }
+        function openToolModal(toolId) {
+            const tool = importedTools.find(t => t.id === toolId);
+            if (!tool) return;
+
+            const modal = document.getElementById('tool-modal');
+            const modalContent = document.getElementById('tool-modal-content');
+            // 直接插入原内容，无任何修改
+            modalContent.innerHTML = tool.content;
+            // 重新执行脚本
+            const scripts = modalContent.querySelectorAll('script');
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                newScript.textContent = oldScript.textContent;
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+            // 显示弹窗
+            modal.style.display = 'flex';
+        }
+        function closeToolModal() {
+            const modal = document.getElementById('tool-modal');
+            const modalContent = document.getElementById('tool-modal-content');
+            modal.style.display = 'none';
+            modalContent.innerHTML = '';
+        }
+        // 打开工具操作弹窗
+        function openToolOperateModal(toolId) {
+            const tool = importedTools.find(t => t.id === toolId);
+            if (!tool) return;
+            currentOperateToolId = toolId;
+            document.getElementById('operate-modal-title').innerText = `操作：${tool.name}`;
+            document.getElementById('new-tool-name').value = tool.name;
+            document.getElementById('tool-operate-modal').style.display = 'flex';
+        }
+        // 关闭工具操作弹窗
+        function closeToolOperateModal() {
+            document.getElementById('tool-operate-modal').style.display = 'none';
+            currentOperateToolId = '';
+        }
+        // 确认修改工具名称
+        function confirmModifyToolName() {
+            const newName = document.getElementById('new-tool-name').value.trim();
+            if (!newName) { alert('工具名称不能为空'); return; }
+            if (newName === importedTools.find(t => t.id === currentOperateToolId).name) {
+                closeToolOperateModal();
+                return;
+            }
+
+            const toolIndex = importedTools.findIndex(t => t.id === currentOperateToolId);
+            importedTools[toolIndex].name = newName;
+            localStorage.setItem('importedTools', JSON.stringify(importedTools));
+            renderToolList();
+            closeToolOperateModal();
+            alert('✅ 工具名称修改成功！');
+        }
+        // 确认删除工具
+        function confirmDeleteTool() {
+            if (!confirm('确定删除该工具？删除后不可恢复！')) return;
+            importedTools = importedTools.filter(t => t.id !== currentOperateToolId);
+            localStorage.setItem('importedTools', JSON.stringify(importedTools));
+            renderToolList();
+            closeToolOperateModal();
+            alert('✅ 工具已删除！');
+        }
+        // 从操作弹窗启动运行工具（管理员）
+        function runToolFromOperate() {
+            closeToolOperateModal();
+            openToolModal(currentOperateToolId);
+        }
+
+        // ===================== 用户中心-个人资料 =====================
+        function loadUserProfile() {
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const currentUser = users.find(u => u.name === loginUser.name) || loginUser;
+            
+            document.getElementById('user-name').innerText = currentUser.nickname || currentUser.name;
+            document.getElementById('user-reg-time').innerText = `注册时间：${currentUser.registerTime || new Date().toLocaleString()}`;
+            
+            if (isAdmin) {
+                document.getElementById('user-role').className = 'user-role role-admin';
+                document.getElementById('user-role').innerText = '管理员';
+            } else {
+                const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}');
+                if (memberInfo.type !== 'none') {
+                    document.getElementById('user-role').className = 'user-role role-vip';
+                    document.getElementById('user-role').innerText = getMemberTypeName(memberInfo.type);
+                } else {
+                    document.getElementById('user-role').className = 'user-role role-normal';
+                    document.getElementById('user-role').innerText = '普通用户';
+                }
+            }
+
+            document.getElementById('edit-username').value = currentUser.name;
+            document.getElementById('edit-nickname').value = currentUser.nickname || currentUser.name;
+            document.getElementById('edit-gender').value = currentUser.gender || '未知';
+            document.getElementById('edit-signature').value = currentUser.signature || '暂无个性签名';
+        }
+        function saveProfile() {
+            const nickname = document.getElementById('edit-nickname').value.trim();
+            const gender = document.getElementById('edit-gender').value;
+            const signature = document.getElementById('edit-signature').value.trim();
+            
+            if (!nickname || nickname.length < 2 || nickname.length > 10) { alert('昵称需2-10字'); return; }
+            if (signature.length > 20) { alert('个性签名不超过20字'); return; }
+
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === loginUser.name);
+            if (userIndex !== -1) {
+                users[userIndex].nickname = nickname;
+                users[userIndex].gender = gender;
+                users[userIndex].signature = signature;
+                localStorage.setItem('registeredUsers', JSON.stringify(users));
+                loginUser.nickname = nickname;
+                document.getElementById('user-name').innerText = nickname;
+                alert('资料保存成功');
+            }
+        }
+        function changePassword() {
+            const oldPwd = prompt('请输入原密码');
+            if (!oldPwd) return;
+            
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === loginUser.name);
+            if (userIndex === -1 || users[userIndex].pwd !== oldPwd) { alert('原密码错误'); return; }
+
+            const newPwd = prompt('请输入新密码（至少6位）');
+            if (!newPwd || newPwd.length < 6) { alert('新密码需至少6位'); return; }
+            const confirmPwd = prompt('请确认新密码');
+            if (newPwd !== confirmPwd) { alert('两次密码不一致'); return; }
+
+            users[userIndex].pwd = newPwd;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            alert('密码修改成功，请重新登录');
+            logout();
+        }
+
+        // ===================== 页面加载初始化 =====================
+        window.onload = function() {
+            // 初始化调整类型弹窗
+            toggleAdjustBox();
+            // 渲染工具列表
+            renderToolList();
+            // 绑定悬浮导入按钮点击事件
+            document.getElementById('admin-import-btn').onclick = function() {
+                document.getElementById('tool-area').style.display = 'block';
+                document.getElementById('import-module').scrollIntoView({ behavior: 'smooth' });
+            };
+        };
+    </script>
+</body>
+</html>

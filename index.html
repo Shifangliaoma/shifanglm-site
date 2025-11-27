@@ -4,9 +4,252 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>十方料码 - 3D趋势分析与缩水工具平台</title>
-    <link rel="stylesheet" href="css/style.css">
-    <!-- 简单图标占位（无需额外引入库，轻量） -->
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+            outline: none;
+        }
+        body {
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 50%, rgba(66, 153, 225, 0.1) 0%, transparent 60%),
+                              linear-gradient(45deg, rgba(120, 119, 198, 0.05) 0%, transparent 50%);
+            overflow-x: hidden;
+        }
+        .container {
+            width: 100%;
+            padding: 0 15px;
+            margin: 0 auto;
+        }
+        .neon-border {
+            box-shadow: 0 0 5px #4299e1, 0 0 10px #4299e1, 0 0 15px #4299e1;
+            border: 1px solid rgba(66, 153, 225, 0.5);
+        }
+        header {
+            background: rgba(0, 15, 30, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(66, 153, 225, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+        .header-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #4299e1, #7877c6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .nav-btn {
+            color: #ddd;
+            text-decoration: none;
+            font-size: 15px;
+            transition: all 0.3s;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .nav-btn:hover {
+            color: #4299e1;
+            background: rgba(66, 153, 225, 0.1);
+        }
+        .btn {
+            padding: 7px 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #4299e1, #5c6bc0);
+            color: #fff;
+            box-shadow: 0 0 5px rgba(66, 153, 225, 0.5);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 8px #4299e1, 0 0 12px #4299e1;
+            transform: translateY(-1px);
+        }
+        .btn-danger {
+            background: linear-gradient(90deg, #e53e3e, #ed8936);
+            color: #fff;
+            box-shadow: 0 0 5px rgba(229, 62, 62, 0.5);
+        }
+        .btn-danger:hover {
+            box-shadow: 0 0 8px #e53e3e, 0 0 12px #e53e3e;
+            transform: translateY(-1px);
+        }
+        section {
+            padding: 25px 0;
+        }
+        .card {
+            background: rgba(0, 15, 30, 0.6);
+            backdrop-filter: blur(5px);
+            border-radius: 8px;
+            padding: 22px;
+            margin-bottom: 22px;
+            border: 1px solid rgba(66, 153, 225, 0.3);
+        }
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 18px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(66, 153, 225, 0.2);
+            color: #4299e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title::before {
+            content: "";
+            width: 4px;
+            height: 18px;
+            background: #4299e1;
+            border-radius: 2px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #bbb;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(66, 153, 225, 0.3);
+            border-radius: 4px;
+            font-size: 14px;
+            background: rgba(0, 20, 40, 0.5);
+            color: #fff;
+            transition: all 0.3s;
+        }
+        .form-group input:focus {
+            border-color: #4299e1;
+            box-shadow: 0 0 5px #4299e1;
+        }
+        .form-btn {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .tool-item {
+            padding: 15px;
+            border: 1px solid rgba(66, 153, 225, 0.2);
+            border-radius: 6px;
+            margin-bottom: 15px;
+            opacity: 0.4;
+            pointer-events: none;
+            background: rgba(0, 20, 40, 0.3);
+            transition: all 0.3s;
+        }
+        .tool-item.active {
+            opacity: 1;
+            pointer-events: all;
+            box-shadow: 0 0 5px rgba(66, 153, 225, 0.3);
+        }
+        .tool-item h3 {
+            color: #4299e1;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .tool-item p {
+            color: #ddd;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .user-info {
+            margin-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        .user-info span {
+            color: #4299e1;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(66, 153, 225, 0.5);
+        }
+        .recharge-link {
+            color: #4299e1;
+            text-decoration: none;
+            margin-left: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .recharge-link:hover {
+            text-decoration: underline;
+            text-shadow: 0 0 5px #4299e1;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .admin-table th, .admin-table td {
+            padding: 10px 8px;
+            border: 1px solid rgba(66, 153, 225, 0.2);
+            text-align: left;
+        }
+        .admin-table th {
+            background: rgba(66, 153, 225, 0.1);
+            color: #4299e1;
+        }
+        .admin-table td {
+            color: #ddd;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-box {
+            background: rgba(0, 15, 30, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 8px;
+            padding: 25px;
+            width: 92%;
+            max-width: 400px;
+            border: 1px solid rgba(66, 153, 225, 0.5);
+            box-shadow: 0 0 15px #4299e1;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
         .icon {
             display: inline-block;
             width: 16px;
@@ -17,6 +260,36 @@
         .icon-tool::after { content: "🔧"; font-size: 16px; }
         .icon-user::after { content: "👤"; font-size: 16px; }
         .icon-login::after { content: "📲"; font-size: 16px; }
+        .icon-register::after { content: "📝"; font-size: 16px; }
+        @media (max-width: 768px) {
+            .header-box {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            .nav {
+                gap: 12px;
+            }
+            .nav-btn {
+                font-size: 14px;
+            }
+            .btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            .card {
+                padding: 18px;
+                margin-bottom: 18px;
+            }
+            .admin-table {
+                font-size: 13px;
+            }
+            .admin-table th, .admin-table td {
+                padding: 8px 6px;
+            }
+            .tool-item {
+                padding: 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -24,48 +297,373 @@
         <div class="container header-box">
             <div class="logo">十方料码</div>
             <div class="nav">
-                <a href="index.html"><span class="icon icon-home"></span> 首页</a>
-                <a href="tools.html"><span class="icon icon-tool"></span> 工具中心</a>
-                <a href="user-center.html" id="userLink"><span class="icon icon-user"></span> 用户中心</a>
-                <button class="btn btn-primary" id="loginBtn"><span class="icon icon-login"></span> 登录</button>
+                <button class="nav-btn" onclick="switchPage('home')"><span class="icon icon-home"></span> 首页</button>
+                <button class="nav-btn" onclick="switchPage('tools')"><span class="icon icon-tool"></span> 工具中心</button>
+                <button class="nav-btn" onclick="switchPage('user-center')"><span class="icon icon-user"></span> 用户中心</button>
+                <button class="nav-btn" id="loginBtn" onclick="switchPage('login')"><span class="icon icon-login"></span> 登录</button>
             </div>
         </div>
     </header>
 
-    <section>
-        <div class="container">
-            <div class="card neon-border">
-                <h2 class="card-title">平台简介</h2>
-                <p style="line-height: 1.6; margin-bottom: 12px;">专注福彩3D趋势数据研究与缩水工具开发，提供专业分析思路与实用工具，助力精准选号。</p>
-                <p style="line-height: 1.6; color: #4299e1; font-weight: 500;">温馨提示：仅注册会员并充值虚拟积分后，可解锁全部缩水工具使用权限，普通用户仅可浏览。</p>
+    <!-- 首页 -->
+    <div id="home" class="page active">
+        <section>
+            <div class="container">
+                <div class="card neon-border">
+                    <h2 class="card-title">平台简介</h2>
+                    <p style="line-height: 1.6; margin-bottom: 12px;">专注福彩3D趋势数据研究与缩水工具开发，提供专业分析思路与实用工具，助力精准选号。</p>
+                    <p style="line-height: 1.6; color: #4299e1; font-weight: 500;">温馨提示：仅注册会员并充值虚拟积分后，可解锁全部缩水工具使用权限，普通用户仅可浏览。</p>
+                </div>
+                <div class="card">
+                    <h2 class="card-title">核心工具预览</h2>
+                    <div class="tool-item">
+                        <h3>3D伪序趋势分析工具</h3>
+                        <p>基于伪序理论，可视化展示数字走势，辅助判断号码规律（需会员充值后使用）</p>
+                    </div>
+                    <div class="tool-item">
+                        <h3>多条件缩水工具</h3>
+                        <p>支持多维度条件筛选，精准缩小号码范围，提升选号效率（需会员充值后使用）</p>
+                    </div>
+                </div>
             </div>
+        </section>
+    </div>
 
-            <div class="card">
-                <h2 class="card-title">核心工具预览</h2>
-                <div class="tool-item">
-                    <h3>3D伪序趋势分析工具</h3>
-                    <p>基于伪序理论，可视化展示数字走势，辅助判断号码规律（需会员充值后使用）</p>
-                </div>
-                <div class="tool-item">
-                    <h3>多条件缩水工具</h3>
-                    <p>支持多维度条件筛选，精准缩小号码范围，提升选号效率（需会员充值后使用）</p>
+    <!-- 登录页 -->
+    <div id="login" class="page">
+        <section>
+            <div class="container">
+                <div class="card" style="max-width: 500px; margin: 0 auto;">
+                    <h2 class="card-title">用户登录</h2>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="username">用户名</label>
+                            <input type="text" id="username" required placeholder="请输入用户名">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">密码</label>
+                            <input type="password" id="password" required placeholder="请输入密码">
+                        </div>
+                        <div class="form-btn">
+                            <button type="submit" class="btn btn-primary">登录</button>
+                            <p style="margin-top: 15px;">没有账号？<button type="button" class="nav-btn" onclick="switchPage('register')" style="color: #3498db; padding:0;">立即注册</button></p>
+                        </div>
+                    </form>
                 </div>
             </div>
+        </section>
+    </div>
+
+    <!-- 注册页 -->
+    <div id="register" class="page">
+        <section>
+            <div class="container">
+                <div class="card" style="max-width: 500px; margin: 0 auto;">
+                    <h2 class="card-title">用户注册</h2>
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label for="regUsername">用户名</label>
+                            <input type="text" id="regUsername" required placeholder="请输入用户名（3-10位）">
+                        </div>
+                        <div class="form-group">
+                            <label for="regPassword">密码</label>
+                            <input type="password" id="regPassword" required placeholder="请输入密码（6-16位）">
+                        </div>
+                        <div class="form-group">
+                            <label for="regConfirmPwd">确认密码</label>
+                            <input type="password" id="regConfirmPwd" required placeholder="请再次输入密码">
+                        </div>
+                        <div class="form-btn">
+                            <button type="submit" class="btn btn-primary">注册</button>
+                            <p style="margin-top: 15px;">已有账号？<button type="button" class="nav-btn" onclick="switchPage('login')" style="color: #3498db; padding:0;">立即登录</button></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 用户中心 -->
+    <div id="user-center" class="page">
+        <section>
+            <div class="container">
+                <div class="card">
+                    <h2 class="card-title">我的账户</h2>
+                    <div class="user-info">
+                        用户名：<span id="showUsername"></span><br>
+                        可用积分：<span id="userScore"></span>
+                        <span class="recharge-link" onclick="document.getElementById('rechargeModal').style.display='flex'">请联系QQ充值</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="goToTools()">进入工具中心</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 工具中心 -->
+    <div id="tools" class="page">
+        <section>
+            <div class="container">
+                <div class="card">
+                    <h2 class="card-title">3D伪序趋势分析工具</h2>
+                    <div class="tool-item active">
+                        <p>伪序理论分析模块（此处可后续添加具体工具逻辑，如数据图表、筛选条件等）</p>
+                        <button class="btn btn-primary" style="margin-top: 10px;">开始分析</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2 class="card-title">多条件缩水工具</h2>
+                    <div class="tool-item active">
+                        <p>缩水条件设置模块（此处可后续添加具体工具逻辑，如和值、跨度筛选等）</p>
+                        <button class="btn btn-primary" style="margin-top: 10px;">开始缩水</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 后台管理 -->
+    <div id="admin" class="page">
+        <section>
+            <div class="container">
+                <div class="card">
+                    <h2 class="card-title">用户管理</h2>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <<th>用户名</</th>
+                                <<th>可用积分</</th>
+                                <<th>账号状态</</th>
+                                <<th>操作</</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 充值弹窗 -->
+    <div class="modal" id="rechargeModal">
+        <div class="modal-box">
+            <h3 class="card-title">虚拟积分充值</h3>
+            <p>充值为虚拟积分，仅用于解锁工具权限，无实际现金价值</p>
+            <p>联系QQ：123456（示例QQ，可自行修改）</p>
+            <button class="btn btn-primary" style="margin-top: 20px;" onclick="document.getElementById('rechargeModal').style.display='none'">关闭</button>
         </div>
-    </section>
+    </div>
 
-    <script src="js/common.js"></script>
+    <!-- 后台充值弹窗 -->
+    <div class="modal" id="adminRechargeModal">
+        <div class="modal-box">
+            <h3 class="card-title">充值积分</h3>
+            <input type="hidden" id="rechargeUsername">
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="adminShowUsername" disabled>
+            </div>
+            <div class="form-group">
+                <label>充值积分数量</label>
+                <input type="number" id="rechargeNum" min="1" placeholder="请输入积分数量">
+            </div>
+            <button class="btn btn-primary" onclick="submitRecharge()">确认充值</button>
+            <button class="btn btn-danger" style="margin-left: 10px;" onclick="document.getElementById('adminRechargeModal').style.display='none'">取消</button>
+        </div>
+    </div>
+
     <script>
-        // 登录状态切换（显示用户名/退出）
-        const user = getCurrentUser();
-        const loginBtn = document.getElementById('loginBtn');
-        const userLink = document.getElementById('userLink');
-        if (user) {
-            loginBtn.innerHTML = '<span class="icon icon-login"></span> 退出登录';
-            loginBtn.onclick = logout;
-            userLink.innerHTML = `<span class="icon icon-user"></span> 我的账户（${user.username}）`;
-        } else {
-            loginBtn.onclick = () => window.location.href = 'login.html';
+        // 本地存储key定义
+        const STORAGE_KEY = {
+            USER_LIST: 'shifanglm_user_list',
+            CURRENT_USER: 'shifanglm_current_user'
+        };
+
+        // 初始化存储
+        function initStorage() {
+            if (!localStorage.getItem(STORAGE_KEY.USER_LIST)) {
+                localStorage.setItem(STORAGE_KEY.USER_LIST, JSON.stringify([]));
+            }
+        }
+        initStorage();
+
+        // 页面切换
+        function switchPage(pageId) {
+            // 权限校验：工具页/用户中心/后台需要登录
+            if (['tools', 'user-center', 'admin'].includes(pageId)) {
+                const user = getCurrentUser();
+                if (!user && pageId !== 'admin') {
+                    alert('请先登录');
+                    switchPage('login');
+                    return;
+                }
+                if (pageId === 'admin' && !(user && user.username === 'admin' && user.password === 'admin123')) {
+                    alert('无后台访问权限');
+                    switchPage('home');
+                    return;
+                }
+                if (pageId === 'tools' && (user.score <= 0)) {
+                    alert('需充值后使用');
+                    switchPage('user-center');
+                    return;
+                }
+            }
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            // 渲染用户中心/后台数据
+            if (pageId === 'user-center') renderUserCenter();
+            if (pageId === 'admin') renderUserList();
+        }
+
+        // 基础存储方法
+        function getAllUsers() { return JSON.parse(localStorage.getItem(STORAGE_KEY.USER_LIST)) || []; }
+        function saveAllUsers(users) { localStorage.setItem(STORAGE_KEY.USER_LIST, JSON.stringify(users)); }
+        function getCurrentUser() { return JSON.parse(localStorage.getItem(STORAGE_KEY.CURRENT_USER)) || null; }
+        function saveCurrentUser(user) { localStorage.setItem(STORAGE_KEY.CURRENT_USER, JSON.stringify(user)); }
+        function logout() {
+            localStorage.removeItem(STORAGE_KEY.CURRENT_USER);
+            document.getElementById('loginBtn').innerHTML = '<span class="icon icon-login"></span> 登录';
+            document.getElementById('loginBtn').onclick = () => switchPage('login');
+            switchPage('home');
+        }
+
+        // 登录逻辑
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const users = getAllUsers();
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                if (user.isBanned) {
+                    alert('账号已被封禁');
+                    return;
+                }
+                saveCurrentUser(user);
+                alert('登录成功');
+                document.getElementById('loginBtn').innerHTML = '<span class="icon icon-login"></span> 退出登录';
+                document.getElementById('loginBtn').onclick = logout;
+                switchPage('home');
+            } else {
+                alert('用户名或密码错误');
+            }
+        });
+
+        // 注册逻辑
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            const confirmPwd = document.getElementById('regConfirmPwd').value.trim();
+            const users = getAllUsers();
+
+            if (username.length < 3 || username.length > 10) { alert('用户名需3-10位'); return; }
+            if (password.length < 6 || password.length > 16) { alert('密码需6-16位'); return; }
+            if (password !== confirmPwd) { alert('两次密码不一致'); return; }
+            if (users.some(u => u.username === username)) { alert('用户名已存在'); return; }
+
+            users.push({ username, password, score: 0, isBanned: false });
+            saveAllUsers(users);
+            alert('注册成功');
+            switchPage('login');
+        });
+
+        // 渲染用户中心
+        function renderUserCenter() {
+            const user = getCurrentUser();
+            if (user) {
+                document.getElementById('showUsername').textContent = user.username;
+                document.getElementById('userScore').textContent = user.score;
+            }
+        }
+
+        // 进入工具中心
+        function goToTools() {
+            const user = getCurrentUser();
+            if (user && user.score > 0) {
+                switchPage('tools');
+            } else {
+                alert('需充值后使用');
+            }
+        }
+
+        // 后台渲染用户列表
+        function renderUserList() {
+            const users = getAllUsers();
+            const tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = '';
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.score}</td>
+                    <td>${user.isBanned ? '已封禁' : '正常'}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="openAdminRechargeModal('${user.username}')">充值积分</button>
+                        <button class="btn btn-danger" style="margin-left: 10px;" onclick="toggleBan('${user.username}')">${user.isBanned ? '解封' : '封禁'}</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // 后台充值弹窗
+        function openAdminRechargeModal(username) {
+            document.getElementById('rechargeUsername').value = username;
+            document.getElementById('adminShowUsername').value = username;
+            document.getElementById('rechargeNum').value = '';
+            document.getElementById('adminRechargeModal').style.display = 'flex';
+        }
+
+        // 提交充值
+        function submitRecharge() {
+            const username = document.getElementById('rechargeUsername').value;
+            const num = parseInt(document.getElementById('rechargeNum').value);
+            if (!num || num < 1) {
+                alert('请输入有效积分数量');
+                return;
+            }
+            const users = getAllUsers();
+            const index = users.findIndex(u => u.username === username);
+            if (index !== -1) {
+                users[index].score += num;
+                saveAllUsers(users);
+                const currentUser = getCurrentUser();
+                if (currentUser && currentUser.username === username) {
+                    saveCurrentUser(users[index]);
+                }
+                alert('充值成功');
+                document.getElementById('adminRechargeModal').style.display = 'none';
+                renderUserList();
+            }
+        }
+
+        // 封禁/解封
+        function toggleBan(username) {
+            const users = getAllUsers();
+            const index = users.findIndex(u => u.username === username);
+            if (index !== -1) {
+                users[index].isBanned = !users[index].isBanned;
+                saveAllUsers(users);
+                const currentUser = getCurrentUser();
+                if (currentUser && currentUser.username === username && users[index].isBanned) {
+                    logout();
+                }
+                renderUserList();
+            }
+        }
+
+        // 初始化登录状态
+        window.onload = function() {
+            const user = getCurrentUser();
+            if (user) {
+                document.getElementById('loginBtn').innerHTML = '<span class="icon icon-login"></span> 退出登录';
+                document.getElementById('loginBtn').onclick = logout;
+            }
         }
     </script>
 </body>

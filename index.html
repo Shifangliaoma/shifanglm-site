@@ -145,7 +145,7 @@
         #admin-panel button:hover {
             background: #00cc00;
         }
-        #member-result, #oper-result {
+        #member-result, #ban-result {
             margin-top: 15px;
             padding: 10px;
             background: #222;
@@ -272,7 +272,7 @@
         .edit-btn {
             background: #ff9900 !important;
         }
-        /* 导入功能样式补充（默认隐藏，仅管理员显示） */
+        /* 导入功能样式补充（默认隐藏，仅管理员可见） */
         .example {
             margin-top: 8px;
             color: #999;
@@ -438,10 +438,25 @@
         .status-info {
             line-height: 1.6;
         }
+        /* 倒计时样式 */
+        .countdown {
+            color: #ff3300;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 10px 0;
+            display: inline-block;
+            padding: 5px 10px;
+            background: #333;
+            border-radius: 4px;
+        }
         .renew-btn {
             margin-top: 10px;
             background: #ff9900 !important;
             color: #000 !important;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
         .profile-form {
             display: flex;
@@ -468,6 +483,10 @@
             width: 120px;
             padding: 10px 0;
             background: #0066cc !important;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
         }
         .security-list {
             display: flex;
@@ -493,6 +512,10 @@
             padding: 6px 12px;
             background: #0066cc !important;
             font-size: 0.9rem;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
         }
         .no-login-tip {
             background: #222;
@@ -503,15 +526,6 @@
             width: 90%;
             max-width: 600px;
             display: none;
-        }
-        .no-login-tip h3 {
-            margin-bottom: 20px;
-            color: #0ff;
-        }
-        .login-btn {
-            padding: 10px 25px;
-            background: #0066cc !important;
-            font-size: 1rem;
         }
     </style>
 </head>
@@ -640,6 +654,7 @@
             <div style="margin-bottom: 15px;">
                 <h4 style="margin-bottom: 8px;">或直接粘贴HTML代码</h4>
                 <textarea id="html-code-input" style="width: 100%; height: 150px; background: #222; color: #fff; border: 1px solid #666; border-radius: 4px; padding: 8px;" placeholder="粘贴完整HTML代码"></textarea>
+                <button class="nav-btn" style="margin-top: 8px;" onclick="previewHtmlCode()">预览代码导入</button>
             </div>
             <div style="margin-bottom: 15px;">
                 <label>工具名称（用户看到的名称）：</label>
@@ -749,16 +764,74 @@
     <!-- 未登录提示 -->
     <div class="no-login-tip" id="no-login-tip">
         <h3>请先登录，查看个人中心内容</h3>
-        <button class="login-btn" onclick="switchToLogin()">立即登录</button>
+        <button class="nav-btn" onclick="switchToLogin()">立即登录</button>
     </div>
 
     <script>
         let isAdmin = false;
         let loginUser = {};
-        // 存储导入的工具列表
         let importedTools = JSON.parse(localStorage.getItem('importedTools') || '[]');
+        let countdownInterval = null; // 倒计时定时器
 
-        // ===================== 基础函数 =====================
+        // ===================== 页面基础切换 =====================
+        function showHome() {
+            // 首页逻辑：未登录显示登录面板，已登录显示会员提示+工具中心入口
+            if (Object.keys(loginUser).length === 0) {
+                document.getElementById('auth-container').style.display = 'block';
+                document.getElementById('tool-area').style.display = 'none';
+                document.getElementById('page-container').style.display = 'none';
+                document.getElementById('no-login-tip').style.display = 'none';
+            } else {
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('tool-area').style.display = isAdmin || (loginUser.memberType !== 'none') ? 'block' : 'none';
+                document.getElementById('page-container').style.display = 'none';
+                document.getElementById('no-login-tip').style.display = 'none';
+            }
+        }
+        function showToolCenter() {
+            if (Object.keys(loginUser).length === 0) {
+                alert('请先登录');
+                switchToLogin();
+                return;
+            }
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('page-container').style.display = 'none';
+            document.getElementById('no-login-tip').style.display = 'none';
+            // 会员/管理员显示工具中心，普通用户提示开通会员
+            if (isAdmin || JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}').type !== 'none') {
+                document.getElementById('tool-area').style.display = 'block';
+            } else {
+                document.getElementById('tool-area').style.display = 'none';
+                alert('需开通会员后使用工具中心');
+            }
+        }
+        function showUserCenter() {
+            if (Object.keys(loginUser).length === 0) {
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('tool-area').style.display = 'none';
+                document.getElementById('page-container').style.display = 'none';
+                document.getElementById('no-login-tip').style.display = 'block';
+                return;
+            }
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('tool-area').style.display = 'none';
+            document.getElementById('no-login-tip').style.display = 'none';
+            document.getElementById('page-container').style.display = 'block';
+            // 加载用户信息
+            loadUserProfile();
+            // 加载会员状态（含倒计时）
+            loadVipStatus();
+        }
+        function switchUserTab(tabId) {
+            document.querySelectorAll('.user-nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.content-module').forEach(module => module.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            // 切换到会员权益时刷新倒计时
+            if (tabId === 'vip-benefit') loadVipStatus();
+        }
+
+        // ===================== 登录/注册 =====================
         function switchToRegister() {
             document.getElementById('login-panel').style.display = 'none';
             document.getElementById('register-panel').style.display = 'block';
@@ -767,22 +840,6 @@
             document.getElementById('register-panel').style.display = 'none';
             document.getElementById('login-panel').style.display = 'block';
         }
-        function switchAdminTab(tabId) {
-            const targetBtn = event.target;
-            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
-            targetBtn.classList.add('active');
-            document.querySelectorAll('.admin-content').forEach(cont => cont.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            if (tabId === 'user-list') loadUserList();
-            if (tabId === 'member-list') loadMemberList();
-        }
-        function toggleAdjustBox() {
-            const type = document.getElementById('adjust-type').value;
-            document.getElementById('extend-day-box').style.display = type === 'extend' ? 'block' : 'none';
-            document.getElementById('modify-time-box').style.display = type === 'modify' ? 'block' : 'none';
-        }
-
-        // ===================== 登录/注册 =====================
         function register() {
             const username = document.getElementById('reg-username').value.trim();
             const pwd = document.getElementById('reg-pwd').value.trim();
@@ -807,10 +864,10 @@
             const pwd = document.getElementById('login-pwd').value.trim();
             if (!username || !pwd) { alert('请输入用户名和密码'); return; }
 
-            // 管理员验证
+            // 管理员验证（默认账号：十方料码，密码：7446265）
             isAdmin = username === '十方料码' && pwd === '7446265';
             if (isAdmin) {
-                loginUser = { name: username, isAdmin: true };
+                loginUser = { name: username, isAdmin: true, registerTime: '管理员账号' };
                 document.getElementById('auth-container').style.display = 'none';
                 document.getElementById('logout-btn').style.display = 'block';
                 document.getElementById('admin-panel').style.display = 'block';
@@ -820,7 +877,7 @@
                 document.getElementById('import-module').style.display = 'block';
                 loadUserList();
                 loadMemberList();
-                renderToolList(); // 渲染工具列表
+                renderToolList();
                 return;
             }
 
@@ -835,12 +892,22 @@
             document.getElementById('logout-btn').style.display = 'block';
             document.getElementById('admin-import-btn').style.display = 'none';
             document.getElementById('import-module').style.display = 'none';
+            // 检查会员状态
             checkMemberStatus();
-            renderToolList(); // 渲染工具列表
+            // 渲染工具列表
+            renderToolList();
         }
+        // 修复退出登录功能（清除定时器+重置所有状态）
         function logout() {
+            // 清除倒计时定时器
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            // 重置用户状态
             loginUser = {};
             isAdmin = false;
+            // 隐藏所有功能模块
             document.getElementById('auth-container').style.display = 'block';
             document.getElementById('login-panel').style.display = 'block';
             document.getElementById('logout-btn').style.display = 'none';
@@ -851,15 +918,18 @@
             document.getElementById('import-module').style.display = 'none';
             document.getElementById('page-container').style.display = 'none';
             document.getElementById('no-login-tip').style.display = 'none';
+            // 关闭工具弹窗（若打开）
+            closeToolModal();
         }
 
-        // ===================== 会员相关 =====================
+        // ===================== 会员相关（含倒计时） =====================
         function checkMemberStatus() {
             const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
             const now = new Date();
             const endDate = new Date(memberInfo.end);
 
             if (memberInfo.type !== 'none' && now > endDate) {
+                // 会员已到期
                 localStorage.setItem(`member_${loginUser.name}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
                 document.getElementById('member-tips').innerText = '您的会员已到期，恢复为普通用户';
                 document.getElementById('tool-area').style.display = 'none';
@@ -868,21 +938,25 @@
             }
 
             if (memberInfo.type !== 'none') {
+                // 会员有效
                 const leftDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
                 memberInfo.leftDays = leftDays;
                 localStorage.setItem(`member_${loginUser.name}`, JSON.stringify(memberInfo));
                 document.getElementById('member-tips').innerText = `当前会员类型：${getMemberTypeName(memberInfo.type)} | 剩余天数：${leftDays}天`;
                 document.getElementById('tool-area').style.display = 'block';
             } else {
+                // 非会员
                 document.getElementById('member-tips').innerText = '您当前是普通用户，需联系管理员开通会员';
                 document.getElementById('tool-area').style.display = 'none';
-                alert('需办理会员后使用');
+                alert('需办理会员后使用工具中心');
             }
         }
         function getMemberTypeName(type) {
             switch(type) {
-                case 'day': return '日会员'; case 'week': return '周会员';
-                case 'month': return '月会员'; case 'year': return '年会员';
+                case 'day': return '日会员'; 
+                case 'week': return '周会员';
+                case 'month': return '月会员'; 
+                case 'year': return '年会员';
                 default: return '普通用户';
             }
         }
@@ -898,8 +972,106 @@
             const leftDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
             return { type, start: start.toLocaleString(), end: end.toLocaleString(), leftDays };
         }
+        // 实时倒计时函数（月/天/时/分/秒）
+        function startCountdown(endTimeStr) {
+            const endDate = new Date(endTimeStr);
+            const countdownEl = document.getElementById('countdown-display');
+            
+            // 清除已有定时器
+            if (countdownInterval) clearInterval(countdownInterval);
+            
+            // 每秒更新一次
+            countdownInterval = setInterval(() => {
+                const now = new Date();
+                const diff = endDate - now;
+                
+                if (diff <= 0) {
+                    // 倒计时结束
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                    countdownEl.innerText = '会员已到期';
+                    // 刷新会员状态
+                    loadVipStatus();
+                    return;
+                }
+                
+                // 计算月（按30天估算）、天、时、分、秒
+                const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
+                const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                // 拼接倒计时文本（只显示非零部分，补零优化）
+                let countdownText = '';
+                if (months > 0) countdownText += `${months}月`;
+                if (days > 0 || months > 0) countdownText += `${days}天`;
+                countdownText += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                countdownEl.innerText = countdownText;
+            }, 1000);
+        }
+        // 加载用户中心的会员状态（含倒计时）
+        function loadVipStatus() {
+            const vipStatusEl = document.getElementById('vip-status');
+            const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+            const now = new Date();
+            const endDate = new Date(memberInfo.end);
+
+            if (memberInfo.type === 'none') {
+                vipStatusEl.innerHTML = `
+                    <div class="status-info">
+                        <p>当前身份：普通用户</p>
+                        <p>会员状态：未开通</p>
+                        <p>提示：联系管理员开通会员后，可解锁所有工具功能</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (now > endDate) {
+                // 会员已到期
+                vipStatusEl.innerHTML = `
+                    <div class="status-info">
+                        <p>当前身份：${getMemberTypeName(memberInfo.type)}（已到期）</p>
+                        <p>开通时间：${memberInfo.start}</p>
+                        <p>截止时间：${memberInfo.end}</p>
+                        <p class="countdown" id="countdown-display">会员已到期</p>
+                        <button class="renew-btn" onclick="alert('请联系管理员续费')">立即续费</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // 会员有效，显示倒计时
+            vipStatusEl.innerHTML = `
+                <div class="status-info">
+                    <p>当前身份：${getMemberTypeName(memberInfo.type)}（有效）</p>
+                    <p>开通时间：${memberInfo.start}</p>
+                    <p>截止时间：${memberInfo.end}</p>
+                    <p>剩余时长：<span class="countdown" id="countdown-display"></span></p>
+                    <button class="renew-btn" onclick="alert('请联系管理员续费')">续费会员</button>
+                </div>
+            `;
+            // 启动倒计时
+            startCountdown(memberInfo.end);
+        }
 
         // ===================== 管理员后台 =====================
+        function switchAdminTab(tabId) {
+            const targetBtn = event.target;
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+            targetBtn.classList.add('active');
+            document.querySelectorAll('.admin-content').forEach(cont => cont.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if (tabId === 'user-list') loadUserList();
+            if (tabId === 'member-list') loadMemberList();
+        }
+        function toggleAdjustBox() {
+            const type = document.getElementById('adjust-type').value;
+            document.getElementById('extend-day-box').style.display = type === 'extend' ? 'block' : 'none';
+            document.getElementById('modify-time-box').style.display = type === 'modify' ? 'block' : 'none';
+        }
         function loadUserList() {
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
             const tbody = document.getElementById('user-list-body');
@@ -1003,7 +1175,7 @@
             }
 
             document.getElementById('member-result').innerText = resultText;
-            loadMemberList();
+            loadMemberList(); // 刷新会员列表
         }
         function banUser(username) {
             if (!isAdmin) { alert('无管理员权限'); return; }
@@ -1035,7 +1207,6 @@
         }
 
         // ===================== 工具导入/弹窗 =====================
-        // 读取HTML文件
         function readHtmlFile() {
             const fileInput = document.getElementById('html-file-import');
             const file = fileInput.files[0];
@@ -1051,7 +1222,11 @@
             };
             reader.onerror = function() { alert('文件读取失败'); };
         }
-        // 显示预览
+        function previewHtmlCode() {
+            const code = document.getElementById('html-code-input').value.trim();
+            if (!code) { alert('请粘贴HTML代码'); return; }
+            showHtmlPreview(code);
+        }
         function showHtmlPreview(content) {
             const previewContainer = document.getElementById('preview-container');
             const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
@@ -1060,32 +1235,25 @@
             localStorage.setItem('tempHtmlImportContent', content);
             document.getElementById('html-import-preview').style.display = 'block';
         }
-        // 隐藏预览
         function hideHtmlPreview() {
             document.getElementById('html-import-preview').style.display = 'none';
             document.getElementById('html-code-input').value = '';
             localStorage.removeItem('tempHtmlImportContent');
         }
-        // 确认导入工具
         function confirmHtmlImport() {
             const content = localStorage.getItem('tempHtmlImportContent');
             const toolName = document.getElementById('tool-name-input').value.trim();
             if (!content) { alert('无导入内容'); return; }
             if (!toolName) { alert('请输入工具名称'); return; }
 
-            // 添加到工具列表
-            const toolId = Date.now().toString(); // 唯一ID
+            const toolId = Date.now().toString();
             importedTools.push({ id: toolId, name: toolName, content: content });
             localStorage.setItem('importedTools', JSON.stringify(importedTools));
-            
-            // 渲染工具列表
             renderToolList();
-            
             alert(`✅ 工具「${toolName}」导入成功！用户可在工具列表点击打开`);
             hideHtmlPreview();
             document.getElementById('tool-name-input').value = '';
         }
-        // 渲染工具列表
         function renderToolList() {
             const toolList = document.getElementById('tool-list');
             toolList.innerHTML = '';
@@ -1102,7 +1270,6 @@
                 toolList.appendChild(toolItem);
             });
         }
-        // 打开工具弹窗（1:1显示原工具）
         function openToolModal(toolId) {
             const tool = importedTools.find(t => t.id === toolId);
             if (!tool) return;
@@ -1122,7 +1289,6 @@
             // 显示弹窗
             modal.style.display = 'flex';
         }
-        // 关闭工具弹窗
         function closeToolModal() {
             const modal = document.getElementById('tool-modal');
             const modalContent = document.getElementById('tool-modal-content');
@@ -1130,54 +1296,8 @@
             modalContent.innerHTML = '';
         }
 
-        // ===================== 用户中心 =====================
-        function showHome() {
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('tool-area').style.display = 'none';
-            document.getElementById('page-container').style.display = 'none';
-            document.getElementById('no-login-tip').style.display = 'none';
-            if (Object.keys(loginUser).length === 0) {
-                document.getElementById('auth-container').style.display = 'block';
-            } else {
-                alert('首页可自定义添加公告、工具说明等内容');
-            }
-        }
-        function showToolCenter() {
-            document.getElementById('page-container').style.display = 'none';
-            document.getElementById('no-login-tip').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'none';
-            
-            if (Object.keys(loginUser).length === 0) {
-                alert('请先登录');
-                return;
-            }
-            if (isAdmin || (loginUser.isAdmin !== true && JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}').type !== 'none')) {
-                document.getElementById('tool-area').style.display = 'block';
-            } else {
-                alert('需开通会员后查看');
-            }
-        }
-        function showUserCenter() {
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('tool-area').style.display = 'none';
-            document.getElementById('auth-container').style.display = 'none';
-            
-            if (Object.keys(loginUser).length === 0) {
-                document.getElementById('no-login-tip').style.display = 'block';
-                document.getElementById('page-container').style.display = 'none';
-            } else {
-                document.getElementById('no-login-tip').style.display = 'none';
-                document.getElementById('page-container').style.display = 'block';
-                initUserCenter();
-            }
-        }
-        function switchUserTab(tabId) {
-            document.querySelectorAll('.user-nav-item').forEach(item => item.classList.remove('active'));
-            event.target.classList.add('active');
-            document.querySelectorAll('.content-module').forEach(module => module.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-        }
-        function initUserCenter() {
+        // ===================== 用户中心-个人资料 =====================
+        function loadUserProfile() {
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
             const currentUser = users.find(u => u.name === loginUser.name) || loginUser;
             
@@ -1187,41 +1307,14 @@
             if (isAdmin) {
                 document.getElementById('user-role').className = 'user-role role-admin';
                 document.getElementById('user-role').innerText = '管理员';
-                document.getElementById('vip-status').innerHTML = `
-                    <div class="status-info">
-                        身份：管理员<br>
-                        会员状态：永久有效<br>
-                        权益：解锁平台所有功能，含工具导入、用户管理权限
-                    </div>
-                `;
             } else {
                 const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}');
-                const now = new Date();
-                const endDate = new Date(memberInfo.end);
-                const leftDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
-                
-                if (memberInfo.type !== 'none' && leftDays > 0) {
+                if (memberInfo.type !== 'none') {
                     document.getElementById('user-role').className = 'user-role role-vip';
                     document.getElementById('user-role').innerText = getMemberTypeName(memberInfo.type);
-                    document.getElementById('vip-status').innerHTML = `
-                        <div class="status-info">
-                            会员等级：${getMemberTypeName(memberInfo.type)}<br>
-                            开通时间：${memberInfo.start}<br>
-                            截止时间：${memberInfo.end}<br>
-                            剩余天数：${leftDays}天
-                        </div>
-                        <button class="renew-btn" onclick="alert('请联系管理员续费')">立即续费</button>
-                    `;
                 } else {
                     document.getElementById('user-role').className = 'user-role role-normal';
                     document.getElementById('user-role').innerText = '普通用户';
-                    document.getElementById('vip-status').innerHTML = `
-                        <div class="status-info">
-                            当前为普通用户，未开通会员<br>
-                            开通会员可解锁全部3D分析工具与选号技巧
-                        </div>
-                        <button class="renew-btn" onclick="alert('请联系管理员开通会员')">开通会员</button>
-                    `;
                 }
             }
 
@@ -1275,11 +1368,6 @@
             toggleAdjustBox();
             // 渲染工具列表
             renderToolList();
-            // 绑定粘贴代码预览
-            document.getElementById('html-code-input')?.addEventListener('blur', function() {
-                const code = this.value.trim();
-                if (code) showHtmlPreview(code);
-            });
             // 绑定悬浮导入按钮点击事件
             document.getElementById('admin-import-btn').onclick = function() {
                 document.getElementById('tool-area').style.display = 'block';

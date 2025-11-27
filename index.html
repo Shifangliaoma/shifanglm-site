@@ -473,198 +473,213 @@
         </div>
     </div>
 
-    <script>
-        // 本地存储key定义
-        const STORAGE_KEY = {
-            USER_LIST: 'shifanglm_user_list',
-            CURRENT_USER: 'shifanglm_current_user'
-        };
+    <script>  // 本地存储key定义
+const STORAGE_KEY = {
+    USER_LIST: 'shifanglm_user_list',
+    CURRENT_USER: 'shifanglm_current_user'
+};
 
-        // 初始化存储
-        function initStorage() {
-            if (!localStorage.getItem(STORAGE_KEY.USER_LIST)) {
-                localStorage.setItem(STORAGE_KEY.USER_LIST, JSON.stringify([]));
-            }
-        }
-        initStorage();
-
-        // 页面切换
-        function switchPage(pageId) {
-            // 权限校验：工具页/用户中心/后台需要登录
-            if (['tools', 'user-center', 'admin'].includes(pageId)) {
-                const user = getCurrentUser();
-                if (!user && pageId !== 'admin') {
-                    alert('请先登录');
-                    switchPage('login');
-                    return;
-                }
-                if (pageId === 'admin' && !(user && user.username === 'admin' && user.password === 'admin123')) {
-                    alert('无后台访问权限');
-                    switchPage('home');
-                    return;
-                }
-                if (pageId === 'tools' && (user.score <= 0)) {
-                    alert('需充值后使用');
-                    switchPage('user-center');
-                    return;
-                }
-            }
-
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            
-            // 渲染用户中心/后台数据
-            if (pageId === 'user-center') renderUserCenter();
-            if (pageId === 'admin') renderUserList();
-        }
-
-        // 基础存储方法
-        function getAllUsers() { return JSON.parse(localStorage.getItem(STORAGE_KEY.USER_LIST)) || []; }
-        function saveAllUsers(users) { localStorage.setItem(STORAGE_KEY.USER_LIST, JSON.stringify(users)); }
-        function getCurrentUser() { return JSON.parse(localStorage.getItem(STORAGE_KEY.CURRENT_USER)) || null; }
-        function saveCurrentUser(user) { localStorage.setItem(STORAGE_KEY.CURRENT_USER, JSON.stringify(user)); }
-        function logout() {
-            localStorage.removeItem(STORAGE_KEY.CURRENT_USER);
-            document.getElementById('loginBtn').innerHTML = '<span class="icon icon-login"></span> 登录';
-            document.getElementById('loginBtn').onclick = () => switchPage('login');
-            switchPage('home');
-        }
-
-        // 登录逻辑
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const users = getAllUsers();
-            const user = users.find(u => u.username === username && u.password === password);
-            
-            if (user) {
-                if (user.isBanned) {
-                    alert('账号已被封禁');
-                    return;
-                }
-                saveCurrentUser(user);
-                alert('登录成功');
-                document.getElementById('loginBtn').innerHTML = '<span class="icon icon-login"></span> 退出登录';
-                document.getElementById('loginBtn').onclick = logout;
-                switchPage('home');
-            } else {
-                alert('用户名或密码错误');
-            }
+// 初始化存储（自动创建超级管理员：十方料码/7446265）
+function initStorage() {
+    let users = JSON.parse(localStorage.getItem(STORAGE_KEY.USER_LIST)) || [];
+    // 检查是否已有超级管理员，无则自动创建
+    const adminExist = users.some(u => u.username === '十方料码');
+    if (!adminExist) {
+        users.push({
+            username: '十方料码',
+            password: '7446265',
+            score: 0,
+            isBanned: false,
+            isSuperAdmin: true // 标记为超级管理员
         });
+        localStorage.setItem(STORAGE_KEY.USER_LIST, JSON.stringify(users));
+    }
+}
+initStorage();
 
-        // 注册逻辑
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('regUsername').value.trim();
-            const password = document.getElementById('regPassword').value.trim();
-            const confirmPwd = document.getElementById('regConfirmPwd').value.trim();
-            const users = getAllUsers();
-
-            if (username.length < 3 || username.length > 10) { alert('用户名需3-10位'); return; }
-            if (password.length < 6 || password.length > 16) { alert('密码需6-16位'); return; }
-            if (password !== confirmPwd) { alert('两次密码不一致'); return; }
-            if (users.some(u => u.username === username)) { alert('用户名已存在'); return; }
-
-            users.push({ username, password, score: 0, isBanned: false });
-            saveAllUsers(users);
-            alert('注册成功');
+// 页面切换
+function switchPage(pageId) {
+    // 权限校验：工具页/用户中心/后台需要登录
+    if (['tools', 'user-center', 'admin'].includes(pageId)) {
+        const user = getCurrentUser();
+        if (!user && pageId !== 'admin') {
+            alert('请先登录');
             switchPage('login');
-        });
-
-        // 渲染用户中心
-        function renderUserCenter() {
-            const user = getCurrentUser();
-            if (user) {
-                document.getElementById('showUsername').textContent = user.username;
-                document.getElementById('userScore').textContent = user.score;
-            }
+            return;
         }
-
-        // 进入工具中心
-        function goToTools() {
-            const user = getCurrentUser();
-            if (user && user.score > 0) {
-                switchPage('tools');
-            } else {
-                alert('需充值后使用');
-            }
+        // 后台仅超级管理员可访问
+        if (pageId === 'admin' && !(user && user.username === '十方料码' && user.password === '7446265')) {
+            alert('无后台访问权限');
+            switchPage('home');
+            return;
         }
-
-        // 后台渲染用户列表
-        function renderUserList() {
-            const users = getAllUsers();
-            const tableBody = document.getElementById('userTableBody');
-            tableBody.innerHTML = '';
-            users.forEach(user => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${user.username}</td>
-                    <td>${user.score}</td>
-                    <td>${user.isBanned ? '已封禁' : '正常'}</td>
-                    <td>
-                        <button class="btn btn-primary" onclick="openAdminRechargeModal('${user.username}')">充值积分</button>
-                        <button class="btn btn-danger" style="margin-left: 10px;" onclick="toggleBan('${user.username}')">${user.isBanned ? '解封' : '封禁'}</button>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-            });
+        if (pageId === 'tools' && (user.score <= 0)) {
+            alert('需充值后使用');
+            switchPage('user-center');
+            return;
         }
+    }
 
-        // 后台充值弹窗
-        function openAdminRechargeModal(username) {
-            document.getElementById('rechargeUsername').value = username;
-            document.getElementById('adminShowUsername').value = username;
-            document.getElementById('rechargeNum').value = '';
-            document.getElementById('adminRechargeModal').style.display = 'flex';
-        }
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    
+    // 渲染用户中心/后台数据
+    if (pageId === 'user-center') renderUserCenter();
+    if (pageId === 'admin') renderUserList();
+}
 
-        // 提交充值
-        function submitRecharge() {
-            const username = document.getElementById('rechargeUsername').value;
-            const num = parseInt(document.getElementById('rechargeNum').value);
-            if (!num || num < 1) {
-                alert('请输入有效积分数量');
-                return;
-            }
-            const users = getAllUsers();
-            const index = users.findIndex(u => u.username === username);
-            if (index !== -1) {
-                users[index].score += num;
-                saveAllUsers(users);
-                const currentUser = getCurrentUser();
-                if (currentUser && currentUser.username === username) {
-                    saveCurrentUser(users[index]);
-                }
-                alert('充值成功');
-                document.getElementById('adminRechargeModal').style.display = 'none';
-                renderUserList();
-            }
-        }
+// 基础存储方法
+function getAllUsers() { return JSON.parse(localStorage.getItem(STORAGE_KEY.USER_LIST)) || []; }
+function saveAllUsers(users) { localStorage.setItem(STORAGE_KEY.USER_LIST, JSON.stringify(users)); }
+function getCurrentUser() { return JSON.parse(localStorage.getItem(STORAGE_KEY.CURRENT_USER)) || null; }
+function saveCurrentUser(user) { localStorage.setItem(STORAGE_KEY.CURRENT_USER, JSON.stringify(user)); }
+function logout() {
+    localStorage.removeItem(STORAGE_KEY.CURRENT_USER);
+    document.getElementById('loginBtn').innerHTML = '<span class="icon icon-login"></span> 登录';
+    document.getElementById('loginBtn').onclick = () => switchPage('login');
+    switchPage('home');
+}
 
-        // 封禁/解封
-        function toggleBan(username) {
-            const users = getAllUsers();
-            const index = users.findIndex(u => u.username === username);
-            if (index !== -1) {
-                users[index].isBanned = !users[index].isBanned;
-                saveAllUsers(users);
-                const currentUser = getCurrentUser();
-                if (currentUser && currentUser.username === username && users[index].isBanned) {
-                    logout();
-                }
-                renderUserList();
-            }
+// 登录逻辑
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const users = getAllUsers();
+    const user = users.find(u => u.username === username && u.password === password);
+    
+    if (user) {
+        if (user.isBanned) {
+            alert('账号已被封禁');
+            return;
         }
+        saveCurrentUser(user);
+        alert('登录成功');
+        document.getElementById('loginBtn').innerHTML = '<span class="icon icon-login"></span> 退出登录';
+        document.getElementById('loginBtn').onclick = logout;
+        switchPage('home');
+    } else {
+        alert('用户名或密码错误');
+    }
+});
 
-        // 初始化登录状态
-        window.onload = function() {
-            const user = getCurrentUser();
-            if (user) {
-                document.getElementById('loginBtn').innerHTML = '<span class="icon icon-login"></span> 退出登录';
-                document.getElementById('loginBtn').onclick = logout;
-            }
+// 注册逻辑（禁止注册“十方料码”）
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('regUsername').value.trim();
+    const password = document.getElementById('regPassword').value.trim();
+    const confirmPwd = document.getElementById('regConfirmPwd').value.trim();
+    const users = getAllUsers();
+
+    // 禁止注册超级管理员同名账号
+    if (username === '十方料码') {
+        alert('该用户名不可注册');
+        return;
+    }
+    if (username.length < 3 || username.length > 10) { alert('用户名需3-10位'); return; }
+    if (password.length < 6 || password.length > 16) { alert('密码需6-16位'); return; }
+    if (password !== confirmPwd) { alert('两次密码不一致'); return; }
+    if (users.some(u => u.username === username)) { alert('用户名已存在'); return; }
+
+    users.push({ username, password, score: 0, isBanned: false });
+    saveAllUsers(users);
+    alert('注册成功');
+    switchPage('login');
+});
+
+// 渲染用户中心
+function renderUserCenter() {
+    const user = getCurrentUser();
+    if (user) {
+        document.getElementById('showUsername').textContent = user.username;
+        document.getElementById('userScore').textContent = user.score;
+    }
+}
+
+// 进入工具中心
+function goToTools() {
+    const user = getCurrentUser();
+    if (user && user.score > 0) {
+        switchPage('tools');
+    } else {
+        alert('需充值后使用');
+    }
+}
+
+// 后台渲染用户列表
+function renderUserList() {
+    const users = getAllUsers();
+    const tableBody = document.getElementById('userTableBody');
+    tableBody.innerHTML = '';
+    users.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${user.username}</td>
+            <td>${user.score}</td>
+            <td>${user.isBanned ? '已封禁' : '正常'}</td>
+            <td>
+                <button class="btn btn-primary" onclick="openAdminRechargeModal('${user.username}')">充值积分</button>
+                <button class="btn btn-danger" style="margin-left: 10px;" onclick="toggleBan('${user.username}')">${user.isBanned ? '解封' : '封禁'}</button>
+            </td>
+        `;
+        tableBody.appendChild(tr);
+    });
+}
+
+// 后台充值弹窗
+function openAdminRechargeModal(username) {
+    document.getElementById('rechargeUsername').value = username;
+    document.getElementById('adminShowUsername').value = username;
+    document.getElementById('rechargeNum').value = '';
+    document.getElementById('adminRechargeModal').style.display = 'flex';
+}
+
+// 提交充值
+function submitRecharge() {
+    const username = document.getElementById('rechargeUsername').value;
+    const num = parseInt(document.getElementById('rechargeNum').value);
+    if (!num || num < 1) {
+        alert('请输入有效积分数量');
+        return;
+    }
+    const users = getAllUsers();
+    const index = users.findIndex(u => u.username === username);
+    if (index !== -1) {
+        users[index].score += num;
+        saveAllUsers(users);
+        const currentUser = getCurrentUser();
+        if (currentUser && currentUser.username === username) {
+            saveCurrentUser(users[index]);
         }
-    </script>
+        alert('充值成功');
+        document.getElementById('adminRechargeModal').style.display = 'none';
+        renderUserList();
+    }
+}
+
+// 封禁/解封
+function toggleBan(username) {
+    const users = getAllUsers();
+    const index = users.findIndex(u => u.username === username);
+    if (index !== -1) {
+        users[index].isBanned = !users[index].isBanned;
+        saveAllUsers(users);
+        const currentUser = getCurrentUser();
+        if (currentUser && currentUser.username === username && users[index].isBanned) {
+            logout();
+        }
+        renderUserList();
+    }
+}
+
+// 初始化登录状态
+window.onload = function() {
+    const user = getCurrentUser();
+    if (user) {
+        document.getElementById('loginBtn').innerHTML = '<span class="icon icon-login"></span> 退出登录';
+        document.getElementById('loginBtn').onclick = logout;
+    }
+}
+
 </body>
 </html>

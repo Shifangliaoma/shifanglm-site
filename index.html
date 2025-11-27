@@ -220,12 +220,6 @@
             color: #999;
             font-size: 0.9rem;
         }
-        #imported-tools-container {
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #0ff;
-            border-radius: 8px;
-        }
         #preview-container {
             width: 100%;
             background: #111;
@@ -238,6 +232,48 @@
         /* 导入模块默认隐藏，仅管理员显示 */
         #import-module {
             display: none;
+        }
+        /* 导入工具容器：支持多工具管理+删除 */
+        #imported-tools-container {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #0ff;
+            border-radius: 8px;
+        }
+        /* 单个导入工具卡片：保留原样式+添加删除按钮 */
+        .imported-tool-card {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            position: relative;
+        }
+        /* 删除按钮：仅管理员可见，悬浮显示 */
+        .delete-tool-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff3300;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: none;
+        }
+        .imported-tool-card:hover .delete-tool-btn {
+            display: block;
+        }
+        /* 工具名称输入框样式 */
+        #tool-name-input {
+            width: 100%;
+            padding: 8px;
+            background: #222;
+            color: #fff;
+            border: 1px solid #666;
+            border-radius: 4px;
+            margin-bottom: 10px;
         }
 
         /* ============= 新增用户中心核心样式 ============= */
@@ -523,10 +559,10 @@
             <h3>所有注册用户名单</h3>
             <table class="admin-table">
                 <tr>
-                    <th>用户名</th>
-                    <th>注册状态</th>
-                    <th>是否封禁</th>
-                    <th>操作</th>
+                    <<th>用户名</</th>
+                    <<th>注册状态</</th>
+                    <<th>是否封禁</</th>
+                    <<th>操作</</th>
                 </tr>
                 <tbody id="user-list-body"></tbody>
             </table>
@@ -537,12 +573,12 @@
             <h3>会员明细名单</h3>
             <table class="admin-table">
                 <tr>
-                    <th>用户名</th>
-                    <th>会员等级</th>
-                    <th>开通时间</th>
-                    <th>截止时间</th>
-                    <th>剩余天数</th>
-                    <th>状态</th>
+                    <<th>用户名</</th>
+                    <<th>会员等级</</th>
+                    <<th>开通时间</</th>
+                    <<th>截止时间</</th>
+                    <<th>剩余天数</</th>
+                    <<th>状态</</th>
                 </tr>
                 <tbody id="member-list-body"></tbody>
             </table>
@@ -619,6 +655,11 @@
         <!-- HTML/代码导入功能（默认隐藏，仅管理员显示） -->
         <div style="margin: 20px 0; padding: 15px; border: 1px solid #333; border-radius: 8px;" id="import-module">
             <h3>HTML文件/代码导入</h3>
+            <!-- 新增：工具名称输入 -->
+            <div style="margin-bottom: 15px;">
+                <label style="color: #0ff;">工具名称（便于管理删除）：</label>
+                <input type="text" id="tool-name-input" placeholder="如：定位复式大底计算器">
+            </div>
             <!-- 文件导入 -->
             <div style="margin-bottom: 15px;">
                 <input type="file" id="html-file-import" accept=".html,.htm" style="display: none;" onchange="readHtmlFile()">
@@ -639,7 +680,7 @@
             </div>
         </div>
 
-        <!-- 导入后的工具容器（纯容器，无任何样式修改） -->
+        <!-- 导入后的工具容器（支持多工具管理+删除） -->
         <div id="imported-tools-container">
             <h3>导入的工具</h3>
             <div id="imported-content"></div>
@@ -768,6 +809,8 @@
     <script>
         let isAdmin = false;
         let loginUser = {};
+        // 存储导入的工具列表（含名称+内容）
+        let importedTools = JSON.parse(localStorage.getItem('importedTools') || '[]');
 
         // ===================== 基础切换函数 =====================
         // 登录/注册面板切换
@@ -851,6 +894,7 @@
                 document.getElementById('import-module').style.display = 'block'; // 显示导入模块（管理员专属）
                 loadUserList();
                 loadMemberList();
+                renderImportedTools(); // 渲染已导入的工具
                 initUserCenter();
                 return;
             }
@@ -874,6 +918,7 @@
             document.getElementById('admin-import-btn').style.display = 'none';
             document.getElementById('import-module').style.display = 'none'; // 隐藏导入模块
             checkMemberStatus();
+            renderImportedTools(); // 渲染已导入的工具（仅查看，无删除权限）
             initUserCenter();
         }
 
@@ -1108,7 +1153,7 @@
             loadUserList();
         }
 
-        // ===================== 悬浮按钮+导入核心功能 =====================
+        // ===================== 悬浮按钮+导入核心功能（新增删除） =====================
         // 读取本地HTML文件
         function readHtmlFile() {
             const fileInput = document.getElementById('html-file-import');
@@ -1151,39 +1196,114 @@
             if (code) showHtmlPreview(code);
         });
 
-        // 确认导入HTML/代码（1:1还原，不做任何修改）
+        // 确认导入HTML/代码（1:1还原+保存工具名称）
         function confirmHtmlImport() {
             const content = localStorage.getItem('tempHtmlImportContent');
+            const toolName = document.getElementById('tool-name-input').value.trim() || `未命名工具${importedTools.length + 1}`;
+            
             if (!content) {
                 alert('无导入内容，请先选择文件或粘贴代码');
                 return;
             }
 
-            const importedContent = document.getElementById('imported-content');
+            // 解析body内内容（避免整个HTML结构冲突）
             const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
             const toolContent = bodyMatch ? bodyMatch[1] : content;
-            // 直接插入原内容，不添加任何额外样式或容器
-            importedContent.innerHTML = toolContent;
 
-            // 重新执行脚本（保留原功能）
-            const scripts = importedContent.querySelectorAll('script');
-            scripts.forEach(oldScript => {
-                const newScript = document.createElement('script');
-                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                newScript.textContent = oldScript.textContent;
-                oldScript.parentNode.replaceChild(newScript, oldScript);
+            // 添加到工具列表
+            importedTools.push({
+                id: Date.now(), // 唯一ID用于删除
+                name: toolName,
+                content: toolContent
             });
+            localStorage.setItem('importedTools', JSON.stringify(importedTools));
+            
+            // 渲染工具列表
+            renderImportedTools();
 
-            alert('导入成功！已完全保留原HTML的样式和布局，无任何修改');
+            alert(`导入成功！工具名称：${toolName}（已完全保留原样式）`);
             localStorage.removeItem('tempHtmlImportContent');
             document.getElementById('html-code-input').value = '';
+            document.getElementById('tool-name-input').value = '';
             document.getElementById('html-import-preview').style.display = 'none';
+        }
+
+        // 渲染已导入的工具列表（含删除按钮）
+        function renderImportedTools() {
+            const container = document.getElementById('imported-content');
+            container.innerHTML = '';
+
+            if (importedTools.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">暂无导入的工具</div>';
+                return;
+            }
+
+            importedTools.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = 'imported-tool-card';
+                card.dataset.toolId = tool.id;
+                
+                // 工具标题+删除按钮
+                const header = document.createElement('div');
+                header.style.display = 'flex';
+                header.style.justifyContent = 'space-between';
+                header.style.alignItems = 'center';
+                header.style.marginBottom = '10px';
+                header.style.paddingBottom = '5px';
+                header.style.borderBottom = '1px solid #333';
+                
+                const title = document.createElement('h4');
+                title.style.color = '#0ff';
+                title.innerText = tool.name;
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-tool-btn';
+                deleteBtn.innerText = '删除';
+                deleteBtn.onclick = () => deleteImportedTool(tool.id);
+                deleteBtn.style.display = isAdmin ? 'block' : 'none'; // 仅管理员显示删除按钮
+                
+                header.appendChild(title);
+                header.appendChild(deleteBtn);
+                
+                // 工具内容
+                const content = document.createElement('div');
+                content.innerHTML = tool.content;
+                
+                // 重新执行脚本（保留工具功能）
+                const scripts = content.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.textContent = oldScript.textContent;
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+                
+                card.appendChild(header);
+                card.appendChild(content);
+                container.appendChild(card);
+            });
+        }
+
+        // 删除指定导入的工具
+        function deleteImportedTool(toolId) {
+            if (!isAdmin) {
+                alert('仅管理员可删除工具');
+                return;
+            }
+            
+            if (confirm('确定要删除该工具吗？删除后不可恢复')) {
+                importedTools = importedTools.filter(tool => tool.id !== toolId);
+                localStorage.setItem('importedTools', JSON.stringify(importedTools));
+                renderImportedTools();
+                alert('工具删除成功');
+            }
         }
 
         // 隐藏预览
         function hideHtmlPreview() {
             document.getElementById('html-import-preview').style.display = 'none';
             document.getElementById('html-code-input').value = '';
+            document.getElementById('tool-name-input').value = '';
             localStorage.removeItem('tempHtmlImportContent');
         }
 
@@ -1229,4 +1349,221 @@
                 } else {
                     document.getElementById('user-role').className = 'user-role role-normal';
                     document.getElementById('user-role').innerText = '普通用户';
-                    document.getElementById('vip-status').innerHTML =
+                    document.getElementById('vip-status').innerHTML = `
+                        <div class="status-info">
+                            当前为普通用户，未开通会员<br>
+                            开通会员可解锁全部3D分析工具与选号技巧
+                        </div>
+                        <button class="renew-btn" onclick="alert('请联系管理员开通会员')">开通会员</button>
+                    `;
+                }
+            }
+
+            // 填充个人资料编辑模块
+            document.getElementById('edit-username').value = currentUser.name;
+            document.getElementById('edit-nickname').value = currentUser.nickname || currentUser.name;
+            document.getElementById('edit-gender').value = currentUser.gender || '未知';
+            document.getElementById('edit-signature').value = currentUser.signature || '暂无个性签名';
+        }
+
+        // 切换用户中心标签
+        function switchUserTab(tabId) {
+            // 切换左侧导航激活状态
+            document.querySelectorAll('.user-nav-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 切换右侧内容显示
+            document.querySelectorAll('.content-module').forEach(module => module.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // 保存个人资料
+        function saveProfile() {
+            const nickname = document.getElementById('edit-nickname').value.trim();
+            const gender = document.getElementById('edit-gender').value;
+            const signature = document.getElementById('edit-signature').value.trim();
+            
+            if (!nickname || nickname.length < 2 || nickname.length > 10) {
+                alert('昵称需2-10字');
+                return;
+            }
+            if (signature.length > 20) {
+                alert('个性签名不超过20字');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === loginUser.name);
+            if (userIndex !== -1) {
+                users[userIndex].nickname = nickname;
+                users[userIndex].gender = gender;
+                users[userIndex].signature = signature;
+                localStorage.setItem('registeredUsers', JSON.stringify(users));
+                loginUser.nickname = nickname;
+                document.getElementById('user-name').innerText = nickname;
+                alert('资料保存成功');
+            }
+        }
+
+        // 修改密码
+        function changePassword() {
+            const oldPwd = prompt('请输入原密码');
+            if (!oldPwd) return;
+            
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === loginUser.name);
+            if (userIndex === -1 || users[userIndex].pwd !== oldPwd) {
+                alert('原密码错误');
+                return;
+            }
+
+            const newPwd = prompt('请输入新密码');
+            if (!newPwd || newPwd.length < 6) {
+                alert('新密码需至少6位');
+                return;
+            }
+            const confirmPwd = prompt('请确认新密码');
+            if (newPwd !== confirmPwd) {
+                alert('两次密码不一致');
+                return;
+            }
+
+            users[userIndex].pwd = newPwd;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            alert('密码修改成功，请重新登录');
+            logout();
+        }
+
+        // 显示用户中心
+        function showUserCenter() {
+            // 隐藏其他模块
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('tool-area').style.display = 'none';
+            document.getElementById('member-tips').style.display = 'none';
+            document.getElementById('auth-container').style.display = 'none';
+            
+            if (Object.keys(loginUser).length === 0) {
+                // 未登录显示提示
+                document.getElementById('no-login-tip').style.display = 'block';
+                document.getElementById('page-container').style.display = 'none';
+            } else {
+                // 已登录显示用户中心
+                document.getElementById('no-login-tip').style.display = 'none';
+                document.getElementById('page-container').style.display = 'block';
+                initUserCenter();
+            }
+        }
+
+        // ===================== 辅助函数 =====================
+        // 计算会员时间
+        function calcMemberTime(type) {
+            const start = new Date();
+            let end = new Date();
+            switch(type) {
+                case 'day': end.setHours(start.getHours() + 24); break;
+                case 'week': end.setDate(start.getDate() + 7); break;
+                case 'month': end.setDate(start.getDate() + 30); break;
+                case 'year': end.setFullYear(start.getFullYear() + 1); break;
+            }
+            const leftDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            return { type, start: start.toLocaleString(), end: end.toLocaleString(), leftDays };
+        }
+
+        // 会员类型名称转换
+        function getMemberTypeName(type) {
+            switch(type) {
+                case 'day': return '日会员';
+                case 'week': return '周会员';
+                case 'month': return '月会员';
+                case 'year': return '年会员';
+                default: return '普通用户';
+            }
+        }
+
+        // 工具中心点击事件
+        function showToolCenter() {
+            // 隐藏用户中心相关模块
+            document.getElementById('page-container').style.display = 'none';
+            document.getElementById('no-login-tip').style.display = 'none';
+            
+            if (Object.keys(loginUser).length === 0) {
+                alert('请先登录');
+                return;
+            }
+            if (isAdmin || (loginUser.isAdmin !== true && JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}').type !== 'none')) {
+                document.getElementById('tool-area').style.display = 'block';
+                document.getElementById('import-module').scrollIntoView({ behavior: 'smooth' });
+                renderImportedTools(); // 渲染已导入的工具
+            } else {
+                alert('需登录并开通会员后查看');
+            }
+        }
+
+        // 页面导航占位
+        function showHome() { 
+            // 隐藏其他模块
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('tool-area').style.display = 'none';
+            document.getElementById('page-container').style.display = 'none';
+            document.getElementById('no-login-tip').style.display = 'none';
+            
+            if (Object.keys(loginUser).length === 0) {
+                document.getElementById('auth-container').style.display = 'block';
+            } else {
+                document.getElementById('auth-container').style.display = 'none';
+                alert('首页内容可自定义添加3D走势公告、研究成果等内容');
+            }
+        }
+
+        // 页面加载：绑定所有事件（核心修复）
+        window.onload = function() {
+            // 1. 清理到期会员
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            users.forEach(user => {
+                const memberInfo = JSON.parse(localStorage.getItem(`member_${user.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+                if (memberInfo.type !== 'none' && new Date() > new Date(memberInfo.end)) {
+                    localStorage.setItem(`member_${user.name}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
+                }
+            });
+
+            // 2. 绑定管理员标签按钮事件
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.onclick = function() {
+                    const tabId = this.getAttribute('onclick').match(/switchAdminTab\('(.*?)'\)/)[1];
+                    switchAdminTab(tabId);
+                };
+            });
+
+            // 3. 绑定导航按钮事件
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                const btnText = btn.textContent.trim();
+                if (btnText === '工具中心') btn.onclick = showToolCenter;
+                else if (btnText === '首页') btn.onclick = showHome;
+                else if (btnText === '用户中心') btn.onclick = showUserCenter;
+                else if (btnText === '退出登录') btn.onclick = logout;
+            });
+
+            // 4. 绑定调整类型切换事件
+            const adjustTypeSelect = document.getElementById('adjust-type');
+            if (adjustTypeSelect) {
+                adjustTypeSelect.onchange = function() {
+                    const type = this.value;
+                    document.getElementById('extend-day-box').style.display = 'none';
+                    document.getElementById('modify-time-box').style.display = 'none';
+                    if (type === 'extend') document.getElementById('extend-day-box').style.display = 'block';
+                    if (type === 'modify') document.getElementById('modify-time-box').style.display = 'block';
+                };
+            }
+
+            // 5. 绑定悬浮导入按钮点击事件（核心修复：确保100%生效）
+            const importBtn = document.getElementById('admin-import-btn');
+            if (importBtn) {
+                importBtn.onclick = function() {
+                    document.getElementById('tool-area').style.display = 'block';
+                    document.getElementById('import-module').scrollIntoView({ behavior: 'smooth' });
+                };
+            }
+        };
+    </script>
+</body>
+</html>

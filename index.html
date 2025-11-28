@@ -5,9 +5,551 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>十方料码 - 3D趋势分析与缩水工具平台</title>
     <style>
-        /* 之前的样式保持不变，只添加新的样式 */
-        
-        /* 新增：全局工具同步功能样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        body {
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+        .admin-import-btn {
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            background: #00cc00;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            z-index: 9999;
+            display: none;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+        .admin-import-btn:hover {
+            background: #009900;
+            transform: scale(1.05);
+        }
+        .header {
+            border-bottom: 2px solid #0ff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 1200px;
+            text-align: center;
+        }
+        .nav {
+            margin: 10px 0;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            background: #0066cc;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .nav-btn:hover {
+            background: #0088ff;
+        }
+        #admin-panel {
+            background: #111;
+            padding: 20px;
+            border: 1px solid #0ff;
+            border-radius: 8px;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 1000px;
+            display: none;
+        }
+        .admin-tab {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .admin-tab-btn {
+            background: #0066cc;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .admin-tab-btn.active {
+            background: #00cc00;
+        }
+        .admin-content {
+            display: none;
+            margin-top: 15px;
+        }
+        .admin-content.active {
+            display: block;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            background: #222;
+        }
+        .admin-table th, .admin-table td {
+            border: 1px solid #666;
+            padding: 8px;
+            text-align: center;
+        }
+        .admin-table th {
+            background: #0066cc;
+            color: #fff;
+        }
+        #admin-panel h2, #admin-panel h3 {
+            color: #0ff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        #admin-panel input, #admin-panel select {
+            margin: 8px 0;
+            padding: 8px;
+            background: #222;
+            color: #fff;
+            border: 1px solid #666;
+            border-radius: 4px;
+        }
+        #admin-panel button {
+            background: #009900;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        #admin-panel button:hover {
+            background: #00cc00;
+        }
+        #member-result, #ban-result {
+            margin-top: 15px;
+            padding: 10px;
+            background: #222;
+            border-radius: 4px;
+            color: #0ff;
+        }
+        #member-tips {
+            color: #0ff;
+            font-size: 16px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        #tool-area {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #666;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 1200px;
+            display: none;
+        }
+        .tool-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        .tool-item {
+            background: linear-gradient(135deg, #222, #333);
+            border: 2px solid #0ff;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            min-width: 200px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
+        }
+        .tool-item:hover {
+            background: linear-gradient(135deg, #0066cc, #0088ff);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.4);
+        }
+        .tool-delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff3300;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            display: none;
+            z-index: 10;
+            transition: all 0.2s ease;
+        }
+        .tool-delete-btn:hover {
+            background: #cc0000;
+            transform: scale(1.1);
+        }
+        .tool-item:hover .tool-delete-btn {
+            display: block;
+        }
+        .tool-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.95);
+            z-index: 99999;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .tool-modal-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fff;
+            max-width: 750px;
+            min-height: 100vh;
+        }
+        .close-modal {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff3300;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 999999;
+        }
+        .auth-box {
+            background: #111;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        .auth-box input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            background: #222;
+            color: #fff;
+            border: 1px solid #666;
+            border-radius: 4px;
+        }
+        .auth-box button {
+            width: 100%;
+            padding: 8px;
+            background: #0066cc;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        .auth-box .switch-btn {
+            background: #666;
+            font-size: 12px;
+            padding: 5px;
+        }
+        .tips {
+            color: #ff6600;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .ban-btn {
+            background: #ff3300 !important;
+        }
+        .unban-btn {
+            background: #00cc00 !important;
+        }
+        .edit-btn {
+            background: #ff9900 !important;
+        }
+        .example {
+            margin-top: 8px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+        #import-module {
+            display: none;
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        #preview-container {
+            width: 100%;
+            background: #111;
+            border: 1px solid #666;
+            border-radius: 4px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        #page-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            display: none;
+        }
+        .user-center {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            background: #111;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .user-sidebar {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .user-profile-card {
+            background: #222;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #0ff;
+        }
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #0066cc;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .avatar:hover {
+            background: #0088ff;
+            transform: scale(1.05);
+        }
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .user-role {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .role-admin {
+            background: #00cc00;
+            color: #000;
+        }
+        .role-vip {
+            background: #ff9900;
+            color: #000;
+        }
+        .role-normal {
+            background: #666;
+            color: #fff;
+        }
+        .user-reg-time {
+            font-size: 0.85rem;
+            color: #999;
+        }
+        .user-nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .user-nav-item {
+            padding: 12px 15px;
+            background: #222;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-nav-item:hover, .user-nav-item.active {
+            background: #0066cc;
+            color: #fff;
+        }
+        .user-content {
+            flex: 3;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .content-module {
+            background: #222;
+            border-radius: 8px;
+            padding: 20px;
+            display: none;
+        }
+        .content-module.active {
+            display: block;
+        }
+        .module-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #0ff;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #333;
+        }
+        .vip-benefit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .benefit-icon {
+            color: #ff9900;
+            margin-top: 3px;
+        }
+        .vip-status-card {
+            background: #2a2a2a;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 3px solid #ff9900;
+        }
+        .status-info {
+            line-height: 1.6;
+        }
+        .countdown {
+            color: #ff3300;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 10px 0;
+            display: inline-block;
+            padding: 5px 10px;
+            background: #333;
+            border-radius: 4px;
+        }
+        .renew-btn {
+            margin-top: 10px;
+            background: #ff9900 !important;
+            color: #000 !important;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-label {
+            font-size: 0.9rem;
+            color: #999;
+        }
+        .form-input, .form-select {
+            padding: 10px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
+        .save-btn {
+            width: 120px;
+            padding: 10px 0;
+            background: #0066cc !important;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+        }
+        .security-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .security-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #333;
+        }
+        .security-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .security-icon {
+            color: #0ff;
+        }
+        .security-btn {
+            padding: 6px 12px;
+            background: #0066cc !important;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+        }
+        .no-login-tip {
+            background: #222;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
+            display: none;
+        }
+        /* 全局工具同步功能样式 */
         .global-sync-section {
             margin: 20px 0;
             padding: 15px;
@@ -65,20 +607,194 @@
             color: #000 !important;
             margin-left: 10px;
         }
+        #user-sync-info {
+            display: none;
+            margin: 15px 0;
+            padding: 12px;
+            background: #2a2a2a;
+            border-radius: 6px;
+            border-left: 3px solid #ff9900;
+        }
+        /* GitHub同步功能样式 */
+        .github-sync-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #6e5494;
+            border-radius: 8px;
+            background: #1a1a1a;
+        }
+        .github-info {
+            background: #2a2a2a;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 10px 0;
+            border-left: 3px solid #6e5494;
+        }
+        .github-btn {
+            background: #6e5494;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .github-btn:hover {
+            background: #8b6cb5;
+        }
+        .github-status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            background: #333;
+        }
+        .status-success {
+            color: #00cc00;
+            border-left: 3px solid #00cc00;
+        }
+        .status-error {
+            color: #ff3300;
+            border-left: 3px solid #ff3300;
+        }
+        .status-loading {
+            color: #ff9900;
+            border-left: 3px solid #ff9900;
+        }
     </style>
 </head>
 <body>
-    <!-- 页面其他部分保持不变 -->
+    <button class="admin-import-btn" id="admin-import-btn">📤 导入工具</button>
 
-    <!-- 在工具中心的导入模块后面添加全局工具同步功能 -->
+    <div class="header">
+        <h1>十方料码 - 3D趋势分析与缩水工具平台</h1>
+        <div class="nav">
+            <button class="nav-btn" onclick="showHome()">首页</button>
+            <button class="nav-btn" onclick="showToolCenter()">工具中心</button>
+            <button class="nav-btn" onclick="showUserCenter()">用户中心</button>
+            <button class="nav-btn" id="logout-btn" style="display:none;" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+
+    <div id="auth-container">
+        <div id="login-panel" class="auth-box">
+            <h3>用户登录</h3>
+            <input type="text" id="login-username" placeholder="请输入用户名">
+            <input type="password" id="login-pwd" placeholder="请输入密码">
+            <button onclick="login()">登录</button>
+            <button class="switch-btn" onclick="switchToRegister()">没有账号？点击注册</button>
+            <div class="tips">请输入您的账号密码登录</div>
+        </div>
+        <div id="register-panel" class="auth-box" style="display:none;">
+            <h3>用户注册</h3>
+            <input type="text" id="reg-username" placeholder="请设置用户名">
+            <input type="password" id="reg-pwd" placeholder="请设置密码">
+            <input type="password" id="reg-pwd-confirm" placeholder="请确认密码">
+            <button onclick="register()">注册</button>
+            <button class="switch-btn" onclick="switchToLogin()">已有账号？点击登录</button>
+            <div class="tips">注册后请联系管理员开通会员</div>
+        </div>
+    </div>
+
+    <div id="admin-panel">
+        <div class="admin-tab">
+            <button class="admin-tab-btn active" onclick="switchAdminTab('user-list')">注册用户名单</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('member-list')">会员名单</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('member-manage')">办理/调整会员</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('ban-manage')">用户封禁</button>
+        </div>
+        <div id="user-list" class="admin-content active">
+            <h3>所有注册用户名单</h3>
+            <table class="admin-table">
+                <tr><th>用户名</th><th>注册状态</th><th>是否封禁</th><th>操作</th></tr>
+                <tbody id="user-list-body"></tbody>
+            </table>
+        </div>
+        <div id="member-list" class="admin-content">
+            <h3>会员明细名单</h3>
+            <table class="admin-table">
+                <tr><th>用户名</th><th>会员等级</th><th>开通时间</th><th>截止时间</th><th>剩余天数</th><th>状态</th></tr>
+                <tbody id="member-list-body"></tbody>
+            </table>
+        </div>
+        <div id="member-manage" class="admin-content">
+            <h3>会员办理/时长调整</h3>
+            <div>
+                <label>目标用户名：</label>
+                <input type="text" id="target-username" placeholder="输入用户名"><br>
+                <label>会员类型：</label>
+                <select id="member-type">
+                    <option value="day">日会员（24小时）</option>
+                    <option value="week">周会员（7天）</option>
+                    <option value="month">月会员（30天）</option>
+                    <option value="year">年会员（365天）</option>
+                </select><br>
+                <label>调整类型：</label>
+                <select id="adjust-type" onchange="toggleAdjustBox()">
+                    <option value="new">新开通会员</option>
+                    <option value="extend">延长会员时长</option>
+                    <option value="modify">修改截止时间</option>
+                </select><br>
+                <div id="extend-day-box" style="display:none;">
+                    <label>延长天数：</label>
+                    <input type="number" id="extend-days" placeholder="输入延长天数" min="1"><br>
+                </div>
+                <div id="modify-time-box" style="display:none;">
+                    <label>新截止时间：</label>
+                    <input type="datetime-local" id="new-end-time"><br>
+                </div>
+                <button onclick="handleMember()">确认操作</button>
+                <div id="member-result"></div>
+            </div>
+        </div>
+        <div id="ban-manage" class="admin-content">
+            <h3>用户封禁/解封</h3>
+            <div>
+                <label>目标用户名：</label>
+                <input type="text" id="ban-username" placeholder="输入用户名"><br>
+                <button class="ban-btn" onclick="banUser()">封禁用户</button>
+                <button class="unban-btn" onclick="unbanUser()">解封用户</button>
+                <div id="ban-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="member-tips"></div>
+
     <div id="tool-area">
-        <!-- 其他内容保持不变 -->
-        
+        <h2>核心工具平台</h2>
+        <div style="margin: 20px 0; padding: 15px; border: 1px solid #333; border-radius: 8px;">
+            <h3>3D伪序趋势分析工具</h3>
+            <p>基于伪序理论，可视化展示数字走势，辅助判断号码规律（会员专属）</p>
+        </div>
+        <div style="margin-top:15px; padding: 15px; border: 1px solid #333; border-radius: 8px;">
+            <h3>多条件缩水工具</h3>
+            <p>支持多维度条件筛选，精准缩小号码范围，提升选号效率（会员专属）</p>
+        </div>
+
         <!-- 管理员导入模块（仅管理员可见） -->
         <div id="import-module">
-            <!-- 原有的导入功能保持不变 -->
-            
-            <!-- 新增：全局工具同步功能（管理员专用） -->
+            <h3>HTML文件/代码导入</h3>
+            <div style="margin-bottom: 15px;">
+                <input type="file" id="html-file-import" accept=".html,.htm" style="display: none;" onchange="readHtmlFile()">
+                <button class="nav-btn" onclick="document.getElementById('html-file-import').click()">选择本地HTML文件导入</button>
+                <div class="example">支持.html/.htm格式文件</div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <h4 style="margin-bottom: 8px;">或直接粘贴HTML代码</h4>
+                <textarea id="html-code-input" style="width: 100%; height: 150px; background: #222; color: #fff; border: 1px solid #666; border-radius: 4px; padding: 8px;" placeholder="粘贴完整HTML代码"></textarea>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>工具名称（用户看到的名称）：</label>
+                <input type="text" id="tool-name-input" placeholder="如：定位复式大底计算器" style="background: #222; color: #fff; border: 1px solid #666; padding: 8px; border-radius: 4px;">
+            </div>
+            <div style="margin-top: 15px; display: none;" id="html-import-preview">
+                <h4 style="margin-bottom: 8px; color: #0ff;">导入预览</h4>
+                <div id="preview-container"></div>
+                <button class="nav-btn" style="margin-top: 10px; margin-right: 10px;" onclick="confirmHtmlImport()">确认导入</button>
+                <button class="nav-btn" style="margin-top: 10px; background: #666;" onclick="hideHtmlPreview()">取消</button>
+            </div>
+
+            <!-- 全局工具管理系统 -->
             <div class="global-sync-section">
                 <h3>🌐 全局工具管理系统</h3>
                 <p style="color: #ccc; margin-bottom: 10px;">管理员功能：管理所有用户可见的工具</p>
@@ -103,10 +819,57 @@
                     • 用户登录时会自动加载最新工具
                 </div>
             </div>
+
+            <!-- GitHub仓库同步功能 -->
+            <div class="github-sync-section">
+                <h3>🐙 GitHub仓库同步</h3>
+                <p style="color: #ccc; margin-bottom: 10px;">高级功能：通过GitHub仓库实现真正的工具同步</p>
+                
+                <div class="github-info">
+                    <strong>GitHub同步配置</strong>
+                    <div style="margin-top: 10px;">
+                        <label>GitHub仓库地址：</label>
+                        <input type="text" id="github-repo-url" placeholder="https://github.com/username/repo" style="width: 100%; margin: 5px 0; padding: 8px; background: #222; color: #fff; border: 1px solid #666; border-radius: 4px;">
+                        <small style="color: #999;">格式：https://github.com/用户名/仓库名</small>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label>工具文件夹路径：</label>
+                        <input type="text" id="github-tools-path" placeholder="tools" style="width: 100%; margin: 5px 0; padding: 8px; background: #222; color: #fff; border: 1px solid #666; border-radius: 4px;">
+                        <small style="color: #999;">仓库中存放工具HTML文件的文件夹路径</small>
+                    </div>
+                </div>
+
+                <div class="sync-buttons">
+                    <button class="github-btn" onclick="saveGithubConfig()">💾 保存配置</button>
+                    <button class="github-btn" onclick="loadToolsFromGithub()">🔄 从GitHub同步</button>
+                    <button class="github-btn" onclick="testGithubConnection()">🔍 测试连接</button>
+                </div>
+
+                <div id="github-status" class="github-status" style="display: none;"></div>
+
+                <div class="sync-tips">
+                    💡 GitHub同步说明：<br>
+                    • 在GitHub仓库中创建工具HTML文件<br>
+                    • 文件名将作为工具名称<br>
+                    • 支持自动同步更新<br>
+                    • 所有用户实时看到最新工具
+                </div>
+
+                <div style="margin-top: 15px; padding: 10px; background: #2a2a2a; border-radius: 6px;">
+                    <strong>📖 使用教程：</strong>
+                    <ol style="margin: 10px 0; padding-left: 20px; color: #ccc;">
+                        <li>在GitHub创建新仓库</li>
+                        <li>在仓库中创建"tools"文件夹</li>
+                        <li>将工具HTML文件上传到tools文件夹</li>
+                        <li>在此处配置仓库地址和路径</li>
+                        <li>点击"从GitHub同步"</li>
+                    </ol>
+                </div>
+            </div>
         </div>
 
-        <!-- 新增：用户工具同步提示 -->
-        <div id="user-sync-info" style="display: none; margin: 15px 0; padding: 12px; background: #2a2a2a; border-radius: 6px; border-left: 3px solid #ff9900;">
+        <!-- 用户工具同步提示 -->
+        <div id="user-sync-info" style="display: none;">
             <strong>🔄 工具同步状态</strong>
             <div id="sync-status">正在加载工具列表...</div>
             <button class="nav-btn" style="margin-top: 8px;" onclick="loadGlobalTools()">手动刷新工具</button>
@@ -116,34 +879,131 @@
         <div class="tool-list" id="tool-list"></div>
     </div>
 
+    <!-- 工具弹窗（iframe沙箱运行） -->
+    <div class="tool-modal" id="tool-modal">
+        <button class="close-modal" onclick="closeToolModal()">×</button>
+        <iframe class="tool-modal-iframe" id="tool-modal-iframe" src="about:blank"></iframe>
+    </div>
+
+    <!-- 用户中心 -->
+    <div id="page-container">
+        <div class="user-center">
+            <div class="user-sidebar">
+                <div class="user-profile-card">
+                    <div class="avatar" id="user-avatar">👤</div>
+                    <div class="user-name" id="user-name">-</div>
+                    <span class="user-role" id="user-role">-</span>
+                    <div class="user-reg-time" id="user-reg-time">-</div>
+                </div>
+                <ul class="user-nav-list">
+                    <li class="user-nav-item active" onclick="switchUserTab('vip-benefit')">🎁 会员权益</li>
+                    <li class="user-nav-item" onclick="switchUserTab('profile-edit')">👤 个人资料</li>
+                    <li class="user-nav-item" onclick="switchUserTab('account-security')">🔒 账号安全</li>
+                </ul>
+            </div>
+            <div class="user-content">
+                <div class="content-module active" id="vip-benefit">
+                    <h3 class="module-title">会员权益与状态</h3>
+                    <div class="vip-status-card" id="vip-status">
+                        <div class="status-info">加载中...</div>
+                    </div>
+                    <h4 style="margin-bottom: 10px; color: #ff9900;">会员专属权益</h4>
+                    <div class="vip-benefit-list">
+                        <div class="benefit-item"><span class="benefit-icon">✅</span><span>无限制使用3D伪序趋势分析工具</span></div>
+                        <div class="benefit-item"><span class="benefit-icon">✅</span><span>解锁多条件缩水工具全功能</span></div>
+                        <div class="benefit-item"><span class="benefit-icon">✅</span><span>使用所有导入的专属工具</span></div>
+                        <div class="benefit-item"><span class="benefit-icon">✅</span><span>专属客服支持</span></div>
+                    </div>
+                </div>
+                <div class="content-module" id="profile-edit">
+                    <h3 class="module-title">编辑个人资料</h3>
+                    <form class="profile-form">
+                        <div class="form-group">
+                            <label class="form-label">用户名（不可修改）</label>
+                            <input type="text" class="form-input" id="edit-username" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">昵称</label>
+                            <input type="text" class="form-input" id="edit-nickname" placeholder="请输入昵称（2-10字）">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">性别</label>
+                            <select class="form-select" id="edit-gender">
+                                <option value="未知">未知</option>
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">个性签名</label>
+                            <input type="text" class="form-input" id="edit-signature" placeholder="请输入个性签名（不超过20字）">
+                        </div>
+                        <button type="button" class="save-btn" onclick="saveProfile()">保存修改</button>
+                    </form>
+                </div>
+                <div class="content-module" id="account-security">
+                    <h3 class="module-title">账号安全管理</h3>
+                    <div class="security-list">
+                        <div class="security-item">
+                            <div class="security-label"><span class="security-icon">🔑</span><span>修改登录密码</span></div>
+                            <button class="security-btn" onclick="changePassword()">立即修改</button>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-label"><span class="security-icon">📱</span><span>绑定手机号（未开放）</span></div>
+                            <button class="security-btn" disabled>暂未开放</button>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-label"><span class="security-icon">📧</span><span>绑定邮箱（未开放）</span></div>
+                            <button class="security-btn" disabled>暂未开放</button>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-label"><span class="security-icon">🚪</span><span>退出当前登录</span></div>
+                            <button class="security-btn" onclick="logout()">立即退出</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 未登录提示 -->
+    <div class="no-login-tip" id="no-login-tip">
+        <h3>请先登录，查看个人中心内容</h3>
+        <button class="nav-btn" onclick="switchToLogin()">立即登录</button>
+    </div>
+
     <script>
+        let isAdmin = false;
+        let loginUser = {};
+        let countdownInterval = null;
+
         // 全局工具数据键名
         const GLOBAL_TOOLS_KEY = 'shifanglm_global_tools';
+        const GITHUB_CONFIG_KEY = 'shifanglm_github_config';
         
         // ===================== 全局工具管理函数 =====================
         
         // 获取全局工具列表
         function getGlobalTools() {
-            // 模拟从"云端"获取工具数据
-            // 实际项目中这里应该是从服务器API获取
             const globalTools = JSON.parse(localStorage.getItem(GLOBAL_TOOLS_KEY) || '[]');
             return globalTools;
         }
         
         // 保存全局工具列表
         function saveGlobalTools(tools) {
-            // 模拟保存到"云端"
-            // 实际项目中这里应该是调用服务器API
-            localStorage.setItem(GLOBAL_TOOLS_KEY, JSON.stringify(tools));
+            // 为每个工具添加时间戳
+            const toolsWithTimestamp = tools.map(tool => ({
+                ...tool,
+                lastUpdated: new Date().toISOString(),
+                source: tool.source || 'local'
+            }));
             
-            // 更新所有已登录用户的工具列表
-            updateAllUsersTools(tools);
+            localStorage.setItem(GLOBAL_TOOLS_KEY, JSON.stringify(toolsWithTimestamp));
+            updateAllUsersTools(toolsWithTimestamp);
         }
         
         // 更新所有用户的工具列表
         function updateAllUsersTools(tools) {
-            // 这里模拟通知所有用户更新工具列表
-            // 实际项目中应该使用WebSocket或轮询机制
             console.log('全局工具已更新，通知所有用户刷新');
             
             // 如果当前用户已登录，立即更新其工具列表
@@ -234,6 +1094,636 @@
             }
         }
         
+        // ===================== GitHub同步功能 =====================
+        
+        // 获取GitHub配置
+        function getGithubConfig() {
+            return JSON.parse(localStorage.getItem(GITHUB_CONFIG_KEY) || '{}');
+        }
+        
+        // 保存GitHub配置
+        function saveGithubConfig() {
+            const repoUrl = document.getElementById('github-repo-url').value.trim();
+            const toolsPath = document.getElementById('github-tools-path').value.trim() || 'tools';
+            
+            if (!repoUrl) {
+                showGithubStatus('请输入GitHub仓库地址', 'error');
+                return;
+            }
+            
+            // 验证仓库URL格式
+            const repoMatch = repoUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+            if (!repoMatch) {
+                showGithubStatus('GitHub仓库地址格式不正确', 'error');
+                return;
+            }
+            
+            const config = {
+                repoUrl: repoUrl,
+                owner: repoMatch[1],
+                repo: repoMatch[2].replace('.git', ''),
+                toolsPath: toolsPath,
+                lastSync: new Date().toISOString()
+            };
+            
+            localStorage.setItem(GITHUB_CONFIG_KEY, JSON.stringify(config));
+            showGithubStatus('GitHub配置已保存！', 'success');
+        }
+        
+        // 加载GitHub配置到表单
+        function loadGithubConfigToForm() {
+            const config = getGithubConfig();
+            if (config.repoUrl) {
+                document.getElementById('github-repo-url').value = config.repoUrl;
+                document.getElementById('github-tools-path').value = config.toolsPath || 'tools';
+            }
+        }
+        
+        // 从GitHub同步工具
+        async function loadToolsFromGithub() {
+            const config = getGithubConfig();
+            
+            if (!config.owner || !config.repo) {
+                showGithubStatus('请先配置GitHub仓库信息', 'error');
+                return;
+            }
+            
+            showGithubStatus('正在从GitHub同步工具...', 'loading');
+            
+            try {
+                // 使用GitHub API获取仓库内容
+                const apiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.toolsPath}`;
+                
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`GitHub API请求失败: ${response.status}`);
+                }
+                
+                const files = await response.json();
+                
+                // 过滤HTML文件
+                const htmlFiles = files.filter(file => 
+                    file.type === 'file' && file.name.endsWith('.html')
+                );
+                
+                if (htmlFiles.length === 0) {
+                    showGithubStatus('在指定路径中未找到HTML工具文件', 'error');
+                    return;
+                }
+                
+                // 获取每个文件的内容
+                const tools = [];
+                let successCount = 0;
+                
+                for (const file of htmlFiles) {
+                    try {
+                        const fileResponse = await fetch(file.download_url);
+                        if (fileResponse.ok) {
+                            const content = await fileResponse.text();
+                            tools.push({
+                                id: file.sha, // 使用文件SHA作为ID
+                                name: file.name.replace('.html', ''),
+                                content: content,
+                                source: 'github',
+                                githubUrl: file.html_url
+                            });
+                            successCount++;
+                        }
+                    } catch (error) {
+                        console.error(`获取文件 ${file.name} 失败:`, error);
+                    }
+                }
+                
+                // 保存到全局工具
+                saveGlobalTools(tools);
+                
+                // 更新配置
+                config.lastSync = new Date().toISOString();
+                localStorage.setItem(GITHUB_CONFIG_KEY, JSON.stringify(config));
+                
+                showGithubStatus(`同步成功！从GitHub加载了 ${successCount}/${htmlFiles.length} 个工具`, 'success');
+                
+            } catch (error) {
+                console.error('GitHub同步失败:', error);
+                showGithubStatus(`同步失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 测试GitHub连接
+        async function testGithubConnection() {
+            const config = getGithubConfig();
+            
+            if (!config.owner || !config.repo) {
+                showGithubStatus('请先配置GitHub仓库信息', 'error');
+                return;
+            }
+            
+            showGithubStatus('正在测试GitHub连接...', 'loading');
+            
+            try {
+                const apiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}`;
+                const response = await fetch(apiUrl);
+                
+                if (response.ok) {
+                    showGithubStatus('GitHub连接测试成功！', 'success');
+                } else if (response.status === 404) {
+                    showGithubStatus('仓库不存在或没有访问权限', 'error');
+                } else {
+                    showGithubStatus(`连接测试失败: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                showGithubStatus(`连接测试失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 显示GitHub状态
+        function showGithubStatus(message, type) {
+            const statusEl = document.getElementById('github-status');
+            statusEl.textContent = message;
+            statusEl.className = `github-status status-${type}`;
+            statusEl.style.display = 'block';
+            
+            // 3秒后自动隐藏成功消息
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // ===================== 页面基础切换 =====================
+        function showHome() {
+            if (Object.keys(loginUser).length === 0) {
+                document.getElementById('auth-container').style.display = 'block';
+                document.getElementById('tool-area').style.display = 'none';
+                document.getElementById('page-container').style.display = 'none';
+                document.getElementById('no-login-tip').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'none';
+            } else {
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('tool-area').style.display = isAdmin ? 'block' : (loginUser.memberType !== 'none' ? 'block' : 'none');
+                document.getElementById('page-container').style.display = 'none';
+                document.getElementById('no-login-tip').style.display = 'none';
+                document.getElementById('admin-panel').style.display = isAdmin ? 'block' : 'none';
+            }
+        }
+        function showToolCenter() {
+            if (Object.keys(loginUser).length === 0) {
+                alert('请先登录');
+                switchToLogin();
+                return;
+            }
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('page-container').style.display = 'none';
+            document.getElementById('no-login-tip').style.display = 'none';
+            document.getElementById('admin-panel').style.display = isAdmin ? 'block' : 'none';
+            
+            // 管理员和会员都可以使用工具中心
+            if (isAdmin || JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}').type !== 'none') {
+                document.getElementById('tool-area').style.display = 'block';
+                // 显示用户同步信息（非管理员）
+                if (!isAdmin) {
+                    document.getElementById('user-sync-info').style.display = 'block';
+                }
+                loadGlobalTools(); // 加载全局工具
+            } else {
+                document.getElementById('tool-area').style.display = 'none';
+                alert('需开通会员后使用工具中心');
+            }
+        }
+        function showUserCenter() {
+            if (Object.keys(loginUser).length === 0) {
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('tool-area').style.display = 'none';
+                document.getElementById('page-container').style.display = 'none';
+                document.getElementById('no-login-tip').style.display = 'block';
+                document.getElementById('admin-panel').style.display = 'none';
+                return;
+            }
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('tool-area').style.display = 'none';
+            document.getElementById('no-login-tip').style.display = 'none';
+            document.getElementById('page-container').style.display = 'block';
+            document.getElementById('admin-panel').style.display = isAdmin ? 'block' : 'none';
+            loadUserProfile();
+            loadVipStatus();
+        }
+        function switchUserTab(tabId) {
+            document.querySelectorAll('.user-nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.content-module').forEach(module => module.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            if (tabId === 'vip-benefit') loadVipStatus();
+        }
+
+        // ===================== 登录/注册 =====================
+        function switchToRegister() {
+            document.getElementById('login-panel').style.display = 'none';
+            document.getElementById('register-panel').style.display = 'block';
+        }
+        function switchToLogin() {
+            document.getElementById('register-panel').style.display = 'none';
+            document.getElementById('login-panel').style.display = 'block';
+        }
+        function register() {
+            const username = document.getElementById('reg-username').value.trim();
+            const pwd = document.getElementById('reg-pwd').value.trim();
+            const pwdConfirm = document.getElementById('reg-pwd-confirm').value.trim();
+            if (!username || !pwd) { alert('用户名和密码不能为空'); return; }
+            if (pwd !== pwdConfirm) { alert('两次密码不一致'); return; }
+            
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            if (users.some(u => u.name === username)) { alert('用户名已存在'); return; }
+            
+            users.push({
+                name: username, pwd: pwd, isBanned: false,
+                registerTime: new Date().toLocaleString(),
+                nickname: username, gender: '未知', signature: '暂无个性签名'
+            });
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            alert('注册成功！请联系管理员开通会员');
+            switchToLogin();
+        }
+        function login() {
+            const username = document.getElementById('login-username').value.trim();
+            const pwd = document.getElementById('login-pwd').value.trim();
+            if (!username || !pwd) { alert('请输入用户名和密码'); return; }
+
+            // 管理员验证（账号：十方料码，密码：7446265）
+            isAdmin = username === '十方料码' && pwd === '7446265';
+            if (isAdmin) {
+                loginUser = { name: username, isAdmin: true, registerTime: '管理员账号' };
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'block';
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('tool-area').style.display = 'block';
+                document.getElementById('member-tips').innerText = '您是管理员，已解锁所有功能';
+                document.getElementById('admin-import-btn').style.display = 'block';
+                document.getElementById('import-module').style.display = 'block';
+                loadUserList();
+                loadMemberList();
+                loadGlobalTools(); // 加载全局工具
+                return;
+            }
+
+            // 普通用户验证
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const user = users.find(u => u.name === username && u.pwd === pwd);
+            if (!user) { alert('用户名或密码错误'); return; }
+            if (user.isBanned) { alert('您的账号已被封禁'); return; }
+
+            loginUser = { name: username, isAdmin: false, ...user };
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('logout-btn').style.display = 'block';
+            document.getElementById('admin-import-btn').style.display = 'none';
+            document.getElementById('import-module').style.display = 'none';
+            checkMemberStatus();
+            loadGlobalTools(); // 加载全局工具
+        }
+        function logout() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            loginUser = {};
+            isAdmin = false;
+            document.getElementById('auth-container').style.display = 'block';
+            document.getElementById('login-panel').style.display = 'block';
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('tool-area').style.display = 'none';
+            document.getElementById('member-tips').innerText = '';
+            document.getElementById('admin-import-btn').style.display = 'none';
+            document.getElementById('import-module').style.display = 'none';
+            document.getElementById('page-container').style.display = 'none';
+            document.getElementById('no-login-tip').style.display = 'none';
+            document.getElementById('user-sync-info').style.display = 'none';
+            
+            // 清空登录表单
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-pwd').value = '';
+            
+            closeToolModal();
+        }
+
+        // ===================== 会员相关（含倒计时） =====================
+        function checkMemberStatus() {
+            const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+            const now = new Date();
+            const endDate = new Date(memberInfo.end);
+
+            if (memberInfo.type !== 'none' && now > endDate) {
+                localStorage.setItem(`member_${loginUser.name}`, JSON.stringify({type:'none', start:'', end:'', leftDays:0}));
+                document.getElementById('member-tips').innerText = '您的会员已到期，恢复为普通用户';
+                document.getElementById('tool-area').style.display = 'none';
+                alert('您的会员已到期，需联系管理员续费');
+                return;
+            }
+
+            if (memberInfo.type !== 'none') {
+                const leftDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                memberInfo.leftDays = leftDays;
+                localStorage.setItem(`member_${loginUser.name}`, JSON.stringify(memberInfo));
+                document.getElementById('member-tips').innerText = `当前会员类型：${getMemberTypeName(memberInfo.type)} | 剩余天数：${leftDays}天`;
+                document.getElementById('tool-area').style.display = 'block';
+            } else {
+                document.getElementById('member-tips').innerText = '您当前是普通用户，需联系管理员开通会员';
+                document.getElementById('tool-area').style.display = 'none';
+                alert('需办理会员后使用工具中心');
+            }
+        }
+        function getMemberTypeName(type) {
+            switch(type) {
+                case 'day': return '日会员'; 
+                case 'week': return '周会员';
+                case 'month': return '月会员'; 
+                case 'year': return '年会员';
+                default: return '普通用户';
+            }
+        }
+        function calcMemberTime(type) {
+            const start = new Date();
+            let end = new Date();
+            switch(type) {
+                case 'day': end.setHours(start.getHours() + 24); break;
+                case 'week': end.setDate(start.getDate() + 7); break;
+                case 'month': end.setDate(start.getDate() + 30); break;
+                case 'year': end.setFullYear(start.getFullYear() + 1); break;
+            }
+            const leftDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            return { type, start: start.toLocaleString(), end: end.toLocaleString(), leftDays };
+        }
+        function startCountdown(endTimeStr) {
+            const endDate = new Date(endTimeStr);
+            const countdownEl = document.getElementById('countdown-display');
+            
+            if (countdownInterval) clearInterval(countdownInterval);
+            
+            countdownInterval = setInterval(() => {
+                const now = new Date();
+                const diff = endDate - now;
+                
+                if (diff <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                    countdownEl.innerText = '会员已到期';
+                    loadVipStatus();
+                    return;
+                }
+                
+                const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
+                const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                let countdownText = '';
+                if (months > 0) countdownText += `${months}月`;
+                if (days > 0 || months > 0) countdownText += `${days}天`;
+                countdownText += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                countdownEl.innerText = countdownText;
+            }, 1000);
+        }
+        function loadVipStatus() {
+            const vipStatusEl = document.getElementById('vip-status');
+            const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none","start":"","end":"","leftDays":0}');
+            const now = new Date();
+            const endDate = new Date(memberInfo.end);
+
+            if (memberInfo.type === 'none') {
+                vipStatusEl.innerHTML = `
+                    <div class="status-info">
+                        <p>当前身份：普通用户</p>
+                        <p>会员状态：未开通</p>
+                        <p>提示：联系管理员开通会员后，可解锁所有工具功能</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (now > endDate) {
+                vipStatusEl.innerHTML = `
+                    <div class="status-info">
+                        <p>当前身份：${getMemberTypeName(memberInfo.type)}（已到期）</p>
+                        <p>开通时间：${memberInfo.start}</p>
+                        <p>截止时间：${memberInfo.end}</p>
+                        <p class="countdown" id="countdown-display">会员已到期</p>
+                        <button class="renew-btn" onclick="alert('请联系管理员续费')">立即续费</button>
+                    </div>
+                `;
+                return;
+            }
+
+            vipStatusEl.innerHTML = `
+                <div class="status-info">
+                    <p>当前身份：${getMemberTypeName(memberInfo.type)}（有效）</p>
+                    <p>开通时间：${memberInfo.start}</p>
+                    <p>截止时间：${memberInfo.end}</p>
+                    <p>剩余时长：<span class="countdown" id="countdown-display"></span></p>
+                    <button class="renew-btn" onclick="alert('请联系管理员续费')">续费会员</button>
+                </div>
+            `;
+            startCountdown(memberInfo.end);
+        }
+
+        // ===================== 管理员后台 =====================
+        function switchAdminTab(tabId) {
+            const targetBtn = event.target;
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+            targetBtn.classList.add('active');
+            document.querySelectorAll('.admin-content').forEach(cont => cont.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if (tabId === 'user-list') loadUserList();
+            if (tabId === 'member-list') loadMemberList();
+        }
+        function toggleAdjustBox() {
+            const type = document.getElementById('adjust-type').value;
+            document.getElementById('extend-day-box').style.display = type === 'extend' ? 'block' : 'none';
+            document.getElementById('modify-time-box').style.display = type === 'modify' ? 'block' : 'none';
+        }
+        function loadUserList() {
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const tbody = document.getElementById('user-list-body');
+            tbody.innerHTML = '';
+            if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="4">暂无注册用户</td></tr>'; return; }
+            
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>已注册</td>
+                    <td>${user.isBanned ? '已封禁' : '正常'}</td>
+                    <td>
+                        <button class="${user.isBanned ? 'unban-btn' : 'ban-btn'}" onclick="${user.isBanned ? 'unbanUser(\''+user.name+'\')' : 'banUser(\''+user.name+'\')'}">
+                            ${user.isBanned ? '解封' : '封禁'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        function loadMemberList() {
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const tbody = document.getElementById('member-list-body');
+            tbody.innerHTML = '';
+            let hasMember = false;
+
+            users.forEach(user => {
+                const memberInfo = JSON.parse(localStorage.getItem(`member_${user.name}`) || '{"type":"none"}');
+                if (memberInfo.type !== 'none') {
+                    hasMember = true;
+                    const now = new Date();
+                    const endDate = new Date(memberInfo.end);
+                    const leftDays = now > endDate ? 0 : Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.name}</td>
+                        <td>${getMemberTypeName(memberInfo.type)}</td>
+                        <td>${memberInfo.start}</td>
+                        <td>${memberInfo.end}</td>
+                        <td>${leftDays}天</td>
+                        <td>${leftDays > 0 ? '有效' : '已到期'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+
+            if (!hasMember) { tbody.innerHTML = '<tr><td colspan="6">暂无会员用户</td></tr>'; }
+        }
+        function handleMember() {
+            if (!isAdmin) { alert('无管理员权限'); return; }
+            const username = document.getElementById('target-username').value.trim();
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            if (!username || !users.some(u => u.name === username)) { alert('用户名不存在'); return; }
+
+            const adjustType = document.getElementById('adjust-type').value;
+            const memberType = document.getElementById('member-type').value;
+            let memberInfo = JSON.parse(localStorage.getItem(`member_${username}`) || '{"type":"none"}');
+            let resultText = '';
+
+            if (adjustType === 'new') {
+                const newMember = calcMemberTime(memberType);
+                localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
+                resultText = `✅ 为${username}新开通${getMemberTypeName(memberType)}
+开通时间：${newMember.start}
+截止时间：${newMember.end}
+剩余天数：${newMember.leftDays}天`;
+            }
+            if (adjustType === 'extend') {
+                const extendDays = parseInt(document.getElementById('extend-days').value);
+                if (isNaN(extendDays) || extendDays < 1) { alert('请输入有效的延长天数'); return; }
+                const now = new Date();
+                let endDate = memberInfo.type === 'none' ? now : new Date(memberInfo.end);
+                endDate.setDate(endDate.getDate() + extendDays);
+                const newMember = {
+                    type: memberInfo.type === 'none' ? memberType : memberInfo.type,
+                    start: memberInfo.start || now.toLocaleString(),
+                    end: endDate.toLocaleString(),
+                    leftDays: Math.ceil((endDate - now) / (1000 * 60 * 60 * 24))
+                };
+                localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
+                resultText = `✅ 为${username}延长${extendDays}天会员
+新截止时间：${newMember.end}
+剩余天数：${newMember.leftDays}天`;
+            }
+            if (adjustType === 'modify') {
+                const newEndTime = document.getElementById('new-end-time').value;
+                if (!newEndTime) { alert('请选择新的截止时间'); return; }
+                const endDate = new Date(newEndTime);
+                const now = new Date();
+                const newMember = {
+                    type: memberInfo.type === 'none' ? memberType : memberInfo.type,
+                    start: memberInfo.start || now.toLocaleString(),
+                    end: endDate.toLocaleString(),
+                    leftDays: Math.ceil((endDate - now) / (1000 * 60 * 60 * 24))
+                };
+                localStorage.setItem(`member_${username}`, JSON.stringify(newMember));
+                resultText = `✅ 已修改${username}会员截止时间
+新截止时间：${newMember.end}
+剩余天数：${newMember.leftDays}天`;
+            }
+
+            document.getElementById('member-result').innerText = resultText;
+            loadMemberList();
+        }
+        function banUser(username) {
+            if (!isAdmin) { alert('无管理员权限'); return; }
+            const targetName = username || document.getElementById('ban-username').value.trim();
+            if (!targetName) { alert('请输入要封禁的用户名'); return; }
+            
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === targetName);
+            if (userIndex === -1) { alert('用户名不存在'); return; }
+            
+            users[userIndex].isBanned = true;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            document.getElementById('ban-result').innerText = `✅ 已封禁用户：${targetName}`;
+            loadUserList();
+        }
+        function unbanUser(username) {
+            if (!isAdmin) { alert('无管理员权限'); return; }
+            const targetName = username || document.getElementById('ban-username').value.trim();
+            if (!targetName) { alert('请输入要解封的用户名'); return; }
+            
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === targetName);
+            if (userIndex === -1) { alert('用户名不存在'); return; }
+            
+            users[userIndex].isBanned = false;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            document.getElementById('ban-result').innerText = `✅ 已解封用户：${targetName}`;
+            loadUserList();
+        }
+
+        // ===================== 工具导入/弹窗（iframe沙箱运行） =====================
+        function readHtmlFile() {
+            const fileInput = document.getElementById('html-file-import');
+            const file = fileInput.files[0];
+            if (!file) return;
+            if (file.size > 1 * 1024 * 1024) { alert('文件过大，最大支持1MB'); fileInput.value = ''; return; }
+
+            const reader = new FileReader();
+            reader.readAsText(file, 'utf-8');
+            reader.onload = function(e) {
+                const htmlContent = e.target.result.trim();
+                showHtmlPreview(htmlContent);
+                fileInput.value = '';
+            };
+            reader.onerror = function() { alert('文件读取失败'); };
+        }
+        function showHtmlPreview(content) {
+            const previewContainer = document.getElementById('preview-container');
+            const previewContent = content.replace(/<script[\s\S]*?<\/script>/gi, '<span style="color:#ff3300;">[脚本内容已过滤，导入后正常运行]</span>');
+            previewContainer.innerHTML = previewContent;
+            localStorage.setItem('tempHtmlImportContent', content);
+            document.getElementById('html-import-preview').style.display = 'block';
+        }
+        function hideHtmlPreview() {
+            document.getElementById('html-import-preview').style.display = 'none';
+            document.getElementById('html-code-input').value = '';
+            localStorage.removeItem('tempHtmlImportContent');
+        }
+        function confirmHtmlImport() {
+            const content = localStorage.getItem('tempHtmlImportContent') || document.getElementById('html-code-input').value.trim();
+            const toolName = document.getElementById('tool-name-input').value.trim();
+            if (!content) { alert('无导入内容'); return; }
+            if (!toolName) { alert('请输入工具名称'); return; }
+
+            const toolId = Date.now().toString();
+            const newTool = { id: toolId, name: toolName, content: content };
+            
+            // 添加到全局工具
+            const globalTools = getGlobalTools();
+            globalTools.push(newTool);
+            saveGlobalTools(globalTools);
+            
+            alert(`✅ 工具「${toolName}」导入成功！所有用户都能看到这个工具`);
+            hideHtmlPreview();
+            document.getElementById('tool-name-input').value = '';
+        }
+        
         // ===================== 修改现有的工具相关函数 =====================
         
         // 修改渲染工具列表函数，使用全局工具数据
@@ -254,13 +1744,24 @@
                 toolItem.className = 'tool-item';
                 toolItem.setAttribute('data-tool-id', tool.id);
                 
-                // 创建工具名称
+                // 创建工具名称和来源标识
+                const toolContent = document.createElement('div');
+                toolContent.style.cssText = 'padding-right: 25px; text-align: center; width: 100%;';
+                
                 const toolName = document.createElement('div');
                 toolName.textContent = tool.name;
-                toolName.style.cssText = 'padding-right: 25px; text-align: center; width: 100%;';
+                toolName.style.fontWeight = 'bold';
+                toolContent.appendChild(toolName);
                 
-                // 创建删除按钮（仅管理员可见）
-                if (isAdmin) {
+                // 显示来源
+                const toolSource = document.createElement('div');
+                toolSource.style.fontSize = '12px';
+                toolSource.style.color = tool.source === 'github' ? '#6e5494' : '#0ff';
+                toolSource.textContent = tool.source === 'github' ? '来自GitHub' : '本地工具';
+                toolContent.appendChild(toolSource);
+                
+                // 创建删除按钮（仅管理员可见，且只对本地工具显示）
+                if (isAdmin && tool.source !== 'github') {
                     const deleteBtn = document.createElement('button');
                     deleteBtn.className = 'tool-delete-btn';
                     deleteBtn.innerHTML = '×';
@@ -268,7 +1769,18 @@
                     toolItem.appendChild(deleteBtn);
                 }
                 
-                toolItem.appendChild(toolName);
+                // GitHub工具显示链接图标
+                if (tool.source === 'github' && tool.githubUrl) {
+                    const githubLink = document.createElement('a');
+                    githubLink.href = tool.githubUrl;
+                    githubLink.target = '_blank';
+                    githubLink.style.cssText = 'position: absolute; top: 5px; left: 5px; color: #6e5494; text-decoration: none; font-size: 14px;';
+                    githubLink.innerHTML = '🔗';
+                    githubLink.title = '在GitHub中查看';
+                    toolItem.appendChild(githubLink);
+                }
+                
+                toolItem.appendChild(toolContent);
                 toolItem.onclick = () => openToolModal(tool.id);
                 
                 toolList.appendChild(toolItem);
@@ -291,26 +1803,6 @@
                 saveGlobalTools(updatedTools);
                 alert('工具删除成功！');
             }
-        }
-        
-        // 修改确认导入函数，将工具添加到全局工具
-        function confirmHtmlImport() {
-            const content = localStorage.getItem('tempHtmlImportContent') || document.getElementById('html-code-input').value.trim();
-            const toolName = document.getElementById('tool-name-input').value.trim();
-            if (!content) { alert('无导入内容'); return; }
-            if (!toolName) { alert('请输入工具名称'); return; }
-
-            const toolId = Date.now().toString();
-            const newTool = { id: toolId, name: toolName, content: content };
-            
-            // 添加到全局工具
-            const globalTools = getGlobalTools();
-            globalTools.push(newTool);
-            saveGlobalTools(globalTools);
-            
-            alert(`✅ 工具「${toolName}」导入成功！所有用户都能看到这个工具`);
-            hideHtmlPreview();
-            document.getElementById('tool-name-input').value = '';
         }
         
         // 修改打开工具弹窗函数，从全局工具获取内容
@@ -337,49 +1829,85 @@
             modal.style.display = 'flex';
         }
         
-        // ===================== 修改登录和页面显示逻辑 =====================
-        
-        // 在登录函数中添加工具加载
-        function login() {
-            // ... 其他登录逻辑保持不变 ...
-            
-            // 在登录成功后加载全局工具
-            if (isAdmin || loginUser.name) {
-                loadGlobalTools();
-            }
+        function closeToolModal() {
+            const modal = document.getElementById('tool-modal');
+            const iframe = document.getElementById('tool-modal-iframe');
+            iframe.src = 'about:blank';
+            modal.style.display = 'none';
         }
-        
-        // 在显示工具中心时加载全局工具
-        function showToolCenter() {
-            if (Object.keys(loginUser).length === 0) {
-                alert('请先登录');
-                switchToLogin();
-                return;
-            }
-            document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('page-container').style.display = 'none';
-            document.getElementById('no-login-tip').style.display = 'none';
-            document.getElementById('admin-panel').style.display = isAdmin ? 'block' : 'none';
+
+        // ===================== 用户资料 =====================
+        function loadUserProfile() {
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const currentUser = users.find(u => u.name === loginUser.name) || loginUser;
             
-            // 管理员和会员都可以使用工具中心
-            if (isAdmin || JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}').type !== 'none') {
-                document.getElementById('tool-area').style.display = 'block';
-                // 显示用户同步信息（非管理员）
-                if (!isAdmin) {
-                    document.getElementById('user-sync-info').style.display = 'block';
-                }
-                loadGlobalTools(); // 加载全局工具
+            document.getElementById('user-name').innerText = currentUser.nickname || currentUser.name;
+            document.getElementById('user-reg-time').innerText = `注册时间：${currentUser.registerTime || new Date().toLocaleString()}`;
+            
+            if (isAdmin) {
+                document.getElementById('user-role').className = 'user-role role-admin';
+                document.getElementById('user-role').innerText = '管理员';
             } else {
-                document.getElementById('tool-area').style.display = 'none';
-                alert('需开通会员后使用工具中心');
+                const memberInfo = JSON.parse(localStorage.getItem(`member_${loginUser.name}`) || '{"type":"none"}');
+                if (memberInfo.type !== 'none' && new Date(memberInfo.end) > new Date()) {
+                    document.getElementById('user-role').className = 'user-role role-vip';
+                    document.getElementById('user-role').innerText = getMemberTypeName(memberInfo.type);
+                } else {
+                    document.getElementById('user-role').className = 'user-role role-normal';
+                    document.getElementById('user-role').innerText = '普通用户';
+                }
+            }
+
+            document.getElementById('edit-username').value = currentUser.name;
+            document.getElementById('edit-nickname').value = currentUser.nickname || currentUser.name;
+            document.getElementById('edit-gender').value = currentUser.gender || '未知';
+            document.getElementById('edit-signature').value = currentUser.signature || '暂无个性签名';
+        }
+        function saveProfile() {
+            const nickname = document.getElementById('edit-nickname').value.trim();
+            const gender = document.getElementById('edit-gender').value;
+            const signature = document.getElementById('edit-signature').value.trim();
+            
+            if (!nickname || nickname.length < 2 || nickname.length > 10) { alert('昵称需2-10字'); return; }
+            if (signature.length > 20) { alert('个性签名不超过20字'); return; }
+
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === loginUser.name);
+            if (userIndex !== -1) {
+                users[userIndex].nickname = nickname;
+                users[userIndex].gender = gender;
+                users[userIndex].signature = signature;
+                localStorage.setItem('registeredUsers', JSON.stringify(users));
+                loginUser.nickname = nickname;
+                document.getElementById('user-name').innerText = nickname;
+                alert('资料保存成功');
             }
         }
-        
+        function changePassword() {
+            const oldPwd = prompt('请输入原密码');
+            if (!oldPwd) return;
+            
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const userIndex = users.findIndex(u => u.name === loginUser.name);
+            if (userIndex === -1 || users[userIndex].pwd !== oldPwd) { alert('原密码错误'); return; }
+
+            const newPwd = prompt('请输入新密码（至少6位）');
+            if (!newPwd || newPwd.length < 6) { alert('新密码需至少6位'); return; }
+            const confirmPwd = prompt('请确认新密码');
+            if (newPwd !== confirmPwd) { alert('两次密码不一致'); return; }
+
+            users[userIndex].pwd = newPwd;
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            alert('密码修改成功，请重新登录');
+            logout();
+        }
+
         // ===================== 页面初始化 =====================
         window.onload = function() {
             toggleAdjustBox();
             renderToolList();
             updateGlobalToolsCount();
+            loadGithubConfigToForm(); // 加载GitHub配置
             
             document.getElementById('admin-import-btn').onclick = function() {
                 document.getElementById('tool-area').style.display = 'block';
@@ -389,6 +1917,23 @@
             // 初始化时显示同步状态
             if (Object.keys(loginUser).length > 0 && !isAdmin) {
                 document.getElementById('user-sync-info').style.display = 'block';
+            }
+            
+            // 如果配置了GitHub，尝试自动同步
+            const config = getGithubConfig();
+            if (config.owner && config.repo && isAdmin) {
+                // 检查是否需要同步（比如一天同步一次）
+                const lastSync = new Date(config.lastSync);
+                const now = new Date();
+                const hoursSinceLastSync = (now - lastSync) / (1000 * 60 * 60);
+                
+                if (hoursSinceLastSync > 24) { // 24小时同步一次
+                    setTimeout(() => {
+                        if (confirm('检测到GitHub配置，是否现在同步工具？')) {
+                            loadToolsFromGithub();
+                        }
+                    }, 2000);
+                }
             }
         };
     </script>

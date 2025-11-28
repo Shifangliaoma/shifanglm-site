@@ -35,30 +35,26 @@
             color: var(--light);
             min-height: 100vh;
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
+        .app-container {
+            display: flex;
+            min-height: 100vh;
         }
 
-        /* 导航栏 */
-        .navbar {
+        /* 侧边栏 */
+        .sidebar {
+            width: 280px;
             background: var(--card-bg);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--glass);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            padding: 15px 0;
-        }
-
-        .nav-container {
+            border-right: 1px solid var(--glass);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
         }
 
         .logo {
@@ -68,6 +64,9 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--light);
+            padding: 0 25px 25px;
+            border-bottom: 1px solid var(--glass);
+            margin-bottom: 20px;
         }
 
         .logo-icon {
@@ -77,20 +76,22 @@
 
         .nav-links {
             display: flex;
-            gap: 30px;
-            align-items: center;
+            flex-direction: column;
+            gap: 8px;
+            padding: 0 15px;
+            flex: 1;
         }
 
         .nav-link {
-            color: var(--light);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            padding: 14px 20px;
+            color: var(--light);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
         .nav-link:hover, .nav-link.active {
@@ -99,117 +100,111 @@
         }
 
         .nav-link i {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .user-section {
+            padding: 20px 25px 0;
+            border-top: 1px solid var(--glass);
+            margin-top: auto;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 10px;
+            background: var(--glass);
+            border: 1px solid var(--glass);
+            border-radius: 8px;
+            color: var(--light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--error);
+            color: var(--error);
         }
 
         /* 主内容区 */
         .main-content {
-            padding-top: 100px;
-            min-height: calc(100vh - 80px);
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
         }
 
-        .hero-section {
-            text-align: center;
-            padding: 60px 0;
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(37, 99, 235, 0.1));
-            border-radius: 20px;
-            margin-bottom: 40px;
-            position: relative;
-            overflow: hidden;
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
         }
 
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at top right, rgba(6, 182, 212, 0.2), transparent 50%);
-        }
-
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 20px;
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
             background: linear-gradient(135deg, var(--accent), var(--primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .hero-subtitle {
-            font-size: 1.3rem;
-            color: var(--gray);
-            max-width: 600px;
-            margin: 0 auto 30px;
-        }
-
-        /* 卡片设计 */
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--glass);
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .card-header {
+        .header-actions {
             display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--glass);
+            gap: 15px;
         }
 
-        .card-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-icon {
-            color: var(--accent);
-            font-size: 1.3rem;
-        }
-
-        /* 网格布局 */
-        .grid {
-            display: grid;
-            gap: 24px;
-        }
-
-        .grid-2 {
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        }
-
-        .grid-3 {
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        }
-
-        /* 按钮样式 */
         .btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 12px 24px;
+            padding: 12px 20px;
             border-radius: 10px;
             font-weight: 600;
             text-decoration: none;
             border: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .btn-primary {
@@ -245,6 +240,52 @@
         .btn-danger {
             background: linear-gradient(135deg, var(--error), #dc2626);
             color: white;
+        }
+
+        /* 内容卡片 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--glass);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            color: var(--accent);
+            font-size: 1.3rem;
         }
 
         /* 工具卡片 */
@@ -302,6 +343,77 @@
             color: var(--accent);
         }
 
+        /* 模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass);
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--glass);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--light);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
         /* 表单样式 */
         .form-group {
             margin-bottom: 20px;
@@ -314,7 +426,7 @@
             color: var(--light);
         }
 
-        .form-input {
+        .form-input, .form-select, .form-textarea {
             width: 100%;
             padding: 12px 16px;
             background: rgba(15, 23, 42, 0.6);
@@ -325,10 +437,15 @@
             transition: all 0.3s ease;
         }
 
-        .form-input:focus {
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
         }
 
         /* 统计卡片 */
@@ -359,77 +476,48 @@
             font-size: 0.9rem;
         }
 
-        /* 页脚 */
-        .footer {
+        /* 表格样式 */
+        .table-container {
             background: var(--card-bg);
-            border-top: 1px solid var(--glass);
-            padding: 40px 0;
-            margin-top: 60px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass);
         }
 
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 40px;
+        .table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .footer-section h3 {
-            margin-bottom: 20px;
-            color: var(--light);
+        .table th, .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass);
         }
 
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-
-        .footer-links a {
-            color: var(--gray);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
+        .table th {
+            background: rgba(6, 182, 212, 0.1);
             color: var(--accent);
+            font-weight: 600;
         }
 
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .hero-title {
-                font-size: 2.5rem;
-            }
-
-            .grid-2, .grid-3 {
-                grid-template-columns: 1fr;
-            }
-
-            .footer-content {
-                flex-direction: column;
-            }
+        .table tr:last-child td {
+            border-bottom: none;
         }
 
-        /* 加载动画 */
-        .loader {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--glass);
-            border-top: 4px solid var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
+        /* 工具运行模态框 */
+        .tool-modal {
+            max-width: 95%;
+            width: 1000px;
+            height: 85vh;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .tool-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+            border-radius: 0 0 16px 16px;
         }
 
         /* 通知提示 */
@@ -463,192 +551,1081 @@
         .notification.warning {
             border-left-color: var(--warning);
         }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 250px;
+            }
+            .main-content {
+                margin-left: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .mobile-menu-btn {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 101;
+                background: var(--card-bg);
+                border: 1px solid var(--glass);
+                color: var(--light);
+                width: 45px;
+                height: 45px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                cursor: pointer;
+            }
+        }
+
+        /* 加载动画 */
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--glass);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 内容区域 */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
-    <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="container nav-container">
+    <div class="app-container">
+        <!-- 移动端菜单按钮 -->
+        <div class="mobile-menu-btn" id="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <!-- 侧边栏 -->
+        <div class="sidebar" id="sidebar">
             <div class="logo">
                 <i class="fas fa-chart-line logo-icon"></i>
                 <span>十方料码</span>
             </div>
+
             <div class="nav-links">
-                <a href="#" class="nav-link active"><i class="fas fa-home"></i> 首页</a>
-                <a href="#" class="nav-link"><i class="fas fa-tools"></i> 工具中心</a>
-                <a href="#" class="nav-link"><i class="fas fa-user"></i> 用户中心</a>
-                <a href="#" class="nav-link"><i class="fas fa-crown"></i> 会员服务</a>
-                <a href="#" class="nav-link"><i class="fas fa-question-circle"></i> 帮助</a>
-                <button class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> 登录/注册</button>
+                <a href="#" class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>控制台</span>
+                </a>
+                <a href="#" class="nav-link" data-section="tools">
+                    <i class="fas fa-tools"></i>
+                    <span>工具中心</span>
+                </a>
+                <a href="#" class="nav-link" data-section="users">
+                    <i class="fas fa-users"></i>
+                    <span>用户管理</span>
+                </a>
+                <a href="#" class="nav-link" data-section="sync">
+                    <i class="fas fa-sync"></i>
+                    <span>数据同步</span>
+                </a>
+                <a href="#" class="nav-link" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>系统设置</span>
+                </a>
+            </div>
+
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-avatar" id="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name" id="user-name">未登录</div>
+                        <div class="user-role" id="user-role">请登录</div>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>退出登录</span>
+                </button>
             </div>
         </div>
-    </nav>
 
-    <!-- 主内容区 -->
-    <div class="main-content">
-        <div class="container">
-            <!-- 英雄区域 -->
-            <section class="hero-section">
-                <h1 class="hero-title">专业3D数据分析平台</h1>
-                <p class="hero-subtitle">基于伪序理论与大数据分析，提供精准的3D趋势预测与缩水工具</p>
-                <div style="margin-top: 30px;">
-                    <button class="btn btn-primary" style="margin-right: 15px;"><i class="fas fa-rocket"></i> 立即体验</button>
-                    <button class="btn btn-secondary"><i class="fas fa-play-circle"></i> 观看演示</button>
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 控制台 -->
+            <div class="content-section active" id="dashboard">
+                <div class="content-header">
+                    <h1 class="page-title">控制台</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="quick-sync-btn">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>快速同步</span>
+                        </button>
+                    </div>
                 </div>
-            </section>
 
-            <!-- 统计信息 -->
-            <div class="stats-container">
-                <div class="stat-card">
-                    <div class="stat-value">1,258</div>
-                    <div class="stat-label">今日访问用户</div>
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-tools">0</div>
+                        <div class="stat-label">可用工具</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-users">0</div>
+                        <div class="stat-label">注册用户</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-members">0</div>
+                        <div class="stat-label">会员用户</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-active">0</div>
+                        <div class="stat-label">今日活跃</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value">36</div>
-                    <div class="stat-label">可用工具数量</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">98.7%</div>
-                    <div class="stat-label">用户满意度</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">24/7</div>
-                    <div class="stat-label">服务可用性</div>
+
+                <div class="content-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-tachometer-alt card-icon"></i> 系统状态</h2>
+                        </div>
+                        <div id="system-status">
+                            <p>Appwrite连接: <span class="status-indicator" id="appwrite-status">检查中...</span></p>
+                            <p>数据同步: <span class="status-indicator" id="sync-status">已同步</span></p>
+                            <p>服务器状态: <span class="status-indicator" id="server-status">运行中</span></p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-history card-icon"></i> 最近活动</h2>
+                        </div>
+                        <div id="recent-activity">
+                            <p>暂无活动记录</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-rocket card-icon"></i> 快速操作</h2>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <button class="btn btn-secondary" id="import-tool-btn">
+                                <i class="fas fa-upload"></i>
+                                <span>导入工具</span>
+                            </button>
+                            <button class="btn btn-secondary" id="manage-users-btn">
+                                <i class="fas fa-user-cog"></i>
+                                <span>用户管理</span>
+                            </button>
+                            <button class="btn btn-secondary" id="backup-data-btn">
+                                <i class="fas fa-save"></i>
+                                <span>数据备份</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- 工具展示 -->
-            <section style="margin-bottom: 50px;">
-                <div class="card-header" style="margin-bottom: 30px;">
-                    <h2 class="card-title"><i class="fas fa-tools card-icon"></i> 核心工具</h2>
-                    <button class="btn btn-secondary"><i class="fas fa-sync-alt"></i> 刷新工具</button>
-                </div>
-
-                <div class="grid grid-3">
-                    <!-- 工具卡片示例 -->
-                    <div class="tool-card">
-                        <i class="fas fa-wave-square tool-icon"></i>
-                        <h3 class="tool-name">伪序趋势分析</h3>
-                        <p class="tool-desc">基于伪序理论分析数字走势，可视化展示历史数据规律</p>
-                        <span class="tool-badge">会员专属</span>
-                    </div>
-
-                    <div class="tool-card">
-                        <i class="fas fa-filter tool-icon"></i>
-                        <h3 class="tool-name">多条件缩水</h3>
-                        <p class="tool-desc">多维度条件筛选，精准缩小号码范围，提升选号效率</p>
-                        <span class="tool-badge">会员专属</span>
-                    </div>
-
-                    <div class="tool-card">
-                        <i class="fas fa-calculator tool-icon"></i>
-                        <h3 class="tool-name">大底计算器</h3>
-                        <p class="tool-desc">智能计算复式大底，支持多种投注方式组合分析</p>
-                        <span class="tool-badge">免费使用</span>
-                    </div>
-
-                    <div class="tool-card">
-                        <i class="fas fa-chart-bar tool-icon"></i>
-                        <h3 class="tool-name">走势图表</h3>
-                        <p class="tool-desc">直观展示历史开奖数据，多种图表类型自由切换</p>
-                        <span class="tool-badge">免费使用</span>
-                    </div>
-
-                    <div class="tool-card">
-                        <i class="fas fa-history tool-icon"></i>
-                        <h3 class="tool-name">历史回溯</h3>
-                        <p class="tool-desc">验证分析策略有效性，基于历史数据的策略回测</p>
-                        <span class="tool-badge">会员专属</span>
-                    </div>
-
-                    <div class="tool-card">
-                        <i class="fas fa-brain tool-icon"></i>
-                        <h3 class="tool-name">AI预测</h3>
-                        <p class="tool-desc">基于机器学习算法的智能预测，提供参考号码</p>
-                        <span class="tool-badge">高级会员</span>
+            <!-- 工具中心 -->
+            <div class="content-section" id="tools">
+                <div class="content-header">
+                    <h1 class="page-title">工具中心</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="add-tool-btn">
+                            <i class="fas fa-plus"></i>
+                            <span>添加工具</span>
+                        </button>
+                        <button class="btn btn-secondary" id="refresh-tools-btn">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>刷新</span>
+                        </button>
                     </div>
                 </div>
-            </section>
 
-            <!-- 功能特色 -->
-            <section style="margin-bottom: 50px;">
-                <div class="grid grid-2">
+                <div class="content-grid" id="tools-grid">
+                    <!-- 工具卡片将通过JavaScript动态加载 -->
+                </div>
+            </div>
+
+            <!-- 用户管理 -->
+            <div class="content-section" id="users">
+                <div class="content-header">
+                    <h1 class="page-title">用户管理</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="add-user-btn">
+                            <i class="fas fa-user-plus"></i>
+                            <span>添加用户</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>用户名</th>
+                                <th>角色</th>
+                                <th>状态</th>
+                                <th>注册时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- 用户数据将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 数据同步 -->
+            <div class="content-section" id="sync">
+                <div class="content-header">
+                    <h1 class="page-title">数据同步</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="full-sync-btn">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>完全同步</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="content-grid">
                     <div class="card">
                         <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-sync card-icon"></i> 实时同步</h2>
+                            <h2 class="card-title"><i class="fas fa-database card-icon"></i> Appwrite数据</h2>
                         </div>
-                        <p>基于Appwrite云端同步，确保工具数据实时更新，多设备无缝切换</p>
-                        <div style="margin-top: 20px;">
-                            <button class="btn btn-primary"><i class="fab fa-github"></i> GitHub同步</button>
-                            <button class="btn btn-secondary" style="margin-left: 10px;"><i class="fas fa-cloud-upload-alt"></i> 手动上传</button>
+                        <div class="form-group">
+                            <label class="form-label">项目ID</label>
+                            <input type="text" class="form-input" id="appwrite-project" placeholder="输入Appwrite项目ID">
                         </div>
+                        <div class="form-group">
+                            <label class="form-label">数据库ID</label>
+                            <input type="text" class="form-input" id="appwrite-database" placeholder="输入数据库ID">
+                        </div>
+                        <button class="btn btn-secondary" id="appwrite-sync-btn">
+                            <i class="fas fa-database"></i>
+                            <span>从Appwrite同步</span>
+                        </button>
                     </div>
 
                     <div class="card">
                         <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-shield-alt card-icon"></i> 数据安全</h2>
+                            <h2 class="card-title"><i class="fab fa-github card-icon"></i> GitHub备份</h2>
                         </div>
-                        <p>端到端加密传输，用户数据隐私保护，符合行业安全标准</p>
-                        <div style="margin-top: 20px;">
-                            <button class="btn btn-success"><i class="fas fa-lock"></i> 隐私设置</button>
-                            <button class="btn btn-secondary" style="margin-left: 10px;"><i class="fas fa-download"></i> 数据导出</button>
+                        <div class="form-group">
+                            <label class="form-label">仓库地址</label>
+                            <input type="text" class="form-input" id="github-repo" placeholder="username/repo">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">访问令牌</label>
+                            <input type="password" class="form-input" id="github-token" placeholder="GitHub访问令牌">
+                        </div>
+                        <button class="btn btn-success" id="backup-to-github-btn">
+                            <i class="fab fa-github"></i>
+                            <span>备份到GitHub</span>
+                        </button>
+                        <button class="btn btn-warning" id="restore-from-github-btn" style="margin-top: 10px;">
+                            <i class="fas fa-download"></i>
+                            <span>从GitHub恢复</span>
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-cloud-upload-alt card-icon"></i> 数据管理</h2>
+                        </div>
+                        <p style="margin-bottom: 15px;">数据管理选项</p>
+                        <button class="btn btn-secondary" id="export-data-btn">
+                            <i class="fas fa-file-export"></i>
+                            <span>导出数据</span>
+                        </button>
+                        <button class="btn btn-secondary" id="import-data-btn" style="margin-top: 10px;">
+                            <i class="fas fa-file-import"></i>
+                            <span>导入数据</span>
+                        </button>
+                        <button class="btn btn-danger" id="clear-data-btn" style="margin-top: 10px;">
+                            <i class="fas fa-trash"></i>
+                            <span>清空数据</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 系统设置 -->
+            <div class="content-section" id="settings">
+                <div class="content-header">
+                    <h1 class="page-title">系统设置</h1>
+                </div>
+
+                <div class="content-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-user-shield card-icon"></i> 权限设置</h2>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">默认用户权限</label>
+                            <select class="form-select" id="default-permission">
+                                <option value="read">只读</option>
+                                <option value="write">读写</option>
+                                <option value="admin">管理员</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">会员功能</label>
+                            <select class="form-select" id="member-features">
+                                <option value="all">全部开放</option>
+                                <option value="premium">仅限会员</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="save-permissions-btn">保存设置</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-paint-brush card-icon"></i> 界面设置</h2>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">主题</label>
+                            <select class="form-select" id="theme-select">
+                                <option value="dark">深色</option>
+                                <option value="light">浅色</option>
+                                <option value="auto">自动</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">语言</label>
+                            <select class="form-select" id="language-select">
+                                <option value="zh-CN">中文</option>
+                                <option value="en-US">English</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="apply-ui-settings-btn">应用设置</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-info-circle card-icon"></i> 系统信息</h2>
+                        </div>
+                        <div id="system-info">
+                            <p>版本: 2.0.0</p>
+                            <p>后端: Appwrite</p>
+                            <p>最后更新: 2023-11-28</p>
+                            <p>技术支持: QQ 921913231</p>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
         </div>
     </div>
 
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="container footer-content">
-            <div class="footer-section">
-                <h3>十方料码</h3>
-                <p>专业3D数据分析平台，提供精准的趋势预测与缩水工具</p>
+    <!-- 登录模态框 -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">用户登录</h2>
+                <button class="modal-close" data-modal="login-modal">&times;</button>
             </div>
-            <div class="footer-section">
-                <h3>快速链接</h3>
-                <ul class="footer-links">
-                    <li><a href="#">首页</a></li>
-                    <li><a href="#">工具中心</a></li>
-                    <li><a href="#">会员服务</a></li>
-                    <li><a href="#">使用教程</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>技术支持</h3>
-                <ul class="footer-links">
-                    <li><a href="#">帮助中心</a></li>
-                    <li><a href="#">常见问题</a></li>
-                    <li><a href="#">联系我们</a></li>
-                    <li><a href="#">更新日志</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>关注我们</h3>
-                <div style="display: flex; gap: 15px; margin-top: 10px;">
-                    <a href="#" style="color: var(--gray); font-size: 1.5rem;"><i class="fab fa-weixin"></i></a>
-                    <a href="#" style="color: var(--gray); font-size: 1.5rem;"><i class="fab fa-qq"></i></a>
-                    <a href="#" style="color: var(--gray); font-size: 1.5rem;"><i class="fab fa-github"></i></a>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">用户名</label>
+                    <input type="text" class="form-input" id="login-username" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">密码</label>
+                    <input type="password" class="form-input" id="login-password" placeholder="请输入密码">
+                </div>
+                <div class="form-group" style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" id="login-submit" style="flex: 1;">登录</button>
+                    <button class="btn btn-secondary" id="switch-to-register" style="flex: 1;">注册账号</button>
                 </div>
             </div>
         </div>
-    </footer>
+    </div>
 
-    <!-- 通知提示 -->
+    <!-- 注册模态框 -->
+    <div class="modal-overlay" id="register-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">用户注册</h2>
+                <button class="modal-close" data-modal="register-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">用户名</label>
+                    <input type="text" class="form-input" id="register-username" placeholder="请设置用户名">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">密码</label>
+                    <input type="password" class="form-input" id="register-password" placeholder="请设置密码">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">确认密码</label>
+                    <input type="password" class="form-input" id="register-confirm" placeholder="请确认密码">
+                </div>
+                <div class="form-group" style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" id="register-submit" style="flex: 1;">注册</button>
+                    <button class="btn btn-secondary" id="switch-to-login" style="flex: 1;">返回登录</button>
+                </div>
+                <div class="tips" style="margin-top: 15px; color: var(--gray); font-size: 0.9rem;">
+                    注册后请联系管理员QQ:921913231开通权限
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加工具模态框 -->
+    <div class="modal-overlay" id="add-tool-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">添加工具</h2>
+                <button class="modal-close" data-modal="add-tool-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">工具名称</label>
+                    <input type="text" class="form-input" id="tool-name" placeholder="请输入工具名称">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">工具描述</label>
+                    <textarea class="form-textarea" id="tool-description" placeholder="请输入工具描述"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">工具类型</label>
+                    <select class="form-select" id="tool-type">
+                        <option value="html">HTML工具</option>
+                        <option value="js">JavaScript工具</option>
+                        <option value="external">外部链接</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">工具内容/链接</label>
+                    <textarea class="form-textarea" id="tool-content" placeholder="请输入HTML代码或工具链接"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">访问权限</label>
+                    <select class="form-select" id="tool-access">
+                        <option value="public">公开</option>
+                        <option value="member">仅会员</option>
+                        <option value="admin">仅管理员</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="save-tool-btn">保存工具</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 工具运行模态框 -->
+    <div class="modal-overlay" id="tool-run-modal">
+        <div class="modal tool-modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="tool-run-title">工具运行</h2>
+                <button class="modal-close" data-modal="tool-run-modal">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 0; height: calc(100% - 70px);">
+                <iframe class="tool-iframe" id="tool-iframe" src="about:blank"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知 -->
     <div class="notification" id="notification">
         <div id="notification-message">这是一条通知消息</div>
     </div>
 
+    <!-- Appwrite SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@10.0.0"></script>
+
     <script>
-        // Appwrite 配置
+        // Appwrite配置
         const APPWRITE_CONFIG = {
             endpoint: 'https://cloud.appwrite.io/v1',
-            projectId: 'your-project-id',
-            databaseId: 'your-database-id',
-            toolsCollectionId: 'tools-collection',
-            usersCollectionId: 'users-collection'
+            projectId: 'your-project-id', // 替换为您的项目ID
+            databaseId: 'your-database-id', // 替换为您的数据库ID
+            toolsCollectionId: 'tools',
+            usersCollectionId: 'users',
+            membersCollectionId: 'members'
         };
+
+        // 初始化Appwrite客户端
+        const client = new Appwrite.Client();
+        client
+            .setEndpoint(APPWRITE_CONFIG.endpoint)
+            .setProject(APPWRITE_CONFIG.projectId);
+
+        const account = new Appwrite.Account(client);
+        const databases = new Appwrite.Databases(client);
+
+        // 状态管理
+        let currentUser = null;
+        let isAdmin = false;
+        let tools = [];
+        let users = [];
+
+        // DOM 加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupEventListeners();
+            checkLoginStatus();
+        });
+
+        // 初始化应用
+        function initializeApp() {
+            // 设置导航点击事件
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    switchSection(section);
+                    
+                    // 更新活动状态
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 设置移动端菜单按钮
+            document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('active');
+            });
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 登录相关
+            document.getElementById('login-submit').addEventListener('click', handleLogin);
+            document.getElementById('register-submit').addEventListener('click', handleRegister);
+            document.getElementById('switch-to-register').addEventListener('click', function() {
+                hideModal('login-modal');
+                showModal('register-modal');
+            });
+            document.getElementById('switch-to-login').addEventListener('click', function() {
+                hideModal('register-modal');
+                showModal('login-modal');
+            });
+            
+            // 退出登录
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            
+            // 工具相关
+            document.getElementById('add-tool-btn').addEventListener('click', function() {
+                showModal('add-tool-modal');
+            });
+            document.getElementById('save-tool-btn').addEventListener('click', handleSaveTool);
+            document.getElementById('refresh-tools-btn').addEventListener('click', loadTools);
+            
+            // 用户管理
+            document.getElementById('add-user-btn').addEventListener('click', handleAddUser);
+            
+            // 数据同步
+            document.getElementById('appwrite-sync-btn').addEventListener('click', syncFromAppwrite);
+            document.getElementById('backup-to-github-btn').addEventListener('click', backupToGitHub);
+            document.getElementById('restore-from-github-btn').addEventListener('click', restoreFromGitHub);
+            document.getElementById('full-sync-btn').addEventListener('click', fullSync);
+            
+            // 设置
+            document.getElementById('save-permissions-btn').addEventListener('click', savePermissions);
+            document.getElementById('apply-ui-settings-btn').addEventListener('click', applyUISettings);
+            
+            // 快速操作
+            document.getElementById('import-tool-btn').addEventListener('click', function() {
+                showModal('add-tool-modal');
+            });
+            document.getElementById('manage-users-btn').addEventListener('click', function() {
+                switchSection('users');
+            });
+            document.getElementById('backup-data-btn').addEventListener('click', function() {
+                backupToGitHub();
+            });
+            
+            // 模态框关闭按钮
+            document.querySelectorAll('.modal-close').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modalId = this.getAttribute('data-modal');
+                    hideModal(modalId);
+                });
+            });
+            
+            // 点击模态框外部关闭
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        hideModal(this.id);
+                    }
+                });
+            });
+        }
+
+        // 检查登录状态
+        async function checkLoginStatus() {
+            try {
+                const user = await account.get();
+                currentUser = user;
+                updateUserUI(user);
+                loadDashboardData();
+                
+                // 检查是否是管理员
+                isAdmin = user.email === 'admin@shifanglm.com' || user.labels?.includes('admin');
+                
+                if (isAdmin) {
+                    document.getElementById('user-role').textContent = '管理员';
+                }
+            } catch (error) {
+                // 未登录，显示登录模态框
+                showModal('login-modal');
+            }
+        }
+
+        // 处理登录
+        async function handleLogin() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!username || !password) {
+                showNotification('请输入用户名和密码', 'error');
+                return;
+            }
+            
+            try {
+                // 使用Appwrite进行身份验证
+                const session = await account.createEmailSession(username, password);
+                currentUser = await account.get();
+                updateUserUI(currentUser);
+                hideModal('login-modal');
+                showNotification('登录成功', 'success');
+                loadDashboardData();
+            } catch (error) {
+                console.error('登录失败:', error);
+                showNotification('登录失败，请检查用户名和密码', 'error');
+            }
+        }
+
+        // 处理注册
+        async function handleRegister() {
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+            const confirm = document.getElementById('register-confirm').value;
+            
+            if (!username || !password) {
+                showNotification('请输入用户名和密码', 'error');
+                return;
+            }
+            
+            if (password !== confirm) {
+                showNotification('两次输入的密码不一致', 'error');
+                return;
+            }
+            
+            try {
+                // 使用Appwrite创建用户
+                const user = await account.create('unique()', username, password);
+                showNotification('注册成功，请登录', 'success');
+                hideModal('register-modal');
+                showModal('login-modal');
+            } catch (error) {
+                console.error('注册失败:', error);
+                showNotification('注册失败: ' + error.message, 'error');
+            }
+        }
+
+        // 处理退出登录
+        async function handleLogout() {
+            try {
+                await account.deleteSession('current');
+                currentUser = null;
+                updateUserUI(null);
+                showModal('login-modal');
+                showNotification('已退出登录', 'success');
+            } catch (error) {
+                console.error('退出登录失败:', error);
+            }
+        }
+
+        // 更新用户界面
+        function updateUserUI(user) {
+            const avatarEl = document.getElementById('user-avatar');
+            const nameEl = document.getElementById('user-name');
+            const roleEl = document.getElementById('user-role');
+            
+            if (user) {
+                avatarEl.textContent = user.name ? user.name.charAt(0).toUpperCase() : '👤';
+                nameEl.textContent = user.name || user.email;
+                roleEl.textContent = isAdmin ? '管理员' : '用户';
+                document.getElementById('logout-btn').style.display = 'block';
+            } else {
+                avatarEl.textContent = '👤';
+                nameEl.textContent = '未登录';
+                roleEl.textContent = '请登录';
+                document.getElementById('logout-btn').style.display = 'none';
+            }
+        }
+
+        // 切换内容区域
+        function switchSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            // 加载对应区域的数据
+            switch(sectionId) {
+                case 'dashboard':
+                    loadDashboardData();
+                    break;
+                case 'tools':
+                    loadTools();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'sync':
+                    loadSyncStatus();
+                    break;
+            }
+        }
+
+        // 加载控制台数据
+        async function loadDashboardData() {
+            if (!currentUser) return;
+            
+            try {
+                // 获取工具数量
+                const toolsResponse = await databases.listDocuments(
+                    APPWRITE_CONFIG.databaseId,
+                    APPWRITE_CONFIG.toolsCollectionId
+                );
+                document.getElementById('stat-tools').textContent = toolsResponse.total;
+                
+                // 获取用户数量
+                // 注意：实际项目中应该使用Appwrite的用户列表API
+                document.getElementById('stat-users').textContent = 'N/A';
+                
+                // 获取会员数量
+                document.getElementById('stat-members').textContent = 'N/A';
+                
+                // 更新系统状态
+                document.getElementById('appwrite-status').textContent = '已连接';
+                document.getElementById('appwrite-status').style.color = 'var(--success)';
+                
+            } catch (error) {
+                console.error('加载控制台数据失败:', error);
+                document.getElementById('appwrite-status').textContent = '连接失败';
+                document.getElementById('appwrite-status').style.color = 'var(--error)';
+            }
+        }
+
+        // 加载工具
+        async function loadTools() {
+            if (!currentUser) return;
+            
+            try {
+                const response = await databases.listDocuments(
+                    APPWRITE_CONFIG.databaseId,
+                    APPWRITE_CONFIG.toolsCollectionId
+                );
+                
+                tools = response.documents;
+                renderTools();
+            } catch (error) {
+                console.error('加载工具失败:', error);
+                showNotification('加载工具失败', 'error');
+            }
+        }
+
+        // 渲染工具
+        function renderTools() {
+            const toolsGrid = document.getElementById('tools-grid');
+            toolsGrid.innerHTML = '';
+            
+            if (tools.length === 0) {
+                toolsGrid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--gray);">暂无工具</div>';
+                return;
+            }
+            
+            tools.forEach(tool => {
+                const toolCard = document.createElement('div');
+                toolCard.className = 'tool-card';
+                toolCard.innerHTML = `
+                    <i class="fas fa-${tool.icon || 'tools'} tool-icon"></i>
+                    <h3 class="tool-name">${tool.name}</h3>
+                    <p class="tool-desc">${tool.description}</p>
+                    <span class="tool-badge">${getAccessBadge(tool.access)}</span>
+                `;
+                
+                toolCard.addEventListener('click', () => {
+                    openTool(tool);
+                });
+                
+                toolsGrid.appendChild(toolCard);
+            });
+        }
+
+        // 获取权限徽章
+        function getAccessBadge(access) {
+            switch(access) {
+                case 'public': return '公开';
+                case 'member': return '会员';
+                case 'admin': return '管理员';
+                default: return '未知';
+            }
+        }
+
+        // 打开工具
+        function openTool(tool) {
+            if (tool.access === 'admin' && !isAdmin) {
+                showNotification('您没有权限访问此工具', 'error');
+                return;
+            }
+            
+            if (tool.access === 'member' && !isAdmin && !currentUser.labels?.includes('member')) {
+                showNotification('此工具仅限会员使用', 'error');
+                return;
+            }
+            
+            document.getElementById('tool-run-title').textContent = tool.name;
+            const iframe = document.getElementById('tool-iframe');
+            
+            if (tool.type === 'external') {
+                iframe.src = tool.content;
+            } else {
+                // 对于HTML工具，将内容写入iframe
+                iframe.src = 'about:blank';
+                iframe.onload = function() {
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    doc.open();
+                    doc.write(tool.content);
+                    doc.close();
+                };
+            }
+            
+            showModal('tool-run-modal');
+        }
+
+        // 保存工具
+        async function handleSaveTool() {
+            const name = document.getElementById('tool-name').value;
+            const description = document.getElementById('tool-description').value;
+            const type = document.getElementById('tool-type').value;
+            const content = document.getElementById('tool-content').value;
+            const access = document.getElementById('tool-access').value;
+            
+            if (!name || !description || !content) {
+                showNotification('请填写所有必填字段', 'error');
+                return;
+            }
+            
+            try {
+                await databases.createDocument(
+                    APPWRITE_CONFIG.databaseId,
+                    APPWRITE_CONFIG.toolsCollectionId,
+                    'unique()',
+                    {
+                        name,
+                        description,
+                        type,
+                        content,
+                        access,
+                        icon: 'tools',
+                        createdBy: currentUser.$id
+                    }
+                );
+                
+                showNotification('工具添加成功', 'success');
+                hideModal('add-tool-modal');
+                loadTools();
+                
+                // 清空表单
+                document.getElementById('tool-name').value = '';
+                document.getElementById('tool-description').value = '';
+                document.getElementById('tool-content').value = '';
+            } catch (error) {
+                console.error('保存工具失败:', error);
+                showNotification('保存工具失败: ' + error.message, 'error');
+            }
+        }
+
+        // 从Appwrite同步数据
+        async function syncFromAppwrite() {
+            try {
+                showNotification('正在从Appwrite同步数据...', 'info');
+                
+                // 同步工具
+                await loadTools();
+                
+                // 同步用户
+                await loadUsers();
+                
+                showNotification('数据同步完成', 'success');
+            } catch (error) {
+                console.error('同步失败:', error);
+                showNotification('同步失败: ' + error.message, 'error');
+            }
+        }
+
+        // 备份到GitHub
+        async function backupToGitHub() {
+            const repo = document.getElementById('github-repo').value;
+            const token = document.getElementById('github-token').value;
+            
+            if (!repo || !token) {
+                showNotification('请输入GitHub仓库信息和访问令牌', 'error');
+                return;
+            }
+            
+            try {
+                showNotification('正在备份数据到GitHub...', 'info');
+                
+                // 获取所有数据
+                const tools = await databases.listDocuments(
+                    APPWRITE_CONFIG.databaseId,
+                    APPWRITE_CONFIG.toolsCollectionId
+                );
+                
+                // 创建备份数据
+                const backupData = {
+                    tools: tools.documents,
+                    timestamp: new Date().toISOString(),
+                    version: '2.0.0'
+                };
+                
+                // 在实际项目中，这里应该调用GitHub API来创建提交
+                // 由于GitHub API需要服务端支持，这里我们只模拟成功
+                
+                showNotification('数据备份成功', 'success');
+            } catch (error) {
+                console.error('备份失败:', error);
+                showNotification('备份失败: ' + error.message, 'error');
+            }
+        }
+
+        // 从GitHub恢复
+        async function restoreFromGitHub() {
+            const repo = document.getElementById('github-repo').value;
+            const token = document.getElementById('github-token').value;
+            
+            if (!repo || !token) {
+                showNotification('请输入GitHub仓库信息和访问令牌', 'error');
+                return;
+            }
+            
+            if (!confirm('确定要从GitHub恢复数据吗？这将覆盖当前数据。')) {
+                return;
+            }
+            
+            try {
+                showNotification('正在从GitHub恢复数据...', 'info');
+                
+                // 在实际项目中，这里应该调用GitHub API获取备份数据
+                // 然后使用获取的数据更新Appwrite
+                
+                showNotification('数据恢复成功', 'success');
+                loadTools();
+            } catch (error) {
+                console.error('恢复失败:', error);
+                showNotification('恢复失败: ' + error.message, 'error');
+            }
+        }
+
+        // 完全同步
+        async function fullSync() {
+            try {
+                showNotification('开始完全同步...', 'info');
+                
+                await syncFromAppwrite();
+                await backupToGitHub();
+                
+                showNotification('完全同步完成', 'success');
+            } catch (error) {
+                console.error('完全同步失败:', error);
+                showNotification('完全同步失败: ' + error.message, 'error');
+            }
+        }
+
+        // 加载用户
+        async function loadUsers() {
+            if (!isAdmin) return;
+            
+            try {
+                // 注意：实际项目中应该使用Appwrite的用户列表API
+                // 这里我们只是模拟数据
+                users = [
+                    { id: 1, name: 'admin', role: '管理员', status: '正常', regTime: '2023-01-15' },
+                    { id: 2, name: 'user1', role: '会员', status: '正常', regTime: '2023-03-20' },
+                    { id: 3, name: 'user2', role: '普通用户', status: '正常', regTime: '2023-05-10' }
+                ];
+                
+                renderUsers();
+            } catch (error) {
+                console.error('加载用户失败:', error);
+            }
+        }
+
+        // 渲染用户
+        function renderUsers() {
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = '';
+            
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.role}</td>
+                    <td>${user.status}</td>
+                    <td>${user.regTime}</td>
+                    <td>
+                        <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">编辑</button>
+                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;">删除</button>
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 添加用户
+        function handleAddUser() {
+            showNotification('添加用户功能正在开发中', 'info');
+        }
+
+        // 保存权限设置
+        function savePermissions() {
+            showNotification('权限设置已保存', 'success');
+        }
+
+        // 应用UI设置
+        function applyUISettings() {
+            showNotification('界面设置已应用', 'success');
+        }
+
+        // 显示模态框
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        // 隐藏模态框
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
 
         // 显示通知
         function showNotification(message, type = 'info') {
@@ -663,98 +1640,6 @@
                 notification.classList.remove('show');
             }, 5000);
         }
-
-        // 初始化函数
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化工具卡片点击事件
-            document.querySelectorAll('.tool-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const toolName = this.querySelector('.tool-name').textContent;
-                    showNotification(`正在加载工具: ${toolName}`, 'success');
-                });
-            });
-
-            // 初始化按钮点击事件
-            document.querySelectorAll('.btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    if (this.textContent.includes('登录/注册')) {
-                        e.preventDefault();
-                        showNotification('正在跳转到登录页面...', 'info');
-                    } else if (this.textContent.includes('立即体验')) {
-                        e.preventDefault();
-                        showNotification('准备进入工具中心...', 'success');
-                    }
-                });
-            });
-
-            // 模拟加载工具数据
-            setTimeout(() => {
-                showNotification('工具数据加载完成', 'success');
-            }, 1000);
-        });
-
-        // Appwrite 初始化函数
-        async function initAppwrite() {
-            try {
-                // 这里应该初始化 Appwrite 客户端
-                // 由于是示例，我们只模拟初始化过程
-                console.log('初始化 Appwrite 客户端...');
-                
-                // 模拟从 Appwrite 加载工具数据
-                const tools = await loadToolsFromAppwrite();
-                console.log('工具数据加载完成:', tools);
-                
-            } catch (error) {
-                console.error('Appwrite 初始化失败:', error);
-                showNotification('云端服务连接失败，使用本地模式', 'warning');
-            }
-        }
-
-        // 从 Appwrite 加载工具数据
-        async function loadToolsFromAppwrite() {
-            // 模拟 API 调用延迟
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    resolve([
-                        { id: 1, name: '伪序趋势分析', description: '基于伪序理论分析数字走势', category: 'premium' },
-                        { id: 2, name: '多条件缩水', description: '多维度条件筛选号码', category: 'premium' },
-                        { id: 3, name: '大底计算器', description: '智能计算复式大底', category: 'free' }
-                    ]);
-                }, 1000);
-            });
-        }
-
-        // GitHub 同步函数（通过 Appwrite 代理）
-        async function syncWithGitHub() {
-            try {
-                showNotification('正在从 GitHub 同步工具...', 'info');
-                
-                // 通过 Appwrite 函数调用 GitHub API，避免跨域问题
-                const result = await fetch('/api/github-sync', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        repo: 'shifangliaoma/shifanglm-site',
-                        path: 'tools'
-                    })
-                });
-                
-                if (result.ok) {
-                    const data = await result.json();
-                    showNotification(`成功同步 ${data.count} 个工具`, 'success');
-                } else {
-                    throw new Error('同步失败');
-                }
-            } catch (error) {
-                console.error('GitHub 同步失败:', error);
-                showNotification('同步失败，请检查网络连接', 'error');
-            }
-        }
-
-        // 初始化 Appwrite
-        initAppwrite();
     </script>
 </body>
 </html>

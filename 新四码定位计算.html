@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>定位复式大底专用计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        body {
+            background: #fff;
+            padding: 0;
+            max-width: 750px;
+            margin: 0 auto;
+            overflow-y: auto !important;
+            min-height: 100vh !important;
+            padding-bottom: 30px !important;
+        }
+        /* 标题栏 */
+        .header {
+            background: #e53935;
+            color: #fff;
+            padding: 18px 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .header .sub-title {
+            font-size: 12px;
+            margin-top: 4px;
+            opacity: 0.9;
+        }
+        /* 输入区域 */
+        .input-wrap {
+            margin: 20px 15px;
+        }
+        .input-wrap .title {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .input-wrap textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f9c000;
+            border-radius: 6px;
+            min-height: 150px;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            outline: none;
+        }
+        .input-wrap .desc {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        /* 按钮组 */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin: 0 15px 20px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px 0;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #0066cc, #0088ff);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .btn:active {
+            background: linear-gradient(90deg, #0055bb, #0077ee);
+        }
+        .btn.primary {
+            background: linear-gradient(90deg, #e53935, #c0392b);
+        }
+        .btn.primary:active {
+            background: linear-gradient(90deg, #c0392b, #a03020);
+        }
+        /* 设置卡片通用样式 */
+        .setting-card {
+            margin: 0 15px 25px;
+        }
+        .setting-card .title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .setting-card .subtitle {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+        /* 圆形匹配按钮 */
+        .match-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .match-option {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #333;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .match-option.active {
+            background: #e53935;
+            color: #fff;
+            border-color: #e53935;
+        }
+        /* 容错设置 */
+        .tolerance-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0 15px;
+            font-size: 14px;
+        }
+        .tolerance-wrap input {
+            width: 60px;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+            outline: none;
+        }
+        /* 结果区域 */
+        .result-card {
+            margin: 0 15px 30px;
+            display: none; /* 初始隐藏 */
+        }
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .result-count {
+            font-size: 18px;
+            color: #e53935;
+            font-weight: 600;
+        }
+        .numbers-container {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+        .number {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 4px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        /* 导入模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+        .modal-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #333;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .modal-buttons .btn {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        定位复式大底专用计算器
+        <div class="sub-title">仅提供交流参考学习使用！</div>
+    </div>
+
+    <!-- 输入区域 -->
+    <div class="input-wrap">
+        <div class="title">输入多组定位复式 (格式: 6547-7569-3604)</div>
+        <textarea id="positional-compound" placeholder="每行一组，格式：百位数字-十位数字-个位数字
+例如：
+6547-7569-3604
+0231-0182-9875
+2819-1423-8152">6547-7569-3604
+0231-0182-9875
+2819-1423-8152</textarea>
+        <div class="desc">每组定位复式对应百位/十位/个位，用"-"分隔</div>
+    </div>
+
+    <!-- 功能按钮组 -->
+    <div class="btn-group">
+        <button class="btn" id="import-btn">导入数据</button>
+        <button class="btn" id="clear-btn">清除数据</button>
+    </div>
+
+    <!-- 匹配设置 -->
+    <div class="setting-card">
+        <div class="title">🎯 匹配设置</div>
+        <div class="subtitle">包含匹配开奖号位置数</div>
+        <div class="match-options" id="matchOptions">
+            <div class="match-option active">2</div>
+            <div class="match-option active">3</div>
+            <div class="match-option">0</div>
+            <div class="match-option">1</div>
+            <div class="match-option">01</div>
+            <div class="match-option">02</div>
+            <div class="match-option">03</div>
+            <div class="match-option">12</div>
+            <div class="match-option">13</div>
+            <div class="match-option">23</div>
+            <div class="match-option">123</div>
+        </div>
+    </div>
+
+    <!-- 容错设置 -->
+    <div class="setting-card">
+        <div class="title">⚙️ 容错设置</div>
+        <div class="subtitle">允许指定范围内的复式组不满足匹配条件</div>
+        <div class="tolerance-wrap">
+            容错 <input type="number" id="tolerance-min" value="2" min="0"> 
+            到 <input type="number" id="tolerance-max" value="4" min="0"> 组
+        </div>
+        <button class="btn primary" id="calculate-btn" style="width: 100%;">计算大底号码</button>
+    </div>
+
+    <!-- 结果区域 -->
+    <div class="result-card" id="results-section">
+        <div class="result-header">
+            <div class="title">📊 计算结果</div>
+            <div class="result-count" id="result-count">0组</div>
+        </div>
+        <div class="numbers-container">
+            <div class="numbers-grid" id="numbers-grid">
+                <!-- 号码将动态生成 -->
+            </div>
+        </div>
+        <button class="btn" id="copy-btn">复制提取号码</button>
+    </div>
+
+    <!-- 导入数据模态框 -->
+    <div id="import-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">导入数据</div>
+            <textarea id="import-data" placeholder="请粘贴复式数据，每行一组，格式如：6547-7569-3604" style="width: 100%; height: 150px;"></textarea>
+            <div class="modal-buttons">
+                <button class="btn primary" id="confirm-import">确认导入</button>
+                <button class="btn" id="cancel-import">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 元素获取
+            const calculateBtn = document.getElementById('calculate-btn');
+            const importBtn = document.getElementById('import-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            const confirmImportBtn = document.getElementById('confirm-import');
+            const cancelImportBtn = document.getElementById('cancel-import');
+            const importModal = document.getElementById('import-modal');
+            const resultsSection = document.getElementById('results-section');
+            const numbersGrid = document.getElementById('numbers-grid');
+            const resultCount = document.getElementById('result-count');
+            const matchOptions = document.querySelectorAll('.match-option');
+
+            // 1. 匹配选项选择逻辑（多选）
+            matchOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+
+            // 2. 计算按钮点击事件（核心逻辑）
+            calculateBtn.addEventListener('click', function() {
+                calculateResults();
+            });
+
+            // 3. 导入按钮点击事件
+            importBtn.addEventListener('click', function() {
+                document.getElementById('import-data').value = '';
+                importModal.style.display = 'flex';
+            });
+
+            // 4. 清除按钮点击事件
+            clearBtn.addEventListener('click', function() {
+                document.getElementById('positional-compound').value = '';
+                // 重置结果区域
+                resultsSection.style.display = 'none';
+                numbersGrid.innerHTML = '';
+                resultCount.textContent = '0组';
+            });
+
+            // 5. 确认导入按钮点击事件
+            confirmImportBtn.addEventListener('click', function() {
+                const importData = document.getElementById('import-data').value.trim();
+                if (importData) {
+                    document.getElementById('positional-compound').value = importData;
+                    importModal.style.display = 'none';
+                }
+            });
+
+            // 6. 取消导入按钮点击事件
+            cancelImportBtn.addEventListener('click', function() {
+                importModal.style.display = 'none';
+            });
+
+            // 7. 复制按钮点击事件（修复版：兼容移动端100%）
+            copyBtn.addEventListener('click', function() {
+                const numbers = Array.from(document.querySelectorAll('.number'))
+                    .map(el => el.textContent)
+                    .join(' ');
+                
+                // 创建临时文本框实现兼容复制
+                const tempInput = document.createElement('textarea');
+                tempInput.style.position = 'fixed';
+                tempInput.style.top = '-9999px';
+                tempInput.style.left = '-9999px';
+                tempInput.value = numbers;
+                document.body.appendChild(tempInput);
+                
+                // 选中并复制
+                tempInput.select();
+                tempInput.setSelectionRange(0, 99999); // 适配移动端
+                try {
+                    document.execCommand('copy');
+                    alert('号码已复制到剪贴板！');
+                } catch (err) {
+                    console.error('复制失败: ', err);
+                    alert('复制失败，请手动复制号码：\n' + numbers);
+                }
+                
+                // 移除临时文本框
+                document.body.removeChild(tempInput);
+            });
+
+            // 核心计算函数（完全复用原生逻辑）
+            function calculateResults() {
+                // 获取输入的定位复式
+                const compoundInput = document.getElementById('positional-compound').value;
+                const compoundLines = compoundInput.trim().split('\n').filter(line => line.trim() !== '');
+                
+                // 获取容错设置
+                const toleranceMin = parseInt(document.getElementById('tolerance-min').value);
+                const toleranceMax = parseInt(document.getElementById('tolerance-max').value);
+                
+                // 获取匹配设置
+                const selectedMatches = Array.from(document.querySelectorAll('.match-option.active'))
+                    .map(el => el.textContent);
+                
+                // 生成号码
+                const numbers = generateNumbers(compoundLines, selectedMatches, toleranceMin, toleranceMax);
+                
+                // 显示结果
+                displayResults(numbers);
+            }
+
+            // 生成号码函数（完全复用原生逻辑）
+            function generateNumbers(compoundLines, selectedMatches, toleranceMin, toleranceMax) {
+                // 验证输入
+                if (compoundLines.length === 0) {
+                    alert('请输入定位复式数据！');
+                    return [];
+                }
+                
+                // 解析匹配条件
+                const matchConditions = [];
+                selectedMatches.forEach(match => {
+                    if (match.length === 1) {
+                        matchConditions.push(parseInt(match));
+                    } else {
+                        // 处理多位数匹配条件，如"01"、"23"等
+                        for (let i = 0; i < match.length; i++) {
+                            matchConditions.push(parseInt(match[i]));
+                        }
+                    }
+                });
+                
+                // 生成所有可能的3D号码
+                const allNumbers = [];
+                for (let i = 0; i < 1000; i++) {
+                    const num = i.toString().padStart(3, '0');
+                    allNumbers.push(num);
+                }
+                
+                // 过滤符合条件的号码
+                const validNumbers = allNumbers.filter(number => {
+                    // 统计符合条件的复式组数
+                    let validGroups = 0;
+                    
+                    compoundLines.forEach(line => {
+                        const parts = line.split('-');
+                        if (parts.length !== 3) return;
+                        
+                        const [hundreds, tens, units] = parts;
+                        
+                        // 计算匹配位置数
+                        let matchCount = 0;
+                        if (hundreds.includes(number[0])) matchCount++;
+                        if (tens.includes(number[1])) matchCount++;
+                        if (units.includes(number[2])) matchCount++;
+                        
+                        // 检查是否满足匹配条件
+                        if (matchConditions.includes(matchCount)) {
+                            validGroups++;
+                        }
+                    });
+                    
+                    // 计算错误组数
+                    const errorGroups = compoundLines.length - validGroups;
+                    
+                    // 检查是否满足容错条件
+                    return errorGroups >= toleranceMin && errorGroups <= toleranceMax;
+                });
+                
+                return validNumbers;
+            }
+
+            // 显示结果函数（完全复用原生逻辑）
+            function displayResults(numbers) {
+                // 清空现有的号码
+                numbersGrid.innerHTML = '';
+                
+                // 添加号码到网格
+                numbers.forEach(number => {
+                    const numberElement = document.createElement('div');
+                    numberElement.className = 'number';
+                    numberElement.textContent = number;
+                    numbersGrid.appendChild(numberElement);
+                });
+                
+                // 更新结果计数
+                resultCount.textContent = `${numbers.length}组`;
+                
+                // 显示结果区域
+                resultsSection.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

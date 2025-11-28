@@ -1094,7 +1094,7 @@
             }
         }
         
-        // ===================== GitHub同步功能 =====================
+        // ===================== GitHub同步功能 - 修复版 =====================
         
         // 获取GitHub配置
         function getGithubConfig() {
@@ -1139,7 +1139,7 @@
             }
         }
         
-        // 从GitHub同步工具
+        // 从GitHub同步工具 - 修复版
         async function loadToolsFromGithub() {
             const config = getGithubConfig();
             
@@ -1153,18 +1153,40 @@
             try {
                 // 使用GitHub API获取仓库内容
                 const apiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.toolsPath}`;
+                console.log('GitHub API URL:', apiUrl);
                 
-                const response = await fetch(apiUrl);
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/vnd.github.v3+json',
+                        'User-Agent': 'Shifanglm-Tools-Sync'
+                    }
+                });
+                
+                console.log('GitHub API Response:', response.status, response.statusText);
+                
+                if (response.status === 404) {
+                    throw new Error(`工具文件夹路径不存在: ${config.toolsPath}`);
+                }
+                
+                if (response.status === 403) {
+                    throw new Error('GitHub API限制，请稍后重试');
+                }
                 
                 if (!response.ok) {
-                    throw new Error(`GitHub API请求失败: ${response.status}`);
+                    throw new Error(`GitHub API请求失败: ${response.status} ${response.statusText}`);
                 }
                 
                 const files = await response.json();
+                console.log('GitHub文件列表:', files);
+                
+                // 检查返回的是文件数组还是单个文件对象
+                let fileList = Array.isArray(files) ? files : [files];
                 
                 // 过滤HTML文件
-                const htmlFiles = files.filter(file => 
-                    file.type === 'file' && file.name.endsWith('.html')
+                const htmlFiles = fileList.filter(file => 
+                    file.type === 'file' && 
+                    (file.name.endsWith('.html') || file.name.endsWith('.htm'))
                 );
                 
                 if (htmlFiles.length === 0) {
@@ -1175,42 +1197,107 @@
                 // 获取每个文件的内容
                 const tools = [];
                 let successCount = 0;
+                let errorCount = 0;
                 
                 for (const file of htmlFiles) {
                     try {
+                        console.log('正在获取文件:', file.name, file.download_url);
+                        
+                        if (!file.download_url) {
+                            console.warn(`文件 ${file.name} 没有下载链接`);
+                            errorCount++;
+                            continue;
+                        }
+                        
                         const fileResponse = await fetch(file.download_url);
+                        console.log('文件响应状态:', fileResponse.status);
+                        
                         if (fileResponse.ok) {
                             const content = await fileResponse.text();
+                            
+                            // 验证HTML内容
+                            if (!content || content.trim().length === 0) {
+                                console.warn(`文件 ${file.name} 内容为空`);
+                                errorCount++;
+                                continue;
+                            }
+                            
+                            // 提取工具名称（从文件名或HTML标题）
+                            let toolName = file.name.replace('.html', '').replace('.htm', '');
+                            
+                            // 尝试从HTML中提取标题
+                            const titleMatch = content.match(/<title[^>]*>([^<]*)<\/title>/i);
+                            if (titleMatch && titleMatch[1]) {
+                                toolName = titleMatch[1].trim() || toolName;
+                            }
+                            
                             tools.push({
-                                id: file.sha, // 使用文件SHA作为ID
-                                name: file.name.replace('.html', ''),
+                                id: `github_${file.sha}`,
+                                name: toolName,
                                 content: content,
                                 source: 'github',
-                                githubUrl: file.html_url
+                                githubUrl: file.html_url,
+                                fileName: file.name,
+                                lastUpdated: new Date().toISOString()
                             });
                             successCount++;
+                            
+                            console.log(`成功加载工具: ${toolName}`);
+                        } else {
+                            console.error(`获取文件 ${file.name} 失败:`, fileResponse.status);
+                            errorCount++;
                         }
-                    } catch (error) {
-                        console.error(`获取文件 ${file.name} 失败:`, error);
+                    } catch (fileError) {
+                        console.error(`处理文件 ${file.name} 时出错:`, fileError);
+                        errorCount++;
                     }
+                    
+                    // 添加延迟避免请求过快
+                    await new Promise(resolve => setTimeout(resolve, 100));
                 }
                 
-                // 保存到全局工具
-                saveGlobalTools(tools);
+                if (successCount === 0) {
+                    throw new Error('所有文件获取都失败了，请检查文件内容和网络连接');
+                }
+                
+                // 保存到全局工具（合并，不覆盖现有本地工具）
+                const existingTools = getGlobalTools();
+                const existingGithubIds = new Set(existingTools.filter(t => t.source === 'github').map(t => t.id));
+                
+                // 移除已存在的GitHub工具，用新的替换
+                const filteredTools = existingTools.filter(t => t.source !== 'github');
+                const mergedTools = [...filteredTools, ...tools];
+                
+                saveGlobalTools(mergedTools);
                 
                 // 更新配置
                 config.lastSync = new Date().toISOString();
                 localStorage.setItem(GITHUB_CONFIG_KEY, JSON.stringify(config));
                 
-                showGithubStatus(`同步成功！从GitHub加载了 ${successCount}/${htmlFiles.length} 个工具`, 'success');
+                let statusMessage = `同步成功！从GitHub加载了 ${successCount} 个工具`;
+                if (errorCount > 0) {
+                    statusMessage += `，${errorCount} 个文件失败`;
+                }
+                
+                showGithubStatus(statusMessage, 'success');
                 
             } catch (error) {
                 console.error('GitHub同步失败:', error);
-                showGithubStatus(`同步失败: ${error.message}`, 'error');
+                
+                let errorMessage = error.message;
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage = '网络连接失败，请检查网络设置或GitHub访问';
+                } else if (error.message.includes('404')) {
+                    errorMessage = `工具文件夹路径不存在: ${config.toolsPath}，请检查路径配置`;
+                } else if (error.message.includes('403')) {
+                    errorMessage = 'GitHub API限制，请等待一小时后重试';
+                }
+                
+                showGithubStatus(`同步失败: ${errorMessage}`, 'error');
             }
         }
         
-        // 测试GitHub连接
+        // 测试GitHub连接 - 增强版
         async function testGithubConnection() {
             const config = getGithubConfig();
             
@@ -1222,17 +1309,40 @@
             showGithubStatus('正在测试GitHub连接...', 'loading');
             
             try {
-                const apiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}`;
-                const response = await fetch(apiUrl);
+                // 测试仓库访问
+                const repoUrl = `https://api.github.com/repos/${config.owner}/${config.repo}`;
+                const repoResponse = await fetch(repoUrl);
                 
-                if (response.ok) {
-                    showGithubStatus('GitHub连接测试成功！', 'success');
-                } else if (response.status === 404) {
-                    showGithubStatus('仓库不存在或没有访问权限', 'error');
-                } else {
-                    showGithubStatus(`连接测试失败: ${response.status}`, 'error');
+                if (!repoResponse.ok) {
+                    if (repoResponse.status === 404) {
+                        throw new Error('仓库不存在或没有访问权限');
+                    } else {
+                        throw new Error(`仓库访问失败: ${repoResponse.status}`);
+                    }
                 }
+                
+                // 测试工具文件夹访问
+                const toolsUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.toolsPath}`;
+                const toolsResponse = await fetch(toolsUrl);
+                
+                if (toolsResponse.status === 404) {
+                    throw new Error(`工具文件夹路径不存在: ${config.toolsPath}`);
+                }
+                
+                if (!toolsResponse.ok) {
+                    throw new Error(`工具文件夹访问失败: ${toolsResponse.status}`);
+                }
+                
+                const toolsData = await toolsResponse.json();
+                const fileCount = Array.isArray(toolsData) ? toolsData.length : 1;
+                const htmlFiles = Array.isArray(toolsData) ? 
+                    toolsData.filter(f => f.name.endsWith('.html') || f.name.endsWith('.htm')).length : 
+                    (toolsData.name.endsWith('.html') || toolsData.name.endsWith('.htm') ? 1 : 0);
+                
+                showGithubStatus(`连接测试成功！找到 ${fileCount} 个文件，其中 ${htmlFiles} 个HTML文件`, 'success');
+                
             } catch (error) {
+                console.error('GitHub连接测试失败:', error);
                 showGithubStatus(`连接测试失败: ${error.message}`, 'error');
             }
         }
@@ -1244,10 +1354,12 @@
             statusEl.className = `github-status status-${type}`;
             statusEl.style.display = 'block';
             
-            // 3秒后自动隐藏成功消息
+            // 5秒后自动隐藏成功消息，错误消息保持显示
             if (type === 'success') {
                 setTimeout(() => {
-                    statusEl.style.display = 'none';
+                    if (statusEl.textContent === message) {
+                        statusEl.style.display = 'none';
+                    }
                 }, 5000);
             }
         }
@@ -1919,21 +2031,15 @@
                 document.getElementById('user-sync-info').style.display = 'block';
             }
             
-            // 如果配置了GitHub，尝试自动同步
+            // 如果配置了GitHub，显示上次同步时间
             const config = getGithubConfig();
-            if (config.owner && config.repo && isAdmin) {
-                // 检查是否需要同步（比如一天同步一次）
-                const lastSync = new Date(config.lastSync);
-                const now = new Date();
-                const hoursSinceLastSync = (now - lastSync) / (1000 * 60 * 60);
-                
-                if (hoursSinceLastSync > 24) { // 24小时同步一次
-                    setTimeout(() => {
-                        if (confirm('检测到GitHub配置，是否现在同步工具？')) {
-                            loadToolsFromGithub();
-                        }
-                    }, 2000);
-                }
+            if (config.lastSync) {
+                const lastSyncTime = new Date(config.lastSync).toLocaleString();
+                showGithubStatus(`上次同步时间: ${lastSyncTime}`, 'success');
+                setTimeout(() => {
+                    const statusEl = document.getElementById('github-status');
+                    if (statusEl) statusEl.style.display = 'none';
+                }, 3000);
             }
         };
     </script>

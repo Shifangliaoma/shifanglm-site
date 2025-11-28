@@ -182,10 +182,31 @@
             padding: 15px 20px;
             cursor: pointer;
             transition: all 0.2s ease;
+            position: relative;
+            min-width: 200px;
         }
         .tool-item:hover {
             background: #0066cc;
             transform: scale(1.05);
+        }
+        /* 删除按钮样式 */
+        .tool-delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff3300;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: none; /* 默认隐藏，仅管理员可见 */
+            z-index: 10;
+        }
+        .tool-item:hover .tool-delete-btn {
+            display: block;
         }
         /* 工具弹窗样式（iframe沙箱运行，1:1还原原生环境） */
         .tool-modal {
@@ -574,14 +595,14 @@
         <div id="user-list" class="admin-content active">
             <h3>所有注册用户名单</h3>
             <table class="admin-table">
-                <tr><<th>用户名</</th><<th>注册状态</</th><<th>是否封禁</</th><<th>操作</</th></tr>
+                <tr><th>用户名</th><th>注册状态</th><th>是否封禁</th><th>操作</th></tr>
                 <tbody id="user-list-body"></tbody>
             </table>
         </div>
         <div id="member-list" class="admin-content">
             <h3>会员明细名单</h3>
             <table class="admin-table">
-                <tr><<th>用户名</</th><<th>会员等级</</th><<th>开通时间</</th><<th>截止时间</</th><<th>剩余天数</</th><<th>状态</</th></tr>
+                <tr><th>用户名</th><th>会员等级</th><th>开通时间</th><th>截止时间</th><th>剩余天数</th><th>状态</th></tr>
                 <tbody id="member-list-body"></tbody>
             </table>
         </div>
@@ -1220,6 +1241,22 @@
             hideHtmlPreview();
             document.getElementById('tool-name-input').value = '';
         }
+        
+        // ===================== 新增删除工具功能 =====================
+        function deleteTool(toolId) {
+            if (!isAdmin) {
+                alert('只有管理员可以删除工具');
+                return;
+            }
+            
+            if (confirm('确定要删除这个工具吗？此操作不可恢复！')) {
+                importedTools = importedTools.filter(tool => tool.id !== toolId);
+                localStorage.setItem('importedTools', JSON.stringify(importedTools));
+                renderToolList();
+                alert('工具删除成功！');
+            }
+        }
+        
         function renderToolList() {
             const toolList = document.getElementById('tool-list');
             toolList.innerHTML = '';
@@ -1231,11 +1268,15 @@
             importedTools.forEach(tool => {
                 const toolItem = document.createElement('div');
                 toolItem.className = 'tool-item';
-                toolItem.innerText = tool.name;
+                toolItem.innerHTML = `
+                    ${tool.name}
+                    ${isAdmin ? `<button class="tool-delete-btn" onclick="event.stopPropagation(); deleteTool('${tool.id}')">×</button>` : ''}
+                `;
                 toolItem.onclick = () => openToolModal(tool.id);
                 toolList.appendChild(toolItem);
             });
         }
+        
         function openToolModal(toolId) {
             const tool = importedTools.find(t => t.id === toolId);
             if (!tool) return;

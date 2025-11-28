@@ -19,9 +19,8 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding-top: 80px; /* 给悬浮按钮留空间 */
+            padding-top: 80px;
         }
-        /* 管理员专属悬浮导入按钮 */
         .admin-import-btn {
             position: fixed;
             top: 10px;
@@ -35,7 +34,7 @@
             font-size: 1rem;
             font-weight: 600;
             z-index: 9999;
-            display: none; /* 默认隐藏，仅管理员显示 */
+            display: none;
             box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
             transition: all 0.3s ease;
         }
@@ -69,7 +68,6 @@
         .nav-btn:hover {
             background: #0088ff;
         }
-        /* 管理员后台整体隐藏，仅管理员可见 */
         #admin-panel {
             background: #111;
             padding: 20px;
@@ -158,7 +156,6 @@
             margin: 10px 0;
             text-align: center;
         }
-        /* 工具区域强制隐藏，仅会员/管理员可见 */
         #tool-area {
             margin: 20px auto;
             padding: 20px;
@@ -168,7 +165,6 @@
             max-width: 1200px;
             display: none;
         }
-        /* 工具列表样式（用户点击工具名称打开弹窗） */
         .tool-list {
             display: flex;
             flex-wrap: wrap;
@@ -189,7 +185,6 @@
             background: #0066cc;
             transform: scale(1.05);
         }
-        /* 删除按钮样式 */
         .tool-delete-btn {
             position: absolute;
             top: 5px;
@@ -202,13 +197,12 @@
             height: 20px;
             font-size: 12px;
             cursor: pointer;
-            display: none; /* 默认隐藏，仅管理员可见 */
+            display: none;
             z-index: 10;
         }
         .tool-item:hover .tool-delete-btn {
             display: block;
         }
-        /* 工具弹窗样式（iframe沙箱运行，1:1还原原生环境） */
         .tool-modal {
             position: fixed;
             top: 0;
@@ -228,7 +222,6 @@
             height: 100%;
             border: none;
             background: #fff;
-            /* 还原工具原生尺寸（适配移动端） */
             max-width: 750px;
             min-height: 100vh;
         }
@@ -292,14 +285,13 @@
         .edit-btn {
             background: #ff9900 !important;
         }
-        /* 导入功能样式补充（默认隐藏，仅管理员可见） */
         .example {
             margin-top: 8px;
             color: #999;
             font-size: 0.9rem;
         }
         #import-module {
-            display: none; /* 导入模块默认隐藏，仅管理员显示 */
+            display: none;
             margin: 20px 0;
             padding: 15px;
             border: 1px solid #333;
@@ -314,8 +306,6 @@
             max-height: 200px;
             overflow-y: auto;
         }
-
-        /* ============= 新增用户中心核心样式 ============= */
         #page-container {
             width: 90%;
             max-width: 1200px;
@@ -458,7 +448,6 @@
         .status-info {
             line-height: 1.6;
         }
-        /* 倒计时样式 */
         .countdown {
             color: #ff3300;
             font-size: 1.2rem;
@@ -550,7 +539,6 @@
     </style>
 </head>
 <body>
-    <!-- 管理员专属悬浮导入按钮 -->
     <button class="admin-import-btn" id="admin-import-btn">📤 导入工具</button>
 
     <div class="header">
@@ -563,7 +551,6 @@
         </div>
     </div>
 
-    <!-- 登录/注册模块 -->
     <div id="auth-container">
         <div id="login-panel" class="auth-box">
             <h3>用户登录</h3>
@@ -584,7 +571,6 @@
         </div>
     </div>
 
-    <!-- 管理员后台 -->
     <div id="admin-panel">
         <div class="admin-tab">
             <button class="admin-tab-btn active" onclick="switchAdminTab('user-list')">注册用户名单</button>
@@ -648,10 +634,8 @@
         </div>
     </div>
 
-    <!-- 会员信息提示 -->
     <div id="member-tips"></div>
 
-    <!-- 工具中心（用户看到工具列表，点击打开弹窗） -->
     <div id="tool-area">
         <h2>核心工具平台</h2>
         <div style="margin: 20px 0; padding: 15px; border: 1px solid #333; border-radius: 8px;">
@@ -663,7 +647,6 @@
             <p>支持多维度条件筛选，精准缩小号码范围，提升选号效率（会员专属）</p>
         </div>
 
-        <!-- 管理员导入模块（仅管理员可见） -->
         <div id="import-module">
             <h3>HTML文件/代码导入</h3>
             <div style="margin-bottom: 15px;">
@@ -687,19 +670,15 @@
             </div>
         </div>
 
-        <!-- 工具列表（用户点击工具名称打开弹窗） -->
         <div class="tool-list" id="tool-list">
-            <!-- 导入的工具会自动添加到这里 -->
         </div>
     </div>
 
-    <!-- 工具弹窗（iframe沙箱运行） -->
     <div class="tool-modal" id="tool-modal">
         <button class="close-modal" onclick="closeToolModal()">×</button>
         <iframe class="tool-modal-iframe" id="tool-modal-iframe" src="about:blank"></iframe>
     </div>
 
-    <!-- 用户中心 -->
     <div id="page-container">
         <div class="user-center">
             <div class="user-sidebar">
@@ -780,7 +759,6 @@
         </div>
     </div>
 
-    <!-- 未登录提示 -->
     <div class="no-login-tip" id="no-login-tip">
         <h3>请先登录，查看个人中心内容</h3>
         <button class="nav-btn" onclick="switchToLogin()">立即登录</button>
@@ -790,7 +768,7 @@
         let isAdmin = false;
         let loginUser = {};
         let importedTools = JSON.parse(localStorage.getItem('importedTools') || '[]');
-        let countdownInterval = null; // 倒计时定时器
+        let countdownInterval = null;
 
         // ===================== 页面基础切换 =====================
         function showHome() {
@@ -1242,17 +1220,25 @@
             document.getElementById('tool-name-input').value = '';
         }
         
-        // ===================== 新增删除工具功能 =====================
-        function deleteTool(toolId) {
+        // ===================== 修复删除工具功能 =====================
+        function deleteTool(toolId, event) {
+            if (event) event.stopPropagation();
+            
             if (!isAdmin) {
                 alert('只有管理员可以删除工具');
                 return;
             }
             
             if (confirm('确定要删除这个工具吗？此操作不可恢复！')) {
+                // 从数组中删除工具
                 importedTools = importedTools.filter(tool => tool.id !== toolId);
+                
+                // 更新本地存储
                 localStorage.setItem('importedTools', JSON.stringify(importedTools));
+                
+                // 重新渲染工具列表
                 renderToolList();
+                
                 alert('工具删除成功！');
             }
         }
@@ -1260,6 +1246,7 @@
         function renderToolList() {
             const toolList = document.getElementById('tool-list');
             toolList.innerHTML = '';
+            
             if (importedTools.length === 0) {
                 toolList.innerHTML = '<div style="color:#999; width:100%; text-align:center; padding:20px;">暂无导入的工具</div>';
                 return;
@@ -1268,11 +1255,25 @@
             importedTools.forEach(tool => {
                 const toolItem = document.createElement('div');
                 toolItem.className = 'tool-item';
-                toolItem.innerHTML = `
-                    ${tool.name}
-                    ${isAdmin ? `<button class="tool-delete-btn" onclick="event.stopPropagation(); deleteTool('${tool.id}')">×</button>` : ''}
-                `;
+                toolItem.setAttribute('data-tool-id', tool.id);
+                
+                // 创建工具名称
+                const toolName = document.createElement('div');
+                toolName.textContent = tool.name;
+                toolName.style.paddingRight = '25px'; // 为删除按钮留出空间
+                
+                // 创建删除按钮（仅管理员可见）
+                if (isAdmin) {
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'tool-delete-btn';
+                    deleteBtn.innerHTML = '×';
+                    deleteBtn.onclick = (e) => deleteTool(tool.id, e);
+                    toolItem.appendChild(deleteBtn);
+                }
+                
+                toolItem.appendChild(toolName);
                 toolItem.onclick = () => openToolModal(tool.id);
+                
                 toolList.appendChild(toolItem);
             });
         }

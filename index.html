@@ -3,1643 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>十方料码 - 专业3D数据分析平台</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #7c3aed;
-            --accent: #06b6d4;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --error: #ef4444;
-            --dark: #0f172a;
-            --darker: #020617;
-            --light: #f8fafc;
-            --gray: #64748b;
-            --card-bg: rgba(30, 41, 59, 0.8);
-            --glass: rgba(255, 255, 255, 0.05);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, var(--darker), var(--dark));
-            color: var(--light);
-            min-height: 100vh;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* 侧边栏 */
-        .sidebar {
-            width: 280px;
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-right: 1px solid var(--glass);
-            display: flex;
-            flex-direction: column;
-            padding: 20px 0;
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--light);
-            padding: 0 25px 25px;
-            border-bottom: 1px solid var(--glass);
-            margin-bottom: 20px;
-        }
-
-        .logo-icon {
-            color: var(--accent);
-            font-size: 1.8rem;
-        }
-
-        .nav-links {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding: 0 15px;
-            flex: 1;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 20px;
-            color: var(--light);
-            text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background: var(--glass);
-            color: var(--accent);
-        }
-
-        .nav-link i {
-            font-size: 1.2rem;
-            width: 24px;
-            text-align: center;
-        }
-
-        .user-section {
-            padding: 20px 25px 0;
-            border-top: 1px solid var(--glass);
-            margin-top: auto;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent), var(--primary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .user-details {
-            flex: 1;
-        }
-
-        .user-name {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .user-role {
-            font-size: 0.8rem;
-            color: var(--gray);
-        }
-
-        .logout-btn {
-            width: 100%;
-            padding: 10px;
-            background: var(--glass);
-            border: 1px solid var(--glass);
-            border-radius: 8px;
-            color: var(--light);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: var(--error);
-            color: var(--error);
-        }
-
-        /* 主内容区 */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .page-title {
-            font-size: 2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent), var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 15px;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: 600;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
-        }
-
-        .btn-secondary {
-            background: var(--glass);
-            color: var(--light);
-            border: 1px solid var(--glass);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #059669);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning), #d97706);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--error), #dc2626);
-            color: white;
-        }
-
-        /* 内容卡片 */
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--glass);
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--glass);
-        }
-
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-icon {
-            color: var(--accent);
-            font-size: 1.3rem;
-        }
-
-        /* 工具卡片 */
-        .tool-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid var(--glass);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--accent), var(--primary));
-        }
-
-        .tool-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent);
-            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
-        }
-
-        .tool-icon {
-            font-size: 2rem;
-            color: var(--accent);
-            margin-bottom: 15px;
-        }
-
-        .tool-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .tool-desc {
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-
-        .tool-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            background: var(--glass);
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: var(--accent);
-        }
-
-        /* 模态框 */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--glass);
-            width: 100%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-
-        .modal-overlay.active .modal {
-            transform: scale(1);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            border-bottom: 1px solid var(--glass);
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--light);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--gray);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .modal-close:hover {
-            color: var(--light);
-        }
-
-        .modal-body {
-            padding: 25px;
-        }
-
-        /* 表单样式 */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--light);
-        }
-
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--glass);
-            border-radius: 8px;
-            color: var(--light);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
-        }
-
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        /* 统计卡片 */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid var(--glass);
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        /* 表格样式 */
-        .table-container {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--glass);
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table th, .table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--glass);
-        }
-
-        .table th {
-            background: rgba(6, 182, 212, 0.1);
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* 工具运行模态框 */
-        .tool-modal {
-            max-width: 95%;
-            width: 1000px;
-            height: 85vh;
-        }
-
-        .tool-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: white;
-            border-radius: 0 0 16px 16px;
-        }
-
-        /* 通知提示 */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 16px 20px;
-            border-radius: 10px;
-            background: var(--card-bg);
-            border-left: 4px solid var(--accent);
-            box-shadow: var(--shadow);
-            transform: translateX(120%);
-            transition: transform 0.3s ease;
-            z-index: 1100;
-            max-width: 400px;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            border-left-color: var(--success);
-        }
-
-        .notification.error {
-            border-left-color: var(--error);
-        }
-
-        .notification.warning {
-            border-left-color: var(--warning);
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 250px;
-            }
-            .main-content {
-                margin-left: 250px;
+    <title>十方料码 - 福彩3D工具平台</title>
+    <!-- 引入外部资源 -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@11.0.0"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 配置Tailwind霓虹主题 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neonBlue: '#00f3ff',
+                        neonPurple: '#bf00ff',
+                        neonPink: '#ff00c8',
+                        darkBg: '#0a021a',
+                    },
+                    animation: {
+                        'neon-pulse': 'neon 2s infinite alternate',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        neon: {
+                            '0%': { boxShadow: '0 0 5px #00f3ff, 0 0 10px #00f3ff' },
+                            '100%': { boxShadow: '0 0 10px #00f3ff, 0 0 20px #00f3ff, 0 0 30px #bf00ff' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
             }
         }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow-neon {
+                text-shadow: 0 0 5px #00f3ff, 0 0 10px #bf00ff;
             }
-            .sidebar.active {
-                transform: translateX(0);
+            .bg-glass {
+                background: rgba(10, 2, 26, 0.7);
+                backdrop-filter: blur(10px);
             }
-            .main-content {
-                margin-left: 0;
+            .border-neon {
+                border: 1px solid #00f3ff;
+                box-shadow: 0 0 10px #00f3ff;
             }
-            .mobile-menu-btn {
-                display: block;
-                position: fixed;
-                top: 20px;
-                left: 20px;
-                z-index: 101;
-                background: var(--card-bg);
-                border: 1px solid var(--glass);
-                color: var(--light);
-                width: 45px;
-                height: 45px;
-                border-radius: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.2rem;
-                cursor: pointer;
-            }
-        }
-
-        /* 加载动画 */
-        .loader {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--glass);
-            border-top: 4px solid var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* 内容区域 */
-        .content-section {
-            display: none;
-        }
-
-        .content-section.active {
-            display: block;
         }
     </style>
 </head>
-<body>
-    <div class="app-container">
-        <!-- 移动端菜单按钮 -->
-        <div class="mobile-menu-btn" id="mobile-menu-btn">
-            <i class="fas fa-bars"></i>
-        </div>
+<body class="bg-darkBg text-white min-h-screen overflow-x-hidden">
+    <!-- 背景霓虹装饰 -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden z-0">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-neonBlue/10 blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-neonPurple/10 blur-3xl animate-pulse delay-1000"></div>
+        <div class="absolute top-3/4 left-2/3 w-64 h-64 rounded-full bg-neonPink/10 blur-3xl animate-pulse delay-2000"></div>
+    </div>
 
-        <!-- 侧边栏 -->
-        <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <i class="fas fa-chart-line logo-icon"></i>
-                <span>十方料码</span>
+    <!-- 导航栏 -->
+    <nav class="bg-glass border-b border-neon/30 fixed top-0 w-full z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="text-2xl font-bold text-shadow-neon">
+                <<i class="fa fa-ticket mr-2 text-neonPink"></</i>十方料码
             </div>
-
-            <div class="nav-links">
-                <a href="#" class="nav-link active" data-section="dashboard">
-                    <i class="fas fa-home"></i>
-                    <span>控制台</span>
-                </a>
-                <a href="#" class="nav-link" data-section="tools">
-                    <i class="fas fa-tools"></i>
-                    <span>工具中心</span>
-                </a>
-                <a href="#" class="nav-link" data-section="users">
-                    <i class="fas fa-users"></i>
-                    <span>用户管理</span>
-                </a>
-                <a href="#" class="nav-link" data-section="sync">
-                    <i class="fas fa-sync"></i>
-                    <span>数据同步</span>
-                </a>
-                <a href="#" class="nav-link" data-section="settings">
-                    <i class="fas fa-cog"></i>
-                    <span>系统设置</span>
-                </a>
+            <div id="authButtons" class="flex gap-3">
+                <button id="loginBtn" class="px-4 py-2 bg-neonBlue/20 hover:bg-neonBlue/40 text-neonBlue rounded-lg transition-all animate-neon-pulse">
+                    登录
+                </button>
+                <button id="registerBtn" class="px-4 py-2 bg-neonPurple/20 hover:bg-neonPurple/40 text-neonPurple rounded-lg transition-all animate-neon-pulse">
+                    注册
+                </button>
             </div>
-
-            <div class="user-section">
-                <div class="user-info">
-                    <div class="user-avatar" id="user-avatar">👤</div>
-                    <div class="user-details">
-                        <div class="user-name" id="user-name">未登录</div>
-                        <div class="user-role" id="user-role">请登录</div>
-                    </div>
-                </div>
-                <button class="logout-btn" id="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>退出登录</span>
+            <div id="userMenu" class="hidden flex items-center gap-3">
+                <span id="username" class="text-neonBlue"></span>
+                <button id="logoutBtn" class="px-3 py-1 bg-red-500/30 hover:bg-red-500/50 rounded-lg transition-all">
+                    退出
                 </button>
             </div>
         </div>
+    </nav>
 
-        <!-- 主内容区 -->
-        <div class="main-content">
-            <!-- 控制台 -->
-            <div class="content-section active" id="dashboard">
-                <div class="content-header">
-                    <h1 class="page-title">控制台</h1>
-                    <div class="header-actions">
-                        <button class="btn btn-primary" id="quick-sync-btn">
-                            <i class="fas fa-sync-alt"></i>
-                            <span>快速同步</span>
-                        </button>
-                    </div>
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 pt-24 pb-16 z-10 relative">
+        <!-- 登录/注册模态框 -->
+        <div id="authModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
+            <div class="bg-glass border-neon rounded-xl p-6 w-full max-w-md animate-float">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 id="modalTitle" class="text-xl font-bold text-shadow-neon">用户登录</h2>
+                    <button id="closeModal" class="text-white hover:text-neonPink text-xl">
+                        <<i class="fa fa-times"></</i>
+                    </button>
                 </div>
-
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <div class="stat-value" id="stat-tools">0</div>
-                        <div class="stat-label">可用工具</div>
+                <form id="authForm" class="space-y-4">
+                    <div>
+                        <label class="block text-neonBlue mb-1" for="email">邮箱</label>
+                        <input type="email" id="email" class="w-full px-4 py-2 bg-darkBg/50 border border-neonBlue/50 rounded-lg text-white focus:outline-none focus:border-neonBlue focus:ring-1 focus:ring-neonBlue" required>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="stat-users">0</div>
-                        <div class="stat-label">注册用户</div>
+                    <div>
+                        <label class="block text-neonBlue mb-1" for="password">密码</label>
+                        <input type="password" id="password" class="w-full px-4 py-2 bg-darkBg/50 border border-neonBlue/50 rounded-lg text-white focus:outline-none focus:border-neonBlue focus:ring-1 focus:ring-neonBlue" required>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="stat-members">0</div>
-                        <div class="stat-label">会员用户</div>
+                    <button type="submit" class="w-full py-2 bg-neonBlue/30 hover:bg-neonBlue/50 text-white rounded-lg transition-all animate-neon-pulse">
+                        登录
+                    </button>
+                    <div class="text-center text-gray-400">
+                        <span id="toggleAuthText">没有账号？</span>
+                        <button type="button" id="toggleAuthBtn" class="text-neonPurple hover:underline ml-1">立即注册</button>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="stat-active">0</div>
-                        <div class="stat-label">今日活跃</div>
-                    </div>
-                </div>
-
-                <div class="content-grid">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-tachometer-alt card-icon"></i> 系统状态</h2>
-                        </div>
-                        <div id="system-status">
-                            <p>Appwrite连接: <span class="status-indicator" id="appwrite-status">检查中...</span></p>
-                            <p>数据同步: <span class="status-indicator" id="sync-status">已同步</span></p>
-                            <p>服务器状态: <span class="status-indicator" id="server-status">运行中</span></p>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-history card-icon"></i> 最近活动</h2>
-                        </div>
-                        <div id="recent-activity">
-                            <p>暂无活动记录</p>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-rocket card-icon"></i> 快速操作</h2>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <button class="btn btn-secondary" id="import-tool-btn">
-                                <i class="fas fa-upload"></i>
-                                <span>导入工具</span>
-                            </button>
-                            <button class="btn btn-secondary" id="manage-users-btn">
-                                <i class="fas fa-user-cog"></i>
-                                <span>用户管理</span>
-                            </button>
-                            <button class="btn btn-secondary" id="backup-data-btn">
-                                <i class="fas fa-save"></i>
-                                <span>数据备份</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 工具中心 -->
-            <div class="content-section" id="tools">
-                <div class="content-header">
-                    <h1 class="page-title">工具中心</h1>
-                    <div class="header-actions">
-                        <button class="btn btn-primary" id="add-tool-btn">
-                            <i class="fas fa-plus"></i>
-                            <span>添加工具</span>
-                        </button>
-                        <button class="btn btn-secondary" id="refresh-tools-btn">
-                            <i class="fas fa-sync-alt"></i>
-                            <span>刷新</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="content-grid" id="tools-grid">
-                    <!-- 工具卡片将通过JavaScript动态加载 -->
-                </div>
-            </div>
-
-            <!-- 用户管理 -->
-            <div class="content-section" id="users">
-                <div class="content-header">
-                    <h1 class="page-title">用户管理</h1>
-                    <div class="header-actions">
-                        <button class="btn btn-primary" id="add-user-btn">
-                            <i class="fas fa-user-plus"></i>
-                            <span>添加用户</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>用户名</th>
-                                <th>角色</th>
-                                <th>状态</th>
-                                <th>注册时间</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-table-body">
-                            <!-- 用户数据将通过JavaScript动态加载 -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 数据同步 -->
-            <div class="content-section" id="sync">
-                <div class="content-header">
-                    <h1 class="page-title">数据同步</h1>
-                    <div class="header-actions">
-                        <button class="btn btn-primary" id="full-sync-btn">
-                            <i class="fas fa-sync-alt"></i>
-                            <span>完全同步</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="content-grid">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-database card-icon"></i> Appwrite数据</h2>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">项目ID</label>
-                            <input type="text" class="form-input" id="appwrite-project" placeholder="输入Appwrite项目ID">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">数据库ID</label>
-                            <input type="text" class="form-input" id="appwrite-database" placeholder="输入数据库ID">
-                        </div>
-                        <button class="btn btn-secondary" id="appwrite-sync-btn">
-                            <i class="fas fa-database"></i>
-                            <span>从Appwrite同步</span>
-                        </button>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title"><i class="fab fa-github card-icon"></i> GitHub备份</h2>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">仓库地址</label>
-                            <input type="text" class="form-input" id="github-repo" placeholder="username/repo">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">访问令牌</label>
-                            <input type="password" class="form-input" id="github-token" placeholder="GitHub访问令牌">
-                        </div>
-                        <button class="btn btn-success" id="backup-to-github-btn">
-                            <i class="fab fa-github"></i>
-                            <span>备份到GitHub</span>
-                        </button>
-                        <button class="btn btn-warning" id="restore-from-github-btn" style="margin-top: 10px;">
-                            <i class="fas fa-download"></i>
-                            <span>从GitHub恢复</span>
-                        </button>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-cloud-upload-alt card-icon"></i> 数据管理</h2>
-                        </div>
-                        <p style="margin-bottom: 15px;">数据管理选项</p>
-                        <button class="btn btn-secondary" id="export-data-btn">
-                            <i class="fas fa-file-export"></i>
-                            <span>导出数据</span>
-                        </button>
-                        <button class="btn btn-secondary" id="import-data-btn" style="margin-top: 10px;">
-                            <i class="fas fa-file-import"></i>
-                            <span>导入数据</span>
-                        </button>
-                        <button class="btn btn-danger" id="clear-data-btn" style="margin-top: 10px;">
-                            <i class="fas fa-trash"></i>
-                            <span>清空数据</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 系统设置 -->
-            <div class="content-section" id="settings">
-                <div class="content-header">
-                    <h1 class="page-title">系统设置</h1>
-                </div>
-
-                <div class="content-grid">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-user-shield card-icon"></i> 权限设置</h2>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">默认用户权限</label>
-                            <select class="form-select" id="default-permission">
-                                <option value="read">只读</option>
-                                <option value="write">读写</option>
-                                <option value="admin">管理员</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">会员功能</label>
-                            <select class="form-select" id="member-features">
-                                <option value="all">全部开放</option>
-                                <option value="premium">仅限会员</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-primary" id="save-permissions-btn">保存设置</button>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-paint-brush card-icon"></i> 界面设置</h2>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">主题</label>
-                            <select class="form-select" id="theme-select">
-                                <option value="dark">深色</option>
-                                <option value="light">浅色</option>
-                                <option value="auto">自动</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">语言</label>
-                            <select class="form-select" id="language-select">
-                                <option value="zh-CN">中文</option>
-                                <option value="en-US">English</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-primary" id="apply-ui-settings-btn">应用设置</button>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-info-circle card-icon"></i> 系统信息</h2>
-                        </div>
-                        <div id="system-info">
-                            <p>版本: 2.0.0</p>
-                            <p>后端: Appwrite</p>
-                            <p>最后更新: 2023-11-28</p>
-                            <p>技术支持: QQ 921913231</p>
-                        </div>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
-    </div>
 
-    <!-- 登录模态框 -->
-    <div class="modal-overlay" id="login-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">用户登录</h2>
-                <button class="modal-close" data-modal="login-modal">&times;</button>
+        <!-- 工具列表区 -->
+        <section id="toolsSection" class="hidden mt-8">
+            <h2 class="text-2xl font-bold mb-6 text-shadow-neon text-center">福彩3D工具库</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 工具1：金山文档嵌入示例 -->
+                <div class="bg-glass border-neon rounded-xl p-4 hover:shadow-lg hover:shadow-neonBlue/20 transition-all">
+                    <h3 class="text-xl font-semibold text-neonBlue mb-3">3D走势分析文档</h3>
+                    <div class="aspect-video border border-neonPurple/50 rounded-lg overflow-hidden">
+                        <!-- 替换为你的金山文档嵌入代码 -->
+                        <iframe src="https://kdocs.cn/l/csC7X7rP0j88" frameborder="0" width="100%" height="100%" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <!-- 工具2：HTML上传与预览 -->
+                <div class="bg-glass border-neon rounded-xl p-4 hover:shadow-lg hover:shadow-neonPink/20 transition-all">
+                    <h3 class="text-xl font-semibold text-neonPink mb-3">自定义工具上传</h3>
+                    <div class="space-y-4">
+                        <input type="file" id="htmlUpload" accept=".html" class="w-full px-4 py-2 bg-darkBg/50 border border-neonPink/50 rounded-lg text-white">
+                        <button id="previewBtn" class="w-full py-2 bg-neonPink/30 hover:bg-neonPink/50 text-white rounded-lg transition-all">
+                            预览上传的工具
+                        </button>
+                        <div id="previewContainer" class="aspect-video border border-neonPink/50 rounded-lg overflow-hidden hidden">
+                            <iframe id="previewIframe" frameborder="0" width="100%" height="100%"></iframe>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">用户名</label>
-                    <input type="text" class="form-input" id="login-username" placeholder="请输入用户名">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">密码</label>
-                    <input type="password" class="form-input" id="login-password" placeholder="请输入密码">
-                </div>
-                <div class="form-group" style="display: flex; gap: 10px;">
-                    <button class="btn btn-primary" id="login-submit" style="flex: 1;">登录</button>
-                    <button class="btn btn-secondary" id="switch-to-register" style="flex: 1;">注册账号</button>
-                </div>
-            </div>
+        </section>
+
+        <!-- 未登录提示区 -->
+        <section id="guestSection" class="mt-16 text-center">
+            <h2 class="text-3xl font-bold text-shadow-neon mb-6">欢迎访问十方料码平台</h2>
+            <p class="text-gray-300 mb-8">登录后即可使用福彩3D工具库与专业分析文档</p>
+            <button id="guestLoginBtn" class="px-6 py-3 bg-neonBlue/30 hover:bg-neonBlue/50 text-white rounded-lg transition-all animate-neon-pulse text-lg">
+                立即登录体验
+            </button>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-glass border-t border-neon/30 py-6 z-10 relative">
+        <div class="container mx-auto px-4 text-center text-gray-400">
+            <p>© 2025 十方料码 - 福彩3D工具平台 | 仅供研究参考，不构成投注建议</p>
         </div>
-    </div>
+    </footer>
 
-    <!-- 注册模态框 -->
-    <div class="modal-overlay" id="register-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">用户注册</h2>
-                <button class="modal-close" data-modal="register-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">用户名</label>
-                    <input type="text" class="form-input" id="register-username" placeholder="请设置用户名">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">密码</label>
-                    <input type="password" class="form-input" id="register-password" placeholder="请设置密码">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">确认密码</label>
-                    <input type="password" class="form-input" id="register-confirm" placeholder="请确认密码">
-                </div>
-                <div class="form-group" style="display: flex; gap: 10px;">
-                    <button class="btn btn-primary" id="register-submit" style="flex: 1;">注册</button>
-                    <button class="btn btn-secondary" id="switch-to-login" style="flex: 1;">返回登录</button>
-                </div>
-                <div class="tips" style="margin-top: 15px; color: var(--gray); font-size: 0.9rem;">
-                    注册后请联系管理员QQ:921913231开通权限
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 添加工具模态框 -->
-    <div class="modal-overlay" id="add-tool-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">添加工具</h2>
-                <button class="modal-close" data-modal="add-tool-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">工具名称</label>
-                    <input type="text" class="form-input" id="tool-name" placeholder="请输入工具名称">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">工具描述</label>
-                    <textarea class="form-textarea" id="tool-description" placeholder="请输入工具描述"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">工具类型</label>
-                    <select class="form-select" id="tool-type">
-                        <option value="html">HTML工具</option>
-                        <option value="js">JavaScript工具</option>
-                        <option value="external">外部链接</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">工具内容/链接</label>
-                    <textarea class="form-textarea" id="tool-content" placeholder="请输入HTML代码或工具链接"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">访问权限</label>
-                    <select class="form-select" id="tool-access">
-                        <option value="public">公开</option>
-                        <option value="member">仅会员</option>
-                        <option value="admin">仅管理员</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary" id="save-tool-btn">保存工具</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 工具运行模态框 -->
-    <div class="modal-overlay" id="tool-run-modal">
-        <div class="modal tool-modal">
-            <div class="modal-header">
-                <h2 class="modal-title" id="tool-run-title">工具运行</h2>
-                <button class="modal-close" data-modal="tool-run-modal">&times;</button>
-            </div>
-            <div class="modal-body" style="padding: 0; height: calc(100% - 70px);">
-                <iframe class="tool-iframe" id="tool-iframe" src="about:blank"></iframe>
-            </div>
-        </div>
-    </div>
-
-    <!-- 通知 -->
-    <div class="notification" id="notification">
-        <div id="notification-message">这是一条通知消息</div>
-    </div>
-
-    <!-- Appwrite SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@10.0.0"></script>
-
+    <!-- 核心功能脚本 -->
     <script>
-        // Appwrite配置
-        const APPWRITE_CONFIG = {
-            endpoint: 'https://cloud.appwrite.io/v1',
-            projectId: 'your-project-id', // 替换为您的项目ID
-            databaseId: 'your-database-id', // 替换为您的数据库ID
-            toolsCollectionId: 'tools',
-            usersCollectionId: 'users',
-            membersCollectionId: 'members'
-        };
+        // 初始化Appwrite客户端（已替换你的项目ID）
+        const appwrite = new Appwrite();
+        appwrite
+            .setEndpoint('https://cloud.appwrite.io/v1') 
+            .setProject('6929b5bb003d77ECD385') // 已替换为你的项目ID
+            .setPlatform('web');
 
-        // 初始化Appwrite客户端
-        const client = new Appwrite.Client();
-        client
-            .setEndpoint(APPWRITE_CONFIG.endpoint)
-            .setProject(APPWRITE_CONFIG.projectId);
+        // DOM元素
+        const authButtons = document.getElementById('authButtons');
+        const userMenu = document.getElementById('userMenu');
+        const username = document.getElementById('username');
+        const authModal = document.getElementById('authModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const closeModal = document.getElementById('closeModal');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const authForm = document.getElementById('authForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const toggleAuthText = document.getElementById('toggleAuthText');
+        const toggleAuthBtn = document.getElementById('toggleAuthBtn');
+        const toolsSection = document.getElementById('toolsSection');
+        const guestSection = document.getElementById('guestSection');
+        const guestLoginBtn = document.getElementById('guestLoginBtn');
+        const htmlUpload = document.getElementById('htmlUpload');
+        const previewBtn = document.getElementById('previewBtn');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewIframe = document.getElementById('previewIframe');
 
-        const account = new Appwrite.Account(client);
-        const databases = new Appwrite.Databases(client);
+        // 状态变量
+        let isLoginMode = true;
 
-        // 状态管理
-        let currentUser = null;
-        let isAdmin = false;
-        let tools = [];
-        let users = [];
+        // 检查用户登录状态
+        async function checkAuthStatus() {
+            try {
+                const user = await appwrite.account.get();
+                // 已登录
+                authButtons.classList.add('hidden');
+                userMenu.classList.remove('hidden');
+                username.textContent = user.name || user.email.split('@')[0];
+                toolsSection.classList.remove('hidden');
+                guestSection.classList.add('hidden');
+            } catch (error) {
+                // 未登录
+                authButtons.classList.remove('hidden');
+                userMenu.classList.add('hidden');
+                toolsSection.classList.add('hidden');
+                guestSection.classList.remove('hidden');
+            }
+        }
 
-        // DOM 加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-            setupEventListeners();
-            checkLoginStatus();
+        // 打开模态框
+        function openModal(mode) {
+            isLoginMode = mode;
+            if (isLoginMode) {
+                modalTitle.textContent = '用户登录';
+                authForm.querySelector('button[type="submit"]').textContent = '登录';
+                toggleAuthText.textContent = '没有账号？';
+                toggleAuthBtn.textContent = '立即注册';
+            } else {
+                modalTitle.textContent = '用户注册';
+                authForm.querySelector('button[type="submit"]').textContent = '注册';
+                toggleAuthText.textContent = '已有账号？';
+                toggleAuthBtn.textContent = '立即登录';
+            }
+            authModal.classList.remove('hidden');
+        }
+
+        // 登录/注册提交
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                if (isLoginMode) {
+                    // 登录
+                    await appwrite.account.createEmailSession(email, password);
+                } else {
+                    // 注册（用户名使用邮箱前缀）
+                    const name = email.split('@')[0];
+                    await appwrite.account.create(appwrite.ID.unique(), email, password, name);
+                    await appwrite.account.createEmailSession(email, password);
+                }
+                authModal.classList.add('hidden');
+                authForm.reset();
+                checkAuthStatus();
+            } catch (error) {
+                alert(error.message);
+            }
         });
 
-        // 初始化应用
-        function initializeApp() {
-            // 设置导航点击事件
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const section = this.getAttribute('data-section');
-                    switchSection(section);
-                    
-                    // 更新活动状态
-                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-            
-            // 设置移动端菜单按钮
-            document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-                document.getElementById('sidebar').classList.toggle('active');
-            });
-        }
+        // 切换登录/注册模式
+        toggleAuthBtn.addEventListener('click', () => {
+            openModal(!isLoginMode);
+        });
 
-        // 设置事件监听器
-        function setupEventListeners() {
-            // 登录相关
-            document.getElementById('login-submit').addEventListener('click', handleLogin);
-            document.getElementById('register-submit').addEventListener('click', handleRegister);
-            document.getElementById('switch-to-register').addEventListener('click', function() {
-                hideModal('login-modal');
-                showModal('register-modal');
-            });
-            document.getElementById('switch-to-login').addEventListener('click', function() {
-                hideModal('register-modal');
-                showModal('login-modal');
-            });
-            
-            // 退出登录
-            document.getElementById('logout-btn').addEventListener('click', handleLogout);
-            
-            // 工具相关
-            document.getElementById('add-tool-btn').addEventListener('click', function() {
-                showModal('add-tool-modal');
-            });
-            document.getElementById('save-tool-btn').addEventListener('click', handleSaveTool);
-            document.getElementById('refresh-tools-btn').addEventListener('click', loadTools);
-            
-            // 用户管理
-            document.getElementById('add-user-btn').addEventListener('click', handleAddUser);
-            
-            // 数据同步
-            document.getElementById('appwrite-sync-btn').addEventListener('click', syncFromAppwrite);
-            document.getElementById('backup-to-github-btn').addEventListener('click', backupToGitHub);
-            document.getElementById('restore-from-github-btn').addEventListener('click', restoreFromGitHub);
-            document.getElementById('full-sync-btn').addEventListener('click', fullSync);
-            
-            // 设置
-            document.getElementById('save-permissions-btn').addEventListener('click', savePermissions);
-            document.getElementById('apply-ui-settings-btn').addEventListener('click', applyUISettings);
-            
-            // 快速操作
-            document.getElementById('import-tool-btn').addEventListener('click', function() {
-                showModal('add-tool-modal');
-            });
-            document.getElementById('manage-users-btn').addEventListener('click', function() {
-                switchSection('users');
-            });
-            document.getElementById('backup-data-btn').addEventListener('click', function() {
-                backupToGitHub();
-            });
-            
-            // 模态框关闭按钮
-            document.querySelectorAll('.modal-close').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const modalId = this.getAttribute('data-modal');
-                    hideModal(modalId);
-                });
-            });
-            
-            // 点击模态框外部关闭
-            document.querySelectorAll('.modal-overlay').forEach(overlay => {
-                overlay.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        hideModal(this.id);
-                    }
-                });
-            });
-        }
-
-        // 检查登录状态
-        async function checkLoginStatus() {
-            try {
-                const user = await account.get();
-                currentUser = user;
-                updateUserUI(user);
-                loadDashboardData();
-                
-                // 检查是否是管理员
-                isAdmin = user.email === 'admin@shifanglm.com' || user.labels?.includes('admin');
-                
-                if (isAdmin) {
-                    document.getElementById('user-role').textContent = '管理员';
-                }
-            } catch (error) {
-                // 未登录，显示登录模态框
-                showModal('login-modal');
-            }
-        }
-
-        // 处理登录
-        async function handleLogin() {
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
-            
-            if (!username || !password) {
-                showNotification('请输入用户名和密码', 'error');
+        // HTML文件预览
+        previewBtn.addEventListener('click', () => {
+            const file = htmlUpload.files[0];
+            if (!file) {
+                alert('请先选择一个HTML文件');
                 return;
             }
-            
-            try {
-                // 使用Appwrite进行身份验证
-                const session = await account.createEmailSession(username, password);
-                currentUser = await account.get();
-                updateUserUI(currentUser);
-                hideModal('login-modal');
-                showNotification('登录成功', 'success');
-                loadDashboardData();
-            } catch (error) {
-                console.error('登录失败:', error);
-                showNotification('登录失败，请检查用户名和密码', 'error');
-            }
-        }
+            const fileURL = URL.createObjectURL(file);
+            previewIframe.src = fileURL;
+            previewContainer.classList.remove('hidden');
+        });
 
-        // 处理注册
-        async function handleRegister() {
-            const username = document.getElementById('register-username').value;
-            const password = document.getElementById('register-password').value;
-            const confirm = document.getElementById('register-confirm').value;
-            
-            if (!username || !password) {
-                showNotification('请输入用户名和密码', 'error');
-                return;
-            }
-            
-            if (password !== confirm) {
-                showNotification('两次输入的密码不一致', 'error');
-                return;
-            }
-            
-            try {
-                // 使用Appwrite创建用户
-                const user = await account.create('unique()', username, password);
-                showNotification('注册成功，请登录', 'success');
-                hideModal('register-modal');
-                showModal('login-modal');
-            } catch (error) {
-                console.error('注册失败:', error);
-                showNotification('注册失败: ' + error.message, 'error');
-            }
-        }
+        // 事件监听
+        loginBtn.addEventListener('click', () => openModal(true));
+        registerBtn.addEventListener('click', () => openModal(false));
+        closeModal.addEventListener('click', () => authModal.classList.add('hidden'));
+        logoutBtn.addEventListener('click', async () => {
+            await appwrite.account.deleteSession('current');
+            checkAuthStatus();
+        });
+        guestLoginBtn.addEventListener('click', () => openModal(true));
 
-        // 处理退出登录
-        async function handleLogout() {
-            try {
-                await account.deleteSession('current');
-                currentUser = null;
-                updateUserUI(null);
-                showModal('login-modal');
-                showNotification('已退出登录', 'success');
-            } catch (error) {
-                console.error('退出登录失败:', error);
-            }
-        }
-
-        // 更新用户界面
-        function updateUserUI(user) {
-            const avatarEl = document.getElementById('user-avatar');
-            const nameEl = document.getElementById('user-name');
-            const roleEl = document.getElementById('user-role');
-            
-            if (user) {
-                avatarEl.textContent = user.name ? user.name.charAt(0).toUpperCase() : '👤';
-                nameEl.textContent = user.name || user.email;
-                roleEl.textContent = isAdmin ? '管理员' : '用户';
-                document.getElementById('logout-btn').style.display = 'block';
-            } else {
-                avatarEl.textContent = '👤';
-                nameEl.textContent = '未登录';
-                roleEl.textContent = '请登录';
-                document.getElementById('logout-btn').style.display = 'none';
-            }
-        }
-
-        // 切换内容区域
-        function switchSection(sectionId) {
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(sectionId).classList.add('active');
-            
-            // 加载对应区域的数据
-            switch(sectionId) {
-                case 'dashboard':
-                    loadDashboardData();
-                    break;
-                case 'tools':
-                    loadTools();
-                    break;
-                case 'users':
-                    loadUsers();
-                    break;
-                case 'sync':
-                    loadSyncStatus();
-                    break;
-            }
-        }
-
-        // 加载控制台数据
-        async function loadDashboardData() {
-            if (!currentUser) return;
-            
-            try {
-                // 获取工具数量
-                const toolsResponse = await databases.listDocuments(
-                    APPWRITE_CONFIG.databaseId,
-                    APPWRITE_CONFIG.toolsCollectionId
-                );
-                document.getElementById('stat-tools').textContent = toolsResponse.total;
-                
-                // 获取用户数量
-                // 注意：实际项目中应该使用Appwrite的用户列表API
-                document.getElementById('stat-users').textContent = 'N/A';
-                
-                // 获取会员数量
-                document.getElementById('stat-members').textContent = 'N/A';
-                
-                // 更新系统状态
-                document.getElementById('appwrite-status').textContent = '已连接';
-                document.getElementById('appwrite-status').style.color = 'var(--success)';
-                
-            } catch (error) {
-                console.error('加载控制台数据失败:', error);
-                document.getElementById('appwrite-status').textContent = '连接失败';
-                document.getElementById('appwrite-status').style.color = 'var(--error)';
-            }
-        }
-
-        // 加载工具
-        async function loadTools() {
-            if (!currentUser) return;
-            
-            try {
-                const response = await databases.listDocuments(
-                    APPWRITE_CONFIG.databaseId,
-                    APPWRITE_CONFIG.toolsCollectionId
-                );
-                
-                tools = response.documents;
-                renderTools();
-            } catch (error) {
-                console.error('加载工具失败:', error);
-                showNotification('加载工具失败', 'error');
-            }
-        }
-
-        // 渲染工具
-        function renderTools() {
-            const toolsGrid = document.getElementById('tools-grid');
-            toolsGrid.innerHTML = '';
-            
-            if (tools.length === 0) {
-                toolsGrid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--gray);">暂无工具</div>';
-                return;
-            }
-            
-            tools.forEach(tool => {
-                const toolCard = document.createElement('div');
-                toolCard.className = 'tool-card';
-                toolCard.innerHTML = `
-                    <i class="fas fa-${tool.icon || 'tools'} tool-icon"></i>
-                    <h3 class="tool-name">${tool.name}</h3>
-                    <p class="tool-desc">${tool.description}</p>
-                    <span class="tool-badge">${getAccessBadge(tool.access)}</span>
-                `;
-                
-                toolCard.addEventListener('click', () => {
-                    openTool(tool);
-                });
-                
-                toolsGrid.appendChild(toolCard);
-            });
-        }
-
-        // 获取权限徽章
-        function getAccessBadge(access) {
-            switch(access) {
-                case 'public': return '公开';
-                case 'member': return '会员';
-                case 'admin': return '管理员';
-                default: return '未知';
-            }
-        }
-
-        // 打开工具
-        function openTool(tool) {
-            if (tool.access === 'admin' && !isAdmin) {
-                showNotification('您没有权限访问此工具', 'error');
-                return;
-            }
-            
-            if (tool.access === 'member' && !isAdmin && !currentUser.labels?.includes('member')) {
-                showNotification('此工具仅限会员使用', 'error');
-                return;
-            }
-            
-            document.getElementById('tool-run-title').textContent = tool.name;
-            const iframe = document.getElementById('tool-iframe');
-            
-            if (tool.type === 'external') {
-                iframe.src = tool.content;
-            } else {
-                // 对于HTML工具，将内容写入iframe
-                iframe.src = 'about:blank';
-                iframe.onload = function() {
-                    const doc = iframe.contentDocument || iframe.contentWindow.document;
-                    doc.open();
-                    doc.write(tool.content);
-                    doc.close();
-                };
-            }
-            
-            showModal('tool-run-modal');
-        }
-
-        // 保存工具
-        async function handleSaveTool() {
-            const name = document.getElementById('tool-name').value;
-            const description = document.getElementById('tool-description').value;
-            const type = document.getElementById('tool-type').value;
-            const content = document.getElementById('tool-content').value;
-            const access = document.getElementById('tool-access').value;
-            
-            if (!name || !description || !content) {
-                showNotification('请填写所有必填字段', 'error');
-                return;
-            }
-            
-            try {
-                await databases.createDocument(
-                    APPWRITE_CONFIG.databaseId,
-                    APPWRITE_CONFIG.toolsCollectionId,
-                    'unique()',
-                    {
-                        name,
-                        description,
-                        type,
-                        content,
-                        access,
-                        icon: 'tools',
-                        createdBy: currentUser.$id
-                    }
-                );
-                
-                showNotification('工具添加成功', 'success');
-                hideModal('add-tool-modal');
-                loadTools();
-                
-                // 清空表单
-                document.getElementById('tool-name').value = '';
-                document.getElementById('tool-description').value = '';
-                document.getElementById('tool-content').value = '';
-            } catch (error) {
-                console.error('保存工具失败:', error);
-                showNotification('保存工具失败: ' + error.message, 'error');
-            }
-        }
-
-        // 从Appwrite同步数据
-        async function syncFromAppwrite() {
-            try {
-                showNotification('正在从Appwrite同步数据...', 'info');
-                
-                // 同步工具
-                await loadTools();
-                
-                // 同步用户
-                await loadUsers();
-                
-                showNotification('数据同步完成', 'success');
-            } catch (error) {
-                console.error('同步失败:', error);
-                showNotification('同步失败: ' + error.message, 'error');
-            }
-        }
-
-        // 备份到GitHub
-        async function backupToGitHub() {
-            const repo = document.getElementById('github-repo').value;
-            const token = document.getElementById('github-token').value;
-            
-            if (!repo || !token) {
-                showNotification('请输入GitHub仓库信息和访问令牌', 'error');
-                return;
-            }
-            
-            try {
-                showNotification('正在备份数据到GitHub...', 'info');
-                
-                // 获取所有数据
-                const tools = await databases.listDocuments(
-                    APPWRITE_CONFIG.databaseId,
-                    APPWRITE_CONFIG.toolsCollectionId
-                );
-                
-                // 创建备份数据
-                const backupData = {
-                    tools: tools.documents,
-                    timestamp: new Date().toISOString(),
-                    version: '2.0.0'
-                };
-                
-                // 在实际项目中，这里应该调用GitHub API来创建提交
-                // 由于GitHub API需要服务端支持，这里我们只模拟成功
-                
-                showNotification('数据备份成功', 'success');
-            } catch (error) {
-                console.error('备份失败:', error);
-                showNotification('备份失败: ' + error.message, 'error');
-            }
-        }
-
-        // 从GitHub恢复
-        async function restoreFromGitHub() {
-            const repo = document.getElementById('github-repo').value;
-            const token = document.getElementById('github-token').value;
-            
-            if (!repo || !token) {
-                showNotification('请输入GitHub仓库信息和访问令牌', 'error');
-                return;
-            }
-            
-            if (!confirm('确定要从GitHub恢复数据吗？这将覆盖当前数据。')) {
-                return;
-            }
-            
-            try {
-                showNotification('正在从GitHub恢复数据...', 'info');
-                
-                // 在实际项目中，这里应该调用GitHub API获取备份数据
-                // 然后使用获取的数据更新Appwrite
-                
-                showNotification('数据恢复成功', 'success');
-                loadTools();
-            } catch (error) {
-                console.error('恢复失败:', error);
-                showNotification('恢复失败: ' + error.message, 'error');
-            }
-        }
-
-        // 完全同步
-        async function fullSync() {
-            try {
-                showNotification('开始完全同步...', 'info');
-                
-                await syncFromAppwrite();
-                await backupToGitHub();
-                
-                showNotification('完全同步完成', 'success');
-            } catch (error) {
-                console.error('完全同步失败:', error);
-                showNotification('完全同步失败: ' + error.message, 'error');
-            }
-        }
-
-        // 加载用户
-        async function loadUsers() {
-            if (!isAdmin) return;
-            
-            try {
-                // 注意：实际项目中应该使用Appwrite的用户列表API
-                // 这里我们只是模拟数据
-                users = [
-                    { id: 1, name: 'admin', role: '管理员', status: '正常', regTime: '2023-01-15' },
-                    { id: 2, name: 'user1', role: '会员', status: '正常', regTime: '2023-03-20' },
-                    { id: 3, name: 'user2', role: '普通用户', status: '正常', regTime: '2023-05-10' }
-                ];
-                
-                renderUsers();
-            } catch (error) {
-                console.error('加载用户失败:', error);
-            }
-        }
-
-        // 渲染用户
-        function renderUsers() {
-            const tbody = document.getElementById('users-table-body');
-            tbody.innerHTML = '';
-            
-            users.forEach(user => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${user.name}</td>
-                    <td>${user.role}</td>
-                    <td>${user.status}</td>
-                    <td>${user.regTime}</td>
-                    <td>
-                        <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">编辑</button>
-                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;">删除</button>
-                    </td>
-                `;
-                
-                tbody.appendChild(tr);
-            });
-        }
-
-        // 添加用户
-        function handleAddUser() {
-            showNotification('添加用户功能正在开发中', 'info');
-        }
-
-        // 保存权限设置
-        function savePermissions() {
-            showNotification('权限设置已保存', 'success');
-        }
-
-        // 应用UI设置
-        function applyUISettings() {
-            showNotification('界面设置已应用', 'success');
-        }
-
-        // 显示模态框
-        function showModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-
-        // 隐藏模态框
-        function hideModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        // 显示通知
-        function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notification');
-            const messageEl = document.getElementById('notification-message');
-            
-            messageEl.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 5000);
-        }
+        // 初始化页面
+        checkAuthStatus();
     </script>
 </body>
 </html>

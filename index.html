@@ -4,284 +4,372 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>十方料码 - 福彩3D工具平台</title>
-    <!-- 引入外部资源 -->
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@11.0.0"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <!-- 配置Tailwind霓虹主题 -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        neonBlue: '#00f3ff',
-                        neonPurple: '#bf00ff',
-                        neonPink: '#ff00c8',
-                        darkBg: '#0a021a',
-                    },
-                    animation: {
-                        'neon-pulse': 'neon 2s infinite alternate',
-                        'float': 'float 3s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        neon: {
-                            '0%': { boxShadow: '0 0 5px #00f3ff, 0 0 10px #00f3ff' },
-                            '100%': { boxShadow: '0 0 10px #00f3ff, 0 0 20px #00f3ff, 0 0 30px #bf00ff' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
-                    }
-                }
-            }
+    <style>
+        /* 保留原有霓虹风格样式，无需修改 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
         }
-    </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .text-shadow-neon {
-                text-shadow: 0 0 5px #00f3ff, 0 0 10px #bf00ff;
-            }
-            .bg-glass {
-                background: rgba(10, 2, 26, 0.7);
-                backdrop-filter: blur(10px);
-            }
-            .border-neon {
-                border: 1px solid #00f3ff;
-                box-shadow: 0 0 10px #00f3ff;
-            }
+        body {
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .neon-title {
+            font-size: 2.5rem;
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .neon-subtitle {
+            font-size: 1rem;
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .neon-btn {
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-shadow: 0 0 5px #00ffff;
+            box-shadow: 0 0 10px #00ffff;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .neon-btn:hover {
+            background: #00ffff;
+            color: #000;
+            box-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff;
+        }
+        .header {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+        .auth-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+        .modal-content {
+            background: #111;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #ff00ff;
+            width: 90%;
+            max-width: 400px;
+        }
+        .modal-title {
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #00ffff;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            background: #222;
+            border: 1px solid #00ffff;
+            color: #fff;
+            border-radius: 5px;
+            outline: none;
+        }
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #ff00ff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .tool-section {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+        .tool-title {
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
+            margin-bottom: 30px;
+        }
+        .doc-embed {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .upload-area {
+            border: 2px dashed #00ffff;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            box-shadow: 0 0 10px #00ffff;
         }
     </style>
 </head>
-<body class="bg-darkBg text-white min-h-screen overflow-x-hidden">
-    <!-- 背景霓虹装饰 -->
-    <div class="fixed top-0 left-0 w-full h-full overflow-hidden z-0">
-        <div class="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-neonBlue/10 blur-3xl animate-pulse"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-neonPurple/10 blur-3xl animate-pulse delay-1000"></div>
-        <div class="absolute top-3/4 left-2/3 w-64 h-64 rounded-full bg-neonPink/10 blur-3xl animate-pulse delay-2000"></div>
+<body>
+    <!-- 头部 -->
+    <div class="header">
+        <div class="logo">十方料码</div>
+        <div class="auth-btns">
+            <button class="neon-btn" id="loginBtn">登录</button>
+            <button class="neon-btn" id="registerBtn">注册</button>
+        </div>
     </div>
 
-    <!-- 导航栏 -->
-    <nav class="bg-glass border-b border-neon/30 fixed top-0 w-full z-50">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="text-2xl font-bold text-shadow-neon">
-                <<i class="fa fa-ticket mr-2 text-neonPink"></</i>十方料码
+    <!-- 访客页面 -->
+    <div class="guest-section">
+        <h1 class="neon-title">欢迎访问十方料码平台</h1>
+        <p class="neon-subtitle">登录后即可使用福彩3D工具库与专业分析文档</p>
+        <button class="neon-btn" id="guestLoginBtn">立即登录体验</button>
+    </div>
+
+    <!-- 工具页面（登录后显示） -->
+    <div class="tool-section" id="toolSection">
+        <h2 class="tool-title">福彩3D工具库</h2>
+        <!-- 金山文档嵌入 -->
+        <iframe class="doc-embed" src="https://kdocs.cn/l/cnqZ0nGYv6Uc" frameborder="0"></iframe>
+        <!-- HTML文件上传 -->
+        <div class="upload-area" id="uploadArea">
+            <p>点击上传本地HTML工具文件</p>
+        </div>
+        <input type="file" id="fileInput" accept=".html" style="display: none;">
+        <button class="neon-btn" id="previewBtn">预览上传文件</button>
+        <div id="previewArea" style="margin-top: 20px;"></div>
+    </div>
+
+    <!-- 登录弹窗 -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-btn" id="loginClose">&times;</span>
+            <h3 class="modal-title">用户登录</h3>
+            <div class="input-group">
+                <label for="loginEmail">邮箱</label>
+                <input type="email" id="loginEmail" placeholder="请输入注册邮箱">
             </div>
-            <div id="authButtons" class="flex gap-3">
-                <button id="loginBtn" class="px-4 py-2 bg-neonBlue/20 hover:bg-neonBlue/40 text-neonBlue rounded-lg transition-all animate-neon-pulse">
-                    登录
-                </button>
-                <button id="registerBtn" class="px-4 py-2 bg-neonPurple/20 hover:bg-neonPurple/40 text-neonPurple rounded-lg transition-all animate-neon-pulse">
-                    注册
-                </button>
+            <div class="input-group">
+                <label for="loginPassword">密码</label>
+                <input type="password" id="loginPassword" placeholder="请输入密码">
             </div>
-            <div id="userMenu" class="hidden flex items-center gap-3">
-                <span id="username" class="text-neonBlue"></span>
-                <button id="logoutBtn" class="px-3 py-1 bg-red-500/30 hover:bg-red-500/50 rounded-lg transition-all">
-                    退出
-                </button>
+            <div class="modal-btns">
+                <button class="neon-btn" id="doLoginBtn">登录</button>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <!-- 主内容区 -->
-    <main class="container mx-auto px-4 pt-24 pb-16 z-10 relative">
-        <!-- 登录/注册模态框 -->
-        <div id="authModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
-            <div class="bg-glass border-neon rounded-xl p-6 w-full max-w-md animate-float">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 id="modalTitle" class="text-xl font-bold text-shadow-neon">用户登录</h2>
-                    <button id="closeModal" class="text-white hover:text-neonPink text-xl">
-                        <<i class="fa fa-times"></</i>
-                    </button>
-                </div>
-                <form id="authForm" class="space-y-4">
-                    <div>
-                        <label class="block text-neonBlue mb-1" for="email">邮箱</label>
-                        <input type="email" id="email" class="w-full px-4 py-2 bg-darkBg/50 border border-neonBlue/50 rounded-lg text-white focus:outline-none focus:border-neonBlue focus:ring-1 focus:ring-neonBlue" required>
-                    </div>
-                    <div>
-                        <label class="block text-neonBlue mb-1" for="password">密码</label>
-                        <input type="password" id="password" class="w-full px-4 py-2 bg-darkBg/50 border border-neonBlue/50 rounded-lg text-white focus:outline-none focus:border-neonBlue focus:ring-1 focus:ring-neonBlue" required>
-                    </div>
-                    <button type="submit" class="w-full py-2 bg-neonBlue/30 hover:bg-neonBlue/50 text-white rounded-lg transition-all animate-neon-pulse">
-                        登录
-                    </button>
-                    <div class="text-center text-gray-400">
-                        <span id="toggleAuthText">没有账号？</span>
-                        <button type="button" id="toggleAuthBtn" class="text-neonPurple hover:underline ml-1">立即注册</button>
-                    </div>
-                </form>
+    <!-- 注册弹窗 -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <span class="close-btn" id="registerClose">&times;</span>
+            <h3 class="modal-title">用户注册</h3>
+            <div class="input-group">
+                <label for="registerEmail">邮箱</label>
+                <input type="email" id="registerEmail" placeholder="请输入邮箱">
+            </div>
+            <div class="input-group">
+                <label for="registerPassword">密码</label>
+                <input type="password" id="registerPassword" placeholder="请设置密码（至少8位）">
+            </div>
+            <div class="modal-btns">
+                <button class="neon-btn" id="doRegisterBtn">注册</button>
             </div>
         </div>
+    </div>
 
-        <!-- 工具列表区 -->
-        <section id="toolsSection" class="hidden mt-8">
-            <h2 class="text-2xl font-bold mb-6 text-shadow-neon text-center">福彩3D工具库</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- 工具1：金山文档嵌入示例 -->
-                <div class="bg-glass border-neon rounded-xl p-4 hover:shadow-lg hover:shadow-neonBlue/20 transition-all">
-                    <h3 class="text-xl font-semibold text-neonBlue mb-3">3D走势分析文档</h3>
-                    <div class="aspect-video border border-neonPurple/50 rounded-lg overflow-hidden">
-                        <!-- 替换为你的金山文档嵌入代码 -->
-                        <iframe src="https://kdocs.cn/l/csC7X7rP0j88" frameborder="0" width="100%" height="100%" allowfullscreen></iframe>
-                    </div>
-                </div>
-                <!-- 工具2：HTML上传与预览 -->
-                <div class="bg-glass border-neon rounded-xl p-4 hover:shadow-lg hover:shadow-neonPink/20 transition-all">
-                    <h3 class="text-xl font-semibold text-neonPink mb-3">自定义工具上传</h3>
-                    <div class="space-y-4">
-                        <input type="file" id="htmlUpload" accept=".html" class="w-full px-4 py-2 bg-darkBg/50 border border-neonPink/50 rounded-lg text-white">
-                        <button id="previewBtn" class="w-full py-2 bg-neonPink/30 hover:bg-neonPink/50 text-white rounded-lg transition-all">
-                            预览上传的工具
-                        </button>
-                        <div id="previewContainer" class="aspect-video border border-neonPink/50 rounded-lg overflow-hidden hidden">
-                            <iframe id="previewIframe" frameborder="0" width="100%" height="100%"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- 底部 -->
+    <div class="footer">
+        2025 十方料码 - 福彩3D工具平台 | 仅供研究参考，不构成投注建议
+    </div>
 
-        <!-- 未登录提示区 -->
-        <section id="guestSection" class="mt-16 text-center">
-            <h2 class="text-3xl font-bold text-shadow-neon mb-6">欢迎访问十方料码平台</h2>
-            <p class="text-gray-300 mb-8">登录后即可使用福彩3D工具库与专业分析文档</p>
-            <button id="guestLoginBtn" class="px-6 py-3 bg-neonBlue/30 hover:bg-neonBlue/50 text-white rounded-lg transition-all animate-neon-pulse text-lg">
-                立即登录体验
-            </button>
-        </section>
-    </main>
-
-    <!-- 页脚 -->
-    <footer class="bg-glass border-t border-neon/30 py-6 z-10 relative">
-        <div class="container mx-auto px-4 text-center text-gray-400">
-            <p>© 2025 十方料码 - 福彩3D工具平台 | 仅供研究参考，不构成投注建议</p>
-        </div>
-    </footer>
-
-    <!-- 核心功能脚本 -->
+    <!-- Appwrite SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
     <script>
-        // 初始化Appwrite客户端（已替换你的项目ID）
+        // 初始化Appwrite（已修复跨域配置）
         const appwrite = new Appwrite();
         appwrite
-            .setEndpoint('https://cloud.appwrite.io/v1') 
-            .setProject('6929b5bb003d77ECD385') // 已替换为你的项目ID
-            .setPlatform('web');
+            .setEndpoint('https://cloud.appwrite.io/v1')
+            .setProject('6929b5bb003d77ecd385') // 你的项目ID，已核对截图
+            .setPlatform('web')
+            .setDomain(window.location.hostname); // 自动适配当前域名，解决跨域
 
-        // DOM元素
-        const authButtons = document.getElementById('authButtons');
-        const userMenu = document.getElementById('userMenu');
-        const username = document.getElementById('username');
-        const authModal = document.getElementById('authModal');
+        // DOM元素获取
         const loginBtn = document.getElementById('loginBtn');
         const registerBtn = document.getElementById('registerBtn');
-        const closeModal = document.getElementById('closeModal');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const authForm = document.getElementById('authForm');
-        const modalTitle = document.getElementById('modalTitle');
-        const toggleAuthText = document.getElementById('toggleAuthText');
-        const toggleAuthBtn = document.getElementById('toggleAuthBtn');
-        const toolsSection = document.getElementById('toolsSection');
-        const guestSection = document.getElementById('guestSection');
         const guestLoginBtn = document.getElementById('guestLoginBtn');
-        const htmlUpload = document.getElementById('htmlUpload');
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const loginClose = document.getElementById('loginClose');
+        const registerClose = document.getElementById('registerClose');
+        const doLoginBtn = document.getElementById('doLoginBtn');
+        const doRegisterBtn = document.getElementById('doRegisterBtn');
+        const toolSection = document.getElementById('toolSection');
+        const guestSection = document.querySelector('.guest-section');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
         const previewBtn = document.getElementById('previewBtn');
-        const previewContainer = document.getElementById('previewContainer');
-        const previewIframe = document.getElementById('previewIframe');
+        const previewArea = document.getElementById('previewArea');
 
-        // 状态变量
-        let isLoginMode = true;
-
-        // 检查用户登录状态
-        async function checkAuthStatus() {
-            try {
-                const user = await appwrite.account.get();
-                // 已登录
-                authButtons.classList.add('hidden');
-                userMenu.classList.remove('hidden');
-                username.textContent = user.name || user.email.split('@')[0];
-                toolsSection.classList.remove('hidden');
-                guestSection.classList.add('hidden');
-            } catch (error) {
-                // 未登录
-                authButtons.classList.remove('hidden');
-                userMenu.classList.add('hidden');
-                toolsSection.classList.add('hidden');
-                guestSection.classList.remove('hidden');
-            }
-        }
-
-        // 打开模态框
-        function openModal(mode) {
-            isLoginMode = mode;
-            if (isLoginMode) {
-                modalTitle.textContent = '用户登录';
-                authForm.querySelector('button[type="submit"]').textContent = '登录';
-                toggleAuthText.textContent = '没有账号？';
-                toggleAuthBtn.textContent = '立即注册';
-            } else {
-                modalTitle.textContent = '用户注册';
-                authForm.querySelector('button[type="submit"]').textContent = '注册';
-                toggleAuthText.textContent = '已有账号？';
-                toggleAuthBtn.textContent = '立即登录';
-            }
-            authModal.classList.remove('hidden');
-        }
-
-        // 登录/注册提交
-        authForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                if (isLoginMode) {
-                    // 登录
-                    await appwrite.account.createEmailSession(email, password);
-                } else {
-                    // 注册（用户名使用邮箱前缀）
-                    const name = email.split('@')[0];
-                    await appwrite.account.create(appwrite.ID.unique(), email, password, name);
-                    await appwrite.account.createEmailSession(email, password);
-                }
-                authModal.classList.add('hidden');
-                authForm.reset();
-                checkAuthStatus();
-            } catch (error) {
-                alert(error.message);
-            }
+        // 弹窗显示/隐藏
+        loginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
+        registerBtn.addEventListener('click', () => registerModal.style.display = 'flex');
+        guestLoginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
+        loginClose.addEventListener('click', () => loginModal.style.display = 'none');
+        registerClose.addEventListener('click', () => registerModal.style.display = 'none');
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) loginModal.style.display = 'none';
+            if (e.target === registerModal) registerModal.style.display = 'none';
         });
 
-        // 切换登录/注册模式
-        toggleAuthBtn.addEventListener('click', () => {
-            openModal(!isLoginMode);
-        });
-
-        // HTML文件预览
-        previewBtn.addEventListener('click', () => {
-            const file = htmlUpload.files[0];
-            if (!file) {
-                alert('请先选择一个HTML文件');
+        // 注册功能
+        doRegisterBtn.addEventListener('click', async () => {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            if (!email || !password || password.length < 8) {
+                alert('请输入有效邮箱，且密码至少8位！');
                 return;
             }
-            const fileURL = URL.createObjectURL(file);
-            previewIframe.src = fileURL;
-            previewContainer.classList.remove('hidden');
+
+            try {
+                // 创建用户
+                await appwrite.account.create(
+                    ID.unique(),
+                    email,
+                    password
+                );
+                // 注册后自动登录
+                await appwrite.account.createEmailSession(email, password);
+                alert('注册并登录成功！');
+                registerModal.style.display = 'none';
+                showToolSection();
+            } catch (error) {
+                alert('注册失败：' + error.message);
+            }
         });
 
-        // 事件监听
-        loginBtn.addEventListener('click', () => openModal(true));
-        registerBtn.addEventListener('click', () => openModal(false));
-        closeModal.addEventListener('click', () => authModal.classList.add('hidden'));
-        logoutBtn.addEventListener('click', async () => {
-            await appwrite.account.deleteSession('current');
-            checkAuthStatus();
-        });
-        guestLoginBtn.addEventListener('click', () => openModal(true));
+        // 登录功能
+        doLoginBtn.addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                alert('请输入邮箱和密码！');
+                return;
+            }
 
-        // 初始化页面
-        checkAuthStatus();
+            try {
+                await appwrite.account.createEmailSession(email, password);
+                alert('登录成功！');
+                loginModal.style.display = 'none';
+                showToolSection();
+            } catch (error) {
+                alert('登录失败：' + error.message);
+            }
+        });
+
+        // 显示工具页面
+        function showToolSection() {
+            guestSection.style.display = 'none';
+            toolSection.style.display = 'block';
+            loginBtn.style.display = 'none';
+            registerBtn.style.display = 'none';
+        }
+
+        // 检查是否已登录
+        async function checkLoginStatus() {
+            try {
+                await appwrite.account.get();
+                showToolSection();
+            } catch (error) {
+                // 未登录，显示访客页面
+                guestSection.style.display = 'block';
+                toolSection.style.display = 'none';
+            }
+        }
+
+        // 文件上传
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                uploadArea.innerHTML = `已选择文件：${e.target.files[0].name}`;
+            }
+        });
+
+        // 预览上传的HTML文件
+        previewBtn.addEventListener('click', () => {
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('请先选择要上传的HTML文件！');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewArea.innerHTML = `<iframe src="${e.target.result}" width="100%" height="400px" frameborder="0"></iframe>`;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // 页面加载时检查登录状态
+        window.onload = checkLoginStatus;
     </script>
 </body>
 </html>

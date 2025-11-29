@@ -756,7 +756,6 @@
                     <ul class="profile-menu">
                         <li><a href="#" class="active" data-tab="profile-info"><i class="fas fa-user-edit"></i> 个人信息</a></li>
                         <li><a href="#" data-tab="membership-info"><i class="fas fa-crown"></i> 会员信息</a></li>
-                        <li><a href="#" data-tab="billing-history"><i class="fas fa-receipt"></i> 消费记录</a></li>
                     </ul>
                 </div>
                 
@@ -889,6 +888,44 @@
         let userMembership = null;
         const ADMIN_EMAIL = 'shifangliaoma@163.com';
         
+        // 模拟用户数据
+        let users = [
+            {
+                id: '001',
+                email: 'user1@example.com',
+                registerDate: '2025-01-15',
+                membership: 'none',
+                status: 'active'
+            },
+            {
+                id: '002',
+                email: 'user2@example.com',
+                registerDate: '2025-02-20',
+                membership: 'silver',
+                membershipStart: '2025-02-20',
+                membershipEnd: '2025-03-20',
+                status: 'active'
+            },
+            {
+                id: '003',
+                email: 'user3@example.com',
+                registerDate: '2025-03-10',
+                membership: 'gold',
+                membershipStart: '2025-03-10',
+                membershipEnd: '2025-04-10',
+                status: 'active'
+            },
+            {
+                id: '004',
+                email: 'user4@example.com',
+                registerDate: '2025-04-05',
+                membership: 'ultimate',
+                membershipStart: '2025-04-05',
+                membershipEnd: '2025-05-05',
+                status: 'active'
+            }
+        ];
+        
         // DOM元素
         const loginBtn = document.getElementById('loginBtn');
         const registerBtn = document.getElementById('registerBtn');
@@ -910,6 +947,9 @@
         const contentSections = document.querySelectorAll('.content-section');
         const navLinks = document.querySelectorAll('.nav-link');
         const adminOnlyElements = document.querySelectorAll('.admin-only');
+        
+        // 当前操作用户
+        let currentOperationUser = null;
         
         // 初始化粒子背景
         particlesJS('particles-js', {
@@ -1026,6 +1066,15 @@
                 // 自动登录
                 await account.createEmailSession(email, password);
                 
+                // 添加到模拟用户列表
+                users.push({
+                    id: '00' + (users.length + 1),
+                    email: email,
+                    registerDate: new Date().toISOString().split('T')[0],
+                    membership: 'none',
+                    status: 'active'
+                });
+                
                 alert('注册成功！已自动登录');
                 registerModal.style.display = 'none';
                 checkLoginStatus();
@@ -1098,15 +1147,24 @@
         
         // 加载用户会员信息
         async function loadUserMembership() {
-            // 模拟从数据库获取会员信息
-            // 实际应用中应从Appwrite数据库获取
-            userMembership = {
-                type: 'none', // 'none', 'silver', 'gold', 'ultimate'
-                startDate: null,
-                endDate: null
-            };
+            // 从模拟用户数据中查找当前用户
+            const user = users.find(u => u.email === currentUser.email);
             
-            // 模拟数据 - 实际应从数据库获取
+            if (user) {
+                userMembership = {
+                    type: user.membership,
+                    startDate: user.membershipStart ? new Date(user.membershipStart) : null,
+                    endDate: user.membershipEnd ? new Date(user.membershipEnd) : null
+                };
+            } else {
+                userMembership = {
+                    type: 'none',
+                    startDate: null,
+                    endDate: null
+                };
+            }
+            
+            // 如果是管理员，设置为终极会员
             if (currentUser.email === ADMIN_EMAIL) {
                 userMembership.type = 'ultimate';
                 userMembership.startDate = new Date();
@@ -1307,20 +1365,6 @@
                     
                     profileTabContent.innerHTML = membershipHtml;
                     break;
-                    
-                case 'billing-history':
-                    profileTabTitle.innerHTML = '<i class="fas fa-receipt"></i> 消费记录';
-                    profileTabContent.innerHTML = `
-                        <div style="text-align: center; padding: 30px 20px;">
-                            <i class="fas fa-history" style="font-size: 3rem; color: var(--accent); margin-bottom: 20px;"></i>
-                            <h3>消费记录</h3>
-                            <p>查看您的会员购买和续费记录</p>
-                            <div style="margin-top: 30px;">
-                                <p>暂无消费记录</p>
-                            </div>
-                        </div>
-                    `;
-                    break;
             }
         }
         
@@ -1355,10 +1399,25 @@
             const membershipType = document.getElementById('membershipType').value;
             const membershipDuration = document.getElementById('membershipDuration').value;
             
-            // 这里应该调用API给用户开通会员
-            // 实际应用中应该调用Appwrite数据库更新用户会员信息
+            if (!currentOperationUser) {
+                alert('请选择要开通会员的用户');
+                return;
+            }
             
-            alert(`已成功为用户开通${membershipType === 'silver' ? '白银' : membershipType === 'gold' ? '黄金' : '终极'}会员${membershipDuration}天`);
+            // 计算会员到期时间
+            const startDate = new Date();
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate() + parseInt(membershipDuration));
+            
+            // 更新用户会员信息
+            const userIndex = users.findIndex(u => u.email === currentOperationUser);
+            if (userIndex !== -1) {
+                users[userIndex].membership = membershipType;
+                users[userIndex].membershipStart = startDate.toISOString().split('T')[0];
+                users[userIndex].membershipEnd = endDate.toISOString().split('T')[0];
+            }
+            
+            alert(`已成功为 ${currentOperationUser} 开通${membershipType === 'silver' ? '白银' : membershipType === 'gold' ? '黄金' : '终极'}会员${membershipDuration}天`);
             membershipModal.style.display = 'none';
             
             // 刷新用户列表
@@ -1403,55 +1462,30 @@
                                         <th>邮箱</th>
                                         <th>注册时间</th>
                                         <th>会员状态</th>
+                                        <th>会员到期</th>
                                         <th>状态</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>001</td>
-                                        <td>user1@example.com</td>
-                                        <td>2025-01-15</td>
-                                        <td>普通用户</td>
-                                        <td><span class="status-badge status-active">正常</span></td>
-                                        <td class="action-btns">
-                                            <button class="action-btn btn-promote" onclick="openMembershipModal('user1@example.com')">开通会员</button>
-                                            <button class="action-btn btn-ban">封禁</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>002</td>
-                                        <td>user2@example.com</td>
-                                        <td>2025-02-20</td>
-                                        <td>白银会员</td>
-                                        <td><span class="status-badge status-active">正常</span></td>
-                                        <td class="action-btns">
-                                            <button class="action-btn btn-promote" onclick="openMembershipModal('user2@example.com')">修改会员</button>
-                                            <button class="action-btn btn-ban">封禁</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>003</td>
-                                        <td>user3@example.com</td>
-                                        <td>2025-03-10</td>
-                                        <td>黄金会员</td>
-                                        <td><span class="status-badge status-active">正常</span></td>
-                                        <td class="action-btns">
-                                            <button class="action-btn btn-promote" onclick="openMembershipModal('user3@example.com')">修改会员</button>
-                                            <button class="action-btn btn-ban">封禁</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>004</td>
-                                        <td>user4@example.com</td>
-                                        <td>2025-04-05</td>
-                                        <td>终极会员</td>
-                                        <td><span class="status-badge status-active">正常</span></td>
-                                        <td class="action-btns">
-                                            <button class="action-btn btn-promote" onclick="openMembershipModal('user4@example.com')">修改会员</button>
-                                            <button class="action-btn btn-ban">封禁</button>
-                                        </td>
-                                    </tr>
+                                    ${users.map(user => `
+                                        <tr>
+                                            <td>${user.id}</td>
+                                            <td>${user.email}</td>
+                                            <td>${user.registerDate}</td>
+                                            <td>${
+                                                user.membership === 'silver' ? '白银会员' :
+                                                user.membership === 'gold' ? '黄金会员' :
+                                                user.membership === 'ultimate' ? '终极会员' : '普通用户'
+                                            }</td>
+                                            <td>${user.membershipEnd || '-'}</td>
+                                            <td><span class="status-badge status-active">正常</span></td>
+                                            <td class="action-btns">
+                                                <button class="action-btn btn-promote" onclick="openMembershipModal('${user.email}')">开通/修改会员</button>
+                                                <button class="action-btn btn-ban" onclick="banUser('${user.email}')">封禁</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
                                 </tbody>
                             </table>
                         </div>
@@ -1459,6 +1493,12 @@
                     break;
                     
                 case 'membership-management':
+                    // 统计各类会员数量
+                    const silverCount = users.filter(u => u.membership === 'silver').length;
+                    const goldCount = users.filter(u => u.membership === 'gold').length;
+                    const ultimateCount = users.filter(u => u.membership === 'ultimate').length;
+                    const noneCount = users.filter(u => u.membership === 'none').length;
+                    
                     adminContent.innerHTML = `
                         <div class="card">
                             <div class="card-header">
@@ -1466,18 +1506,23 @@
                             </div>
                             <div style="display: flex; gap: 20px; margin-top: 20px;">
                                 <div class="card" style="flex: 1;">
+                                    <h4>普通用户</h4>
+                                    <p>当前用户数: ${noneCount}</p>
+                                    <p>权限: 无特殊权限</p>
+                                </div>
+                                <div class="card" style="flex: 1;">
                                     <h4>白银会员</h4>
-                                    <p>当前会员数: 15</p>
+                                    <p>当前会员数: ${silverCount}</p>
                                     <p>权限: 查看趋势数据</p>
                                 </div>
                                 <div class="card" style="flex: 1;">
                                     <h4>黄金会员</h4>
-                                    <p>当前会员数: 8</p>
+                                    <p>当前会员数: ${goldCount}</p>
                                     <p>权限: 使用分析工具</p>
                                 </div>
                                 <div class="card" style="flex: 1;">
                                     <h4>终极会员</h4>
-                                    <p>当前会员数: 3</p>
+                                    <p>当前会员数: ${ultimateCount}</p>
                                     <p>权限: 全部功能</p>
                                 </div>
                             </div>
@@ -1512,8 +1557,20 @@
         
         // 打开开通会员模态框
         function openMembershipModal(userEmail) {
+            currentOperationUser = userEmail;
             document.getElementById('membershipModal').style.display = 'flex';
-            // 这里可以保存当前操作用户的邮箱，实际应用中应该传递给开通会员函数
+        }
+        
+        // 封禁用户
+        function banUser(userEmail) {
+            if (confirm(`确定要封禁用户 ${userEmail} 吗？`)) {
+                const userIndex = users.findIndex(u => u.email === userEmail);
+                if (userIndex !== -1) {
+                    users[userIndex].status = 'banned';
+                    alert(`用户 ${userEmail} 已被封禁`);
+                    loadAdminTab('user-management');
+                }
+            }
         }
     </script>
 </body>

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>十方料码 - 福彩3D工具平台</title>
     <style>
-        /* 保留原有样式不变 */
         * {
             margin: 0;
             padding: 0;
@@ -169,6 +168,26 @@
             text-align: center;
             display: none;
         }
+        .user-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: #00ffff;
+            display: none;
+        }
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -178,6 +197,10 @@
         <div class="auth-btns">
             <button class="neon-btn" id="loginBtn">登录</button>
             <button class="neon-btn" id="registerBtn">注册</button>
+        </div>
+        <div class="user-info" id="userInfo">
+            欢迎，<span id="userEmail"></span>
+            <button class="logout-btn" id="logoutBtn">退出</button>
         </div>
     </div>
 
@@ -247,14 +270,14 @@
         2025 十方料码 - 福彩3D工具平台 | 仅供研究参考，不构成投注建议
     </div>
 
-    <!-- 使用更新的Appwrite SDK -->
+    <!-- 使用最新的Appwrite SDK -->
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
     <script>
-        // 初始化Appwrite客户端
+        // 使用正确的配置初始化Appwrite客户端
         const client = new Appwrite.Client();
         client
-            .setEndpoint('https://cloud.appwrite.io/v1')
-            .setProject('6929b5bb003d77ecd385');
+            .setEndpoint('https://fra.cloud.appwrite.io/v1')  // 修正后的端点
+            .setProject('6929b5bb003d77ecd385');  // 修正后的项目ID
 
         // 初始化账户服务
         const account = new Appwrite.Account(client);
@@ -271,6 +294,9 @@
         const doRegisterBtn = document.getElementById('doRegisterBtn');
         const toolSection = document.getElementById('toolSection');
         const guestSection = document.querySelector('.guest-section');
+        const userInfo = document.getElementById('userInfo');
+        const userEmail = document.getElementById('userEmail');
+        const logoutBtn = document.getElementById('logoutBtn');
         const loginError = document.getElementById('loginError');
         const registerError = document.getElementById('registerError');
 
@@ -281,6 +307,17 @@
             setTimeout(() => {
                 element.style.display = 'none';
             }, 5000);
+        }
+
+        // 显示加载状态
+        function setLoading(button, isLoading) {
+            if (isLoading) {
+                button.classList.add('loading');
+                button.textContent = '处理中...';
+            } else {
+                button.classList.remove('loading');
+                button.textContent = button === doLoginBtn ? '登录' : '注册';
+            }
         }
 
         // 弹窗控制
@@ -321,6 +358,8 @@
                 return;
             }
 
+            setLoading(doRegisterBtn, true);
+
             try {
                 // 创建用户
                 await account.create(
@@ -334,10 +373,12 @@
                 
                 alert('注册成功！已自动登录');
                 hideModal(registerModal);
-                showToolSection();
+                await showToolSection();
             } catch (error) {
                 console.error('注册错误:', error);
                 showError(registerError, '注册失败: ' + error.message);
+            } finally {
+                setLoading(doRegisterBtn, false);
             }
         });
 
@@ -351,35 +392,60 @@
                 return;
             }
 
+            setLoading(doLoginBtn, true);
+
             try {
                 await account.createEmailPasswordSession(email, password);
                 alert('登录成功！');
                 hideModal(loginModal);
-                showToolSection();
+                await showToolSection();
             } catch (error) {
                 console.error('登录错误:', error);
                 showError(loginError, '登录失败: ' + error.message);
+            } finally {
+                setLoading(doLoginBtn, false);
+            }
+        });
+
+        // 退出登录
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await account.deleteSession('current');
+                alert('已退出登录');
+                location.reload();
+            } catch (error) {
+                console.error('退出登录错误:', error);
             }
         });
 
         // 显示工具页面
-        function showToolSection() {
-            guestSection.style.display = 'none';
-            toolSection.style.display = 'block';
-            loginBtn.style.display = 'none';
-            registerBtn.style.display = 'none';
+        async function showToolSection() {
+            try {
+                const user = await account.get();
+                userEmail.textContent = user.email;
+                
+                guestSection.style.display = 'none';
+                toolSection.style.display = 'block';
+                loginBtn.style.display = 'none';
+                registerBtn.style.display = 'none';
+                userInfo.style.display = 'block';
+            } catch (error) {
+                console.error('获取用户信息失败:', error);
+            }
         }
 
         // 检查登录状态
         async function checkLoginStatus() {
             try {
-                const user = await account.get();
-                console.log('用户已登录:', user);
-                showToolSection();
+                await account.get();
+                await showToolSection();
             } catch (error) {
                 console.log('用户未登录');
                 guestSection.style.display = 'block';
                 toolSection.style.display = 'none';
+                userInfo.style.display = 'none';
+                loginBtn.style.display = 'block';
+                registerBtn.style.display = 'block';
             }
         }
 

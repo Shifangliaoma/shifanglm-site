@@ -276,8 +276,8 @@
         // 使用正确的配置初始化Appwrite客户端
         const client = new Appwrite.Client();
         client
-            .setEndpoint('https://fra.cloud.appwrite.io/v1')  // 修正后的端点
-            .setProject('6929b5bb003d77ecd385');  // 修正后的项目ID
+            .setEndpoint('https://fra.cloud.appwrite.io/v1')
+            .setProject('6929b5bb003d77ecd385');
 
         // 初始化账户服务
         const account = new Appwrite.Account(client);
@@ -368,15 +368,28 @@
                     password
                 );
                 
-                // 自动登录
-                await account.createEmailPasswordSession(email, password);
+                // 使用正确的 createEmailSession 方法
+                await account.createEmailSession(email, password);
                 
                 alert('注册成功！已自动登录');
                 hideModal(registerModal);
                 await showToolSection();
             } catch (error) {
                 console.error('注册错误:', error);
-                showError(registerError, '注册失败: ' + error.message);
+                
+                // 特殊处理用户已存在的情况
+                if (error.message.includes('already exists')) {
+                    showError(registerError, '该邮箱已注册，请直接登录');
+                    setTimeout(() => {
+                        hideModal(registerModal);
+                        document.getElementById('loginEmail').value = email;
+                        showModal(loginModal);
+                        document.getElementById('registerEmail').value = '';
+                        document.getElementById('registerPassword').value = '';
+                    }, 2000);
+                } else {
+                    showError(registerError, '注册失败: ' + error.message);
+                }
             } finally {
                 setLoading(doRegisterBtn, false);
             }
@@ -395,7 +408,8 @@
             setLoading(doLoginBtn, true);
 
             try {
-                await account.createEmailPasswordSession(email, password);
+                // 使用正确的 createEmailSession 方法
+                await account.createEmailSession(email, password);
                 alert('登录成功！');
                 hideModal(loginModal);
                 await showToolSection();

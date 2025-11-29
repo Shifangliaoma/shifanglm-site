@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>十方料码 - 福彩3D工具平台</title>
     <style>
-        /* 保留原有霓虹风格样式，无需修改 */
+        /* 保留原有样式不变 */
         * {
             margin: 0;
             padding: 0;
@@ -163,6 +163,12 @@
         .upload-area:hover {
             box-shadow: 0 0 10px #00ffff;
         }
+        .error-message {
+            color: #ff4444;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -209,6 +215,7 @@
                 <label for="loginPassword">密码</label>
                 <input type="password" id="loginPassword" placeholder="请输入密码">
             </div>
+            <div class="error-message" id="loginError"></div>
             <div class="modal-btns">
                 <button class="neon-btn" id="doLoginBtn">登录</button>
             </div>
@@ -228,6 +235,7 @@
                 <label for="registerPassword">密码</label>
                 <input type="password" id="registerPassword" placeholder="请设置密码（至少8位）">
             </div>
+            <div class="error-message" id="registerError"></div>
             <div class="modal-btns">
                 <button class="neon-btn" id="doRegisterBtn">注册</button>
             </div>
@@ -239,20 +247,19 @@
         2025 十方料码 - 福彩3D工具平台 | 仅供研究参考，不构成投注建议
     </div>
 
-    <!-- Appwrite SDK（使用兼容手机端的稳定版本） -->
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@10.0.0"></script>
+    <!-- 使用更新的Appwrite SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
     <script>
-        // 修复：补充Appwrite的ID对象（之前缺失导致注册登录失败）
-        const { ID } = Appwrite;
+        // 初始化Appwrite客户端
+        const client = new Appwrite.Client();
+        client
+            .setEndpoint('https://cloud.appwrite.io/v1')
+            .setProject('6929b5bb003d77ecd385');
 
-        // 初始化Appwrite（简化配置，确保手机端兼容）
-        const appwrite = new Appwrite();
-        appwrite
-            .setEndpoint('https://cloud.appwrite.io/v1') // 固定端点
-            .setProject('6929b5bb003d77ecd385') // 你的项目ID（已核对）
-            .setPlatform('web'); // 移除可能冲突的domain配置，跨域靠Appwrite后台域名授权
+        // 初始化账户服务
+        const account = new Appwrite.Account(client);
 
-        // DOM元素获取
+        // DOM元素
         const loginBtn = document.getElementById('loginBtn');
         const registerBtn = document.getElementById('registerBtn');
         const guestLoginBtn = document.getElementById('guestLoginBtn');
@@ -264,68 +271,96 @@
         const doRegisterBtn = document.getElementById('doRegisterBtn');
         const toolSection = document.getElementById('toolSection');
         const guestSection = document.querySelector('.guest-section');
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const previewBtn = document.getElementById('previewBtn');
-        const previewArea = document.getElementById('previewArea');
+        const loginError = document.getElementById('loginError');
+        const registerError = document.getElementById('registerError');
 
-        // 弹窗显示/隐藏（简化事件绑定，确保手机端触发）
-        loginBtn.onclick = () => loginModal.style.display = 'flex';
-        registerBtn.onclick = () => registerModal.style.display = 'flex';
-        guestLoginBtn.onclick = () => loginModal.style.display = 'flex';
-        loginClose.onclick = () => loginModal.style.display = 'none';
-        registerClose.onclick = () => registerModal.style.display = 'none';
-        window.onclick = (e) => {
-            if (e.target === loginModal) loginModal.style.display = 'none';
-            if (e.target === registerModal) registerModal.style.display = 'none';
-        };
+        // 显示错误信息
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
 
-        // 注册功能（简化逻辑，增加错误提示）
-        doRegisterBtn.onclick = async () => {
-            const email = document.getElementById('registerEmail').value;
+        // 弹窗控制
+        function showModal(modal) {
+            modal.style.display = 'flex';
+        }
+
+        function hideModal(modal) {
+            modal.style.display = 'none';
+        }
+
+        // 事件监听器
+        loginBtn.addEventListener('click', () => showModal(loginModal));
+        registerBtn.addEventListener('click', () => showModal(registerModal));
+        guestLoginBtn.addEventListener('click', () => showModal(loginModal));
+        
+        loginClose.addEventListener('click', () => hideModal(loginModal));
+        registerClose.addEventListener('click', () => hideModal(registerModal));
+
+        // 点击模态框外部关闭
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) hideModal(loginModal);
+            if (e.target === registerModal) hideModal(registerModal);
+        });
+
+        // 注册功能
+        doRegisterBtn.addEventListener('click', async () => {
+            const email = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value;
-            
-            if (!email || !password || password.length < 8) {
-                alert('请输入有效邮箱，且密码至少8位！');
+
+            if (!email || !password) {
+                showError(registerError, '请输入邮箱和密码！');
+                return;
+            }
+
+            if (password.length < 8) {
+                showError(registerError, '密码至少需要8位！');
                 return;
             }
 
             try {
-                // 创建用户（补充ID.unique()，之前缺失导致失败）
-                await appwrite.account.create(
-                    ID.unique(),
+                // 创建用户
+                await account.create(
+                    Appwrite.ID.unique(),
                     email,
                     password
                 );
-                // 注册后自动登录
-                await appwrite.account.createEmailSession(email, password);
-                alert('注册并登录成功！');
-                registerModal.style.display = 'none';
+                
+                // 自动登录
+                await account.createEmailPasswordSession(email, password);
+                
+                alert('注册成功！已自动登录');
+                hideModal(registerModal);
                 showToolSection();
             } catch (error) {
-                alert('注册失败：' + error.message);
+                console.error('注册错误:', error);
+                showError(registerError, '注册失败: ' + error.message);
             }
-        };
+        });
 
-        // 登录功能（简化逻辑）
-        doLoginBtn.onclick = async () => {
-            const email = document.getElementById('loginEmail').value;
+        // 登录功能
+        doLoginBtn.addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
-            
+
             if (!email || !password) {
-                alert('请输入邮箱和密码！');
+                showError(loginError, '请输入邮箱和密码！');
                 return;
             }
 
             try {
-                await appwrite.account.createEmailSession(email, password);
+                await account.createEmailPasswordSession(email, password);
                 alert('登录成功！');
-                loginModal.style.display = 'none';
+                hideModal(loginModal);
                 showToolSection();
             } catch (error) {
-                alert('登录失败：' + error.message);
+                console.error('登录错误:', error);
+                showError(loginError, '登录失败: ' + error.message);
             }
-        };
+        });
 
         // 显示工具页面
         function showToolSection() {
@@ -335,29 +370,32 @@
             registerBtn.style.display = 'none';
         }
 
-        // 检查登录状态（页面加载时执行）
+        // 检查登录状态
         async function checkLoginStatus() {
             try {
-                await appwrite.account.get();
+                const user = await account.get();
+                console.log('用户已登录:', user);
                 showToolSection();
             } catch (error) {
-                // 未登录，显示访客页面
+                console.log('用户未登录');
                 guestSection.style.display = 'block';
                 toolSection.style.display = 'none';
             }
         }
 
-        // 文件上传预览（修复手机端兼容性）
-        uploadArea.onclick = () => fileInput.click();
-        fileInput.onchange = (e) => {
-            if (e.target.files.length > 0) {
-                uploadArea.innerHTML = `已选择文件：${e.target.files[0].name}`;
-            }
-        };
+        // 文件上传功能
+        document.getElementById('uploadArea').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
 
-        // 预览HTML文件（简化逻辑，确保手机端正常显示）
-        previewBtn.onclick = () => {
-            const file = fileInput.files[0];
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                document.getElementById('uploadArea').innerHTML = `已选择文件：${e.target.files[0].name}`;
+            }
+        });
+
+        document.getElementById('previewBtn').addEventListener('click', () => {
+            const file = document.getElementById('fileInput').files[0];
             if (!file) {
                 alert('请先选择要上传的HTML文件！');
                 return;
@@ -365,13 +403,14 @@
 
             const reader = new FileReader();
             reader.onload = (e) => {
-                previewArea.innerHTML = `<iframe src="${e.target.result}" width="100%" height="400px" frameborder="0"></iframe>`;
+                document.getElementById('previewArea').innerHTML = 
+                    `<iframe src="${e.target.result}" width="100%" height="400px" frameborder="0"></iframe>`;
             };
             reader.readAsDataURL(file);
-        };
+        });
 
         // 页面加载时检查登录状态
-        window.onload = checkLoginStatus;
+        document.addEventListener('DOMContentLoaded', checkLoginStatus);
     </script>
 </body>
 </html>

@@ -239,16 +239,18 @@
         2025 十方料码 - 福彩3D工具平台 | 仅供研究参考，不构成投注建议
     </div>
 
-    <!-- Appwrite SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+    <!-- Appwrite SDK（使用兼容手机端的稳定版本） -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@10.0.0"></script>
     <script>
-        // 初始化Appwrite（已修复跨域配置）
+        // 修复：补充Appwrite的ID对象（之前缺失导致注册登录失败）
+        const { ID } = Appwrite;
+
+        // 初始化Appwrite（简化配置，确保手机端兼容）
         const appwrite = new Appwrite();
         appwrite
-            .setEndpoint('https://cloud.appwrite.io/v1')
-            .setProject('6929b5bb003d77ecd385') // 你的项目ID，已核对截图
-            .setPlatform('web')
-            .setDomain(window.location.hostname); // 自动适配当前域名，解决跨域
+            .setEndpoint('https://cloud.appwrite.io/v1') // 固定端点
+            .setProject('6929b5bb003d77ecd385') // 你的项目ID（已核对）
+            .setPlatform('web'); // 移除可能冲突的domain配置，跨域靠Appwrite后台域名授权
 
         // DOM元素获取
         const loginBtn = document.getElementById('loginBtn');
@@ -267,19 +269,19 @@
         const previewBtn = document.getElementById('previewBtn');
         const previewArea = document.getElementById('previewArea');
 
-        // 弹窗显示/隐藏
-        loginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
-        registerBtn.addEventListener('click', () => registerModal.style.display = 'flex');
-        guestLoginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
-        loginClose.addEventListener('click', () => loginModal.style.display = 'none');
-        registerClose.addEventListener('click', () => registerModal.style.display = 'none');
-        window.addEventListener('click', (e) => {
+        // 弹窗显示/隐藏（简化事件绑定，确保手机端触发）
+        loginBtn.onclick = () => loginModal.style.display = 'flex';
+        registerBtn.onclick = () => registerModal.style.display = 'flex';
+        guestLoginBtn.onclick = () => loginModal.style.display = 'flex';
+        loginClose.onclick = () => loginModal.style.display = 'none';
+        registerClose.onclick = () => registerModal.style.display = 'none';
+        window.onclick = (e) => {
             if (e.target === loginModal) loginModal.style.display = 'none';
             if (e.target === registerModal) registerModal.style.display = 'none';
-        });
+        };
 
-        // 注册功能
-        doRegisterBtn.addEventListener('click', async () => {
+        // 注册功能（简化逻辑，增加错误提示）
+        doRegisterBtn.onclick = async () => {
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             
@@ -289,7 +291,7 @@
             }
 
             try {
-                // 创建用户
+                // 创建用户（补充ID.unique()，之前缺失导致失败）
                 await appwrite.account.create(
                     ID.unique(),
                     email,
@@ -303,10 +305,10 @@
             } catch (error) {
                 alert('注册失败：' + error.message);
             }
-        });
+        };
 
-        // 登录功能
-        doLoginBtn.addEventListener('click', async () => {
+        // 登录功能（简化逻辑）
+        doLoginBtn.onclick = async () => {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
@@ -323,7 +325,7 @@
             } catch (error) {
                 alert('登录失败：' + error.message);
             }
-        });
+        };
 
         // 显示工具页面
         function showToolSection() {
@@ -333,7 +335,7 @@
             registerBtn.style.display = 'none';
         }
 
-        // 检查是否已登录
+        // 检查登录状态（页面加载时执行）
         async function checkLoginStatus() {
             try {
                 await appwrite.account.get();
@@ -345,16 +347,16 @@
             }
         }
 
-        // 文件上传
-        uploadArea.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => {
+        // 文件上传预览（修复手机端兼容性）
+        uploadArea.onclick = () => fileInput.click();
+        fileInput.onchange = (e) => {
             if (e.target.files.length > 0) {
                 uploadArea.innerHTML = `已选择文件：${e.target.files[0].name}`;
             }
-        });
+        };
 
-        // 预览上传的HTML文件
-        previewBtn.addEventListener('click', () => {
+        // 预览HTML文件（简化逻辑，确保手机端正常显示）
+        previewBtn.onclick = () => {
             const file = fileInput.files[0];
             if (!file) {
                 alert('请先选择要上传的HTML文件！');
@@ -366,7 +368,7 @@
                 previewArea.innerHTML = `<iframe src="${e.target.result}" width="100%" height="400px" frameborder="0"></iframe>`;
             };
             reader.readAsDataURL(file);
-        });
+        };
 
         // 页面加载时检查登录状态
         window.onload = checkLoginStatus;

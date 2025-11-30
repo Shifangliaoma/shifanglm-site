@@ -981,17 +981,18 @@
         // 存储桶ID
         const BUCKET_ID = '692a893600202c4f7dad';
         
-        // 数据库和集合ID - 已更新为您的数据库ID
-        const DATABASE_ID = '692c0b030010a28df72e'; // 您的数据库ID
+        // 数据库和集合ID
+        const DATABASE_ID = '692c0b030010a28df72e';
         const PERMISSIONS_COLLECTION_ID = 'permissions';
         const TOOLS_COLLECTION_ID = 'tools';
         
-        // 管理员邮箱 - 唯一管理员
+        // 管理员邮箱
         const ADMIN_EMAIL = '921913231@qq.com';
         
         // 全局变量
         let currentUser = null;
         let currentEditingToolId = null;
+        let currentEditingPermissionId = null;
         let isAdmin = false;
         let userPermission = null;
         let permissionCountdownInterval = null;
@@ -1047,7 +1048,9 @@
                 document.querySelectorAll('.content-section').forEach(section => {
                     section.classList.remove('active');
                 });
-                document.getElementById(sectionId).classList.add('active');
+                if (sectionId) {
+                    document.getElementById(sectionId).classList.add('active');
+                }
             });
         });
         
@@ -1105,7 +1108,10 @@
         document.getElementById('registerClose').onclick = () => registerModal.style.display = 'none';
         document.getElementById('forgotPasswordClose').onclick = () => forgotPasswordModal.style.display = 'none';
         document.getElementById('addToolClose').onclick = () => addToolModal.style.display = 'none';
-        document.getElementById('addPermissionClose').onclick = () => addPermissionModal.style.display = 'none';
+        document.getElementById('addPermissionClose').onclick = () => {
+            addPermissionModal.style.display = 'none';
+            currentEditingPermissionId = null;
+        };
         
         document.getElementById('switchToRegister').onclick = () => {
             loginModal.style.display = 'none';
@@ -1305,6 +1311,8 @@
                 // 如果是管理员，显示权限管理链接
                 if (isAdmin) {
                     permissionManagementLink.style.display = 'block';
+                } else {
+                    permissionManagementLink.style.display = 'none';
                 }
                 
                 // 加载用户权限信息
@@ -1317,6 +1325,7 @@
                 loginBtn.style.display = 'block';
                 registerBtn.style.display = 'block';
                 userInfo.style.display = 'none';
+                permissionManagementLink.style.display = 'none';
                 
                 // 显示未登录状态
                 const toolsContent = document.getElementById('toolsContent');
@@ -1441,7 +1450,7 @@
                     return;
                 }
                 
-                toolsContent.innerHTML = '<p>正在加载工具列表...</p>';
+                toolsContent.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> 正在加载工具列表...</p>';
                 
                 // 显示管理员添加工具按钮
                 if (isAdmin) {
@@ -1669,16 +1678,16 @@
                 );
                 
                 // 填充表单
-                document.getElementById('editToolName').value = tool.name;
-                document.getElementById('editToolDescription').value = tool.description;
-                document.getElementById('editToolUrl').value = tool.url;
-                document.getElementById('editToolIcon').value = tool.icon;
+                document.getElementById('toolName').value = tool.name;
+                document.getElementById('toolDescription').value = tool.description;
+                document.getElementById('toolUrl').value = tool.url;
+                document.getElementById('toolIcon').value = tool.icon;
                 
                 // 保存当前编辑的工具ID
                 currentEditingToolId = toolId;
                 
                 // 显示模态框
-                editToolModal.style.display = 'flex';
+                addToolModal.style.display = 'flex';
                 clearErrors();
                 
             } catch (error) {
@@ -1686,62 +1695,6 @@
                 alert('无法编辑工具，请稍后重试');
             }
         }
-        
-        // 更新工具
-        document.getElementById('updateToolBtn').addEventListener('click', async function() {
-            if (!isAdmin) {
-                alert('只有管理员可以更新工具');
-                return;
-            }
-            
-            const toolName = document.getElementById('editToolName').value.trim();
-            const toolDescription = document.getElementById('editToolDescription').value.trim();
-            const toolUrl = document.getElementById('editToolUrl').value.trim();
-            const toolIcon = document.getElementById('editToolIcon').value;
-            
-            clearErrors();
-            
-            // 验证输入
-            let hasError = false;
-            
-            if (!toolName) {
-                showError('editToolNameError', '请输入工具名称');
-                hasError = true;
-            }
-            
-            if (!toolUrl) {
-                showError('editToolUrlError', '请输入工具链接');
-                hasError = true;
-            } else if (!isValidUrl(toolUrl)) {
-                showError('editToolUrlError', '请输入有效的URL');
-                hasError = true;
-            }
-            
-            if (hasError) return;
-            
-            try {
-                // 更新工具到Appwrite数据库
-                await databases.updateDocument(
-                    DATABASE_ID,
-                    TOOLS_COLLECTION_ID,
-                    currentEditingToolId,
-                    {
-                        name: toolName,
-                        description: toolDescription,
-                        url: toolUrl,
-                        icon: toolIcon
-                    }
-                );
-                
-                alert('工具更新成功！');
-                editToolModal.style.display = 'none';
-                loadTools();
-                
-            } catch (error) {
-                console.error('更新工具失败:', error);
-                alert('更新工具失败，请稍后重试');
-            }
-        });
         
         // 删除工具
         async function deleteTool(toolId) {
@@ -1769,151 +1722,258 @@
             }
         }
         
-        // 加载权限管理
+        // 加载权限管理 - 真实数据版本
         async function loadPermissionManagement() {
             try {
                 const permissionContent = document.getElementById('permissionContent');
-                permissionContent.innerHTML = '<p>正在加载权限管理...</p>';
                 
-                // 获取所有用户权限
-                const response = await databases.listDocuments(
-                    DATABASE_ID,
-                    PERMISSIONS_COLLECTION_ID
-                );
-                
-                // 获取所有用户
-                const usersResponse = await account.list();
-                
-                let permissionsHTML = `
-                    <div class="permission-grid">
-                        <div class="permission-card">
-                            <h3 class="permission-title"><i class="fas fa-users"></i> 用户列表</h3>
-                            <div class="user-list">
-                `;
-                
-                usersResponse.users.forEach(user => {
-                    // 查找用户权限
-                    const userPermission = response.documents.find(p => p.email === user.email);
-                    let permissionInfo = '无权限';
-                    let statusClass = 'status-expired';
+                // 检查管理员权限
+                if (!isAdmin) {
+                    permissionContent.innerHTML = `
+                        <div style="text-align: center; padding: 50px 20px;">
+                            <i class="fas fa-user-shield" style="font-size: 4rem; color: #ff5555; margin-bottom: 20px;"></i>
+                            <h3 style="color: #ff5555; margin-bottom: 15px;">管理员权限 required</h3>
+                            <p>只有管理员可以访问权限管理功能</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                permissionContent.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> 正在加载真实权限数据...</p>';
+
+                try {
+                    // 1. 获取所有权限数据
+                    const permissionsResponse = await databases.listDocuments(
+                        DATABASE_ID,
+                        PERMISSIONS_COLLECTION_ID
+                    );
                     
-                    if (userPermission) {
-                        const now = Date.now();
-                        
-                        if (userPermission.endTime > now) {
-                            // 权限有效
-                            let permissionText = '';
+                    // 2. 获取所有用户列表
+                    let usersResponse;
+                    try {
+                        usersResponse = await account.list();
+                    } catch (userError) {
+                        console.warn('无法获取用户列表:', userError);
+                        usersResponse = { users: [] };
+                    }
+
+                    // 3. 构建权限管理界面
+                    let permissionsHTML = `
+                        <div class="permission-grid">
+                            <div class="permission-card">
+                                <h3 class="permission-title"><i class="fas fa-users"></i> 用户权限管理</h3>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <span>共 ${permissionsResponse.documents.length} 个权限记录</span>
+                                    <button class="btn btn-primary btn-sm" id="refreshRealPermissions">
+                                        <i class="fas fa-sync-alt"></i> 刷新
+                                    </button>
+                                </div>
+                                
+                                <div class="user-list" style="max-height: 500px;">
+                    `;
+
+                    if (permissionsResponse.documents.length === 0) {
+                        permissionsHTML += `
+                            <div style="text-align: center; padding: 30px; color: #aaa;">
+                                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                                <p>暂无权限数据</p>
+                            </div>
+                        `;
+                    } else {
+                        // 显示真实权限数据
+                        permissionsResponse.documents.forEach(permission => {
+                            const now = Date.now();
+                            const isActive = permission.endTime > now;
+                            const timeLeft = permission.endTime - now;
+                            const daysLeft = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
                             
-                            switch(userPermission.type) {
+                            let permissionText = '';
+                            switch(permission.type) {
                                 case 'doc':
-                                    permissionText = '文档权限';
+                                    permissionText = '📄 文档权限';
                                     break;
                                 case 'tool':
-                                    permissionText = '工具权限';
+                                    permissionText = '🛠️ 工具权限';
                                     break;
                                 case 'both':
-                                    permissionText = '文档+工具权限';
+                                    permissionText = '📊 文档+工具权限';
                                     break;
                             }
                             
-                            const startDate = new Date(userPermission.startTime).toLocaleDateString();
-                            const endDate = new Date(userPermission.endTime).toLocaleDateString();
-                            
-                            permissionInfo = `${permissionText} (${startDate} - ${endDate})`;
-                            statusClass = 'status-active';
-                        }
+                            const startDate = new Date(permission.startTime).toLocaleDateString();
+                            const endDate = new Date(permission.endTime).toLocaleDateString();
+                            const statusClass = isActive ? 'status-active' : 'status-expired';
+                            const statusText = isActive ? `剩余${daysLeft}天` : '已过期';
+
+                            permissionsHTML += `
+                                <div class="user-item">
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 500; color: var(--primary);">${permission.email}</div>
+                                        <div style="font-size: 0.8rem; color: #aaa; margin-top: 5px;">
+                                            ${permissionText} | ${startDate} 至 ${endDate}
+                                        </div>
+                                        <div style="font-size: 0.7rem; color: #666; margin-top: 3px;">
+                                            创建时间: ${new Date(permission.$createdAt).toLocaleString()}
+                                        </div>
+                                    </div>
+                                    <div class="user-actions">
+                                        <span class="permission-status ${statusClass}">${statusText}</span>
+                                        <button class="tool-action-btn edit-permission" data-permission-id="${permission.$id}" data-email="${permission.email}" title="编辑权限">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="tool-action-btn delete-permission" data-permission-id="${permission.$id}" data-email="${permission.email}" title="删除权限">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        });
                     }
-                    
+
                     permissionsHTML += `
-                        <div class="user-item">
-                            <div>
-                                <div>${user.email}</div>
-                                <div style="font-size: 0.8rem; color: #aaa;">${permissionInfo}</div>
-                            </div>
-                            <div class="user-actions">
-                                <button class="btn btn-sm btn-outline grant-permission" data-email="${user.email}">
-                                    <i class="fas fa-key"></i> 授权
-                                </button>
-                                <button class="btn btn-sm btn-outline revoke-permission" data-email="${user.email}">
-                                    <i class="fas fa-ban"></i> 撤销
-                                </button>
+                                </div>
+                                
+                                <div class="permission-details" style="margin-top: 20px;">
+                                    <h4><i class="fas fa-info-circle"></i> 系统状态</h4>
+                                    <div class="permission-detail">
+                                        <span><strong>数据库连接：</strong></span>
+                                        <span style="color: var(--accent);">正常 ✓</span>
+                                    </div>
+                                    <div class="permission-detail">
+                                        <span><strong>权限记录数：</strong></span>
+                                        <span>${permissionsResponse.documents.length}</span>
+                                    </div>
+                                    <div class="permission-detail">
+                                        <span><strong>用户总数：</strong></span>
+                                        <span>${usersResponse.users.length}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     `;
-                });
-                
-                permissionsHTML += `
+
+                    permissionContent.innerHTML = permissionsHTML;
+
+                    // 添加事件监听器
+                    document.getElementById('refreshRealPermissions').addEventListener('click', function() {
+                        loadPermissionManagement();
+                    });
+
+                    document.querySelectorAll('.edit-permission').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const email = this.getAttribute('data-email');
+                            const permissionId = this.getAttribute('data-permission-id');
+                            openEditPermissionModal(email, permissionId);
+                        });
+                    });
+
+                    document.querySelectorAll('.delete-permission').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const permissionId = this.getAttribute('data-permission-id');
+                            const email = this.getAttribute('data-email');
+                            deletePermission(permissionId, email);
+                        });
+                    });
+
+                } catch (dbError) {
+                    console.error('数据库操作失败:', dbError);
+                    permissionContent.innerHTML = `
+                        <div style="text-align: center; padding: 50px 20px;">
+                            <i class="fas fa-database" style="font-size: 4rem; color: #ff5555; margin-bottom: 20px;"></i>
+                            <h3 style="color: #ff5555; margin-bottom: 15px;">数据库连接失败</h3>
+                            <p>无法连接到Appwrite数据库</p>
+                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin: 20px 0; text-align: left;">
+                                <p><strong>可能的原因：</strong></p>
+                                <p>• 数据库权限设置不正确</p>
+                                <p>• 网络连接问题</p>
+                                <p>• Appwrite服务暂时不可用</p>
                             </div>
+                            <button class="btn btn-primary" onclick="loadPermissionManagement()">
+                                <i class="fas fa-redo"></i> 重新加载
+                            </button>
                         </div>
-                    </div>
-                `;
-                
-                permissionContent.innerHTML = permissionsHTML;
-                
-                // 添加授权按钮事件
-                document.querySelectorAll('.grant-permission').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const email = this.getAttribute('data-email');
-                        openAddPermissionModal(email);
-                    });
-                });
-                
-                // 添加撤销按钮事件
-                document.querySelectorAll('.revoke-permission').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const email = this.getAttribute('data-email');
-                        revokePermission(email);
-                    });
-                });
-                
+                    `;
+                }
+
             } catch (error) {
                 console.error('加载权限管理失败:', error);
                 const permissionContent = document.getElementById('permissionContent');
                 permissionContent.innerHTML = `
-                    <div style="text-align: center; padding: 30px;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ff5555; margin-bottom: 15px;"></i>
-                        <h3 style="color: #ff5555; margin-bottom: 10px;">加载失败</h3>
-                        <p>无法加载权限管理，请稍后重试</p>
+                    <div style="text-align: center; padding: 50px 20px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 4rem; color: #ff5555; margin-bottom: 20px;"></i>
+                        <h3 style="color: #ff5555; margin-bottom: 15px;">系统错误</h3>
+                        <p>${error.message}</p>
                     </div>
                 `;
             }
         }
         
-        // 打开添加权限模态框
-        function openAddPermissionModal(email = '') {
-            if (!isAdmin) {
-                alert('只有管理员可以添加权限');
-                return;
+        // 打开编辑权限模态框
+        async function openEditPermissionModal(email, permissionId) {
+            try {
+                // 获取现有权限信息
+                const permission = await databases.getDocument(
+                    DATABASE_ID,
+                    PERMISSIONS_COLLECTION_ID,
+                    permissionId
+                );
+
+                // 填充表单
+                document.getElementById('permissionEmail').value = permission.email;
+                document.getElementById('permissionTypeSelect').value = permission.type;
+                
+                // 计算剩余天数
+                const now = Date.now();
+                const remainingTime = permission.endTime - now;
+                const remainingDays = Math.max(1, Math.ceil(remainingTime / (1000 * 60 * 60 * 24)));
+                document.getElementById('permissionDays').value = remainingDays;
+
+                // 显示模态框
+                addPermissionModal.style.display = 'flex';
+                clearErrors();
+
+                // 保存当前编辑的权限ID
+                currentEditingPermissionId = permissionId;
+
+            } catch (error) {
+                console.error('获取权限详情失败:', error);
+                alert('无法获取权限详情，请稍后重试');
             }
-            
-            addPermissionModal.style.display = 'flex';
-            clearErrors();
-            
-            // 填充用户邮箱
-            document.getElementById('permissionEmail').value = email;
         }
         
-        // 添加权限按钮
-        document.getElementById('addPermissionBtn').addEventListener('click', function() {
-            openAddPermissionModal();
-        });
-        
-        // 保存权限
-        document.getElementById('savePermissionBtn').addEventListener('click', async function() {
-            if (!isAdmin) {
-                alert('只有管理员可以添加权限');
+        // 删除权限
+        async function deletePermission(permissionId, email) {
+            if (!confirm(`确定要删除 ${email} 的权限吗？此操作不可撤销。`)) {
                 return;
             }
-            
+
+            try {
+                await databases.deleteDocument(
+                    DATABASE_ID,
+                    PERMISSIONS_COLLECTION_ID,
+                    permissionId
+                );
+                
+                alert('权限删除成功！');
+                loadPermissionManagement(); // 刷新列表
+                
+            } catch (error) {
+                console.error('删除权限失败:', error);
+                alert('删除权限失败，请稍后重试');
+            }
+        }
+        
+        // 保存权限（添加或更新）
+        document.getElementById('savePermissionBtn').addEventListener('click', async function() {
             const email = document.getElementById('permissionEmail').value.trim();
             const type = document.getElementById('permissionTypeSelect').value;
             const days = parseInt(document.getElementById('permissionDays').value);
-            
+
             clearErrors();
-            
+
             // 验证输入
             let hasError = false;
-            
+
             if (!email) {
                 showError('permissionEmailError', '请输入用户邮箱');
                 hasError = true;
@@ -1921,41 +1981,32 @@
                 showError('permissionEmailError', '请输入有效的邮箱地址');
                 hasError = true;
             }
-            
+
             if (!days || days < 1) {
                 showError('permissionDaysError', '请输入有效的天数');
                 hasError = true;
             }
-            
+
             if (hasError) return;
-            
+
             try {
                 // 计算开始和结束时间
                 const startTime = Date.now();
                 const endTime = startTime + (days * 24 * 60 * 60 * 1000);
-                
-                // 检查是否已存在权限
-                const existingPermissions = await databases.listDocuments(
-                    DATABASE_ID,
-                    PERMISSIONS_COLLECTION_ID,
-                    [
-                        Appwrite.Query.equal('email', email)
-                    ]
-                );
-                
-                if (existingPermissions.documents.length > 0) {
+
+                if (currentEditingPermissionId) {
                     // 更新现有权限
                     await databases.updateDocument(
                         DATABASE_ID,
                         PERMISSIONS_COLLECTION_ID,
-                        existingPermissions.documents[0].$id,
+                        currentEditingPermissionId,
                         {
                             type: type,
-                            startTime: startTime,
                             endTime: endTime,
                             updatedAt: Date.now()
                         }
                     );
+                    alert('权限更新成功！');
                 } else {
                     // 创建新权限
                     await databases.createDocument(
@@ -1970,56 +2021,36 @@
                             createdAt: Date.now()
                         }
                     );
+                    alert('权限添加成功！');
                 }
-                
-                alert('权限设置成功！');
+
                 addPermissionModal.style.display = 'none';
-                loadPermissionManagement();
+                currentEditingPermissionId = null; // 重置编辑状态
+                loadPermissionManagement(); // 刷新列表
                 
             } catch (error) {
-                console.error('设置权限失败:', error);
-                alert('设置权限失败，请稍后重试');
+                console.error('保存权限失败:', error);
+                if (error.message.includes('permission')) {
+                    alert('操作失败：权限不足。请检查数据库设置。');
+                } else if (error.message.includes('already exists')) {
+                    alert('该用户已存在权限记录，请使用编辑功能');
+                } else {
+                    alert('保存权限失败，请稍后重试');
+                }
             }
         });
         
-        // 撤销权限
-        async function revokePermission(email) {
-            if (!isAdmin) {
-                alert('只有管理员可以撤销权限');
-                return;
-            }
+        // 添加权限按钮事件
+        document.getElementById('addPermissionBtn').addEventListener('click', function() {
+            currentEditingPermissionId = null; // 确保是添加模式
+            addPermissionModal.style.display = 'flex';
+            clearErrors();
             
-            if (!confirm(`确定要撤销 ${email} 的权限吗？`)) {
-                return;
-            }
-            
-            try {
-                // 查找用户权限
-                const permissions = await databases.listDocuments(
-                    DATABASE_ID,
-                    PERMISSIONS_COLLECTION_ID,
-                    [
-                        Appwrite.Query.equal('email', email)
-                    ]
-                );
-                
-                if (permissions.documents.length > 0) {
-                    // 删除权限
-                    await databases.deleteDocument(
-                        DATABASE_ID,
-                        PERMISSIONS_COLLECTION_ID,
-                        permissions.documents[0].$id
-                    );
-                }
-                
-                alert('权限撤销成功！');
-                loadPermissionManagement();
-                
-            } catch (error) {
-                console.error('撤销权限失败:', error);
-                alert('撤销权限失败，请稍后重试');
-            }
-        }
+            // 清空表单
+            document.getElementById('permissionEmail').value = '';
+            document.getElementById('permissionTypeSelect').value = 'both';
+            document.getElementById('permissionDays').value = '30';
+        });
         
         // 提交反馈
         document.getElementById('submitFeedback').addEventListener('click', function() {
@@ -2066,6 +2097,7 @@
             }
             if (event.target === addPermissionModal) {
                 addPermissionModal.style.display = 'none';
+                currentEditingPermissionId = null;
             }
             if (event.target === fullscreenDoc) {
                 fullscreenDoc.style.display = 'none';

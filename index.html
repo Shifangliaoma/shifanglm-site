@@ -293,6 +293,45 @@
             color: var(--primary);
         }
         
+        /* 全屏文档浏览区域 */
+        .fullscreen-doc {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+        
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(10, 10, 25, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .doc-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .doc-container {
+            flex: 1;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .doc-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
         /* 工具详情页面 */
         .tool-detail-container {
             background: rgba(20, 20, 40, 0.7);
@@ -309,23 +348,6 @@
             border: none;
             border-radius: 8px;
             background: #fff;
-        }
-        
-        /* 文档浏览区域 */
-        .doc-container {
-            background: rgba(20, 20, 40, 0.7);
-            border-radius: 12px;
-            padding: 0;
-            margin-top: 20px;
-            height: 600px;
-            overflow: hidden;
-        }
-        
-        .doc-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 12px;
         }
         
         /* 模态框 */
@@ -512,7 +534,7 @@
         </div>
         <div class="nav-links">
             <a href="#" class="nav-link active" data-section="home">个人中心</a>
-            <a href="#" class="nav-link" data-section="trends">趋势图表</a>
+            <a href="#" class="nav-link" id="trendsLink">趋势图表</a>
             <a href="#" class="nav-link" data-section="tools">工具缩水</a>
             <a href="#" class="nav-link" data-section="feedback">建议反馈</a>
         </div>
@@ -520,6 +542,7 @@
             <button class="btn btn-outline" id="loginBtn">登录</button>
             <button class="btn btn-primary" id="registerBtn">注册</button>
             <div id="userMenu" style="display: none;">
+                <span id="userEmail" style="margin-right: 15px; color: var(--primary);"></span>
                 <button class="btn btn-outline" id="logoutBtn">退出登录</button>
             </div>
         </div>
@@ -561,18 +584,6 @@
             </div>
         </section>
         
-        <!-- 趋势图表 -->
-        <section id="trends" class="content-section">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-chart-line"></i> 趋势图表</h2>
-                </div>
-                <div class="doc-container">
-                    <iframe src="https://www.kdocs.cn/l/chld5b1eqA9d" class="doc-frame" frameborder="0"></iframe>
-                </div>
-            </div>
-        </section>
-        
         <!-- 工具缩水 -->
         <section id="tools" class="content-section">
             <div class="card">
@@ -584,7 +595,7 @@
                 <div class="tool-management">
                     <div class="management-header">
                         <h3 style="color: var(--primary);">工具管理</h3>
-                        <button class="btn btn-primary" id="addToolBtn">
+                        <button class="btn btn-primary" id="addToolBtn" style="display: none;">
                             <i class="fas fa-plus"></i> 添加工具
                         </button>
                     </div>
@@ -640,6 +651,19 @@
                 </div>
             </div>
         </section>
+    </div>
+    
+    <!-- 全屏文档浏览 -->
+    <div class="fullscreen-doc" id="fullscreenDoc">
+        <div class="doc-header">
+            <h3 class="doc-title">趋势图表文档</h3>
+            <button class="btn btn-outline" id="closeDocBtn">
+                <i class="fas fa-times"></i> 关闭文档
+            </button>
+        </div>
+        <div class="doc-container">
+            <iframe src="https://www.kdocs.cn/l/chld5b1eqA9d" class="doc-frame" frameborder="0"></iframe>
+        </div>
     </div>
     
     <!-- 登录模态框 -->
@@ -814,9 +838,13 @@
         // 存储桶ID
         const BUCKET_ID = '692a893600202c4f7dad';
         
+        // 管理员邮箱
+        const ADMIN_EMAIL = 'shifangliaoma@163.com';
+        
         // 全局变量
         let currentUser = null;
         let currentEditingToolId = null;
+        let isAdmin = false;
         
         // DOM元素
         const loginBtn = document.getElementById('loginBtn');
@@ -828,6 +856,9 @@
         const forgotPasswordModal = document.getElementById('forgotPasswordModal');
         const addToolModal = document.getElementById('addToolModal');
         const editToolModal = document.getElementById('editToolModal');
+        const fullscreenDoc = document.getElementById('fullscreenDoc');
+        const trendsLink = document.getElementById('trendsLink');
+        const closeDocBtn = document.getElementById('closeDocBtn');
         
         // 初始化粒子背景
         particlesJS('particles-js', {
@@ -867,6 +898,18 @@
                 });
                 document.getElementById(sectionId).classList.add('active');
             });
+        });
+        
+        // 趋势图表链接点击事件
+        trendsLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            // 显示全屏文档
+            fullscreenDoc.style.display = 'flex';
+        });
+        
+        // 关闭文档按钮
+        closeDocBtn.addEventListener('click', function() {
+            fullscreenDoc.style.display = 'none';
         });
         
         // 显示/隐藏模态框
@@ -1076,6 +1119,12 @@
                 registerBtn.style.display = 'none';
                 userMenu.style.display = 'flex';
                 
+                // 显示用户邮箱
+                document.getElementById('userEmail').textContent = currentUser.email;
+                
+                // 检查是否为管理员
+                isAdmin = currentUser.email === ADMIN_EMAIL;
+                
                 // 加载工具列表
                 loadTools();
             } catch (error) {
@@ -1102,6 +1151,11 @@
                 const toolsContent = document.getElementById('toolsContent');
                 toolsContent.innerHTML = '<p>正在加载工具列表...</p>';
                 
+                // 显示管理员添加工具按钮
+                if (isAdmin) {
+                    document.getElementById('addToolBtn').style.display = 'flex';
+                }
+                
                 // 从Appwrite存储桶获取工具列表
                 const files = await storage.listFiles(BUCKET_ID);
                 
@@ -1110,7 +1164,7 @@
                         <div style="text-align: center; padding: 30px;">
                             <i class="fas fa-tools" style="font-size: 3rem; color: var(--accent); margin-bottom: 15px;"></i>
                             <h3 style="color: var(--primary); margin-bottom: 10px;">暂无工具</h3>
-                            <p>点击"添加工具"按钮上传您的第一个工具</p>
+                            <p>${isAdmin ? '点击"添加工具"按钮上传您的第一个工具' : '请联系管理员添加工具'}</p>
                         </div>
                     `;
                     return;
@@ -1128,6 +1182,7 @@
                     
                     toolsHTML += `
                         <div class="tool-card" data-file-id="${file.$id}">
+                            ${isAdmin ? `
                             <div class="tool-actions">
                                 <button class="tool-action-btn edit-tool" title="编辑工具">
                                     <i class="fas fa-edit"></i>
@@ -1136,6 +1191,7 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
+                            ` : ''}
                             <div class="tool-icon">
                                 <i class="${toolIcon}"></i>
                             </div>
@@ -1217,7 +1273,9 @@
                 const fileUrl = storage.getFilePreview(BUCKET_ID, fileId);
                 
                 // 显示工具详情页面
-                document.getElementById('tools').classList.remove('active');
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
                 document.getElementById('tool-detail').classList.add('active');
                 
                 // 更新工具详情标题
@@ -1236,7 +1294,9 @@
         
         // 返回工具列表
         document.getElementById('backToTools').addEventListener('click', function() {
-            document.getElementById('tool-detail').classList.remove('active');
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
             document.getElementById('tools').classList.add('active');
             
             // 清空iframe
@@ -1245,6 +1305,11 @@
         
         // 添加工具按钮
         document.getElementById('addToolBtn').addEventListener('click', function() {
+            if (!isAdmin) {
+                alert('只有管理员可以添加工具');
+                return;
+            }
+            
             addToolModal.style.display = 'flex';
             clearErrors();
             
@@ -1257,6 +1322,11 @@
         
         // 保存工具
         document.getElementById('saveToolBtn').addEventListener('click', async function() {
+            if (!isAdmin) {
+                alert('只有管理员可以添加工具');
+                return;
+            }
+            
             const toolName = document.getElementById('toolName').value.trim();
             const toolDescription = document.getElementById('toolDescription').value.trim();
             const toolUrl = document.getElementById('toolUrl').value.trim();
@@ -1308,6 +1378,11 @@
         
         // 打开编辑工具模态框
         async function openEditToolModal(fileId) {
+            if (!isAdmin) {
+                alert('只有管理员可以编辑工具');
+                return;
+            }
+            
             try {
                 // 获取文件详情
                 const file = await storage.getFile(BUCKET_ID, fileId);
@@ -1333,6 +1408,11 @@
         
         // 更新工具
         document.getElementById('updateToolBtn').addEventListener('click', async function() {
+            if (!isAdmin) {
+                alert('只有管理员可以更新工具');
+                return;
+            }
+            
             const toolName = document.getElementById('editToolName').value.trim();
             const toolDescription = document.getElementById('editToolDescription').value.trim();
             const toolUrl = document.getElementById('editToolUrl').value.trim();
@@ -1389,6 +1469,11 @@
         
         // 删除工具
         async function deleteTool(fileId) {
+            if (!isAdmin) {
+                alert('只有管理员可以删除工具');
+                return;
+            }
+            
             if (!confirm('确定要删除这个工具吗？此操作不可撤销。')) {
                 return;
             }
@@ -1448,6 +1533,9 @@
             }
             if (event.target === editToolModal) {
                 editToolModal.style.display = 'none';
+            }
+            if (event.target === fullscreenDoc) {
+                fullscreenDoc.style.display = 'none';
             }
         };
         

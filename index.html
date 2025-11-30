@@ -986,8 +986,8 @@
         const PERMISSIONS_COLLECTION_ID = 'permissions';
         const TOOLS_COLLECTION_ID = 'tools';
         
-        // 管理员邮箱
-        const ADMIN_EMAIL = '921913231@qq.com';
+        // 管理员用户ID - 使用用户ID而不是邮箱
+        const ADMIN_USER_ID = '692c20913931d1f8a953';
         
         // 全局变量
         let currentUser = null;
@@ -1209,7 +1209,50 @@
             }
         };
         
-        // 登录功能
+        // 专门的管理员登录诊断函数 - 使用用户ID版本
+        async function diagnoseAdminLogin(email, password) {
+            console.group('管理员登录诊断（用户ID版本）');
+            
+            try {
+                console.log('1. 检查管理员邮箱格式:', email);
+                console.log('2. 尝试创建会话...');
+                
+                // 尝试登录
+                await account.createEmailSession(email, password);
+                console.log('✓ 会话创建成功');
+                
+                // 获取用户信息
+                const user = await account.get();
+                console.log('✓ 用户信息获取成功:', {
+                    email: user.email,
+                    userId: user.$id,
+                    createdAt: user.$createdAt
+                });
+                
+                // 检查是否为管理员（使用用户ID）
+                const isAdminDetected = user.$id === ADMIN_USER_ID;
+                console.log('3. 管理员状态检查:', {
+                    配置的管理员用户ID: ADMIN_USER_ID,
+                    实际登录用户ID: user.$id,
+                    是否匹配: isAdminDetected
+                });
+                
+                console.groupEnd();
+                return { success: true, user };
+                
+            } catch (error) {
+                console.error('✗ 登录失败:', error);
+                console.log('错误详情:', {
+                    message: error.message,
+                    type: error.type,
+                    code: error.code
+                });
+                console.groupEnd();
+                return { success: false, error };
+            }
+        }
+        
+        // 增强版登录功能
         document.getElementById('doLoginBtn').onclick = async () => {
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
@@ -1226,20 +1269,54 @@
                 return;
             }
             
+            // 显示加载状态
+            const loginBtn = document.getElementById('doLoginBtn');
+            const originalText = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 登录中...';
+            loginBtn.disabled = true;
+            
             try {
-                await account.createEmailSession(email, password);
+                // 如果是可能的admin账号，进行详细诊断
+                if (email.includes('921913231') || email.includes('admin')) {
+                    console.log('检测到可能的admin账号登录，开始诊断...');
+                    const result = await diagnoseAdminLogin(email, password);
+                    
+                    if (!result.success) {
+                        throw result.error;
+                    }
+                } else {
+                    // 普通用户正常登录
+                    await account.createEmailSession(email, password);
+                }
+                
+                console.log('登录成功');
                 alert('登录成功！');
                 loginModal.style.display = 'none';
-                checkLoginStatus();
+                
+                // 重新检查登录状态
+                await checkLoginStatus();
+                
             } catch (error) {
                 console.error('登录错误:', error);
+                
+                let errorMessage = '登录失败，请稍后重试';
+                
                 if (error.message.includes('Invalid credentials')) {
-                    showError('loginPasswordError', '邮箱或密码错误');
+                    errorMessage = '邮箱或密码错误';
+                    showError('loginPasswordError', errorMessage);
                 } else if (error.message.includes('User not found')) {
-                    showError('loginEmailError', '该邮箱未注册');
+                    errorMessage = '该邮箱未注册，请先注册';
+                    showError('loginEmailError', errorMessage);
+                } else if (error.message.includes('rate limit')) {
+                    errorMessage = '登录尝试过于频繁，请稍后再试';
+                    showError('loginEmailError', errorMessage);
                 } else {
-                    showError('loginEmailError', '登录失败，请稍后重试');
+                    showError('loginEmailError', errorMessage);
                 }
+            } finally {
+                // 恢复按钮状态
+                loginBtn.innerHTML = originalText;
+                loginBtn.disabled = false;
             }
         };
         
@@ -1294,10 +1371,12 @@
             }
         };
         
-        // 检查登录状态
+        // 检查登录状态 - 使用用户ID版本
         async function checkLoginStatus() {
             try {
                 currentUser = await account.get();
+                console.log('当前用户信息:', currentUser);
+                
                 loginBtn.style.display = 'none';
                 registerBtn.style.display = 'none';
                 userInfo.style.display = 'flex';
@@ -1305,12 +1384,18 @@
                 // 显示用户邮箱
                 document.getElementById('userEmail').textContent = currentUser.email;
                 
-                // 检查是否为管理员
-                isAdmin = currentUser.email === ADMIN_EMAIL;
+                // 使用用户ID检查是否为管理员
+                isAdmin = currentUser.$id === ADMIN_USER_ID;
+                console.log('管理员状态检查:', {
+                    '当前用户ID': currentUser.$id,
+                    '管理员用户ID': ADMIN_USER_ID,
+                    '是否为管理员': isAdmin
+                });
                 
                 // 如果是管理员，显示权限管理链接
                 if (isAdmin) {
                     permissionManagementLink.style.display = 'block';
+                    console.log('显示权限管理链接');
                 } else {
                     permissionManagementLink.style.display = 'none';
                 }
@@ -1320,8 +1405,9 @@
                 
                 // 加载工具列表
                 loadTools();
+                
             } catch (error) {
-                console.log('用户未登录');
+                console.log('用户未登录或会话无效:', error);
                 loginBtn.style.display = 'block';
                 registerBtn.style.display = 'block';
                 userInfo.style.display = 'none';

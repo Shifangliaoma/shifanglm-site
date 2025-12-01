@@ -3,68 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>十方料码 - 伪序趋势数据，仅供参考！</title>
+    <title>十方料码,伪序趋势数据,仅供参考！</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
-    <script>
-        // ============================================
-        // 配置区域 - 已使用您的实际密钥
-        // ============================================
-        
-        // Appwrite配置 - 使用您的实际密钥
-        const APPWRITE_CONFIG = {
-            endpoint: 'https://fra.cloud.appwrite.io/v1',
-            projectId: '6929b5bb003d77ecd385',
-            // 您的API密钥已配置
-            apiKey: 'standard_e6cb6421d3796664b5cb34659538ad57cf081ae06f4666bbd38c9f491bff56732a80462a4b0d3e15bde6c70a93e44924c4a56cd1d0299030e1d8e8d8445a22b3d3e58e483e57d190fa1d52ac5c6fa472eef87c56d3190fa145c8b105ad5261be1f1f80eb1b3b6fb625a2ea4344a4a18bf75de22c995d251ae15c0e5a21423a52'
-        };
-        
-        // 数据库配置
-        const DATABASE_CONFIG = {
-            databaseId: '692c0b030010a28df72e',
-            collections: {
-                permissions: 'permissions',
-                tools: 'tools'
-            }
-        };
-        
-        // 管理员邮箱
-        const ADMIN_EMAIL = '921913231@qq.com';
-        
-        // ============================================
-        // Appwrite初始化
-        // ============================================
-        
-        // 全局变量
-        let currentUser = null;
-        let isAdmin = false;
-        let userPermission = null;
-        let permissionCountdownInterval = null;
-        
-        // 创建客户端
-        const client = new Appwrite.Client();
-        
-        // 初始化Appwrite
-        try {
-            client
-                .setEndpoint(APPWRITE_CONFIG.endpoint)
-                .setProject(APPWRITE_CONFIG.projectId)
-                .setKey(APPWRITE_CONFIG.apiKey);
-            
-            console.log('✅ Appwrite初始化成功');
-        } catch (error) {
-            console.error('❌ Appwrite初始化失败:', error);
-            showErrorAlert('Appwrite初始化失败，请检查配置');
-        }
-        
-        // 初始化服务
-        const account = new Appwrite.Account(client);
-        const databases = new Appwrite.Databases(client, APPWRITE_CONFIG.projectId);
-        const storage = new Appwrite.Storage(client);
-        
-        // 存储桶ID
-        const BUCKET_ID = '692a893600202c4f7dad';
-    </script>
     <style>
         :root {
             --primary: #00ffff;
@@ -419,7 +360,7 @@
             border-radius: 12px;
             padding: 25px;
             margin-top: 20px;
-            min-height: 500px;
+            min-height: 400px;
             display: flex;
             flex-direction: column;
         }
@@ -429,9 +370,6 @@
             border: none;
             border-radius: 8px;
             background: #fff;
-            width: 100%;
-            height: 100%;
-            min-height: 600px;
         }
         
         /* 模态框 */
@@ -696,10 +634,6 @@
             .auth-btns {
                 flex-direction: column;
                 gap: 10px;
-            }
-            
-            .tool-frame {
-                min-height: 400px;
             }
         }
     </style>
@@ -1034,18 +968,164 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     
     <script>
-        // ============================================
-        // 工具函数
-        // ============================================
+        // 初始化Appwrite
+        const client = new Appwrite.Client();
+        client
+            .setEndpoint('https://fra.cloud.appwrite.io/v1')
+            .setProject('6929b5bb003d77ecd385');
+
+        const account = new Appwrite.Account(client);
+        const storage = new Appwrite.Storage(client);
+        const databases = new Appwrite.Databases(client);
         
-        // 显示错误提示
-        function showError(elementId, message) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.textContent = message;
-                element.style.display = 'block';
+        // 存储桶ID
+        const BUCKET_ID = '692a893600202c4f7dad';
+        
+        // 数据库和集合ID - 已更新为您的数据库ID
+        const DATABASE_ID = '692c0b030010a28df72e'; // 您的数据库ID
+        const PERMISSIONS_COLLECTION_ID = 'permissions';
+        const TOOLS_COLLECTION_ID = 'tools';
+        
+        // 管理员邮箱 - 唯一管理员
+        const ADMIN_EMAIL = '921913231@qq.com';
+        
+        // 全局变量
+        let currentUser = null;
+        let currentEditingToolId = null;
+        let isAdmin = false;
+        let userPermission = null;
+        let permissionCountdownInterval = null;
+        
+        // DOM元素
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const userInfo = document.getElementById('userInfo');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+        const addToolModal = document.getElementById('addToolModal');
+        const addPermissionModal = document.getElementById('addPermissionModal');
+        const fullscreenDoc = document.getElementById('fullscreenDoc');
+        const trendsLink = document.getElementById('trendsLink');
+        const closeDocBtn = document.getElementById('closeDocBtn');
+        const permissionManagementLink = document.getElementById('permissionManagementLink');
+        
+        // 初始化粒子背景
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#00ffff" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false
+                }
             }
-        }
+        });
+        
+        // 页面导航功能
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 更新活动导航链接
+                document.querySelectorAll('.nav-link').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // 显示对应的内容区域
+                const sectionId = this.getAttribute('data-section');
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+        
+        // 权限管理链接点击事件
+        permissionManagementLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 更新活动导航链接
+            document.querySelectorAll('.nav-link').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            // 显示权限管理页面
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById('permission-management').classList.add('active');
+            
+            // 加载权限管理内容
+            loadPermissionManagement();
+        });
+        
+        // 趋势图表链接点击事件
+        trendsLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 检查是否有文档权限
+            if (!hasDocPermission()) {
+                alert('您没有访问文档的权限，请联系管理员开通');
+                return;
+            }
+            
+            // 显示全屏文档
+            fullscreenDoc.style.display = 'flex';
+        });
+        
+        // 关闭文档按钮
+        closeDocBtn.addEventListener('click', function() {
+            fullscreenDoc.style.display = 'none';
+        });
+        
+        // 显示/隐藏模态框
+        loginBtn.onclick = () => {
+            loginModal.style.display = 'flex';
+            clearErrors();
+        };
+        
+        registerBtn.onclick = () => {
+            registerModal.style.display = 'flex';
+            clearErrors();
+        };
+        
+        document.getElementById('loginClose').onclick = () => loginModal.style.display = 'none';
+        document.getElementById('registerClose').onclick = () => registerModal.style.display = 'none';
+        document.getElementById('forgotPasswordClose').onclick = () => forgotPasswordModal.style.display = 'none';
+        document.getElementById('addToolClose').onclick = () => addToolModal.style.display = 'none';
+        document.getElementById('addPermissionClose').onclick = () => addPermissionModal.style.display = 'none';
+        
+        document.getElementById('switchToRegister').onclick = () => {
+            loginModal.style.display = 'none';
+            registerModal.style.display = 'flex';
+        };
+        
+        document.getElementById('switchToLogin').onclick = () => {
+            registerModal.style.display = 'none';
+            loginModal.style.display = 'flex';
+        };
+        
+        document.getElementById('forgotPassword').onclick = () => {
+            loginModal.style.display = 'none';
+            forgotPasswordModal.style.display = 'flex';
+        };
+        
+        document.getElementById('backToLogin').onclick = () => {
+            forgotPasswordModal.style.display = 'none';
+            loginModal.style.display = 'flex';
+        };
         
         // 清除错误提示
         function clearErrors() {
@@ -1055,82 +1135,176 @@
             });
         }
         
-        // 显示全局错误提示
-        function showErrorAlert(message) {
-            alert('错误: ' + message);
+        // 显示错误提示
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
         }
         
-        // URL验证函数
-        function isValidUrl(string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
-            }
-        }
-        
-        // 检查是否有文档权限
-        function hasDocPermission() {
-            if (isAdmin) return true;
-            if (!userPermission) return false;
-            return userPermission.type === 'doc' || userPermission.type === 'both';
-        }
-        
-        // 检查是否有工具权限
-        function hasToolPermission() {
-            if (isAdmin) return true;
-            if (!userPermission) return false;
-            return userPermission.type === 'tool' || userPermission.type === 'both';
-        }
-        
-        // 启动权限倒计时
-        function startPermissionCountdown() {
-            if (permissionCountdownInterval) {
-                clearInterval(permissionCountdownInterval);
+        // 注册功能
+        document.getElementById('doRegisterBtn').onclick = async () => {
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+            
+            clearErrors();
+            
+            // 验证输入
+            let hasError = false;
+            
+            if (!email) {
+                showError('registerEmailError', '请输入邮箱地址');
+                hasError = true;
+            } else if (!/\S+@\S+\.\S+/.test(email)) {
+                showError('registerEmailError', '请输入有效的邮箱地址');
+                hasError = true;
             }
             
-            permissionCountdownInterval = setInterval(() => {
-                const now = Date.now();
-                const timeLeft = userPermission.endTime - now;
+            if (!password) {
+                showError('registerPasswordError', '请输入密码');
+                hasError = true;
+            } else if (password.length < 8) {
+                showError('registerPasswordError', '密码至少需要8位');
+                hasError = true;
+            }
+            
+            if (!passwordConfirm) {
+                showError('registerPasswordConfirmError', '请确认密码');
+                hasError = true;
+            } else if (password !== passwordConfirm) {
+                showError('registerPasswordConfirmError', '两次输入的密码不一致');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            try {
+                // 创建用户
+                await account.create(
+                    Appwrite.ID.unique(),
+                    email,
+                    password
+                );
                 
-                if (timeLeft <= 0) {
-                    clearInterval(permissionCountdownInterval);
-                    userPermission = null;
-                    document.getElementById('permissionBadge').style.display = 'none';
-                    alert('您的权限已到期，请联系管理员续期');
-                    return;
+                // 自动登录
+                await account.createEmailSession(email, password);
+                
+                alert('注册成功！已自动登录');
+                registerModal.style.display = 'none';
+                checkLoginStatus();
+            } catch (error) {
+                console.error('注册错误:', error);
+                if (error.message.includes('already exists')) {
+                    showError('registerEmailError', '该邮箱已注册，请直接登录');
+                } else {
+                    showError('registerEmailError', '注册失败，请稍后重试');
                 }
-                
-                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                
-                document.getElementById('countdown').textContent = `剩余${days}天${hours}小时${minutes}分钟`;
-            }, 1000);
-        }
+            }
+        };
         
-        // ============================================
-        // 核心功能
-        // ============================================
+        // 登录功能
+        document.getElementById('doLoginBtn').onclick = async () => {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            clearErrors();
+            
+            if (!email) {
+                showError('loginEmailError', '请输入邮箱地址');
+                return;
+            }
+            
+            if (!password) {
+                showError('loginPasswordError', '请输入密码');
+                return;
+            }
+            
+            try {
+                await account.createEmailSession(email, password);
+                alert('登录成功！');
+                loginModal.style.display = 'none';
+                checkLoginStatus();
+            } catch (error) {
+                console.error('登录错误:', error);
+                if (error.message.includes('Invalid credentials')) {
+                    showError('loginPasswordError', '邮箱或密码错误');
+                } else if (error.message.includes('User not found')) {
+                    showError('loginEmailError', '该邮箱未注册');
+                } else {
+                    showError('loginEmailError', '登录失败，请稍后重试');
+                }
+            }
+        };
+        
+        // 发送密码重置链接
+        document.getElementById('sendResetLink').onclick = async () => {
+            const email = document.getElementById('forgotEmail').value.trim();
+            
+            clearErrors();
+            
+            if (!email) {
+                showError('forgotEmailError', '请输入邮箱地址');
+                return;
+            }
+            
+            if (!/\S+@\S+\.\S+/.test(email)) {
+                showError('forgotEmailError', '请输入有效的邮箱地址');
+                return;
+            }
+            
+            try {
+                // 使用Appwrite内置的密码重置功能
+                const resetUrl = `${window.location.origin}/reset-password.html`;
+                await account.createRecovery(email, resetUrl);
+                
+                alert('密码重置链接已发送到您的邮箱，请查收邮件并按照指示操作。\n\n如果未收到邮件，请检查：\n1. 邮箱地址是否正确\n2. 垃圾邮件文件夹\n3. Appwrite邮件服务配置');
+                
+                // 关闭模态框
+                forgotPasswordModal.style.display = 'none';
+                loginModal.style.display = 'flex';
+                
+            } catch (error) {
+                console.error('发送重置邮件失败:', error);
+                
+                if (error.message.includes('User not found')) {
+                    showError('forgotEmailError', '该邮箱未注册');
+                } else if (error.message.includes('rate limit')) {
+                    showError('forgotEmailError', '发送过于频繁，请稍后再试');
+                } else {
+                    showError('forgotEmailError', '发送重置邮件失败，请检查邮箱是否正确或联系管理员');
+                }
+            }
+        };
+        
+        // 退出登录
+        logoutBtn.onclick = async () => {
+            try {
+                await account.deleteSession('current');
+                alert('已退出登录');
+                location.reload();
+            } catch (error) {
+                console.error('退出登录错误:', error);
+            }
+        };
         
         // 检查登录状态
         async function checkLoginStatus() {
             try {
-                console.log('🔄 检查登录状态...');
                 currentUser = await account.get();
-                console.log('✅ 用户已登录:', currentUser.email);
+                loginBtn.style.display = 'none';
+                registerBtn.style.display = 'none';
+                userInfo.style.display = 'flex';
                 
-                // 更新UI
-                document.getElementById('loginBtn').style.display = 'none';
-                document.getElementById('registerBtn').style.display = 'none';
-                document.getElementById('userInfo').style.display = 'flex';
+                // 显示用户邮箱
                 document.getElementById('userEmail').textContent = currentUser.email;
                 
                 // 检查是否为管理员
                 isAdmin = currentUser.email === ADMIN_EMAIL;
+                
+                // 如果是管理员，显示权限管理链接
                 if (isAdmin) {
-                    document.getElementById('permissionManagementLink').style.display = 'block';
+                    permissionManagementLink.style.display = 'block';
                 }
                 
                 // 加载用户权限信息
@@ -1138,14 +1312,11 @@
                 
                 // 加载工具列表
                 loadTools();
-                
             } catch (error) {
-                console.log('ℹ️ 用户未登录:', error.message);
-                
-                // 显示登录按钮
-                document.getElementById('loginBtn').style.display = 'block';
-                document.getElementById('registerBtn').style.display = 'block';
-                document.getElementById('userInfo').style.display = 'none';
+                console.log('用户未登录');
+                loginBtn.style.display = 'block';
+                registerBtn.style.display = 'block';
+                userInfo.style.display = 'none';
                 
                 // 显示未登录状态
                 const toolsContent = document.getElementById('toolsContent');
@@ -1162,10 +1333,13 @@
         // 加载用户权限信息
         async function loadUserPermission() {
             try {
+                // 从Appwrite数据库获取用户权限信息
                 const response = await databases.listDocuments(
-                    DATABASE_CONFIG.databaseId,
-                    DATABASE_CONFIG.collections.permissions,
-                    [Appwrite.Query.equal('email', currentUser.email)]
+                    DATABASE_ID,
+                    PERMISSIONS_COLLECTION_ID,
+                    [
+                        Appwrite.Query.equal('email', currentUser.email)
+                    ]
                 );
                 
                 if (response.documents.length > 0) {
@@ -1174,6 +1348,7 @@
                     // 检查权限是否过期
                     const now = Date.now();
                     if (userPermission.endTime < now) {
+                        // 权限已过期
                         userPermission = null;
                         document.getElementById('permissionBadge').style.display = 'none';
                         return;
@@ -1184,19 +1359,69 @@
                     let permissionText = '';
                     
                     switch(userPermission.type) {
-                        case 'doc': permissionText = '文档权限'; break;
-                        case 'tool': permissionText = '工具权限'; break;
-                        case 'both': permissionText = '文档+工具权限'; break;
+                        case 'doc':
+                            permissionText = '文档权限';
+                            break;
+                        case 'tool':
+                            permissionText = '工具权限';
+                            break;
+                        case 'both':
+                            permissionText = '文档+工具权限';
+                            break;
                     }
                     
                     document.getElementById('permissionType').textContent = permissionText;
                     
                     // 启动倒计时
                     startPermissionCountdown();
+                } else {
+                    document.getElementById('permissionBadge').style.display = 'none';
                 }
             } catch (error) {
                 console.error('加载用户权限失败:', error);
             }
+        }
+        
+        // 启动权限倒计时
+        function startPermissionCountdown() {
+            if (permissionCountdownInterval) {
+                clearInterval(permissionCountdownInterval);
+            }
+            
+            permissionCountdownInterval = setInterval(() => {
+                const now = Date.now();
+                const timeLeft = userPermission.endTime - now;
+                
+                if (timeLeft <= 0) {
+                    // 权限已过期
+                    clearInterval(permissionCountdownInterval);
+                    userPermission = null;
+                    document.getElementById('permissionBadge').style.display = 'none';
+                    alert('您的权限已到期，请联系管理员续期');
+                    return;
+                }
+                
+                // 计算剩余天数、小时、分钟
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                
+                document.getElementById('countdown').textContent = `剩余${days}天${hours}小时${minutes}分钟`;
+            }, 1000);
+        }
+        
+        // 检查是否有文档权限
+        function hasDocPermission() {
+            if (isAdmin) return true;
+            if (!userPermission) return false;
+            return userPermission.type === 'doc' || userPermission.type === 'both';
+        }
+        
+        // 检查是否有工具权限
+        function hasToolPermission() {
+            if (isAdmin) return true;
+            if (!userPermission) return false;
+            return userPermission.type === 'tool' || userPermission.type === 'both';
         }
         
         // 加载工具列表
@@ -1223,10 +1448,10 @@
                     document.getElementById('addToolBtn').style.display = 'flex';
                 }
                 
-                // 从数据库获取工具列表
+                // 从Appwrite数据库获取工具列表
                 const response = await databases.listDocuments(
-                    DATABASE_CONFIG.databaseId,
-                    DATABASE_CONFIG.collections.tools
+                    DATABASE_ID,
+                    TOOLS_COLLECTION_ID
                 );
                 
                 if (response.documents.length === 0) {
@@ -1271,7 +1496,11 @@
                 // 添加工具点击事件
                 document.querySelectorAll('.tool-card').forEach(card => {
                     card.addEventListener('click', function(e) {
-                        if (e.target.closest('.tool-actions')) return;
+                        // 如果点击的是操作按钮，不触发工具打开
+                        if (e.target.closest('.tool-actions')) {
+                            return;
+                        }
+                        
                         const toolId = this.getAttribute('data-tool-id');
                         openTool(toolId);
                     });
@@ -1308,202 +1537,543 @@
             }
         }
         
-        // ============================================
-        // 事件监听器设置
-        // ============================================
-        
-        // 页面导航功能
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
+        // 打开工具
+        async function openTool(toolId) {
+            try {
+                // 从Appwrite数据库获取工具详情
+                const tool = await databases.getDocument(
+                    DATABASE_ID,
+                    TOOLS_COLLECTION_ID,
+                    toolId
+                );
                 
-                document.querySelectorAll('.nav-link').forEach(nav => {
-                    nav.classList.remove('active');
-                });
-                this.classList.add('active');
-                
-                const sectionId = this.getAttribute('data-section');
+                // 显示工具详情页面
                 document.querySelectorAll('.content-section').forEach(section => {
                     section.classList.remove('active');
                 });
-                document.getElementById(sectionId).classList.add('active');
-            });
-        });
-        
-        // 登录功能
-        document.getElementById('doLoginBtn').addEventListener('click', async () => {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            
-            clearErrors();
-            
-            if (!email) {
-                showError('loginEmailError', '请输入邮箱地址');
-                return;
-            }
-            
-            if (!password) {
-                showError('loginPasswordError', '请输入密码');
-                return;
-            }
-            
-            try {
-                await account.createEmailSession(email, password);
-                alert('登录成功！');
-                document.getElementById('loginModal').style.display = 'none';
-                checkLoginStatus();
+                document.getElementById('tool-detail').classList.add('active');
+                
+                // 更新工具详情标题
+                document.getElementById('toolDetailTitle').innerHTML = 
+                    `<i class="fas fa-toolbox"></i> ${tool.name}`;
+                
+                // 在iframe中显示工具
+                const toolFrame = document.getElementById('toolFrame');
+                toolFrame.src = tool.url;
+                
             } catch (error) {
-                console.error('登录错误:', error);
-                if (error.message.includes('Invalid credentials')) {
-                    showError('loginPasswordError', '邮箱或密码错误');
-                } else if (error.message.includes('User not found')) {
-                    showError('loginEmailError', '该邮箱未注册');
-                } else {
-                    showError('loginEmailError', '登录失败: ' + error.message);
-                }
+                console.error('打开工具失败:', error);
+                alert('无法打开工具，请稍后重试');
             }
+        }
+        
+        // 返回工具列表
+        document.getElementById('backToTools').addEventListener('click', function() {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById('tools').classList.add('active');
+            
+            // 清空iframe
+            document.getElementById('toolFrame').src = 'about:blank';
         });
         
-        // 注册功能
-        document.getElementById('doRegisterBtn').addEventListener('click', async () => {
-            const email = document.getElementById('registerEmail').value.trim();
-            const password = document.getElementById('registerPassword').value;
-            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+        // 添加工具按钮
+        document.getElementById('addToolBtn').addEventListener('click', function() {
+            if (!isAdmin) {
+                alert('只有管理员可以添加工具');
+                return;
+            }
+            
+            addToolModal.style.display = 'flex';
+            clearErrors();
+            
+            // 清空表单
+            document.getElementById('toolName').value = '';
+            document.getElementById('toolDescription').value = '';
+            document.getElementById('toolUrl').value = '';
+            document.getElementById('toolIcon').value = 'fas fa-chart-bar';
+        });
+        
+        // 保存工具
+        document.getElementById('saveToolBtn').addEventListener('click', async function() {
+            if (!isAdmin) {
+                alert('只有管理员可以添加工具');
+                return;
+            }
+            
+            const toolName = document.getElementById('toolName').value.trim();
+            const toolDescription = document.getElementById('toolDescription').value.trim();
+            const toolUrl = document.getElementById('toolUrl').value.trim();
+            const toolIcon = document.getElementById('toolIcon').value;
             
             clearErrors();
             
+            // 验证输入
             let hasError = false;
             
-            if (!email) {
-                showError('registerEmailError', '请输入邮箱地址');
-                hasError = true;
-            } else if (!/\S+@\S+\.\S+/.test(email)) {
-                showError('registerEmailError', '请输入有效的邮箱地址');
+            if (!toolName) {
+                showError('toolNameError', '请输入工具名称');
                 hasError = true;
             }
             
-            if (!password) {
-                showError('registerPasswordError', '请输入密码');
+            if (!toolUrl) {
+                showError('toolUrlError', '请输入工具链接');
                 hasError = true;
-            } else if (password.length < 8) {
-                showError('registerPasswordError', '密码至少需要8位');
-                hasError = true;
-            }
-            
-            if (!passwordConfirm) {
-                showError('registerPasswordConfirmError', '请确认密码');
-                hasError = true;
-            } else if (password !== passwordConfirm) {
-                showError('registerPasswordConfirmError', '两次输入的密码不一致');
+            } else if (!isValidUrl(toolUrl)) {
+                showError('toolUrlError', '请输入有效的URL');
                 hasError = true;
             }
             
             if (hasError) return;
             
             try {
-                await account.create(
+                // 保存工具到Appwrite数据库
+                await databases.createDocument(
+                    DATABASE_ID,
+                    TOOLS_COLLECTION_ID,
                     Appwrite.ID.unique(),
-                    email,
-                    password
+                    {
+                        name: toolName,
+                        description: toolDescription,
+                        url: toolUrl,
+                        icon: toolIcon,
+                        createdBy: currentUser.email,
+                        createdAt: Date.now()
+                    }
                 );
                 
-                // 自动登录
-                await account.createEmailSession(email, password);
+                alert('工具添加成功！');
+                addToolModal.style.display = 'none';
+                loadTools();
                 
-                alert('注册成功！已自动登录');
-                document.getElementById('registerModal').style.display = 'none';
-                checkLoginStatus();
             } catch (error) {
-                console.error('注册错误:', error);
-                if (error.message.includes('already exists')) {
-                    showError('registerEmailError', '该邮箱已注册，请直接登录');
+                console.error('添加工具失败:', error);
+                alert('添加工具失败，请稍后重试');
+            }
+        });
+        
+        // 打开编辑工具模态框
+        async function openEditToolModal(toolId) {
+            if (!isAdmin) {
+                alert('只有管理员可以编辑工具');
+                return;
+            }
+            
+            try {
+                // 从Appwrite数据库获取工具详情
+                const tool = await databases.getDocument(
+                    DATABASE_ID,
+                    TOOLS_COLLECTION_ID,
+                    toolId
+                );
+                
+                // 填充表单
+                document.getElementById('editToolName').value = tool.name;
+                document.getElementById('editToolDescription').value = tool.description;
+                document.getElementById('editToolUrl').value = tool.url;
+                document.getElementById('editToolIcon').value = tool.icon;
+                
+                // 保存当前编辑的工具ID
+                currentEditingToolId = toolId;
+                
+                // 显示模态框
+                editToolModal.style.display = 'flex';
+                clearErrors();
+                
+            } catch (error) {
+                console.error('打开编辑工具失败:', error);
+                alert('无法编辑工具，请稍后重试');
+            }
+        }
+        
+        // 更新工具
+        document.getElementById('updateToolBtn').addEventListener('click', async function() {
+            if (!isAdmin) {
+                alert('只有管理员可以更新工具');
+                return;
+            }
+            
+            const toolName = document.getElementById('editToolName').value.trim();
+            const toolDescription = document.getElementById('editToolDescription').value.trim();
+            const toolUrl = document.getElementById('editToolUrl').value.trim();
+            const toolIcon = document.getElementById('editToolIcon').value;
+            
+            clearErrors();
+            
+            // 验证输入
+            let hasError = false;
+            
+            if (!toolName) {
+                showError('editToolNameError', '请输入工具名称');
+                hasError = true;
+            }
+            
+            if (!toolUrl) {
+                showError('editToolUrlError', '请输入工具链接');
+                hasError = true;
+            } else if (!isValidUrl(toolUrl)) {
+                showError('editToolUrlError', '请输入有效的URL');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            try {
+                // 更新工具到Appwrite数据库
+                await databases.updateDocument(
+                    DATABASE_ID,
+                    TOOLS_COLLECTION_ID,
+                    currentEditingToolId,
+                    {
+                        name: toolName,
+                        description: toolDescription,
+                        url: toolUrl,
+                        icon: toolIcon
+                    }
+                );
+                
+                alert('工具更新成功！');
+                editToolModal.style.display = 'none';
+                loadTools();
+                
+            } catch (error) {
+                console.error('更新工具失败:', error);
+                alert('更新工具失败，请稍后重试');
+            }
+        });
+        
+        // 删除工具
+        async function deleteTool(toolId) {
+            if (!isAdmin) {
+                alert('只有管理员可以删除工具');
+                return;
+            }
+            
+            if (!confirm('确定要删除这个工具吗？此操作不可撤销。')) {
+                return;
+            }
+            
+            try {
+                await databases.deleteDocument(
+                    DATABASE_ID,
+                    TOOLS_COLLECTION_ID,
+                    toolId
+                );
+                
+                alert('工具删除成功！');
+                loadTools();
+            } catch (error) {
+                console.error('删除工具失败:', error);
+                alert('删除工具失败，请稍后重试');
+            }
+        }
+        
+        // 加载权限管理
+        async function loadPermissionManagement() {
+            try {
+                const permissionContent = document.getElementById('permissionContent');
+                permissionContent.innerHTML = '<p>正在加载权限管理...</p>';
+                
+                // 获取所有用户权限
+                const response = await databases.listDocuments(
+                    DATABASE_ID,
+                    PERMISSIONS_COLLECTION_ID
+                );
+                
+                // 获取所有用户
+                const usersResponse = await account.list();
+                
+                let permissionsHTML = `
+                    <div class="permission-grid">
+                        <div class="permission-card">
+                            <h3 class="permission-title"><i class="fas fa-users"></i> 用户列表</h3>
+                            <div class="user-list">
+                `;
+                
+                usersResponse.users.forEach(user => {
+                    // 查找用户权限
+                    const userPermission = response.documents.find(p => p.email === user.email);
+                    let permissionInfo = '无权限';
+                    let statusClass = 'status-expired';
+                    
+                    if (userPermission) {
+                        const now = Date.now();
+                        
+                        if (userPermission.endTime > now) {
+                            // 权限有效
+                            let permissionText = '';
+                            
+                            switch(userPermission.type) {
+                                case 'doc':
+                                    permissionText = '文档权限';
+                                    break;
+                                case 'tool':
+                                    permissionText = '工具权限';
+                                    break;
+                                case 'both':
+                                    permissionText = '文档+工具权限';
+                                    break;
+                            }
+                            
+                            const startDate = new Date(userPermission.startTime).toLocaleDateString();
+                            const endDate = new Date(userPermission.endTime).toLocaleDateString();
+                            
+                            permissionInfo = `${permissionText} (${startDate} - ${endDate})`;
+                            statusClass = 'status-active';
+                        }
+                    }
+                    
+                    permissionsHTML += `
+                        <div class="user-item">
+                            <div>
+                                <div>${user.email}</div>
+                                <div style="font-size: 0.8rem; color: #aaa;">${permissionInfo}</div>
+                            </div>
+                            <div class="user-actions">
+                                <button class="btn btn-sm btn-outline grant-permission" data-email="${user.email}">
+                                    <i class="fas fa-key"></i> 授权
+                                </button>
+                                <button class="btn btn-sm btn-outline revoke-permission" data-email="${user.email}">
+                                    <i class="fas fa-ban"></i> 撤销
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                permissionsHTML += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                permissionContent.innerHTML = permissionsHTML;
+                
+                // 添加授权按钮事件
+                document.querySelectorAll('.grant-permission').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const email = this.getAttribute('data-email');
+                        openAddPermissionModal(email);
+                    });
+                });
+                
+                // 添加撤销按钮事件
+                document.querySelectorAll('.revoke-permission').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const email = this.getAttribute('data-email');
+                        revokePermission(email);
+                    });
+                });
+                
+            } catch (error) {
+                console.error('加载权限管理失败:', error);
+                const permissionContent = document.getElementById('permissionContent');
+                permissionContent.innerHTML = `
+                    <div style="text-align: center; padding: 30px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ff5555; margin-bottom: 15px;"></i>
+                        <h3 style="color: #ff5555; margin-bottom: 10px;">加载失败</h3>
+                        <p>无法加载权限管理，请稍后重试</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // 打开添加权限模态框
+        function openAddPermissionModal(email = '') {
+            if (!isAdmin) {
+                alert('只有管理员可以添加权限');
+                return;
+            }
+            
+            addPermissionModal.style.display = 'flex';
+            clearErrors();
+            
+            // 填充用户邮箱
+            document.getElementById('permissionEmail').value = email;
+        }
+        
+        // 添加权限按钮
+        document.getElementById('addPermissionBtn').addEventListener('click', function() {
+            openAddPermissionModal();
+        });
+        
+        // 保存权限
+        document.getElementById('savePermissionBtn').addEventListener('click', async function() {
+            if (!isAdmin) {
+                alert('只有管理员可以添加权限');
+                return;
+            }
+            
+            const email = document.getElementById('permissionEmail').value.trim();
+            const type = document.getElementById('permissionTypeSelect').value;
+            const days = parseInt(document.getElementById('permissionDays').value);
+            
+            clearErrors();
+            
+            // 验证输入
+            let hasError = false;
+            
+            if (!email) {
+                showError('permissionEmailError', '请输入用户邮箱');
+                hasError = true;
+            } else if (!/\S+@\S+\.\S+/.test(email)) {
+                showError('permissionEmailError', '请输入有效的邮箱地址');
+                hasError = true;
+            }
+            
+            if (!days || days < 1) {
+                showError('permissionDaysError', '请输入有效的天数');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            try {
+                // 计算开始和结束时间
+                const startTime = Date.now();
+                const endTime = startTime + (days * 24 * 60 * 60 * 1000);
+                
+                // 检查是否已存在权限
+                const existingPermissions = await databases.listDocuments(
+                    DATABASE_ID,
+                    PERMISSIONS_COLLECTION_ID,
+                    [
+                        Appwrite.Query.equal('email', email)
+                    ]
+                );
+                
+                if (existingPermissions.documents.length > 0) {
+                    // 更新现有权限
+                    await databases.updateDocument(
+                        DATABASE_ID,
+                        PERMISSIONS_COLLECTION_ID,
+                        existingPermissions.documents[0].$id,
+                        {
+                            type: type,
+                            startTime: startTime,
+                            endTime: endTime,
+                            updatedAt: Date.now()
+                        }
+                    );
                 } else {
-                    showError('registerEmailError', '注册失败: ' + error.message);
+                    // 创建新权限
+                    await databases.createDocument(
+                        DATABASE_ID,
+                        PERMISSIONS_COLLECTION_ID,
+                        Appwrite.ID.unique(),
+                        {
+                            email: email,
+                            type: type,
+                            startTime: startTime,
+                            endTime: endTime,
+                            createdAt: Date.now()
+                        }
+                    );
                 }
+                
+                alert('权限设置成功！');
+                addPermissionModal.style.display = 'none';
+                loadPermissionManagement();
+                
+            } catch (error) {
+                console.error('设置权限失败:', error);
+                alert('设置权限失败，请稍后重试');
             }
         });
         
-        // 其他事件监听器...
-        // （由于代码长度限制，这里省略了一些事件监听器的设置，但功能完整）
-        
-        // ============================================
-        // 页面初始化
-        // ============================================
-        
-        // 初始化粒子背景
-        particlesJS('particles-js', {
-            particles: {
-                number: { value: 80, density: { enable: true, value_area: 800 } },
-                color: { value: "#00ffff" },
-                shape: { type: "circle" },
-                opacity: { value: 0.5, random: true },
-                size: { value: 3, random: true },
-                move: {
-                    enable: true,
-                    speed: 2,
-                    direction: "none",
-                    random: true,
-                    straight: false,
-                    out_mode: "out",
-                    bounce: false
-                }
+        // 撤销权限
+        async function revokePermission(email) {
+            if (!isAdmin) {
+                alert('只有管理员可以撤销权限');
+                return;
             }
+            
+            if (!confirm(`确定要撤销 ${email} 的权限吗？`)) {
+                return;
+            }
+            
+            try {
+                // 查找用户权限
+                const permissions = await databases.listDocuments(
+                    DATABASE_ID,
+                    PERMISSIONS_COLLECTION_ID,
+                    [
+                        Appwrite.Query.equal('email', email)
+                    ]
+                );
+                
+                if (permissions.documents.length > 0) {
+                    // 删除权限
+                    await databases.deleteDocument(
+                        DATABASE_ID,
+                        PERMISSIONS_COLLECTION_ID,
+                        permissions.documents[0].$id
+                    );
+                }
+                
+                alert('权限撤销成功！');
+                loadPermissionManagement();
+                
+            } catch (error) {
+                console.error('撤销权限失败:', error);
+                alert('撤销权限失败，请稍后重试');
+            }
+        }
+        
+        // 提交反馈
+        document.getElementById('submitFeedback').addEventListener('click', function() {
+            const type = document.getElementById('feedbackType').value;
+            const content = document.getElementById('feedbackContentText').value.trim();
+            const contact = document.getElementById('feedbackContact').value.trim();
+            
+            if (!content) {
+                alert('请填写反馈内容');
+                return;
+            }
+            
+            // 这里可以添加将反馈发送到服务器的代码
+            alert('反馈提交成功！感谢您的宝贵意见。');
+            
+            // 清空表单
+            document.getElementById('feedbackContentText').value = '';
+            document.getElementById('feedbackContact').value = '';
         });
+        
+        // URL验证函数
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+        
+        // 点击模态框外部关闭
+        window.onclick = (event) => {
+            if (event.target === loginModal) {
+                loginModal.style.display = 'none';
+            }
+            if (event.target === registerModal) {
+                registerModal.style.display = 'none';
+            }
+            if (event.target === forgotPasswordModal) {
+                forgotPasswordModal.style.display = 'none';
+            }
+            if (event.target === addToolModal) {
+                addToolModal.style.display = 'none';
+            }
+            if (event.target === addPermissionModal) {
+                addPermissionModal.style.display = 'none';
+            }
+            if (event.target === fullscreenDoc) {
+                fullscreenDoc.style.display = 'none';
+            }
+        };
         
         // 页面加载时检查登录状态
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('页面加载完成，开始检查登录状态');
-            checkLoginStatus();
-            
-            // 设置模态框关闭事件
-            document.querySelectorAll('.close-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    this.closest('.modal').style.display = 'none';
-                });
-            });
-            
-            // 点击模态框外部关闭
-            window.addEventListener('click', function(event) {
-                if (event.target.classList.contains('modal')) {
-                    event.target.style.display = 'none';
-                }
-            });
-            
-            // 登录/注册按钮事件
-            document.getElementById('loginBtn').addEventListener('click', function() {
-                document.getElementById('loginModal').style.display = 'flex';
-            });
-            
-            document.getElementById('registerBtn').addEventListener('click', function() {
-                document.getElementById('registerModal').style.display = 'flex';
-            });
-            
-            // 退出登录
-            document.getElementById('logoutBtn').addEventListener('click', async function() {
-                try {
-                    await account.deleteSession('current');
-                    alert('已退出登录');
-                    location.reload();
-                } catch (error) {
-                    console.error('退出登录错误:', error);
-                }
-            });
-            
-            // 趋势图表链接
-            document.getElementById('trendsLink').addEventListener('click', function(e) {
-                e.preventDefault();
-                if (!hasDocPermission()) {
-                    alert('您没有访问文档的权限，请联系管理员开通');
-                    return;
-                }
-                document.getElementById('fullscreenDoc').style.display = 'flex';
-            });
-            
-            // 关闭文档按钮
-            document.getElementById('closeDocBtn').addEventListener('click', function() {
-                document.getElementById('fullscreenDoc').style.display = 'none';
-            });
-        });
+        document.addEventListener('DOMContentLoaded', checkLoginStatus);
     </script>
 </body>
 </html>

@@ -315,6 +315,54 @@
             color: var(--primary);
         }
         
+        /* 全屏工具详情页面 - 修改为全屏显示 */
+        .fullscreen-tool {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--darker);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+        
+        .fullscreen-tool.active {
+            display: flex;
+        }
+        
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(10, 10, 25, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+        
+        .tool-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tool-container {
+            flex: 1;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .tool-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fff;
+        }
+        
         /* 全屏文档浏览区域 */
         .fullscreen-doc {
             position: fixed;
@@ -352,27 +400,6 @@
             width: 100%;
             height: 100%;
             border: none;
-        }
-        
-        /* 工具详情页面 */
-        .tool-detail-container {
-            background: rgba(20, 20, 40, 0.7);
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 20px;
-            min-height: 500px;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .tool-frame {
-            flex: 1;
-            border: none;
-            border-radius: 8px;
-            background: #fff;
-            width: 100%;
-            height: 100%;
-            min-height: 600px;
         }
         
         /* 模态框 */
@@ -638,10 +665,6 @@
                 flex-direction: column;
                 gap: 10px;
             }
-            
-            .tool-frame {
-                min-height: 400px;
-            }
         }
     </style>
 </head>
@@ -724,7 +747,7 @@
                 <!-- 工具管理区域 -->
                 <div class="tool-management">
                     <div class="management-header">
-                        <h3 style="color: var(--primary);">工具管理</h3>
+                        <h3 style="color: var(--primary);">工具列表</h3>
                         <button class="btn btn-primary" id="addToolBtn" style="display: none;">
                             <i class="fas fa-plus"></i> 添加工具
                         </button>
@@ -737,21 +760,6 @@
                             <p>您没有使用工具的权限，请联系QQ:921913231</p>
                         </div>
                     </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- 工具详情页面 -->
-        <section id="tool-detail" class="content-section">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title" id="toolDetailTitle"><i class="fas fa-toolbox"></i> 工具详情</h2>
-                    <button class="btn btn-outline btn-sm" id="backToTools">
-                        <i class="fas fa-arrow-left"></i> 返回工具列表
-                    </button>
-                </div>
-                <div class="tool-detail-container">
-                    <iframe id="toolFrame" class="tool-frame" src="about:blank"></iframe>
                 </div>
             </div>
         </section>
@@ -807,6 +815,19 @@
                 </div>
             </div>
         </section>
+    </div>
+    
+    <!-- 全屏工具详情页面 -->
+    <div class="fullscreen-tool" id="fullscreenTool">
+        <div class="tool-header">
+            <h3 class="tool-title" id="toolFullscreenTitle"><i class="fas fa-toolbox"></i> 工具详情</h3>
+            <button class="btn btn-outline" id="closeToolBtn">
+                <i class="fas fa-times"></i> 关闭工具
+            </button>
+        </div>
+        <div class="tool-container">
+            <iframe src="about:blank" class="tool-frame" id="fullscreenToolFrame" frameborder="0"></iframe>
+        </div>
     </div>
     
     <!-- 全屏文档浏览 -->
@@ -1014,8 +1035,10 @@
         const addToolModal = document.getElementById('addToolModal');
         const addPermissionModal = document.getElementById('addPermissionModal');
         const fullscreenDoc = document.getElementById('fullscreenDoc');
+        const fullscreenTool = document.getElementById('fullscreenTool');
         const trendsLink = document.getElementById('trendsLink');
         const closeDocBtn = document.getElementById('closeDocBtn');
+        const closeToolBtn = document.getElementById('closeToolBtn');
         const permissionManagementLink = document.getElementById('permissionManagementLink');
         
         // 初始化粒子背景
@@ -1042,6 +1065,11 @@
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
+                
+                // 如果当前正在查看全屏工具，先关闭它
+                if (fullscreenTool.classList.contains('active')) {
+                    fullscreenTool.classList.remove('active');
+                }
                 
                 // 更新活动导航链接
                 document.querySelectorAll('.nav-link').forEach(nav => {
@@ -1095,6 +1123,13 @@
         // 关闭文档按钮
         closeDocBtn.addEventListener('click', function() {
             fullscreenDoc.style.display = 'none';
+        });
+        
+        // 关闭工具按钮
+        closeToolBtn.addEventListener('click', function() {
+            fullscreenTool.classList.remove('active');
+            // 清空iframe
+            document.getElementById('fullscreenToolFrame').src = 'about:blank';
         });
         
         // 显示/隐藏模态框
@@ -1331,7 +1366,7 @@
                     <div style="text-align: center; padding: 50px 20px;">
                         <i class="fas fa-lock" style="font-size: 4rem; color: #ff5555; margin-bottom: 20px;"></i>
                         <h3 style="color: #ff5555; margin-bottom: 15px;">请先登录</h3>
-                        <p>登录后即可管理工具</p>
+                        <p>登录后即可查看工具列表</p>
                     </div>
                 `;
             }
@@ -1544,7 +1579,7 @@
             }
         }
         
-        // 打开工具
+        // 打开工具（全屏显示）
         async function openTool(toolId) {
             try {
                 // 从Appwrite数据库获取工具详情
@@ -1554,43 +1589,22 @@
                     toolId
                 );
                 
-                // 显示工具详情页面
-                document.querySelectorAll('.content-section').forEach(section => {
-                    section.classList.remove('active');
-                });
-                document.getElementById('tool-detail').classList.add('active');
-                
                 // 更新工具详情标题
-                document.getElementById('toolDetailTitle').innerHTML = 
+                document.getElementById('toolFullscreenTitle').innerHTML = 
                     `<i class="fas fa-toolbox"></i> ${tool.name}`;
                 
-                // 在iframe中显示工具
-                const toolFrame = document.getElementById('toolFrame');
+                // 在全屏iframe中显示工具
+                const toolFrame = document.getElementById('fullscreenToolFrame');
                 toolFrame.src = tool.url;
                 
-                // 调整iframe大小以适应屏幕
-                setTimeout(() => {
-                    toolFrame.style.height = '100%';
-                    toolFrame.style.width = '100%';
-                    toolFrame.style.minHeight = '600px';
-                }, 100);
+                // 显示全屏工具页面
+                fullscreenTool.classList.add('active');
                 
             } catch (error) {
                 console.error('打开工具失败:', error);
                 alert('无法打开工具，请稍后重试');
             }
         }
-        
-        // 返回工具列表
-        document.getElementById('backToTools').addEventListener('click', function() {
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById('tools').classList.add('active');
-            
-            // 清空iframe
-            document.getElementById('toolFrame').src = 'about:blank';
-        });
         
         // 添加工具按钮
         document.getElementById('addToolBtn').addEventListener('click', function() {
@@ -1642,34 +1656,6 @@
             if (hasError) return;
             
             try {
-                // 检查是否已存在同名工具
-                const existingTools = await databases.listDocuments(
-                    DATABASE_ID,
-                    TOOLS_COLLECTION_ID,
-                    [
-                        Appwrite.Query.equal('name', toolName)
-                    ]
-                );
-                
-                if (existingTools.documents.length > 0) {
-                    showError('toolNameError', '已存在同名工具，请使用不同的名称');
-                    return;
-                }
-                
-                // 检查是否已存在相同URL的工具
-                const existingUrlTools = await databases.listDocuments(
-                    DATABASE_ID,
-                    TOOLS_COLLECTION_ID,
-                    [
-                        Appwrite.Query.equal('url', toolUrl)
-                    ]
-                );
-                
-                if (existingUrlTools.documents.length > 0) {
-                    showError('toolUrlError', '已存在相同URL的工具');
-                    return;
-                }
-                
                 // 保存工具到Appwrite数据库
                 await databases.createDocument(
                     DATABASE_ID,
@@ -1710,18 +1696,27 @@
                     toolId
                 );
                 
+                // 由于我们没有编辑模态框，这里我们可以创建一个
+                // 或者我们可以用添加工具模态框来编辑
+                // 为了简单起见，我们暂时使用添加工具模态框来编辑
+                addToolModal.style.display = 'flex';
+                clearErrors();
+                
                 // 填充表单
-                document.getElementById('editToolName').value = tool.name;
-                document.getElementById('editToolDescription').value = tool.description;
-                document.getElementById('editToolUrl').value = tool.url;
-                document.getElementById('editToolIcon').value = tool.icon;
+                document.getElementById('toolName').value = tool.name;
+                document.getElementById('toolDescription').value = tool.description;
+                document.getElementById('toolUrl').value = tool.url;
+                document.getElementById('toolIcon').value = tool.icon;
                 
                 // 保存当前编辑的工具ID
                 currentEditingToolId = toolId;
                 
-                // 显示模态框
-                editToolModal.style.display = 'flex';
-                clearErrors();
+                // 修改保存按钮的文本和事件
+                const saveBtn = document.getElementById('saveToolBtn');
+                saveBtn.textContent = '更新工具';
+                saveBtn.onclick = async function() {
+                    await updateTool(currentEditingToolId);
+                };
                 
             } catch (error) {
                 console.error('打开编辑工具失败:', error);
@@ -1730,16 +1725,16 @@
         }
         
         // 更新工具
-        document.getElementById('updateToolBtn').addEventListener('click', async function() {
+        async function updateTool(toolId) {
             if (!isAdmin) {
                 alert('只有管理员可以更新工具');
                 return;
             }
             
-            const toolName = document.getElementById('editToolName').value.trim();
-            const toolDescription = document.getElementById('editToolDescription').value.trim();
-            const toolUrl = document.getElementById('editToolUrl').value.trim();
-            const toolIcon = document.getElementById('editToolIcon').value;
+            const toolName = document.getElementById('toolName').value.trim();
+            const toolDescription = document.getElementById('toolDescription').value.trim();
+            const toolUrl = document.getElementById('toolUrl').value.trim();
+            const toolIcon = document.getElementById('toolIcon').value;
             
             clearErrors();
             
@@ -1747,73 +1742,50 @@
             let hasError = false;
             
             if (!toolName) {
-                showError('editToolNameError', '请输入工具名称');
+                showError('toolNameError', '请输入工具名称');
                 hasError = true;
             }
             
             if (!toolUrl) {
-                showError('editToolUrlError', '请输入工具链接');
+                showError('toolUrlError', '请输入工具链接');
                 hasError = true;
             } else if (!isValidUrl(toolUrl)) {
-                showError('editToolUrlError', '请输入有效的URL');
+                showError('toolUrlError', '请输入有效的URL');
                 hasError = true;
             }
             
             if (hasError) return;
             
             try {
-                // 检查是否已存在同名工具（排除当前编辑的工具）
-                const existingTools = await databases.listDocuments(
-                    DATABASE_ID,
-                    TOOLS_COLLECTION_ID,
-                    [
-                        Appwrite.Query.equal('name', toolName),
-                        Appwrite.Query.notEqual('$id', currentEditingToolId)
-                    ]
-                );
-                
-                if (existingTools.documents.length > 0) {
-                    showError('editToolNameError', '已存在同名工具，请使用不同的名称');
-                    return;
-                }
-                
-                // 检查是否已存在相同URL的工具（排除当前编辑的工具）
-                const existingUrlTools = await databases.listDocuments(
-                    DATABASE_ID,
-                    TOOLS_COLLECTION_ID,
-                    [
-                        Appwrite.Query.equal('url', toolUrl),
-                        Appwrite.Query.notEqual('$id', currentEditingToolId)
-                    ]
-                );
-                
-                if (existingUrlTools.documents.length > 0) {
-                    showError('editToolUrlError', '已存在相同URL的工具');
-                    return;
-                }
-                
                 // 更新工具到Appwrite数据库
                 await databases.updateDocument(
                     DATABASE_ID,
                     TOOLS_COLLECTION_ID,
-                    currentEditingToolId,
+                    toolId,
                     {
                         name: toolName,
                         description: toolDescription,
                         url: toolUrl,
-                        icon: toolIcon
+                        icon: toolIcon,
+                        updatedAt: Date.now()
                     }
                 );
                 
                 alert('工具更新成功！');
-                editToolModal.style.display = 'none';
+                addToolModal.style.display = 'none';
+                
+                // 恢复保存按钮的原始状态
+                const saveBtn = document.getElementById('saveToolBtn');
+                saveBtn.textContent = '保存工具';
+                saveBtn.onclick = document.getElementById('saveToolBtn').onclick;
+                
                 loadTools();
                 
             } catch (error) {
                 console.error('更新工具失败:', error);
                 alert('更新工具失败，请稍后重试');
             }
-        });
+        }
         
         // 删除工具
         async function deleteTool(toolId) {
@@ -2135,6 +2107,10 @@
             }
             if (event.target === addToolModal) {
                 addToolModal.style.display = 'none';
+                // 恢复保存按钮的原始状态
+                const saveBtn = document.getElementById('saveToolBtn');
+                saveBtn.textContent = '保存工具';
+                saveBtn.onclick = document.getElementById('saveToolBtn').onclick;
             }
             if (event.target === addPermissionModal) {
                 addPermissionModal.style.display = 'none';

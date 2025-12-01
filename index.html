@@ -124,6 +124,15 @@
             color: var(--primary);
         }
         
+        .admin-badge {
+            background: rgba(255, 0, 255, 0.2);
+            border: 1px solid var(--secondary);
+            border-radius: 15px;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            color: var(--secondary);
+        }
+        
         .countdown {
             color: var(--accent);
             font-weight: 600;
@@ -1014,13 +1023,14 @@
         const PERMISSIONS_COLLECTION_ID = 'permissions';
         const TOOLS_COLLECTION_ID = 'tools';
         
-        // 管理员邮箱 - 唯一管理员
-        const ADMIN_EMAIL = '921913231@qq.com';
+        // ************ 【重要修改：管理员邮箱列表】 ************
+        // 管理员邮箱列表 - 所有在此列表中的邮箱都具有管理员权限
+        const ADMIN_EMAILS = ['921913231@qq.com', '1106991066@qq.com'];
         
         // 全局变量
         let currentUser = null;
         let currentEditingToolId = null;
-        let isAdmin = false;
+        let isAdmin = false; // 当前登录用户是否为管理员
         let userPermission = null;
         let permissionCountdownInterval = null;
         
@@ -1341,16 +1351,22 @@
                 // 显示用户邮箱
                 document.getElementById('userEmail').textContent = currentUser.email;
                 
-                // 检查是否为管理员
-                isAdmin = currentUser.email === ADMIN_EMAIL;
+                // ************ 【重要修改：判断是否为管理员（检查邮箱是否在列表内）】 ************
+                isAdmin = ADMIN_EMAILS.includes(currentUser.email);
                 
-                // 如果是管理员，显示权限管理链接
+                // 如果是管理员，显示权限管理链接和特殊标识
                 if (isAdmin) {
                     permissionManagementLink.style.display = 'block';
+                    // 为管理员显示特殊徽章 - 修改徽章样式
+                    const badge = document.getElementById('permissionBadge');
+                    badge.className = 'admin-badge'; // 使用管理员样式
+                    badge.style.display = 'flex';
+                    document.getElementById('permissionType').textContent = '系统管理员';
+                    document.getElementById('countdown').textContent = '';
+                } else {
+                    // 普通用户：加载其权限信息
+                    await loadUserPermission();
                 }
-                
-                // 加载用户权限信息
-                await loadUserPermission();
                 
                 // 加载工具列表
                 loadTools();
@@ -1372,8 +1388,14 @@
             }
         }
         
-        // 加载用户权限信息
+        // 加载用户权限信息 (仅对普通用户有效)
         async function loadUserPermission() {
+            // ************ 【重要修改：管理员跳过权限查询】 ************
+            if (isAdmin) {
+                // 管理员已在前面的checkLoginStatus中处理，此处直接返回
+                return;
+            }
+            
             try {
                 // 从Appwrite数据库获取用户权限信息
                 const response = await databases.listDocuments(
@@ -1452,16 +1474,16 @@
             }, 1000);
         }
         
-        // 检查是否有文档权限
+        // ************ 【重要修改：检查文档权限（管理员直接通过）】 ************
         function hasDocPermission() {
-            if (isAdmin) return true;
+            if (isAdmin) return true; // 管理员拥有所有权限
             if (!userPermission) return false;
             return userPermission.type === 'doc' || userPermission.type === 'both';
         }
         
-        // 检查是否有工具权限
+        // ************ 【重要修改：检查工具权限（管理员直接通过）】 ************
         function hasToolPermission() {
-            if (isAdmin) return true;
+            if (isAdmin) return true; // 管理员拥有所有权限
             if (!userPermission) return false;
             return userPermission.type === 'tool' || userPermission.type === 'both';
         }

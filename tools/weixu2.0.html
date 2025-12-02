@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>十方料码 - 专业彩票数据分析工具</title>
+    <title>十方料码 - 伪序复式计算正式版本</title>
     <style>
         :root {
             --primary-gold: #FFD700;
@@ -926,7 +926,7 @@
         <!-- 品牌页脚 -->
         <div class="brand-footer">
             <div>© 2023 <span class="brand-highlight">十方料码</span> - 专业彩票数据分析工具</div>
-            <div style="margin-top: 5px; font-size: 0.8rem;">微信: shifangliaoma | 数据精准 · 命中率高 · 专业可靠</div>
+            <div style="margin-top: 5px; font-size: 0.8rem;">QQ: 921913231 | 趋势数据 · 工具定制 · 为你护航！</div>
         </div>
     </div>
 
@@ -1203,15 +1203,15 @@
                 
                 const resultElement = document.getElementById('verificationResult');
                 resultElement.innerHTML = isWinner 
-                    ? '🎉 恭喜中奖！十方料码精准命中！' 
-                    : '❌ 未中奖，请咨询微信: shifangliaoma 获取更多策略';
+                    ? '🎉 恭喜中奖！精准命中！' 
+                    : '❌ 很遗憾未中奖！';
                 
                 resultElement.className = `verification-result ${isWinner ? 'win' : 'lose'} show`;
                 
                 if (isWinner) {
-                    this.speak('恭喜中奖！十方料码精准命中！');
+                    this.speak('恭喜中奖！精准命中！');
                 } else {
-                    this.speak('未中奖，请咨询微信shifangliaoma获取更多策略');
+                    this.speak('很遗憾，未中奖！');
                 }
             }
             
@@ -1438,7 +1438,7 @@
         
         // 页面加载完成后初始化
         window.addEventListener('load', () => {
-            calculator.speak('十方料码伪序动态复式软件已加载，专业彩票数据分析工具');
+            calculator.speak('十方料码伪序缩水软件已加载，为您提供分析计算');
         });
     </script>
 </body>

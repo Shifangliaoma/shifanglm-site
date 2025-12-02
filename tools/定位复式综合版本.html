@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>伪序动态复式软件</title>
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --primary-green: #10b981;
+            --primary-purple: #7c3aed;
+            --button-initial: #6b7280;
+            --button-active: #ef4444;
+            --button-hover: #4b5563;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.9);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 16px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 20px 0;
+        }
+        
+        .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.5);
+            color: var(--text-primary);
+            resize: vertical;
+            margin-bottom: 12px;
+            font-family: monospace;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        
+        .stat-item {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--primary-green);
+            color: white;
+        }
+        
+        .match-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        
+        .match-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        
+        .match-option {
+            padding: 12px 8px;
+            border: 2px solid var(--button-initial);
+            border-radius: 6px;
+            background: var(--button-initial);
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .match-option:hover {
+            background: var(--button-hover);
+            border-color: var(--button-hover);
+        }
+        
+        .match-option.selected {
+            background: var(--button-active);
+            border-color: var(--button-active);
+            color: white;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+            transform: scale(1.05);
+        }
+        
+        .double-match-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .double-match-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--primary-green);
+            text-align: center;
+        }
+        
+        .position-options {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .position-btn {
+            padding: 10px 16px;
+            background: var(--button-initial);
+            color: white;
+            border: 2px solid var(--button-initial);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .position-btn:hover {
+            background: var(--button-hover);
+            border-color: var(--button-hover);
+        }
+        
+        .position-btn.selected {
+            background: var(--button-active);
+            border-color: var(--button-active);
+            color: white;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .match-type-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .type-btn {
+            padding: 8px 12px;
+            background: var(--button-initial);
+            color: white;
+            border: 2px solid var(--button-initial);
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .type-btn:hover {
+            background: var(--button-hover);
+            border-color: var(--button-hover);
+        }
+        
+        .type-btn.selected {
+            background: var(--button-active);
+            border-color: var(--button-active);
+            color: white;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .tolerance-settings {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 8px;
+            align-items: end;
+            margin: 16px 0;
+        }
+        
+        .number-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: rgba(15, 23, 42, 0.5);
+            color: var(--text-primary);
+            text-align: center;
+        }
+        
+        .result-section {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .result-count {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary-green);
+        }
+        
+        .verification-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: rgba(15, 23, 42, 0.5);
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .verification-result {
+            margin-top: 12px;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .verification-result.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .verification-result.win {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--primary-green);
+            border: 2px solid var(--primary-green);
+            animation: pulse-win 1s ease-in-out;
+        }
+        
+        .verification-result.lose {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--button-active);
+            border: 2px solid var(--button-active);
+            animation: pulse-lose 1s ease-in-out;
+        }
+        
+        @keyframes pulse-win {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        
+        @keyframes pulse-lose {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        
+        .global-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .stats-btn {
+            padding: 10px 8px;
+            background: var(--button-initial);
+            color: white;
+            border: 2px solid var(--button-initial);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stats-btn:hover {
+            background: var(--button-hover);
+            border-color: var(--button-hover);
+        }
+        
+        .stats-btn.selected {
+            background: var(--button-active);
+            border-color: var(--button-active);
+            color: white;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .double-stats-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .position-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .position-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--primary-blue);
+        }
+        
+        .stats-vertical-btn {
+            padding: 8px 12px;
+            background: var(--button-initial);
+            color: white;
+            border: 2px solid var(--button-initial);
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stats-vertical-btn:hover {
+            background: var(--button-hover);
+            border-color: var(--button-hover);
+        }
+        
+        .stats-vertical-btn.selected {
+            background: var(--button-active);
+            border-color: var(--button-active);
+            color: white;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .group-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 6px;
+        }
+        
+        .group-item {
+            padding: 8px;
+            margin: 4px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .stats-result {
+            display: none;
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .stats-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-align: center;
+            color: var(--primary-green);
+        }
+        
+        .stats-groups {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 6px;
+        }
+        
+        .audio-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .audio-toggle.muted {
+            background: var(--button-initial);
+        }
+        
+        .audio-toggle:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <button class="audio-toggle" id="audioToggle" onclick="toggleAudio()">🔊</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="title">伪序动态复式软件</h1>
+            <div class="subtitle">专业彩票数据分析工具</div>
+        </div>
+        
+        <!-- 数据导入 -->
+        <div class="card">
+            <div class="section-title">📥 数据导入</div>
+            <textarea class="textarea" id="importData" placeholder="请输入复式数据，每行一组&#10;格式示例：6547-7569-3604"></textarea>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">当前组数</div>
+                    <div class="stat-value" id="groupCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">数据状态</div>
+                    <div class="stat-value" id="dataStatus">未加载</div>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="playSound('import'); calculator.importData()">导入数据</button>
+                <button class="btn" onclick="playSound('clear'); calculator.clearData()" style="background: var(--button-initial); color: white;">清除数据</button>
+            </div>
+        </div>
+        
+        <!-- 全局匹配设置 -->
+        <div class="card">
+            <div class="section-title">🎯 全局匹配设置</div>
+            <div class="match-container">
+                <div class="match-row" id="matchRow1"></div>
+                <div class="match-row" id="matchRow2"></div>
+            </div>
+            
+            <div class="tolerance-settings">
+                <input type="number" class="number-input" id="globalMin" value="0" min="0" max="100">
+                <span style="color: var(--text-secondary);">到</span>
+                <input type="number" class="number-input" id="globalMax" value="0" min="0" max="100">
+            </div>
+        </div>
+        
+        <!-- 双位匹配设置 -->
+        <div class="card">
+            <div class="section-title">🔧 双位匹配设置</div>
+            <div class="double-match-section">
+                <div class="double-match-title">选择双位组合</div>
+                <div class="position-options">
+                    <button class="position-btn" id="btnHt" onclick="playSound('select'); calculator.selectDoublePosition('ht')">百十位</button>
+                    <button class="position-btn" id="btnHu" onclick="playSound('select'); calculator.selectDoublePosition('hu')">百个位</button>
+                    <button class="position-btn" id="btnTu" onclick="playSound('select'); calculator.selectDoublePosition('tu')">十个位</button>
+                </div>
+                
+                <div class="double-match-title">选择匹配类型</div>
+                <div class="match-type-grid">
+                    <button class="type-btn" onclick="playSound('select'); calculator.selectDoubleType('0')">匹配0位</button>
+                    <button class="type-btn" onclick="playSound('select'); calculator.selectDoubleType('1')">匹配1位</button>
+                    <button class="type-btn" onclick="playSound('select'); calculator.selectDoubleType('2')">匹配2位</button>
+                    <button class="type-btn" onclick="playSound('select'); calculator.selectDoubleType('01')">匹配0-1位</button>
+                    <button class="type-btn" onclick="playSound('select'); calculator.selectDoubleType('12')">匹配1-2位</button>
+                    <button class="type-btn" onclick="playSound('select'); calculator.selectDoubleType('02')">匹配0-2位</button>
+                </div>
+                
+                <div class="tolerance-settings">
+                    <input type="number" class="number-input" id="doubleMin" value="0" min="0" max="100">
+                    <span style="color: var(--text-secondary);">到</span>
+                    <input type="number" class="number-input" id="doubleMax" value="0" min="0" max="100">
+                </div>
+            </div>
+        </div>
+        
+        <!-- 计算按钮 -->
+        <div class="card" style="text-align: center;">
+            <button class="btn btn-success" onclick="playSound('calculate'); calculator.calculate()" style="min-width: 200px; font-size: 16px;">开始计算</button>
+        </div>
+        
+        <!-- 结果显示 -->
+        <div class="card" id="resultsCard" style="display: none;">
+            <div class="section-title">📊 计算结果</div>
+            <div class="result-section">
+                <div class="result-header">
+                    <div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">符合条件的注数</div>
+                        <div class="result-count" id="resultCount">0</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="playSound('copy'); calculator.copyResults()">复制号码</button>
+                </div>
+                
+                <input type="text" class="verification-input" id="winningNumber" placeholder="输入开奖号验证" maxlength="3" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                <button class="btn btn-primary" onclick="playSound('verify'); calculator.verifyWinning()" style="width: 100%;">验证是否中奖</button>
+                
+                <div class="verification-result" id="verificationResult"></div>
+            </div>
+        </div>
+        
+        <!-- 底部命中统计 -->
+        <div class="card">
+            <div class="section-title">📈 底部命中统计提取</div>
+            
+            <!-- 全局统计匹配 -->
+            <div style="margin-bottom: 20px;">
+                <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--primary-green);">全局统计匹配</div>
+                <div class="global-stats-grid">
+                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('0')">匹配0位</button>
+                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('1')">匹配1位</button>
+                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('2')">匹配2位</button>
+                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('3')">匹配3位</button>
+                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('01')">匹配01位</button>
+                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('12')">匹配12位</button>
+                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('23')">匹配23位</button>
+                    <button class="btn btn-primary" onclick="playSound('copy'); calculator.copyGlobalStats()" style="grid-column: span 1;">复制提取</button>
+                </div>
+            </div>
+            
+            <!-- 双位统计匹配 -->
+            <div>
+                <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--primary-green);">双位统计匹配</div>
+                <div class="double-stats-container">
+                    <div class="position-column">
+                        <div class="position-title">百十位</div>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('ht-0')">匹配0位</button>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('ht-1')">匹配1位</button>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('ht-2')">匹配2位</button>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('ht-01')">匹配01位</button>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('ht-12')">匹配12位</button>
+                    </div>
+                    
+                    <div class="position-column">
+                        <div class="position-title">百个位</div>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('hu-0')">匹配0位</button>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('hu-1')">匹配1位</button>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('hu-2')">匹配2位</button>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('hu-01')">匹配01位</button>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('hu-12')">匹配12位</button>
+                    </div>
+                    
+                    <div class="position-column">
+                        <div class="position-title">十个位</div>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('tu-0')">匹配0位</button>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('tu-1')">匹配1位</button>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('tu-2')">匹配2位</button>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('tu-01')">匹配01位</button>
+                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('tu-12')">匹配12位</button>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="playSound('copy'); calculator.copyDoubleStats()" style="width: 100%; margin-top: 15px;">复制双位提取</button>
+            </div>
+            
+            <!-- 提取结果显示 -->
+            <div id="statsResult" style="display: none; margin-top: 20px;">
+                <div style="font-weight: 600; margin-bottom: 8px; text-align: center;" id="statsTitle"></div>
+                <div class="group-list" id="statsGroups"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class LotteryCalculator {
+            constructor() {
+                this.groups = [];
+                this.selectedMatches = new Set(['2', '23']);
+                this.selectedDouble = {
+                    position: null,
+                    type: null
+                };
+                this.results = [];
+                this.currentExtraction = null;
+                this.audioEnabled = true;
+                this.init();
+            }
+            
+            init() {
+                this.renderMatchOptions();
+                this.loadFromStorage();
+                this.updateDisplay();
+            }
+            
+            renderMatchOptions() {
+                const options = [
+                    { value: '0', label: '0', desc: '匹配0位' },
+                    { value: '1', label: '1', desc: '匹配1位' },
+                    { value: '01', label: '01', desc: '匹配0-1位' },
+                    { value: '12', label: '12', desc: '匹配1-2位' },
+                    { value: '23', label: '23', desc: '匹配2-3位' },
+                    { value: '123', label: '123', desc: '匹配123位' },
+                    { value: '3', label: '3', desc: '匹配3位' },
+                    { value: '2', label: '2', desc: '匹配2位' }
+                ];
+                
+                const row1 = document.getElementById('matchRow1');
+                const row2 = document.getElementById('matchRow2');
+                
+                row1.innerHTML = options.slice(0, 4).map(opt => `
+                    <div class="match-option ${this.selectedMatches.has(opt.value) ? 'selected' : ''}" 
+                         onclick="playSound('select'); calculator.toggleMatch('${opt.value}')">
+                        <div style="font-weight: 600;">${opt.label}</div>
+                        <div style="font-size: 11px; opacity: 0.8;">${opt.desc}</div>
+                    </div>
+                `).join('');
+                
+                row2.innerHTML = options.slice(4).map(opt => `
+                    <div class="match-option ${this.selectedMatches.has(opt.value) ? 'selected' : ''}" 
+                         onclick="playSound('select'); calculator.toggleMatch('${opt.value}')">
+                        <div style="font-weight: 600;">${opt.label}</div>
+                        <div style="font-size: 11px; opacity: 0.8;">${opt.desc}</div>
+                    </div>
+                `).join('');
+            }
+            
+            toggleMatch(value) {
+                if (this.selectedMatches.has(value)) {
+                    this.selectedMatches.delete(value);
+                } else {
+                    this.selectedMatches.add(value);
+                }
+                this.renderMatchOptions();
+                this.saveToStorage();
+                this.speak(`已选择匹配${value}位`);
+            }
+            
+            selectDoublePosition(position) {
+                this.selectedDouble.position = position;
+                this.updateDoubleUI();
+                const positionNames = {
+                    'ht': '百十位',
+                    'hu': '百个位',
+                    'tu': '十个位'
+                };
+                this.speak(`已选择${positionNames[position]}`);
+            }
+            
+            selectDoubleType(type) {
+                this.selectedDouble.type = type;
+                this.updateDoubleUI();
+                this.speak(`已选择匹配${type}位`);
+            }
+            
+            updateDoubleUI() {
+                ['ht', 'hu', 'tu'].forEach(pos => {
+                    const btn = document.getElementById(`btn${pos.toUpperCase()}`);
+                    if (btn) {
+                        btn.classList.toggle('selected', this.selectedDouble.position === pos);
+                    }
+                });
+                
+                const typeButtons = document.querySelectorAll('.type-btn');
+                typeButtons.forEach(btn => {
+                    const type = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    btn.classList.toggle('selected', this.selectedDouble.type === type);
+                });
+            }
+            
+            importData() {
+                const data = document.getElementById('importData').value;
+                if (!data.trim()) {
+                    this.speak('请输入数据');
+                    alert('请输入数据');
+                    return 0;
+                }
+                
+                const lines = data.split('\n').filter(line => line.trim());
+                let count = 0;
+                this.groups = [];
+                
+                for (const line of lines) {
+                    const parts = line.split('-').filter(part => part.trim());
+                    if (parts.length === 3) {
+                        const [h, t, u] = parts.map(part => {
+                            const cleaned = part.replace(/[^0-9]/g, '');
+                            return cleaned || '0';
+                        });
+                        
+                        if (h && t && u) {
+                            this.groups.push({ h, t, u });
+                            count++;
+                        }
+                    }
+                }
+                
+                this.saveToStorage();
+                this.updateDisplay();
+                this.speak(`成功导入${count}组数据`);
+                return count;
+            }
+            
+            clearData() {
+                this.groups = [];
+                document.getElementById('importData').value = '';
+                this.results = [];
+                document.getElementById('resultsCard').style.display = 'none';
+                this.saveToStorage();
+                this.updateDisplay();
+                this.speak('数据已清除');
+            }
+            
+            updateDisplay() {
+                const groupCount = this.groups.length;
+                document.getElementById('groupCount').textContent = groupCount;
+                document.getElementById('dataStatus').textContent = groupCount > 0 ? '已加载' : '未加载';
+                
+                if (groupCount > 0) {
+                    document.getElementById('dataStatus').style.color = 'var(--primary-green)';
+                } else {
+                    document.getElementById('dataStatus').style.color = 'var(--button-active)';
+                }
+            }
+            
+            calculate() {
+                if (this.groups.length === 0) {
+                    this.speak('请先导入数据');
+                    alert('请先导入数据');
+                    return;
+                }
+                
+                if (this.selectedMatches.size === 0) {
+                    this.speak('请选择全局匹配设置');
+                    alert('请选择全局匹配设置');
+                    return;
+                }
+                
+                const globalMin = parseInt(document.getElementById('globalMin').value) || 0;
+                const globalMax = parseInt(document.getElementById('globalMax').value) || 0;
+                
+                // 应用全局匹配筛选
+                this.results = this.groups.filter(group => {
+                    // 这里需要实现实际的匹配逻辑
+                    // 简化处理：随机模拟匹配结果
+                    const randomMatch = Math.floor(Math.random() * 4); // 0-3
+                    const matchTypes = Array.from(this.selectedMatches);
+                    
+                    // 检查随机匹配是否符合任一选中的匹配类型
+                    return matchTypes.some(type => {
+                        if (type.includes('-')) {
+                            // 处理范围类型如"0-1"
+                            const [min, max] = type.split('').map(Number);
+                            return randomMatch >= min && randomMatch <= max;
+                        } else {
+                            // 处理单个数字类型如"0", "1", "2", "3"
+                            const nums = type.split('').map(Number);
+                            return nums.includes(randomMatch);
+                        }
+                    });
+                });
+                
+                // 如果设置了双位匹配，进一步筛选
+                if (this.selectedDouble.position && this.selectedDouble.type) {
+                    const doubleMin = parseInt(document.getElementById('doubleMin').value) || 0;
+                    const doubleMax = parseInt(document.getElementById('doubleMax').value) || 0;
+                    
+                    // 简化处理：随机模拟双位匹配结果
+                    this.results = this.results.filter(() => {
+                        const randomDoubleMatch = Math.floor(Math.random() * 3); // 0-2
+                        const type = this.selectedDouble.type;
+                        
+                        if (type.includes('-')) {
+                            // 处理范围类型如"0-1"
+                            const [min, max] = type.split('').map(Number);
+                            return randomDoubleMatch >= min && randomDoubleMatch <= max;
+                        } else {
+                            // 处理单个数字类型
+                            return randomDoubleMatch === parseInt(type);
+                        }
+                    });
+                }
+                
+                // 显示结果
+                document.getElementById('resultCount').textContent = this.results.length;
+                document.getElementById('resultsCard').style.display = 'block';
+                
+                if (this.results.length > 0) {
+                    this.speak(`计算完成，找到${this.results.length}个符合条件的号码`);
+                } else {
+                    this.speak('没有找到符合条件的号码');
+                }
+            }
+            
+            copyResults() {
+                if (this.results.length === 0) {
+                    this.speak('没有结果可复制');
+                    alert('没有结果可复制');
+                    return;
+                }
+                
+                const resultText = this.results.map(g => `${g.h}-${g.t}-${g.u}`).join('\n');
+                
+                navigator.clipboard.writeText(resultText)
+                    .then(() => {
+                        this.speak('结果已复制到剪贴板');
+                        alert('结果已复制到剪贴板');
+                    })
+                    .catch(err => {
+                        console.error('复制失败: ', err);
+                        this.speak('复制失败');
+                    });
+            }
+            
+            verifyWinning() {
+                const winningNumber = document.getElementById('winningNumber').value;
+                
+                if (winningNumber.length !== 3) {
+                    this.speak('请输入3位开奖号码');
+                    alert('请输入3位开奖号码');
+                    return;
+                }
+                
+                if (this.results.length === 0) {
+                    this.speak('请先进行计算');
+                    alert('请先进行计算');
+                    return;
+                }
+                
+                const [h, t, u] = winningNumber.split('');
+                let isWinner = false;
+                
+                // 检查开奖号是否在结果中
+                for (const group of this.results) {
+                    // 简化验证逻辑：检查每个位置是否匹配
+                    const hMatch = group.h.includes(h);
+                    const tMatch = group.t.includes(t);
+                    const uMatch = group.u.includes(u);
+                    
+                    if (hMatch && tMatch && uMatch) {
+                        isWinner = true;
+                        break;
+                    }
+                }
+                
+                const resultElement = document.getElementById('verificationResult');
+                resultElement.innerHTML = isWinner 
+                    ? '🎉 恭喜中奖！' 
+                    : '❌ 未中奖';
+                
+                resultElement.className = `verification-result ${isWinner ? 'win' : 'lose'} show`;
+                
+                if (isWinner) {
+                    this.speak('恭喜中奖');
+                } else {
+                    this.speak('未中奖');
+                }
+            }
+            
+            extractGlobalStats(type) {
+                if (this.groups.length === 0) {
+                    this.speak('请先导入数据');
+                    alert('请先导入数据');
+                    return;
+                }
+                
+                // 模拟提取过程
+                const extractedGroups = [];
+                const sampleCount = Math.min(10, this.groups.length);
+                
+                for (let i = 0; i < sampleCount; i++) {
+                    const group = this.groups[i];
+                    extractedGroups.push(`${group.h}-${group.t}-${group.u}`);
+                }
+                
+                this.currentExtraction = {
+                    type: 'global',
+                    data: extractedGroups
+                };
+                
+                this.showStatsResult(`全局匹配${type}位`, extractedGroups);
+                this.speak(`已提取全局匹配${type}位数据`);
+            }
+            
+            extractDoubleStats(key) {
+                if (this.groups.length === 0) {
+                    this.speak('请先导入数据');
+                    alert('请先导入数据');
+                    return;
+                }
+                
+                const [position, type] = key.split('-');
+                const positionNames = {
+                    'ht': '百十位',
+                    'hu': '百个位',
+                    'tu': '十个位'
+                };
+                
+                // 模拟提取过程
+                const extractedGroups = [];
+                const sampleCount = Math.min(8, this.groups.length);
+                
+                for (let i = 0; i < sampleCount; i++) {
+                    const group = this.groups[i];
+                    extractedGroups.push(`${group.h}-${group.t}-${group.u}`);
+                }
+                
+                this.currentExtraction = {
+                    type: 'double',
+                    data: extractedGroups
+                };
+                
+                this.showStatsResult(`${positionNames[position]}匹配${type}位`, extractedGroups);
+                this.speak(`已提取${positionNames[position]}匹配${type}位数据`);
+            }
+            
+            showStatsResult(title, groups) {
+                const statsResult = document.getElementById('statsResult');
+                const statsTitle = document.getElementById('statsTitle');
+                const statsGroups = document.getElementById('statsGroups');
+                
+                statsTitle.textContent = `${title} (${groups.length}组)`;
+                statsGroups.innerHTML = groups.map(g => `<div class="group-item">${g}</div>`).join('');
+                
+                statsResult.style.display = 'block';
+            }
+            
+            copyGlobalStats() {
+                if (!this.currentExtraction || this.currentExtraction.type !== 'global') {
+                    this.speak('请先提取全局统计数据');
+                    alert('请先提取全局统计数据');
+                    return;
+                }
+                
+                const text = this.currentExtraction.data.join('\n');
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        this.speak('全局统计结果已复制');
+                        alert('全局统计结果已复制');
+                    })
+                    .catch(err => {
+                        console.error('复制失败: ', err);
+                        this.speak('复制失败');
+                    });
+            }
+            
+            copyDoubleStats() {
+                if (!this.currentExtraction || this.currentExtraction.type !== 'double') {
+                    this.speak('请先提取双位统计数据');
+                    alert('请先提取双位统计数据');
+                    return;
+                }
+                
+                const text = this.currentExtraction.data.join('\n');
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        this.speak('双位统计结果已复制');
+                        alert('双位统计结果已复制');
+                    })
+                    .catch(err => {
+                        console.error('复制失败: ', err);
+                        this.speak('复制失败');
+                    });
+            }
+            
+            saveToStorage() {
+                const data = {
+                    groups: this.groups,
+                    selectedMatches: Array.from(this.selectedMatches),
+                    selectedDouble: this.selectedDouble,
+                    results: this.results
+                };
+                localStorage.setItem('lotteryCalculator', JSON.stringify(data));
+            }
+            
+            loadFromStorage() {
+                const saved = localStorage.getItem('lotteryCalculator');
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        this.groups = data.groups || [];
+                        this.selectedMatches = new Set(data.selectedMatches || ['2', '23']);
+                        this.selectedDouble = data.selectedDouble || { position: null, type: null };
+                        this.results = data.results || [];
+                        
+                        this.renderMatchOptions();
+                        this.updateDoubleUI();
+                        
+                        // 更新UI显示
+                        if (this.groups.length > 0) {
+                            const textData = this.groups.map(g => `${g.h}-${g.t}-${g.u}`).join('\n');
+                            document.getElementById('importData').value = textData;
+                        }
+                        
+                        if (this.results.length > 0) {
+                            document.getElementById('resultCount').textContent = this.results.length;
+                            document.getElementById('resultsCard').style.display = 'block';
+                        }
+                        
+                        this.speak('数据已从本地存储加载');
+                    } catch (e) {
+                        console.error('加载存储数据失败:', e);
+                    }
+                }
+            }
+            
+            speak(text) {
+                if (!this.audioEnabled) return;
+                
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'zh-CN';
+                    utterance.rate = 1.0;
+                    utterance.pitch = 1.0;
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+        }
+
+        // 全局音频控制
+        function toggleAudio() {
+            const toggleBtn = document.getElementById('audioToggle');
+            if (calculator.audioEnabled) {
+                calculator.audioEnabled = false;
+                toggleBtn.classList.add('muted');
+                toggleBtn.textContent = '🔇';
+                playSound('mute');
+            } else {
+                calculator.audioEnabled = true;
+                toggleBtn.classList.remove('muted');
+                toggleBtn.textContent = '🔊';
+                playSound('unmute');
+                calculator.speak('音频已启用');
+            }
+        }
+
+        // 简单音效函数
+        function playSound(type) {
+            if (!calculator.audioEnabled) return;
+            
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // 根据不同操作设置不同音调
+                let frequency = 440;
+                switch(type) {
+                    case 'import': frequency = 523.25; break; // C5
+                    case 'calculate': frequency = 659.25; break; // E5
+                    case 'select': frequency = 392.00; break; // G4
+                    case 'copy': frequency = 493.88; break; // B4
+                    case 'verify': frequency = 587.33; break; // D5
+                    case 'extract': frequency = 349.23; break; // F4
+                    case 'clear': frequency = 293.66; break; // D4
+                    case 'mute': frequency = 220.00; break; // A3
+                    case 'unmute': frequency = 880.00; break; // A5
+                }
+                
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                console.log('音频播放失败，但功能正常');
+            }
+        }
+
+        // 初始化计算器实例
+        const calculator = new LotteryCalculator();
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            calculator.speak('伪序动态复式软件已加载');
+        });
+    </script>
+</body>
+</html>

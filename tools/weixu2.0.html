@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>十方料码 - 伪序复式计算正式版本</title>
+    <title>十方料码 - 专业彩票数据分析工具</title>
     <style>
         :root {
             --primary-gold: #FFD700;
@@ -41,7 +41,7 @@
         }
         
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
         
@@ -678,6 +678,49 @@
             font-weight: 700;
         }
         
+        .test-examples {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .test-example {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+        
+        .test-example:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .calculation-logic {
+            background: rgba(255, 215, 0, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+        
+        .calculation-logic h4 {
+            color: var(--primary-gold);
+            margin-bottom: 8px;
+        }
+        
+        .calculation-logic ul {
+            padding-left: 20px;
+        }
+        
+        .calculation-logic li {
+            margin-bottom: 5px;
+        }
+        
         /* 滚动条样式 */
         ::-webkit-scrollbar {
             width: 8px;
@@ -760,23 +803,29 @@
         <!-- 品牌头部 -->
         <div class="brand-header">
             <div class="brand-logo">十方料码</div>
-            <div class="brand-subtitle">伪序动复式软件</div>
-            <div class="brand-tagline">独家趋势数据 · 专业匹配工具</div>
+            <div class="brand-subtitle">伪序动态复式软件</div>
+            <div class="brand-tagline">专业彩票数据分析 · 精准命中计算</div>
         </div>
         
         <!-- 联系方式 -->
         <div class="contact-info">
-            <div>独家趋势数据 · 专业匹配工具</div>
+            <div>专业彩票数据分析 · 精准选号策略</div>
             <div class="wechat-info">
                 <span class="wechat-icon">💬</span>
-                <span>QQ:921913231</span>
+                <span>微信: shifangliaoma</span>
             </div>
         </div>
         
         <!-- 数据导入 -->
         <div class="card">
             <div class="section-title">📥 数据导入</div>
-            <textarea class="textarea" id="importData" placeholder="请输入复式数据，每行一组&#10;格式示例：6547-7569-3604&#10;更多数据格式请咨询微信: shifangliaoma"></textarea>
+            <textarea class="textarea" id="importData" placeholder="请输入复式数据，每行一组&#10;格式示例：3568-2589-1478&#10;更多数据格式请咨询微信: shifangliaoma"></textarea>
+            
+            <div class="test-examples">
+                <div>测试用例（点击直接导入）：</div>
+                <div class="test-example" onclick="loadTestData('single')">单组复式：3568-2589-1478</div>
+                <div class="test-example" onclick="loadTestData('double')">两组复式：3568-2589-1478\n1234-5678-9632</div>
+            </div>
             
             <div class="stats">
                 <div class="stat-item">
@@ -795,24 +844,46 @@
             </div>
         </div>
         
+        <!-- 开奖号码输入 -->
+        <div class="card">
+            <div class="section-title">🎯 开奖号码设置</div>
+            <div style="text-align: center;">
+                <input type="text" class="verification-input" id="winningNumber" placeholder="输入开奖号码（如：123）" maxlength="3" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                <div style="margin-top: 10px; font-size: 0.9rem; color: var(--text-secondary);">
+                    请输入开奖号码，系统将基于此号码进行匹配计算
+                </div>
+            </div>
+        </div>
+        
         <!-- 全局匹配设置 -->
         <div class="card">
-            <div class="section-title">🎯 全局匹配设置</div>
+            <div class="section-title">🎯 全局匹配设置（匹配开奖号的位置数）</div>
             <div class="match-container">
                 <div class="match-row" id="matchRow1"></div>
                 <div class="match-row" id="matchRow2"></div>
             </div>
             
             <div class="tolerance-settings">
-                <input type="number" class="number-input" id="globalMin" value="0" min="0" max="100" placeholder="最小">
+                <input type="number" class="number-input" id="globalMin" value="0" min="0" max="3" placeholder="最小">
                 <span style="color: var(--primary-gold); font-weight: 700;">到</span>
-                <input type="number" class="number-input" id="globalMax" value="0" min="0" max="100" placeholder="最大">
+                <input type="number" class="number-input" id="globalMax" value="3" min="0" max="3" placeholder="最大">
+            </div>
+            
+            <div class="calculation-logic">
+                <h4>全局匹配规则说明：</h4>
+                <ul>
+                    <li><strong>匹配3</strong>: 复式每个位置都包含开奖号对应位置的数字（直选）</li>
+                    <li><strong>匹配2</strong>: 复式有两个位置包含开奖号对应位置的数字</li>
+                    <li><strong>匹配01</strong>: 复式有0或1个位置包含开奖号对应位置的数字</li>
+                    <li><strong>匹配23</strong>: 复式有2或3个位置包含开奖号对应位置的数字</li>
+                    <li>容错范围：控制每组复式需要满足的匹配位置数范围</li>
+                </ul>
             </div>
         </div>
         
         <!-- 双位匹配设置 -->
         <div class="card">
-            <div class="section-title">🔧 双位匹配设置</div>
+            <div class="section-title">🔧 双位匹配设置（针对特定两个位置）</div>
             <div class="double-match-section">
                 <div class="double-match-title">选择双位组合</div>
                 <div class="position-options">
@@ -832,9 +903,19 @@
                 </div>
                 
                 <div class="tolerance-settings">
-                    <input type="number" class="number-input" id="doubleMin" value="0" min="0" max="100" placeholder="最小">
+                    <input type="number" class="number-input" id="doubleMin" value="0" min="0" max="2" placeholder="最小">
                     <span style="color: var(--primary-gold); font-weight: 700;">到</span>
-                    <input type="number" class="number-input" id="doubleMax" value="0" min="0" max="100" placeholder="最大">
+                    <input type="number" class="number-input" id="doubleMax" value="2" min="0" max="2" placeholder="最大">
+                </div>
+                
+                <div class="calculation-logic">
+                    <h4>双位匹配规则说明：</h4>
+                    <ul>
+                        <li><strong>百十位匹配2</strong>: 百位和十位都包含开奖号对应位置的数字</li>
+                        <li><strong>百十位匹配01</strong>: 百位和十位中，要么都没有包含开奖号数字，要么只包含一个</li>
+                        <li><strong>百十位匹配12</strong>: 百位和十位中，包含1或2个开奖号数字</li>
+                        <li>双位匹配与全局匹配同时生效，需要同时满足两个条件</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -856,7 +937,8 @@
                     <button class="btn btn-brand" onclick="playSound('copy'); calculator.copyResults()">复制号码</button>
                 </div>
                 
-                <input type="text" class="verification-input" id="winningNumber" placeholder="输入开奖号验证" maxlength="3" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                <div id="resultDetails" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px; padding: 10px; background: rgba(255, 215, 0, 0.05); border-radius: 6px; font-family: monospace; font-size: 12px; display: none;"></div>
+                
                 <button class="btn btn-brand" onclick="playSound('verify'); calculator.verifyWinning()" style="width: 100%; margin-bottom: 15px;">验证是否中奖</button>
                 
                 <div class="verification-result" id="verificationResult"></div>
@@ -925,8 +1007,8 @@
         
         <!-- 品牌页脚 -->
         <div class="brand-footer">
-            <div>© 2025 <span class="brand-highlight">十方料码</span> - 专业趋势数据计算工具</div>
-            <div style="margin-top: 5px; font-size: 0.8rem;">QQ: 921913231 | 趋势数据 · 专业工具 · 为你护航！</div>
+            <div>© 2023 <span class="brand-highlight">十方料码</span> - 专业彩票数据分析工具</div>
+            <div style="margin-top: 5px; font-size: 0.8rem;">微信: shifangliaoma | 数据精准 · 命中率高 · 专业可靠</div>
         </div>
     </div>
 
@@ -934,14 +1016,16 @@
         class LotteryCalculator {
             constructor() {
                 this.groups = [];
-                this.selectedMatches = new Set(['2', '23']);
+                this.selectedMatches = new Set(['3']); // 默认选择匹配3
                 this.selectedDouble = {
                     position: null,
                     type: null
                 };
                 this.results = [];
+                this.allCombinations = new Set(); // 存储所有符合条件的号码
                 this.currentExtraction = null;
                 this.audioEnabled = true;
+                this.winningNumber = ''; // 存储开奖号码
                 this.init();
             }
             
@@ -984,11 +1068,8 @@
             }
             
             toggleMatch(value) {
-                if (this.selectedMatches.has(value)) {
-                    this.selectedMatches.delete(value);
-                } else {
-                    this.selectedMatches.add(value);
-                }
+                this.selectedMatches.clear();
+                this.selectedMatches.add(value);
                 this.renderMatchOptions();
                 this.saveToStorage();
                 this.speak(`已选择匹配${value}位`);
@@ -1063,7 +1144,9 @@
                 this.groups = [];
                 document.getElementById('importData').value = '';
                 this.results = [];
+                this.allCombinations.clear();
                 document.getElementById('resultsCard').style.display = 'none';
+                document.getElementById('resultDetails').style.display = 'none';
                 this.saveToStorage();
                 this.updateDisplay();
                 this.speak('数据已清除');
@@ -1081,6 +1164,99 @@
                 }
             }
             
+            // 获取开奖号码
+            getWinningNumber() {
+                this.winningNumber = document.getElementById('winningNumber').value;
+                return this.winningNumber;
+            }
+            
+            // 检查一个号码是否匹配匹配条件（基于开奖号码）
+            checkMatchConditions(numberStr, group) {
+                const winningNumber = this.getWinningNumber();
+                
+                // 如果没有输入开奖号码，无法计算匹配
+                if (!winningNumber || winningNumber.length !== 3) {
+                    return false;
+                }
+                
+                const [winH, winT, winU] = winningNumber.split('');
+                const [h, t, u] = numberStr.split('');
+                
+                // 检查每个位置是否匹配（号码的每个位置是否在复式的对应位置中）
+                const hMatch = group.h.includes(h) && h === winH;
+                const tMatch = group.t.includes(t) && t === winT;
+                const uMatch = group.u.includes(u) && u === winU;
+                
+                // 计算全局匹配位置数
+                let globalMatchCount = 0;
+                if (hMatch) globalMatchCount++;
+                if (tMatch) globalMatchCount++;
+                if (uMatch) globalMatchCount++;
+                
+                // 检查全局匹配条件
+                const globalMin = parseInt(document.getElementById('globalMin').value) || 0;
+                const globalMax = parseInt(document.getElementById('globalMax').value) || 3;
+                
+                // 获取选中的匹配类型
+                const selectedMatchType = Array.from(this.selectedMatches)[0];
+                let globalConditionMet = false;
+                
+                // 根据选中的匹配类型检查
+                if (selectedMatchType === '0' && globalMatchCount === 0) globalConditionMet = true;
+                else if (selectedMatchType === '1' && globalMatchCount === 1) globalConditionMet = true;
+                else if (selectedMatchType === '2' && globalMatchCount === 2) globalConditionMet = true;
+                else if (selectedMatchType === '3' && globalMatchCount === 3) globalConditionMet = true;
+                else if (selectedMatchType === '01' && (globalMatchCount === 0 || globalMatchCount === 1)) globalConditionMet = true;
+                else if (selectedMatchType === '12' && (globalMatchCount === 1 || globalMatchCount === 2)) globalConditionMet = true;
+                else if (selectedMatchType === '23' && (globalMatchCount === 2 || globalMatchCount === 3)) globalConditionMet = true;
+                else if (selectedMatchType === '123' && (globalMatchCount === 1 || globalMatchCount === 2 || globalMatchCount === 3)) globalConditionMet = true;
+                
+                // 检查容错范围
+                if (globalMatchCount < globalMin || globalMatchCount > globalMax) {
+                    globalConditionMet = false;
+                }
+                
+                // 如果没有设置双位匹配，只检查全局匹配
+                if (!this.selectedDouble.position || !this.selectedDouble.type) {
+                    return globalConditionMet;
+                }
+                
+                // 检查双位匹配条件
+                let doubleMatchCount = 0;
+                const { position, type } = this.selectedDouble;
+                
+                if (position === 'ht') {
+                    if (hMatch) doubleMatchCount++;
+                    if (tMatch) doubleMatchCount++;
+                } else if (position === 'hu') {
+                    if (hMatch) doubleMatchCount++;
+                    if (uMatch) doubleMatchCount++;
+                } else if (position === 'tu') {
+                    if (tMatch) doubleMatchCount++;
+                    if (uMatch) doubleMatchCount++;
+                }
+                
+                // 检查双位匹配类型
+                let doubleConditionMet = false;
+                if (type === '0' && doubleMatchCount === 0) doubleConditionMet = true;
+                else if (type === '1' && doubleMatchCount === 1) doubleConditionMet = true;
+                else if (type === '2' && doubleMatchCount === 2) doubleConditionMet = true;
+                else if (type === '01' && (doubleMatchCount === 0 || doubleMatchCount === 1)) doubleConditionMet = true;
+                else if (type === '12' && (doubleMatchCount === 1 || doubleMatchCount === 2)) doubleConditionMet = true;
+                else if (type === '02' && (doubleMatchCount === 0 || doubleMatchCount === 2)) doubleConditionMet = true;
+                
+                // 检查双位容错范围
+                const doubleMin = parseInt(document.getElementById('doubleMin').value) || 0;
+                const doubleMax = parseInt(document.getElementById('doubleMax').value) || 2;
+                
+                if (doubleMatchCount < doubleMin || doubleMatchCount > doubleMax) {
+                    doubleConditionMet = false;
+                }
+                
+                // 需要同时满足全局和双位匹配条件
+                return globalConditionMet && doubleConditionMet;
+            }
+            
             calculate() {
                 if (this.groups.length === 0) {
                     this.speak('请先导入数据');
@@ -1094,75 +1270,74 @@
                     return;
                 }
                 
-                const globalMin = parseInt(document.getElementById('globalMin').value) || 0;
-                const globalMax = parseInt(document.getElementById('globalMax').value) || 0;
+                // 检查开奖号码
+                const winningNumber = this.getWinningNumber();
+                if (!winningNumber || winningNumber.length !== 3) {
+                    this.speak('请输入3位开奖号码');
+                    alert('请输入3位开奖号码');
+                    return;
+                }
                 
-                // 应用全局匹配筛选
-                this.results = this.groups.filter(group => {
-                    // 这里需要实现实际的匹配逻辑
-                    // 简化处理：随机模拟匹配结果
-                    const randomMatch = Math.floor(Math.random() * 4); // 0-3
-                    const matchTypes = Array.from(this.selectedMatches);
-                    
-                    // 检查随机匹配是否符合任一选中的匹配类型
-                    return matchTypes.some(type => {
-                        if (type.includes('-')) {
-                            // 处理范围类型如"0-1"
-                            const [min, max] = type.split('').map(Number);
-                            return randomMatch >= min && randomMatch <= max;
-                        } else {
-                            // 处理单个数字类型如"0", "1", "2", "3"
-                            const nums = type.split('').map(Number);
-                            return nums.includes(randomMatch);
-                        }
-                    });
-                });
+                this.allCombinations.clear();
                 
-                // 如果设置了双位匹配，进一步筛选
-                if (this.selectedDouble.position && this.selectedDouble.type) {
-                    const doubleMin = parseInt(document.getElementById('doubleMin').value) || 0;
-                    const doubleMax = parseInt(document.getElementById('doubleMax').value) || 0;
-                    
-                    // 简化处理：随机模拟双位匹配结果
-                    this.results = this.results.filter(() => {
-                        const randomDoubleMatch = Math.floor(Math.random() * 3); // 0-2
-                        const type = this.selectedDouble.type;
-                        
-                        if (type.includes('-')) {
-                            // 处理范围类型如"0-1"
-                            const [min, max] = type.split('').map(Number);
-                            return randomDoubleMatch >= min && randomDoubleMatch <= max;
-                        } else {
-                            // 处理单个数字类型
-                            return randomDoubleMatch === parseInt(type);
+                // 遍历所有可能的号码组合（000-999）
+                for (let h = 0; h <= 9; h++) {
+                    for (let t = 0; t <= 9; t++) {
+                        for (let u = 0; u <= 9; u++) {
+                            const numberStr = `${h}${t}${u}`;
+                            
+                            // 检查这个号码是否满足任意一组的匹配条件
+                            for (const group of this.groups) {
+                                if (this.checkMatchConditions(numberStr, group)) {
+                                    this.allCombinations.add(numberStr);
+                                    break; // 只要满足一组就可以
+                                }
+                            }
                         }
-                    });
+                    }
                 }
                 
                 // 显示结果
-                document.getElementById('resultCount').textContent = this.results.length;
+                const resultCount = this.allCombinations.size;
+                document.getElementById('resultCount').textContent = resultCount;
                 document.getElementById('resultsCard').style.display = 'block';
                 
-                if (this.results.length > 0) {
-                    this.speak(`十方料码计算完成，找到${this.results.length}个符合条件的号码`);
+                // 显示部分结果详情
+                const resultDetails = document.getElementById('resultDetails');
+                const combinationsArray = Array.from(this.allCombinations);
+                
+                if (combinationsArray.length <= 50) {
+                    resultDetails.innerHTML = `开奖号: ${winningNumber}<br>结果: ${combinationsArray.join(' ')}`;
+                    resultDetails.style.display = 'block';
+                } else {
+                    resultDetails.innerHTML = `开奖号: ${winningNumber}<br>前50注号码: ${combinationsArray.slice(0, 50).join(' ')}<br>... 共${resultCount}注`;
+                    resultDetails.style.display = 'block';
+                }
+                
+                if (resultCount > 0) {
+                    this.speak(`十方料码计算完成，基于开奖号${winningNumber}找到${resultCount}个符合条件的号码`);
                 } else {
                     this.speak('没有找到符合条件的号码');
                 }
+                
+                // 保存结果
+                this.results = combinationsArray;
+                this.saveToStorage();
             }
             
             copyResults() {
-                if (this.results.length === 0) {
+                if (this.allCombinations.size === 0) {
                     this.speak('没有结果可复制');
                     alert('没有结果可复制');
                     return;
                 }
                 
-                const resultText = this.results.map(g => `${g.h}-${g.t}-${g.u}`).join('\n');
+                const resultText = Array.from(this.allCombinations).join('\n');
                 
                 navigator.clipboard.writeText(resultText)
                     .then(() => {
                         this.speak('十方料码结果已复制到剪贴板');
-                        alert('结果已复制到剪贴板');
+                        alert(`已复制${this.allCombinations.size}注号码到剪贴板`);
                     })
                     .catch(err => {
                         console.error('复制失败: ', err);
@@ -1171,47 +1346,24 @@
             }
             
             verifyWinning() {
-                const winningNumber = document.getElementById('winningNumber').value;
-                
-                if (winningNumber.length !== 3) {
-                    this.speak('请输入3位开奖号码');
-                    alert('请输入3位开奖号码');
-                    return;
-                }
-                
-                if (this.results.length === 0) {
+                if (this.allCombinations.size === 0) {
                     this.speak('请先进行计算');
                     alert('请先进行计算');
                     return;
                 }
                 
-                const [h, t, u] = winningNumber.split('');
-                let isWinner = false;
-                
-                // 检查开奖号是否在结果中
-                for (const group of this.results) {
-                    // 简化验证逻辑：检查每个位置是否匹配
-                    const hMatch = group.h.includes(h);
-                    const tMatch = group.t.includes(t);
-                    const uMatch = group.u.includes(u);
-                    
-                    if (hMatch && tMatch && uMatch) {
-                        isWinner = true;
-                        break;
-                    }
-                }
-                
+                const isWinner = this.allCombinations.has(this.winningNumber);
                 const resultElement = document.getElementById('verificationResult');
                 resultElement.innerHTML = isWinner 
-                    ? '🎉 恭喜中奖！精准命中！' 
-                    : '❌ 很遗憾未中奖！';
+                    ? `🎉 恭喜中奖！十方料码精准命中 ${this.winningNumber}！` 
+                    : `❌ 未中奖，开奖号${this.winningNumber}不在结果中`;
                 
                 resultElement.className = `verification-result ${isWinner ? 'win' : 'lose'} show`;
                 
                 if (isWinner) {
-                    this.speak('恭喜中奖！精准命中！');
+                    this.speak(`恭喜中奖！开奖号${this.winningNumber}在结果中`);
                 } else {
-                    this.speak('很遗憾，未中奖！');
+                    this.speak(`未中奖，开奖号${this.winningNumber}不在结果中`);
                 }
             }
             
@@ -1222,13 +1374,38 @@
                     return;
                 }
                 
-                // 模拟提取过程
-                const extractedGroups = [];
-                const sampleCount = Math.min(10, this.groups.length);
+                // 检查开奖号码
+                const winningNumber = this.getWinningNumber();
+                if (!winningNumber || winningNumber.length !== 3) {
+                    this.speak('请输入3位开奖号码');
+                    alert('请输入3位开奖号码');
+                    return;
+                }
                 
-                for (let i = 0; i < sampleCount; i++) {
-                    const group = this.groups[i];
-                    extractedGroups.push(`${group.h}-${group.t}-${group.u}`);
+                const [winH, winT, winU] = winningNumber.split('');
+                const extractedGroups = [];
+                
+                // 遍历所有复式组，检查匹配位数
+                for (const group of this.groups) {
+                    // 计算匹配位数
+                    let matchCount = 0;
+                    if (group.h.includes(winH)) matchCount++;
+                    if (group.t.includes(winT)) matchCount++;
+                    if (group.u.includes(winU)) matchCount++;
+                    
+                    // 检查是否满足匹配类型
+                    let isMatch = false;
+                    if (type === '0' && matchCount === 0) isMatch = true;
+                    else if (type === '1' && matchCount === 1) isMatch = true;
+                    else if (type === '2' && matchCount === 2) isMatch = true;
+                    else if (type === '3' && matchCount === 3) isMatch = true;
+                    else if (type === '01' && (matchCount === 0 || matchCount === 1)) isMatch = true;
+                    else if (type === '12' && (matchCount === 1 || matchCount === 2)) isMatch = true;
+                    else if (type === '23' && (matchCount === 2 || matchCount === 3)) isMatch = true;
+                    
+                    if (isMatch) {
+                        extractedGroups.push(`${group.h}-${group.t}-${group.u} (匹配${matchCount}位)`);
+                    }
                 }
                 
                 this.currentExtraction = {
@@ -1236,8 +1413,8 @@
                     data: extractedGroups
                 };
                 
-                this.showStatsResult(`全局匹配${type}位`, extractedGroups);
-                this.speak(`十方料码已提取全局匹配${type}位数据`);
+                this.showStatsResult(`全局匹配${type}位 - 开奖号${winningNumber}`, extractedGroups);
+                this.speak(`十方料码已提取全局匹配${type}位数据，共${extractedGroups.length}组`);
             }
             
             extractDoubleStats(key) {
@@ -1247,6 +1424,15 @@
                     return;
                 }
                 
+                // 检查开奖号码
+                const winningNumber = this.getWinningNumber();
+                if (!winningNumber || winningNumber.length !== 3) {
+                    this.speak('请输入3位开奖号码');
+                    alert('请输入3位开奖号码');
+                    return;
+                }
+                
+                const [winH, winT, winU] = winningNumber.split('');
                 const [position, type] = key.split('-');
                 const positionNames = {
                     'ht': '百十位',
@@ -1254,13 +1440,34 @@
                     'tu': '十个位'
                 };
                 
-                // 模拟提取过程
                 const extractedGroups = [];
-                const sampleCount = Math.min(8, this.groups.length);
                 
-                for (let i = 0; i < sampleCount; i++) {
-                    const group = this.groups[i];
-                    extractedGroups.push(`${group.h}-${group.t}-${group.u}`);
+                // 遍历所有复式组，检查双位匹配
+                for (const group of this.groups) {
+                    let doubleMatchCount = 0;
+                    
+                    if (position === 'ht') {
+                        if (group.h.includes(winH)) doubleMatchCount++;
+                        if (group.t.includes(winT)) doubleMatchCount++;
+                    } else if (position === 'hu') {
+                        if (group.h.includes(winH)) doubleMatchCount++;
+                        if (group.u.includes(winU)) doubleMatchCount++;
+                    } else if (position === 'tu') {
+                        if (group.t.includes(winT)) doubleMatchCount++;
+                        if (group.u.includes(winU)) doubleMatchCount++;
+                    }
+                    
+                    // 检查是否满足匹配类型
+                    let isMatch = false;
+                    if (type === '0' && doubleMatchCount === 0) isMatch = true;
+                    else if (type === '1' && doubleMatchCount === 1) isMatch = true;
+                    else if (type === '2' && doubleMatchCount === 2) isMatch = true;
+                    else if (type === '01' && (doubleMatchCount === 0 || doubleMatchCount === 1)) isMatch = true;
+                    else if (type === '12' && (doubleMatchCount === 1 || doubleMatchCount === 2)) isMatch = true;
+                    
+                    if (isMatch) {
+                        extractedGroups.push(`${group.h}-${group.t}-${group.u} (匹配${doubleMatchCount}位)`);
+                    }
                 }
                 
                 this.currentExtraction = {
@@ -1268,8 +1475,8 @@
                     data: extractedGroups
                 };
                 
-                this.showStatsResult(`${positionNames[position]}匹配${type}位`, extractedGroups);
-                this.speak(`十方料码已提取${positionNames[position]}匹配${type}位数据`);
+                this.showStatsResult(`${positionNames[position]}匹配${type}位 - 开奖号${winningNumber}`, extractedGroups);
+                this.speak(`十方料码已提取${positionNames[position]}匹配${type}位数据，共${extractedGroups.length}组`);
             }
             
             showStatsResult(title, groups) {
@@ -1277,7 +1484,7 @@
                 const statsTitle = document.getElementById('statsTitle');
                 const statsGroups = document.getElementById('statsGroups');
                 
-                statsTitle.textContent = `${title} (${groups.length}组) - 十方料码`;
+                statsTitle.textContent = `${title} (${groups.length}组)`;
                 statsGroups.innerHTML = groups.map(g => `<div class="group-item">${g}</div>`).join('');
                 
                 statsResult.style.display = 'block';
@@ -1326,7 +1533,8 @@
                     groups: this.groups,
                     selectedMatches: Array.from(this.selectedMatches),
                     selectedDouble: this.selectedDouble,
-                    results: this.results
+                    results: this.results,
+                    winningNumber: this.winningNumber
                 };
                 localStorage.setItem('shifangliaoma_calculator', JSON.stringify(data));
             }
@@ -1337,9 +1545,10 @@
                     try {
                         const data = JSON.parse(saved);
                         this.groups = data.groups || [];
-                        this.selectedMatches = new Set(data.selectedMatches || ['2', '23']);
+                        this.selectedMatches = new Set(data.selectedMatches || ['3']);
                         this.selectedDouble = data.selectedDouble || { position: null, type: null };
                         this.results = data.results || [];
+                        this.winningNumber = data.winningNumber || '';
                         
                         this.renderMatchOptions();
                         this.updateDoubleUI();
@@ -1350,9 +1559,24 @@
                             document.getElementById('importData').value = textData;
                         }
                         
+                        if (this.winningNumber) {
+                            document.getElementById('winningNumber').value = this.winningNumber;
+                        }
+                        
                         if (this.results.length > 0) {
+                            this.allCombinations = new Set(this.results);
                             document.getElementById('resultCount').textContent = this.results.length;
                             document.getElementById('resultsCard').style.display = 'block';
+                            
+                            // 显示部分结果详情
+                            const resultDetails = document.getElementById('resultDetails');
+                            if (this.results.length <= 50) {
+                                resultDetails.innerHTML = `开奖号: ${this.winningNumber || '未设置'}<br>结果: ${this.results.join(' ')}`;
+                                resultDetails.style.display = 'block';
+                            } else {
+                                resultDetails.innerHTML = `开奖号: ${this.winningNumber || '未设置'}<br>前50注号码: ${this.results.slice(0, 50).join(' ')}<br>... 共${this.results.length}注`;
+                                resultDetails.style.display = 'block';
+                            }
                         }
                         
                         this.speak('十方料码数据已从本地存储加载');
@@ -1433,12 +1657,22 @@
             }
         }
 
+        // 加载测试数据
+        function loadTestData(type) {
+            if (type === 'single') {
+                document.getElementById('importData').value = '3568-2589-1478';
+            } else if (type === 'double') {
+                document.getElementById('importData').value = '3568-2589-1478\n1234-5678-9632';
+            }
+            calculator.importData();
+        }
+
         // 初始化计算器实例
         const calculator = new LotteryCalculator();
         
         // 页面加载完成后初始化
         window.addEventListener('load', () => {
-            calculator.speak('十方料码伪序缩水软件已加载，为您提供分析计算');
+            calculator.speak('十方料码伪序动态复式软件已加载，专业彩票数据分析工具');
         });
     </script>
 </body>

@@ -2,1628 +2,512 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>十方 - 专业彩票数据分析工具</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>十方料码 www.shifanglm.com</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00ffff">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><circle cx='64' cy='64' r='60' fill='%23000' stroke='%2300ffff' stroke-width='4'/></svg>">
     <style>
-        :root {
-            --primary-gold: #FFD700;
-            --primary-red: #DC2626;
-            --primary-blue: #1E40AF;
-            --primary-green: #10B981;
-            --brand-gradient: linear-gradient(135deg, #FFD700 0%, #DC2626 50%, #1E40AF 100%);
-            --button-initial: #4B5563;
-            --button-active: #DC2626;
-            --button-hover: #374151;
-            --dark-bg: #0F172A;
-            --card-bg: rgba(30, 41, 59, 0.9);
-            --text-primary: #F8FAFC;
-            --text-secondary: #94A3B8;
-            --border-color: rgba(255, 215, 0, 0.2);
-            --brand-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Microsoft YaHei', sans-serif;
-            background: var(--dark-bg);
-            color: var(--text-primary);
-            line-height: 1.6;
-            padding: 16px;
-            min-height: 100vh;
+            background: #000;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(220, 38, 38, 0.05) 0%, transparent 20%);
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(255, 0, 255, 0.1) 0%, transparent 20%);
+            color: #00ffff;
+            min-height: 100vh;
+            padding: 15px;
+            overflow-x: hidden;
         }
-        
         .container {
-            max-width: 900px;
-            margin: 0 auto;
+            width: 100%;
+            min-height: calc(100vh - 30px);
+            background: rgba(0, 10, 20, 0.95);
+            border: 2px solid #00ffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5), 0 0 50px rgba(255, 0, 255, 0.3);
+            display: flex;
+            flex-direction: column;
         }
-        
-        .brand-header {
+        h1 {
             text-align: center;
-            margin-bottom: 24px;
-            padding: 20px 0;
-            position: relative;
+            color: #00ffff;
+            text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff;
+            margin-bottom: 20px;
+            font-size: 24px;
+            flex-shrink: 0;
         }
-        
-        .brand-logo {
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 10px;
-            background: var(--brand-gradient);
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+            flex-shrink: 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00ffff;
+            font-size: 16px;
+            text-shadow: 0 0 5px #00ffff;
+        }
+        #importInput {
+            width: 100%;
+            height: 120px;
+            padding: 12px 15px;
+            background: rgba(0, 20, 30, 0.8);
+            border: 1px solid #00ffff;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            resize: vertical;
+            box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.2);
+            padding-right: 120px;
+        }
+        #importInput:focus {
+            border-color: #ff00ff;
+            box-shadow: inset 0 0 15px rgba(255, 0, 255, 0.4);
+        }
+        .qq-label {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            font-size: 15px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: var(--brand-shadow);
-            letter-spacing: 2px;
+            pointer-events: none;
         }
-        
-        .brand-subtitle {
-            color: var(--primary-gold);
-            font-size: 1.2rem;
-            font-weight: 500;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
-        
-        .brand-tagline {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        .contact-info {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(220, 38, 38, 0.1));
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px auto;
-            text-align: center;
-            border: 1px solid var(--border-color);
-            max-width: 500px;
-        }
-        
-        .wechat-info {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
-            font-size: 1.1rem;
-            color: var(--primary-gold);
-            font-weight: 600;
-        }
-        
-        .wechat-icon {
-            font-size: 1.5rem;
-            animation: pulse 2s infinite;
-        }
-        
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: var(--brand-gradient);
-        }
-        
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: var(--primary-gold);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .section-title::before {
-            content: '✦';
-            color: var(--primary-red);
-        }
-        
-        .textarea {
-            width: 100%;
-            height: 120px;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: rgba(15, 23, 42, 0.7);
-            color: var(--text-primary);
-            resize: vertical;
-            margin-bottom: 12px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-        }
-        
-        .textarea:focus {
-            outline: none;
-            border-color: var(--primary-gold);
-            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin: 16px 0;
-        }
-        
-        .stat-item {
-            background: rgba(255, 215, 0, 0.05);
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-        
-        .stat-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--primary-gold);
-        }
-        
-        .btn-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        
         .btn {
-            padding: 12px 16px;
+            padding: 14px 0;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
             border: none;
             border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
+            color: #000;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            flex: 1;
-            min-width: 120px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), 0 0 25px rgba(255, 0, 255, 0.4);
+            margin-bottom: 10px;
+            width: 48%;
+            float: left;
+            margin-right: 4%;
         }
-        
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
+        .btn:nth-child(even) {
+            margin-right: 0;
         }
-        
-        .btn:active::after {
-            animation: ripple 1s ease-out;
-        }
-        
-        .btn:active {
-            transform: translateY(1px);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-blue), #3730A3);
-            color: white;
-            border: 1px solid rgba(59, 130, 246, 0.5);
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, var(--primary-green), #047857);
-            color: white;
-            border: 1px solid rgba(16, 185, 129, 0.5);
-        }
-        
-        .btn-brand {
-            background: linear-gradient(135deg, var(--primary-red), #9F1239);
-            color: white;
-            border: 1px solid rgba(220, 38, 38, 0.5);
-        }
-        
-        .match-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin: 16px 0;
-        }
-        
-        .match-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-        
-        .match-option {
-            padding: 12px 8px;
-            border: 2px solid var(--button-initial);
-            border-radius: 6px;
-            background: rgba(75, 85, 99, 0.5);
-            color: white;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 700;
-            transition: all 0.3s ease;
-        }
-        
-        .match-option:hover {
-            background: var(--button-hover);
-            border-color: var(--button-hover);
-            transform: translateY(-2px);
-        }
-        
-        .match-option.selected {
-            background: linear-gradient(135deg, var(--primary-red), #B91C1C);
-            border-color: var(--primary-gold);
-            color: white;
-            box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
-            transform: scale(1.05);
-        }
-        
-        .double-match-section {
-            margin-top: 20px;
-            padding: 20px;
-            background: rgba(255, 215, 0, 0.05);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .double-match-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: var(--primary-gold);
-            text-align: center;
-        }
-        
-        .position-options {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .position-btn {
-            padding: 10px 16px;
-            background: rgba(75, 85, 99, 0.5);
-            color: white;
-            border: 2px solid var(--button-initial);
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .position-btn:hover {
-            background: var(--button-hover);
-            border-color: var(--button-hover);
-            transform: translateY(-2px);
-        }
-        
-        .position-btn.selected {
-            background: linear-gradient(135deg, var(--primary-red), #B91C1C);
-            border-color: var(--primary-gold);
-            color: white;
-            box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
-            transform: scale(1.05);
-        }
-        
-        .match-type-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        
-        .type-btn {
-            padding: 8px 12px;
-            background: rgba(75, 85, 99, 0.5);
-            color: white;
-            border: 2px solid var(--button-initial);
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .type-btn:hover {
-            background: var(--button-hover);
-            border-color: var(--button-hover);
-            transform: translateY(-1px);
-        }
-        
-        .type-btn.selected {
-            background: linear-gradient(135deg, var(--primary-red), #B91C1C);
-            border-color: var(--primary-gold);
-            color: white;
-            box-shadow: 0 0 8px rgba(220, 38, 38, 0.5);
-            transform: scale(1.05);
-        }
-        
-        .tolerance-settings {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 8px;
-            align-items: end;
-            margin: 16px 0;
-        }
-        
-        .number-input {
+        .btn.full-width {
             width: 100%;
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background: rgba(15, 23, 42, 0.7);
-            color: var(--text-primary);
-            text-align: center;
-            font-weight: 600;
+            margin-right: 0;
+            padding: 16px 0;
+            font-size: 18px;
         }
-        
-        .number-input:focus {
-            outline: none;
-            border-color: var(--primary-gold);
-            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(255, 0, 255, 0.6);
         }
-        
-        .result-section {
-            margin-top: 20px;
-            padding: 16px;
-            background: rgba(255, 215, 0, 0.05);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+        .btn:disabled {
+            background: linear-gradient(90deg, #666, #999);
+            color: #333;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
         }
-        
-        .result-header {
+        .btn-group {
+            margin-bottom: 20px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .groups-container {
+            margin: 20px 0;
+            padding: 0;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .groups-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .groups-container::-webkit-scrollbar-track {
+            background: rgba(0, 20, 30, 0.8);
+            border-radius: 3px;
+        }
+        .groups-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #00ffff, #ff00ff);
+            border-radius: 3px;
+        }
+        .group-card {
+            background: rgba(0, 20, 30, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+        .group-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+            position: relative;
         }
-        
-        .result-count {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--primary-gold);
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-        
-        .verification-input {
+        .group-id {
+            color: #00ffff;
+            font-weight: bold;
+            font-size: 18px;
+            text-shadow: 0 0 5px #00ffff;
             width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background: rgba(15, 23, 42, 0.7);
-            color: var(--text-primary);
             text-align: center;
+        }
+        .group-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #666;
+            transition: all 0.3s;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .group-card.selected .group-status {
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        .group-data {
+            font-size: 15px;
+            color: #aaffff;
             margin-bottom: 12px;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 5px;
-        }
-        
-        .verification-input:focus {
-            outline: none;
-            border-color: var(--primary-gold);
-            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
-        }
-        
-        .verification-result {
-            margin-top: 12px;
-            padding: 16px;
-            border-radius: 8px;
             text-align: center;
+        }
+        .position-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .pos-btn {
+            flex: 1;
+            padding: 10px 0;
+            background: rgba(0, 20, 30, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .pos-btn.active {
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+        .settings-section {
+            background: rgba(0, 20, 30, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            flex-shrink: 0;
+        }
+        .setting-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .setting-label {
+            color: #00ffff;
+            font-size: 16px;
+            text-shadow: 0 0 5px #00ffff;
+            margin-right: 10px;
+        }
+        .tolerance-input {
+            width: 70px;
+            padding: 10px;
+            background: rgba(0, 20, 30, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 6px;
+            color: #fff;
+            text-align: center;
+            font-size: 16px;
+            margin: 0 5px;
+        }
+        .tolerance-desc {
+            color: #aaffff;
+            font-size: 14px;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        .result-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 20, 30, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 12px;
+            display: none;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            flex-shrink: 0;
+        }
+        .result-title {
+            color: #ff00ff;
+            margin-bottom: 15px;
             font-size: 18px;
-            font-weight: 800;
+            text-align: center;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+        .result-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #00ffff;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(0, 70, 70, 0.8);
+            border: none;
+            color: #aaffff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            color: #000;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #aaffff;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .tab-content::-webkit-scrollbar-track {
+            background: rgba(0, 20, 30, 0.8);
+            border-radius: 3px;
+        }
+        .tab-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #00ffff, #ff00ff);
+            border-radius: 3px;
+        }
+        /* 优化：缩小开奖号验证区域样式 */
+        .verify-section {
+            background: transparent; /* 取消背景，减少占用空间 */
+            border: none; /* 取消边框 */
+            padding: 10px 0;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center; /* 居中显示 */
+        }
+        #lotteryInput {
+            width: 100px; /* 缩小输入框宽度 */
+            padding: 8px; /* 缩小内边距 */
+            background: rgba(0, 20, 30, 0.8);
+            border: 2px solid #ffd700;
+            border-radius: 6px;
+            color: #fff;
+            text-align: center;
+            font-size: 16px; /* 缩小字体 */
+            letter-spacing: 1px;
+        }
+        #verifyBtn {
+            width: 90px; /* 缩小按钮宽度 */
+            padding: 8px 0; /* 缩小内边距 */
+            background: linear-gradient(90deg, #ffd700, #ff6b35);
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            font-size: 14px; /* 缩小字体 */
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        #verifyBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+        .verify-result {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 5px;
+            height: 24px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #669999;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff00;
+            border-radius: 8px;
+            color: #00ff00;
+            font-size: 16px;
+            box-shadow: 0 0 10px #00ff00;
             opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.5s ease;
-            min-height: 60px;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .toast.active {
+            opacity: 1;
+        }
+        .voice-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            border: none;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.8), 0 0 25px rgba(255, 0, 255, 0.6);
+            color: #000;
+            font-size: 24px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 9999;
         }
-        
-        .verification-result.show {
-            opacity: 1;
-            transform: scale(1);
+        .voice-btn.playing {
+            animation: pulse 1.5s infinite;
         }
-        
-        .verification-result.win {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
-            color: var(--primary-green);
-            border: 2px solid var(--primary-green);
-            animation: pulse-win 1.5s ease-in-out;
-        }
-        
-        .verification-result.lose {
-            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(185, 28, 28, 0.2));
-            color: var(--primary-red);
-            border: 2px solid var(--primary-red);
-            animation: pulse-lose 1.5s ease-in-out;
-        }
-        
-        @keyframes pulse-win {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-        
-        @keyframes pulse-lose {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(220, 38, 38, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
-        }
-        
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
-        
-        @keyframes ripple {
-            0% { transform: scale(0, 0); opacity: 1; }
-            100% { transform: scale(20, 20); opacity: 0; }
-        }
-        
-        .global-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .stats-btn {
-            padding: 10px 8px;
-            background: rgba(75, 85, 99, 0.5);
-            color: white;
-            border: 2px solid var(--button-initial);
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .stats-btn:hover {
-            background: var(--button-hover);
-            border-color: var(--button-hover);
-            transform: translateY(-2px);
-        }
-        
-        .stats-btn.selected {
-            background: linear-gradient(135deg, var(--primary-red), #B91C1C);
-            border-color: var(--primary-gold);
-            color: white;
-            box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
-            transform: scale(1.05);
-        }
-        
-        .double-stats-container {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .position-column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .position-title {
-            font-size: 14px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 10px;
-            color: var(--primary-gold);
-        }
-        
-        .stats-vertical-btn {
-            padding: 8px 12px;
-            background: rgba(75, 85, 99, 0.5);
-            color: white;
-            border: 2px solid var(--button-initial);
-            border-radius: 4px;
-            font-size: 11px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-        
-        .stats-vertical-btn:hover {
-            background: var(--button-hover);
-            border-color: var(--button-hover);
-            transform: translateY(-1px);
-        }
-        
-        .stats-vertical-btn.selected {
-            background: linear-gradient(135deg, var(--primary-red), #B91C1C);
-            border-color: var(--primary-gold);
-            color: white;
-            box-shadow: 0 0 8px rgba(220, 38, 38, 0.5);
-            transform: scale(1.05);
-        }
-        
-        .group-list {
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 15px;
-            padding: 12px;
-            background: rgba(255, 215, 0, 0.05);
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .group-item {
-            padding: 8px;
-            margin: 4px 0;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            text-align: center;
-            border-left: 3px solid var(--primary-gold);
-        }
-        
-        .stats-result {
-            display: none;
-            margin-top: 20px;
-            padding: 16px;
-            background: rgba(255, 215, 0, 0.05);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .stats-title {
-            font-weight: 800;
-            margin-bottom: 8px;
-            text-align: center;
-            color: var(--primary-gold);
-            font-size: 1.1rem;
-        }
-        
-        .stats-groups {
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 12px;
-            background: rgba(15, 23, 42, 0.3);
-            border-radius: 6px;
-        }
-        
-        .audio-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: linear-gradient(135deg, var(--primary-red), #B91C1C);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
-            transition: all 0.3s ease;
-            border: 2px solid var(--primary-gold);
-        }
-        
-        .audio-toggle.muted {
-            background: linear-gradient(135deg, var(--button-initial), #4B5563);
-        }
-        
-        .audio-toggle:active {
-            transform: scale(0.95);
-        }
-        
-        .brand-watermark {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            color: rgba(255, 215, 0, 0.2);
-            font-size: 1.2rem;
-            font-weight: 900;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            letter-spacing: 3px;
-            z-index: 1;
-        }
-        
-        .brand-footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--border-color);
-        }
-        
-        .brand-highlight {
-            color: var(--primary-gold);
-            font-weight: 700;
-        }
-        
-        .test-examples {
-            margin-top: 10px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        
-        .test-example {
-            background: rgba(255, 215, 0, 0.1);
-            padding: 8px;
-            border-radius: 6px;
-            margin-top: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
-        }
-        
-        .test-example:hover {
-            background: rgba(255, 215, 0, 0.2);
-            transform: translateY(-2px);
-        }
-        
-        .calculation-logic {
-            background: rgba(255, 215, 0, 0.05);
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 15px;
-            border: 1px solid var(--border-color);
-            font-size: 0.9rem;
-        }
-        
-        .calculation-logic h4 {
-            color: var(--primary-gold);
-            margin-bottom: 8px;
-        }
-        
-        .calculation-logic ul {
-            padding-left: 20px;
-        }
-        
-        .calculation-logic li {
-            margin-bottom: 5px;
-        }
-        
-        /* 滚动条样式 */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, var(--primary-gold), var(--primary-red));
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, var(--primary-red), var(--primary-gold));
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .match-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .global-stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .double-stats-container {
-                flex-direction: column;
-            }
-            
-            .position-column {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .stats-vertical-btn {
-                flex: 1;
-                min-width: 100px;
-            }
-            
-            .brand-logo {
-                font-size: 2.2rem;
-            }
-            
-            .position-options {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .position-btn {
-                width: 80%;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .match-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .global-stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .brand-logo {
-                font-size: 1.8rem;
-            }
-        }
     </style>
 </head>
 <body>
-    <button class="audio-toggle" id="audioToggle" onclick="toggleAudio()">🔊</button>
-    <div class="brand-watermark">十方料码</div>
-    
+    <button class="voice-btn" id="voiceBtn" title="语音播报当前结果">🔊</button>
     <div class="container">
-        <!-- 品牌头部 -->
-        <div class="brand-header">
-            <div class="brand-logo">十方料码</div>
-            <div class="brand-subtitle">伪序动态复式软件</div>
-            <div class="brand-tagline">专业彩票数据分析 · 精准命中计算</div>
+        <h1>✨ 十方料码 www.shifanglm.com ✨</h1>
+        <div class="input-group">
+            <label for="importInput">导入定位复式数据（每行一组）</label>
+            <textarea id="importInput" placeholder="请输入多组定位复式数据，每行一组">0846-2874-2758
+9713-0136-0931
+0285-2985-2476
+2456-9754-4568
+9275-0915-0496
+1357-2468-3579
+0246-1357-2468
+1122-3344-5566
+7890-1234-5678
+2345-6789-0123</textarea>
+            <div class="qq-label">QQ: 921913231</div>
         </div>
-        
-        <!-- 联系方式 -->
-        <div class="contact-info">
-            <div>专业彩票数据分析 · 精准选号策略</div>
-            <div class="wechat-info">
-                <span class="wechat-icon">💬</span>
-                <span>微信: shifangliaoma</span>
+        <div class="btn-group">
+            <button class="btn" id="parseBtn">解析数据</button>
+            <button class="btn" id="clearBtn">清空数据</button>
+            <button class="btn" id="selectAllBtn">全选组</button>
+            <button class="btn" id="deselectAllBtn">取消全选</button>
+            <button class="btn full-width" id="enableGenerateBtn">启用生成功能</button>
+        </div>
+        <div class="groups-container" id="groupsContainer">
+            <div class="group-card">
+                <div class="group-header">
+                    <div class="group-id">无数据</div>
+                    <div class="group-status"></div>
+                </div>
+                <div class="group-data">请点击"解析数据"加载组</div>
             </div>
         </div>
-        
-        <!-- 数据导入 -->
-        <div class="card">
-            <div class="section-title">📥 数据导入</div>
-            <textarea class="textarea" id="importData" placeholder="请输入复式数据，每行一组&#10;格式示例：3568-2589-1478&#10;更多数据格式请咨询微信: shifangliaoma"></textarea>
+        <div class="settings-section">
+            <div class="setting-row">
+                <span class="setting-label">容错范围（错误组数）：</span>
+                <input type="number" id="toleranceMin" class="tolerance-input" value="0" min="0">
+                <span class="setting-label">-</span>
+                <input type="number" id="toleranceMax" class="tolerance-input" value="0" min="0">
+            </div>
+            <p class="tolerance-desc">⚠️ 核心规则：单组未选择任何位置时，视为「三个位置全错」；选择部分位置时，未选位置视为「必须错误」</p>
+        </div>
+        <button class="btn full-width" id="calcBtn" disabled>生成大底号码</button>
+        <div class="result-section" id="resultSection">
+            <div class="result-title">📊 大底生成结果</div>
+            <div class="result-tabs">
+                <button class="tab-btn active" data-tab="summary">统计汇总</button>
+                <button class="tab-btn" data-tab="numbers">大底号码</button>
+                <button class="tab-btn" data-tab="config">配置清单</button>
+            </div>
+            <div class="tab-content active" id="summaryContent"></div>
+            <div class="tab-content" id="numbersContent"></div>
+            <div class="tab-content" id="configContent"></div>
             
-            <div class="test-examples">
-                <div>测试用例（点击直接导入）：</div>
-                <div class="test-example" onclick="loadTestData('single')">单组复式：3568-2589-1478</div>
-                <div class="test-example" onclick="loadTestData('double')">两组复式：3568-2589-1478\n1234-5678-9632</div>
+            <!-- 优化：缩小后的开奖号验证区域 -->
+            <div class="verify-section">
+                <input type="text" id="lotteryInput" placeholder="开奖号" maxlength="3">
+                <button id="verifyBtn">验证中奖</button>
             </div>
+            <div class="verify-result" id="verifyResult"></div>
             
-            <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-label">当前组数</div>
-                    <div class="stat-value" id="groupCount">0</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">数据状态</div>
-                    <div class="stat-value" id="dataStatus">未加载</div>
-                </div>
-            </div>
-            
-            <div class="btn-group">
-                <button class="btn btn-brand" onclick="playSound('import'); calculator.importData()">导入数据</button>
-                <button class="btn btn-primary" onclick="playSound('clear'); calculator.clearData()">清除数据</button>
-            </div>
+            <button class="btn full-width" id="copyBtn">一键复制当前标签内容</button>
         </div>
-        
-        <!-- 开奖号码输入 -->
-        <div class="card">
-            <div class="section-title">🎯 开奖号码设置</div>
-            <div style="text-align: center;">
-                <input type="text" class="verification-input" id="winningNumber" placeholder="输入开奖号码（如：123）" maxlength="3" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                <div style="margin-top: 10px; font-size: 0.9rem; color: var(--text-secondary);">
-                    请输入开奖号码，系统将基于此号码进行匹配计算
-                </div>
-            </div>
-        </div>
-        
-        <!-- 全局匹配设置 -->
-        <div class="card">
-            <div class="section-title">🎯 全局匹配设置（匹配开奖号的位置数）</div>
-            <div class="match-container">
-                <div class="match-row" id="matchRow1"></div>
-                <div class="match-row" id="matchRow2"></div>
-            </div>
-            
-            <div class="tolerance-settings">
-                <input type="number" class="number-input" id="globalMin" value="0" min="0" max="3" placeholder="最小">
-                <span style="color: var(--primary-gold); font-weight: 700;">到</span>
-                <input type="number" class="number-input" id="globalMax" value="3" min="0" max="3" placeholder="最大">
-            </div>
-            
-            <div class="calculation-logic">
-                <h4>全局匹配规则说明：</h4>
-                <ul>
-                    <li><strong>匹配3</strong>: 复式每个位置都包含开奖号对应位置的数字（直选）</li>
-                    <li><strong>匹配2</strong>: 复式有两个位置包含开奖号对应位置的数字</li>
-                    <li><strong>匹配01</strong>: 复式有0或1个位置包含开奖号对应位置的数字</li>
-                    <li><strong>匹配23</strong>: 复式有2或3个位置包含开奖号对应位置的数字</li>
-                    <li>容错范围：控制每组复式需要满足的匹配位置数范围</li>
-                </ul>
-            </div>
-        </div>
-        
-        <!-- 双位匹配设置 -->
-        <div class="card">
-            <div class="section-title">🔧 双位匹配设置（针对特定两个位置）</div>
-            <div class="double-match-section">
-                <div class="double-match-title">选择双位组合</div>
-                <div class="position-options">
-                    <button class="position-btn" id="btnHt" onclick="playSound('select'); calculator.selectDoublePosition('ht')">百十位</button>
-                    <button class="position-btn" id="btnHu" onclick="playSound('select'); calculator.selectDoublePosition('hu')">百个位</button>
-                    <button class="position-btn" id="btnTu" onclick="playSound('select'); calculator.selectDoublePosition('tu')">十个位</button>
-                </div>
-                
-                <div class="double-match-title">选择匹配类型</div>
-                <div class="match-type-grid">
-                    <button class="type-btn" onclick="playSound('select'); calculator.selectDoubleType('0')">匹配0位</button>
-                    <button class="type-btn" onclick="playSound('select'); calculator.selectDoubleType('1')">匹配1位</button>
-                    <button class="type-btn" onclick="playSound('select'); calculator.selectDoubleType('2')">匹配2位</button>
-                    <button class="type-btn" onclick="playSound('select'); calculator.selectDoubleType('01')">匹配0-1位</button>
-                    <button class="type-btn" onclick="playSound('select'); calculator.selectDoubleType('12')">匹配1-2位</button>
-                    <button class="type-btn" onclick="playSound('select'); calculator.selectDoubleType('02')">匹配0-2位</button>
-                </div>
-                
-                <div class="tolerance-settings">
-                    <input type="number" class="number-input" id="doubleMin" value="0" min="0" max="2" placeholder="最小">
-                    <span style="color: var(--primary-gold); font-weight: 700;">到</span>
-                    <input type="number" class="number-input" id="doubleMax" value="2" min="0" max="2" placeholder="最大">
-                </div>
-                
-                <div class="calculation-logic">
-                    <h4>双位匹配规则说明：</h4>
-                    <ul>
-                        <li><strong>百十位匹配2</strong>: 百位和十位都包含开奖号对应位置的数字</li>
-                        <li><strong>百十位匹配01</strong>: 百位和十位中，要么都没有包含开奖号数字，要么只包含一个</li>
-                        <li><strong>百十位匹配12</strong>: 百位和十位中，包含1或2个开奖号数字</li>
-                        <li>双位匹配与全局匹配同时生效，需要同时满足两个条件</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 计算按钮 -->
-        <div class="card" style="text-align: center;">
-            <button class="btn btn-success" onclick="playSound('calculate'); calculator.calculate()" style="min-width: 200px; font-size: 16px; padding: 15px; background: linear-gradient(135deg, var(--primary-gold), var(--primary-red));">开始计算</button>
-        </div>
-        
-        <!-- 结果显示 -->
-        <div class="card" id="resultsCard" style="display: none;">
-            <div class="section-title">📊 计算结果</div>
-            <div class="result-section">
-                <div class="result-header">
-                    <div>
-                        <div style="font-size: 12px; color: var(--text-secondary);">符合条件的注数</div>
-                        <div class="result-count" id="resultCount">0</div>
-                    </div>
-                    <button class="btn btn-brand" onclick="playSound('copy'); calculator.copyResults()">复制号码</button>
-                </div>
-                
-                <div id="resultDetails" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px; padding: 10px; background: rgba(255, 215, 0, 0.05); border-radius: 6px; font-family: monospace; font-size: 12px; display: none;"></div>
-                
-                <button class="btn btn-brand" onclick="playSound('verify'); calculator.verifyWinning()" style="width: 100%; margin-bottom: 15px;">验证是否中奖</button>
-                
-                <div class="verification-result" id="verificationResult"></div>
-            </div>
-        </div>
-        
-        <!-- 底部命中统计 -->
-        <div class="card">
-            <div class="section-title">📈 底部命中统计提取</div>
-            
-            <!-- 全局统计匹配 -->
-            <div style="margin-bottom: 20px;">
-                <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; color: var(--primary-gold); text-align: center;">全局统计匹配</div>
-                <div class="global-stats-grid">
-                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('0')">匹配0位</button>
-                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('1')">匹配1位</button>
-                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('2')">匹配2位</button>
-                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('3')">匹配3位</button>
-                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('01')">匹配01位</button>
-                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('12')">匹配12位</button>
-                    <button class="stats-btn" onclick="playSound('extract'); calculator.extractGlobalStats('23')">匹配23位</button>
-                    <button class="btn btn-brand" onclick="playSound('copy'); calculator.copyGlobalStats()" style="grid-column: span 1;">复制提取</button>
-                </div>
-            </div>
-            
-            <!-- 双位统计匹配 -->
-            <div>
-                <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; color: var(--primary-gold); text-align: center;">双位统计匹配</div>
-                <div class="double-stats-container">
-                    <div class="position-column">
-                        <div class="position-title">百十位</div>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('ht-0')">匹配0位</button>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('ht-1')">匹配1位</button>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('ht-2')">匹配2位</button>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('ht-01')">匹配01位</button>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('ht-12')">匹配12位</button>
-                    </div>
-                    
-                    <div class="position-column">
-                        <div class="position-title">百个位</div>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('hu-0')">匹配0位</button>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('hu-1')">匹配1位</button>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('hu-2')">匹配2位</button>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('hu-01')">匹配01位</button>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('hu-12')">匹配12位</button>
-                    </div>
-                    
-                    <div class="position-column">
-                        <div class="position-title">十个位</div>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('tu-0')">匹配0位</button>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('tu-1')">匹配1位</button>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('tu-2')">匹配2位</button>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('tu-01')">匹配01位</button>
-                        <button class="stats-vertical-btn" onclick="playSound('extract'); calculator.extractDoubleStats('tu-12')">匹配12位</button>
-                    </div>
-                </div>
-                <button class="btn btn-brand" onclick="playSound('copy'); calculator.copyDoubleStats()" style="width: 100%; margin-top: 15px;">复制双位提取</button>
-            </div>
-            
-            <!-- 提取结果显示 -->
-            <div id="statsResult" style="display: none; margin-top: 20px;">
-                <div class="stats-title" id="statsTitle"></div>
-                <div class="group-list" id="statsGroups"></div>
-            </div>
-        </div>
-        
-        <!-- 品牌页脚 -->
-        <div class="brand-footer">
-            <div>© 2023 <span class="brand-highlight">十方料码</span> - 专业彩票数据分析工具</div>
-            <div style="margin-top: 5px; font-size: 0.8rem;">微信: shifangliaoma | 数据精准 · 命中率高 · 专业可靠</div>
+        <div class="footer">
+            温馨提示：本工具仅用于数据分析，不构成彩票购买建议
         </div>
     </div>
-
+    <div class="toast" id="toast">操作成功！</div>
     <script>
-        class LotteryCalculator {
-            constructor() {
-                this.groups = [];
-                this.selectedMatches = new Set(['3']); // 默认选择匹配3
-                this.selectedDouble = {
-                    position: null,
-                    type: null
-                };
-                this.results = [];
-                this.allCombinations = new Set(); // 存储所有符合条件的号码
-                this.currentExtraction = null;
-                this.audioEnabled = true;
-                this.winningNumber = ''; // 存储开奖号码
-                this.init();
-            }
-            
-            init() {
-                this.renderMatchOptions();
-                this.loadFromStorage();
-                this.updateDisplay();
-            }
-            
-            renderMatchOptions() {
-                const options = [
-                    { value: '0', label: '0', desc: '匹配0位' },
-                    { value: '1', label: '1', desc: '匹配1位' },
-                    { value: '01', label: '01', desc: '匹配0-1位' },
-                    { value: '12', label: '12', desc: '匹配1-2位' },
-                    { value: '23', label: '23', desc: '匹配2-3位' },
-                    { value: '123', label: '123', desc: '匹配123位' },
-                    { value: '3', label: '3', desc: '匹配3位' },
-                    { value: '2', label: '2', desc: '匹配2位' }
-                ];
-                
-                const row1 = document.getElementById('matchRow1');
-                const row2 = document.getElementById('matchRow2');
-                
-                row1.innerHTML = options.slice(0, 4).map(opt => `
-                    <div class="match-option ${this.selectedMatches.has(opt.value) ? 'selected' : ''}" 
-                         onclick="playSound('select'); calculator.toggleMatch('${opt.value}')">
-                        <div style="font-weight: 800;">${opt.label}</div>
-                        <div style="font-size: 11px; opacity: 0.8;">${opt.desc}</div>
-                    </div>
-                `).join('');
-                
-                row2.innerHTML = options.slice(4).map(opt => `
-                    <div class="match-option ${this.selectedMatches.has(opt.value) ? 'selected' : ''}" 
-                         onclick="playSound('select'); calculator.toggleMatch('${opt.value}')">
-                        <div style="font-weight: 800;">${opt.label}</div>
-                        <div style="font-size: 11px; opacity: 0.8;">${opt.desc}</div>
-                    </div>
-                `).join('');
-            }
-            
-            toggleMatch(value) {
-                this.selectedMatches.clear();
-                this.selectedMatches.add(value);
-                this.renderMatchOptions();
-                this.saveToStorage();
-                this.speak(`已选择匹配${value}位`);
-            }
-            
-            selectDoublePosition(position) {
-                this.selectedDouble.position = position;
-                this.updateDoubleUI();
-                const positionNames = {
-                    'ht': '百十位',
-                    'hu': '百个位',
-                    'tu': '十个位'
-                };
-                this.speak(`已选择${positionNames[position]}`);
-            }
-            
-            selectDoubleType(type) {
-                this.selectedDouble.type = type;
-                this.updateDoubleUI();
-                this.speak(`已选择匹配${type}位`);
-            }
-            
-            updateDoubleUI() {
-                ['ht', 'hu', 'tu'].forEach(pos => {
-                    const btn = document.getElementById(`btn${pos.toUpperCase()}`);
-                    if (btn) {
-                        btn.classList.toggle('selected', this.selectedDouble.position === pos);
-                    }
-                });
-                
-                const typeButtons = document.querySelectorAll('.type-btn');
-                typeButtons.forEach(btn => {
-                    const type = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
-                    btn.classList.toggle('selected', this.selectedDouble.type === type);
-                });
-            }
-            
-            importData() {
-                const data = document.getElementById('importData').value;
-                if (!data.trim()) {
-                    this.speak('请输入数据');
-                    alert('请输入数据');
-                    return 0;
-                }
-                
-                const lines = data.split('\n').filter(line => line.trim());
-                let count = 0;
-                this.groups = [];
-                
-                for (const line of lines) {
-                    const parts = line.split('-').filter(part => part.trim());
-                    if (parts.length === 3) {
-                        const [h, t, u] = parts.map(part => {
-                            const cleaned = part.replace(/[^0-9]/g, '');
-                            return cleaned || '0';
-                        });
-                        
-                        if (h && t && u) {
-                            this.groups.push({ h, t, u });
-                            count++;
-                        }
-                    }
-                }
-                
-                this.saveToStorage();
-                this.updateDisplay();
-                this.speak(`十方料码成功导入${count}组数据`);
-                return count;
-            }
-            
-            clearData() {
-                this.groups = [];
-                document.getElementById('importData').value = '';
-                this.results = [];
-                this.allCombinations.clear();
-                document.getElementById('resultsCard').style.display = 'none';
-                document.getElementById('resultDetails').style.display = 'none';
-                this.saveToStorage();
-                this.updateDisplay();
-                this.speak('数据已清除');
-            }
-            
-            updateDisplay() {
-                const groupCount = this.groups.length;
-                document.getElementById('groupCount').textContent = groupCount;
-                document.getElementById('dataStatus').textContent = groupCount > 0 ? '已加载' : '未加载';
-                
-                if (groupCount > 0) {
-                    document.getElementById('dataStatus').style.color = 'var(--primary-green)';
-                } else {
-                    document.getElementById('dataStatus').style.color = 'var(--primary-red)';
-                }
-            }
-            
-            // 获取开奖号码
-            getWinningNumber() {
-                this.winningNumber = document.getElementById('winningNumber').value;
-                return this.winningNumber;
-            }
-            
-            // 检查一个号码是否匹配匹配条件（基于开奖号码）
-            checkMatchConditions(numberStr, group) {
-                const winningNumber = this.getWinningNumber();
-                
-                // 如果没有输入开奖号码，无法计算匹配
-                if (!winningNumber || winningNumber.length !== 3) {
-                    return false;
-                }
-                
-                const [winH, winT, winU] = winningNumber.split('');
-                const [h, t, u] = numberStr.split('');
-                
-                // 检查每个位置是否匹配（号码的每个位置是否在复式的对应位置中）
-                const hMatch = group.h.includes(h) && h === winH;
-                const tMatch = group.t.includes(t) && t === winT;
-                const uMatch = group.u.includes(u) && u === winU;
-                
-                // 计算全局匹配位置数
-                let globalMatchCount = 0;
-                if (hMatch) globalMatchCount++;
-                if (tMatch) globalMatchCount++;
-                if (uMatch) globalMatchCount++;
-                
-                // 检查全局匹配条件
-                const globalMin = parseInt(document.getElementById('globalMin').value) || 0;
-                const globalMax = parseInt(document.getElementById('globalMax').value) || 3;
-                
-                // 获取选中的匹配类型
-                const selectedMatchType = Array.from(this.selectedMatches)[0];
-                let globalConditionMet = false;
-                
-                // 根据选中的匹配类型检查
-                if (selectedMatchType === '0' && globalMatchCount === 0) globalConditionMet = true;
-                else if (selectedMatchType === '1' && globalMatchCount === 1) globalConditionMet = true;
-                else if (selectedMatchType === '2' && globalMatchCount === 2) globalConditionMet = true;
-                else if (selectedMatchType === '3' && globalMatchCount === 3) globalConditionMet = true;
-                else if (selectedMatchType === '01' && (globalMatchCount === 0 || globalMatchCount === 1)) globalConditionMet = true;
-                else if (selectedMatchType === '12' && (globalMatchCount === 1 || globalMatchCount === 2)) globalConditionMet = true;
-                else if (selectedMatchType === '23' && (globalMatchCount === 2 || globalMatchCount === 3)) globalConditionMet = true;
-                else if (selectedMatchType === '123' && (globalMatchCount === 1 || globalMatchCount === 2 || globalMatchCount === 3)) globalConditionMet = true;
-                
-                // 检查容错范围
-                if (globalMatchCount < globalMin || globalMatchCount > globalMax) {
-                    globalConditionMet = false;
-                }
-                
-                // 如果没有设置双位匹配，只检查全局匹配
-                if (!this.selectedDouble.position || !this.selectedDouble.type) {
-                    return globalConditionMet;
-                }
-                
-                // 检查双位匹配条件
-                let doubleMatchCount = 0;
-                const { position, type } = this.selectedDouble;
-                
-                if (position === 'ht') {
-                    if (hMatch) doubleMatchCount++;
-                    if (tMatch) doubleMatchCount++;
-                } else if (position === 'hu') {
-                    if (hMatch) doubleMatchCount++;
-                    if (uMatch) doubleMatchCount++;
-                } else if (position === 'tu') {
-                    if (tMatch) doubleMatchCount++;
-                    if (uMatch) doubleMatchCount++;
-                }
-                
-                // 检查双位匹配类型
-                let doubleConditionMet = false;
-                if (type === '0' && doubleMatchCount === 0) doubleConditionMet = true;
-                else if (type === '1' && doubleMatchCount === 1) doubleConditionMet = true;
-                else if (type === '2' && doubleMatchCount === 2) doubleConditionMet = true;
-                else if (type === '01' && (doubleMatchCount === 0 || doubleMatchCount === 1)) doubleConditionMet = true;
-                else if (type === '12' && (doubleMatchCount === 1 || doubleMatchCount === 2)) doubleConditionMet = true;
-                else if (type === '02' && (doubleMatchCount === 0 || doubleMatchCount === 2)) doubleConditionMet = true;
-                
-                // 检查双位容错范围
-                const doubleMin = parseInt(document.getElementById('doubleMin').value) || 0;
-                const doubleMax = parseInt(document.getElementById('doubleMax').value) || 2;
-                
-                if (doubleMatchCount < doubleMin || doubleMatchCount > doubleMax) {
-                    doubleConditionMet = false;
-                }
-                
-                // 需要同时满足全局和双位匹配条件
-                return globalConditionMet && doubleConditionMet;
-            }
-            
-            calculate() {
-                if (this.groups.length === 0) {
-                    this.speak('请先导入数据');
-                    alert('请先导入数据');
-                    return;
-                }
-                
-                if (this.selectedMatches.size === 0) {
-                    this.speak('请选择全局匹配设置');
-                    alert('请选择全局匹配设置');
-                    return;
-                }
-                
-                // 检查开奖号码
-                const winningNumber = this.getWinningNumber();
-                if (!winningNumber || winningNumber.length !== 3) {
-                    this.speak('请输入3位开奖号码');
-                    alert('请输入3位开奖号码');
-                    return;
-                }
-                
-                this.allCombinations.clear();
-                
-                // 遍历所有可能的号码组合（000-999）
-                for (let h = 0; h <= 9; h++) {
-                    for (let t = 0; t <= 9; t++) {
-                        for (let u = 0; u <= 9; u++) {
-                            const numberStr = `${h}${t}${u}`;
-                            
-                            // 检查这个号码是否满足任意一组的匹配条件
-                            for (const group of this.groups) {
-                                if (this.checkMatchConditions(numberStr, group)) {
-                                    this.allCombinations.add(numberStr);
-                                    break; // 只要满足一组就可以
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                // 显示结果
-                const resultCount = this.allCombinations.size;
-                document.getElementById('resultCount').textContent = resultCount;
-                document.getElementById('resultsCard').style.display = 'block';
-                
-                // 显示部分结果详情
-                const resultDetails = document.getElementById('resultDetails');
-                const combinationsArray = Array.from(this.allCombinations);
-                
-                if (combinationsArray.length <= 50) {
-                    resultDetails.innerHTML = `开奖号: ${winningNumber}<br>结果: ${combinationsArray.join(' ')}`;
-                    resultDetails.style.display = 'block';
-                } else {
-                    resultDetails.innerHTML = `开奖号: ${winningNumber}<br>前50注号码: ${combinationsArray.slice(0, 50).join(' ')}<br>... 共${resultCount}注`;
-                    resultDetails.style.display = 'block';
-                }
-                
-                if (resultCount > 0) {
-                    this.speak(`十方料码计算完成，基于开奖号${winningNumber}找到${resultCount}个符合条件的号码`);
-                } else {
-                    this.speak('没有找到符合条件的号码');
-                }
-                
-                // 保存结果
-                this.results = combinationsArray;
-                this.saveToStorage();
-            }
-            
-            copyResults() {
-                if (this.allCombinations.size === 0) {
-                    this.speak('没有结果可复制');
-                    alert('没有结果可复制');
-                    return;
-                }
-                
-                const resultText = Array.from(this.allCombinations).join('\n');
-                
-                navigator.clipboard.writeText(resultText)
-                    .then(() => {
-                        this.speak('十方料码结果已复制到剪贴板');
-                        alert(`已复制${this.allCombinations.size}注号码到剪贴板`);
-                    })
-                    .catch(err => {
-                        console.error('复制失败: ', err);
-                        this.speak('复制失败');
-                    });
-            }
-            
-            verifyWinning() {
-                if (this.allCombinations.size === 0) {
-                    this.speak('请先进行计算');
-                    alert('请先进行计算');
-                    return;
-                }
-                
-                const isWinner = this.allCombinations.has(this.winningNumber);
-                const resultElement = document.getElementById('verificationResult');
-                resultElement.innerHTML = isWinner 
-                    ? `🎉 恭喜中奖！十方料码精准命中 ${this.winningNumber}！` 
-                    : `❌ 未中奖，开奖号${this.winningNumber}不在结果中`;
-                
-                resultElement.className = `verification-result ${isWinner ? 'win' : 'lose'} show`;
-                
-                if (isWinner) {
-                    this.speak(`恭喜中奖！开奖号${this.winningNumber}在结果中`);
-                } else {
-                    this.speak(`未中奖，开奖号${this.winningNumber}不在结果中`);
-                }
-            }
-            
-            extractGlobalStats(type) {
-                if (this.groups.length === 0) {
-                    this.speak('请先导入数据');
-                    alert('请先导入数据');
-                    return;
-                }
-                
-                // 检查开奖号码
-                const winningNumber = this.getWinningNumber();
-                if (!winningNumber || winningNumber.length !== 3) {
-                    this.speak('请输入3位开奖号码');
-                    alert('请输入3位开奖号码');
-                    return;
-                }
-                
-                const [winH, winT, winU] = winningNumber.split('');
-                const extractedGroups = [];
-                
-                // 遍历所有复式组，检查匹配位数
-                for (const group of this.groups) {
-                    // 计算匹配位数
-                    let matchCount = 0;
-                    if (group.h.includes(winH)) matchCount++;
-                    if (group.t.includes(winT)) matchCount++;
-                    if (group.u.includes(winU)) matchCount++;
-                    
-                    // 检查是否满足匹配类型
-                    let isMatch = false;
-                    if (type === '0' && matchCount === 0) isMatch = true;
-                    else if (type === '1' && matchCount === 1) isMatch = true;
-                    else if (type === '2' && matchCount === 2) isMatch = true;
-                    else if (type === '3' && matchCount === 3) isMatch = true;
-                    else if (type === '01' && (matchCount === 0 || matchCount === 1)) isMatch = true;
-                    else if (type === '12' && (matchCount === 1 || matchCount === 2)) isMatch = true;
-                    else if (type === '23' && (matchCount === 2 || matchCount === 3)) isMatch = true;
-                    
-                    if (isMatch) {
-                        extractedGroups.push(`${group.h}-${group.t}-${group.u} (匹配${matchCount}位)`);
-                    }
-                }
-                
-                this.currentExtraction = {
-                    type: 'global',
-                    data: extractedGroups
-                };
-                
-                this.showStatsResult(`全局匹配${type}位 - 开奖号${winningNumber}`, extractedGroups);
-                this.speak(`十方料码已提取全局匹配${type}位数据，共${extractedGroups.length}组`);
-            }
-            
-            extractDoubleStats(key) {
-                if (this.groups.length === 0) {
-                    this.speak('请先导入数据');
-                    alert('请先导入数据');
-                    return;
-                }
-                
-                // 检查开奖号码
-                const winningNumber = this.getWinningNumber();
-                if (!winningNumber || winningNumber.length !== 3) {
-                    this.speak('请输入3位开奖号码');
-                    alert('请输入3位开奖号码');
-                    return;
-                }
-                
-                const [winH, winT, winU] = winningNumber.split('');
-                const [position, type] = key.split('-');
-                const positionNames = {
-                    'ht': '百十位',
-                    'hu': '百个位',
-                    'tu': '十个位'
-                };
-                
-                const extractedGroups = [];
-                
-                // 遍历所有复式组，检查双位匹配
-                for (const group of this.groups) {
-                    let doubleMatchCount = 0;
-                    
-                    if (position === 'ht') {
-                        if (group.h.includes(winH)) doubleMatchCount++;
-                        if (group.t.includes(winT)) doubleMatchCount++;
-                    } else if (position === 'hu') {
-                        if (group.h.includes(winH)) doubleMatchCount++;
-                        if (group.u.includes(winU)) doubleMatchCount++;
-                    } else if (position === 'tu') {
-                        if (group.t.includes(winT)) doubleMatchCount++;
-                        if (group.u.includes(winU)) doubleMatchCount++;
-                    }
-                    
-                    // 检查是否满足匹配类型
-                    let isMatch = false;
-                    if (type === '0' && doubleMatchCount === 0) isMatch = true;
-                    else if (type === '1' && doubleMatchCount === 1) isMatch = true;
-                    else if (type === '2' && doubleMatchCount === 2) isMatch = true;
-                    else if (type === '01' && (doubleMatchCount === 0 || doubleMatchCount === 1)) isMatch = true;
-                    else if (type === '12' && (doubleMatchCount === 1 || doubleMatchCount === 2)) isMatch = true;
-                    
-                    if (isMatch) {
-                        extractedGroups.push(`${group.h}-${group.t}-${group.u} (匹配${doubleMatchCount}位)`);
-                    }
-                }
-                
-                this.currentExtraction = {
-                    type: 'double',
-                    data: extractedGroups
-                };
-                
-                this.showStatsResult(`${positionNames[position]}匹配${type}位 - 开奖号${winningNumber}`, extractedGroups);
-                this.speak(`十方料码已提取${positionNames[position]}匹配${type}位数据，共${extractedGroups.length}组`);
-            }
-            
-            showStatsResult(title, groups) {
-                const statsResult = document.getElementById('statsResult');
-                const statsTitle = document.getElementById('statsTitle');
-                const statsGroups = document.getElementById('statsGroups');
-                
-                statsTitle.textContent = `${title} (${groups.length}组)`;
-                statsGroups.innerHTML = groups.map(g => `<div class="group-item">${g}</div>`).join('');
-                
-                statsResult.style.display = 'block';
-            }
-            
-            copyGlobalStats() {
-                if (!this.currentExtraction || this.currentExtraction.type !== 'global') {
-                    this.speak('请先提取全局统计数据');
-                    alert('请先提取全局统计数据');
-                    return;
-                }
-                
-                const text = this.currentExtraction.data.join('\n');
-                navigator.clipboard.writeText(text)
-                    .then(() => {
-                        this.speak('十方料码全局统计结果已复制');
-                        alert('全局统计结果已复制');
-                    })
-                    .catch(err => {
-                        console.error('复制失败: ', err);
-                        this.speak('复制失败');
-                    });
-            }
-            
-            copyDoubleStats() {
-                if (!this.currentExtraction || this.currentExtraction.type !== 'double') {
-                    this.speak('请先提取双位统计数据');
-                    alert('请先提取双位统计数据');
-                    return;
-                }
-                
-                const text = this.currentExtraction.data.join('\n');
-                navigator.clipboard.writeText(text)
-                    .then(() => {
-                        this.speak('十方料码双位统计结果已复制');
-                        alert('双位统计结果已复制');
-                    })
-                    .catch(err => {
-                        console.error('复制失败: ', err);
-                        this.speak('复制失败');
-                    });
-            }
-            
-            saveToStorage() {
-                const data = {
-                    groups: this.groups,
-                    selectedMatches: Array.from(this.selectedMatches),
-                    selectedDouble: this.selectedDouble,
-                    results: this.results,
-                    winningNumber: this.winningNumber
-                };
-                localStorage.setItem('shifangliaoma_calculator', JSON.stringify(data));
-            }
-            
-            loadFromStorage() {
-                const saved = localStorage.getItem('shifangliaoma_calculator');
-                if (saved) {
-                    try {
-                        const data = JSON.parse(saved);
-                        this.groups = data.groups || [];
-                        this.selectedMatches = new Set(data.selectedMatches || ['3']);
-                        this.selectedDouble = data.selectedDouble || { position: null, type: null };
-                        this.results = data.results || [];
-                        this.winningNumber = data.winningNumber || '';
-                        
-                        this.renderMatchOptions();
-                        this.updateDoubleUI();
-                        
-                        // 更新UI显示
-                        if (this.groups.length > 0) {
-                            const textData = this.groups.map(g => `${g.h}-${g.t}-${g.u}`).join('\n');
-                            document.getElementById('importData').value = textData;
-                        }
-                        
-                        if (this.winningNumber) {
-                            document.getElementById('winningNumber').value = this.winningNumber;
-                        }
-                        
-                        if (this.results.length > 0) {
-                            this.allCombinations = new Set(this.results);
-                            document.getElementById('resultCount').textContent = this.results.length;
-                            document.getElementById('resultsCard').style.display = 'block';
-                            
-                            // 显示部分结果详情
-                            const resultDetails = document.getElementById('resultDetails');
-                            if (this.results.length <= 50) {
-                                resultDetails.innerHTML = `开奖号: ${this.winningNumber || '未设置'}<br>结果: ${this.results.join(' ')}`;
-                                resultDetails.style.display = 'block';
-                            } else {
-                                resultDetails.innerHTML = `开奖号: ${this.winningNumber || '未设置'}<br>前50注号码: ${this.results.slice(0, 50).join(' ')}<br>... 共${this.results.length}注`;
-                                resultDetails.style.display = 'block';
-                            }
-                        }
-                        
-                        this.speak('十方料码数据已从本地存储加载');
-                    } catch (e) {
-                        console.error('加载存储数据失败:', e);
-                    }
-                }
-            }
-            
-            speak(text) {
-                if (!this.audioEnabled) return;
-                
-                if ('speechSynthesis' in window) {
-                    // 停止当前语音
-                    window.speechSynthesis.cancel();
-                    
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'zh-CN';
-                    utterance.rate = 1.0;
-                    utterance.pitch = 1.0;
-                    utterance.volume = 1.0;
-                    window.speechSynthesis.speak(utterance);
-                }
+        let groupsData = [];
+        let selectedGroupIds = new Set();
+        let generateEnabled = false;
+        let currentVoiceText = '';
+        let speechSynthesis = window.speechSynthesis || null;
+        let finalNumbers = []; // 存储生成的大底号码，用于验证
+        
+        // 修复语音播报：添加文字提示和兼容处理
+        function initVoiceTip() {
+            if (!speechSynthesis) {
+                showToast('当前浏览器不支持语音播报，将显示文字提示');
+                // 替换语音按钮为文字提示按钮
+                const voiceBtn = document.getElementById('voiceBtn');
+                voiceBtn.innerHTML = '📝';
+                voiceBtn.title = '显示文字提示';
             }
         }
-
-        // 全局音频控制
-        function toggleAudio() {
-            const toggleBtn = document.getElementById('audioToggle');
-            if (calculator.audioEnabled) {
-                calculator.audioEnabled = false;
-                toggleBtn.classList.add('muted');
-                toggleBtn.textContent = '🔇';
-                playSound('mute');
-            } else {
-                calculator.audioEnabled = true;
-                toggleBtn.classList.remove('muted');
-                toggleBtn.textContent = '🔊';
-                playSound('unmute');
-                calculator.speak('十方料码音频已启用');
-            }
+        
+        function numberToChineseOrdinal(num) {
+            const chars = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+            if (num <= 10) return chars[num] + '组';
+            if (num < 20) return '十' + chars[num % 10] + '组';
+            const ten = Math.floor(num / 10);
+            const one = num % 10;
+            return chars[ten] + '十' + (one > 0 ? chars[one] : '') + '组';
         }
-
-        // 简单音效函数
-        function playSound(type) {
-            if (!calculator.audioEnabled) return;
-            
+        
+        // 新增：播放提示音效（兼容浏览器）
+        function playTipSound(type = 'success') {
+            // 尝试播放音效，失败则显示文字提示
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioContext.createOscillator();
@@ -1632,48 +516,477 @@
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
                 
-                // 根据不同操作设置不同音调
-                let frequency = 440;
-                switch(type) {
-                    case 'import': frequency = 523.25; break; // C5
-                    case 'calculate': frequency = 659.25; break; // E5
-                    case 'select': frequency = 392.00; break; // G4
-                    case 'copy': frequency = 493.88; break; // B4
-                    case 'verify': frequency = 587.33; break; // D5
-                    case 'extract': frequency = 349.23; break; // F4
-                    case 'clear': frequency = 293.66; break; // D4
-                    case 'mute': frequency = 220.00; break; // A3
-                    case 'unmute': frequency = 880.00; break; // A5
+                if (type === 'success') {
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(1318.51, audioContext.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.8);
+                } else {
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(392, audioContext.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.8);
                 }
-                
-                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.1);
             } catch (e) {
-                console.log('音频播放失败，但功能正常');
+                console.log('音效播放失败，仅显示文字提示');
             }
         }
-
-        // 加载测试数据
-        function loadTestData(type) {
-            if (type === 'single') {
-                document.getElementById('importData').value = '3568-2589-1478';
-            } else if (type === 'double') {
-                document.getElementById('importData').value = '3568-2589-1478\n1234-5678-9632';
-            }
-            calculator.importData();
-        }
-
-        // 初始化计算器实例
-        const calculator = new LotteryCalculator();
         
-        // 页面加载完成后初始化
+        const importInput = document.getElementById('importInput');
+        const parseBtn = document.getElementById('parseBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const selectAllBtn = document.getElementById('selectAllBtn');
+        const deselectAllBtn = document.getElementById('deselectAllBtn');
+        const enableGenerateBtn = document.getElementById('enableGenerateBtn');
+        const calcBtn = document.getElementById('calcBtn');
+        const groupsContainer = document.getElementById('groupsContainer');
+        const toleranceMin = document.getElementById('toleranceMin');
+        const toleranceMax = document.getElementById('toleranceMax');
+        const resultSection = document.getElementById('resultSection');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const summaryContent = document.getElementById('summaryContent');
+        const numbersContent = document.getElementById('numbersContent');
+        const configContent = document.getElementById('configContent');
+        const copyBtn = document.getElementById('copyBtn');
+        const toast = document.getElementById('toast');
+        const voiceBtn = document.getElementById('voiceBtn');
+        // 开奖号验证元素
+        const lotteryInput = document.getElementById('lotteryInput');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const verifyResult = document.getElementById('verifyResult');
+        
+        // 页面加载时初始化语音提示
         window.addEventListener('load', () => {
-            calculator.speak('十方料码伪序动态复式软件已加载，专业彩票数据分析工具');
+            document.querySelector('.container').style.minHeight = `${window.innerHeight - 30}px`;
+            initVoiceTip(); // 初始化语音/文字提示
+            if (importInput.value.trim()) {
+                parseBtn.click();
+            }
         });
+        
+        window.addEventListener('resize', () => {
+            document.querySelector('.container').style.minHeight = `${window.innerHeight - 30}px`;
+        });
+        
+        copyBtn.addEventListener('click', () => {
+            const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+            const text = document.getElementById(`${activeTab}Content`).textContent;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('复制成功！');
+                    playTipSound('success'); // 复制成功播放音效
+                }).catch(err => {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+        });
+        
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('复制成功！');
+                playTipSound('success');
+            } catch (err) {
+                showToast('复制失败，请手动复制！');
+                playTipSound('error');
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+        
+        // 修复语音按钮逻辑：支持文字提示
+        voiceBtn.addEventListener('click', () => {
+            if (resultSection.style.display !== 'block') {
+                showToast('请先生成结果再进行语音播报！');
+                playTipSound('error');
+                return;
+            }
+            
+            const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+            let text = document.getElementById(`${activeTab}Content`).textContent;
+            text = text.replace(/[📊🎰📝⚠️💰]/g, '').replace(/\n+/g, '。').replace(/\s+/g, ' ');
+            currentVoiceText = text;
+            
+            // 不支持语音播报时显示文字提示
+            if (!speechSynthesis) {
+                alert('当前结果文字提示：\n' + text);
+                showToast('文字提示已显示');
+                return;
+            }
+            
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+                voiceBtn.classList.remove('playing');
+                showToast('语音播报已停止');
+                return;
+            }
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-CN';
+            utterance.rate = 0.9;
+            utterance.volume = 1;
+            utterance.pitch = 1;
+            utterance.onstart = () => {
+                voiceBtn.classList.add('playing');
+                showToast('语音播报中...');
+            };
+            utterance.onend = () => {
+                voiceBtn.classList.remove('playing');
+                showToast('语音播报完成！');
+                playTipSound('success');
+            };
+            utterance.onerror = () => {
+                voiceBtn.classList.remove('playing');
+                showToast('语音播报失败，显示文字提示');
+                playTipSound('error');
+                alert('当前结果文字提示：\n' + text);
+            };
+            speechSynthesis.speak(utterance);
+        });
+        
+        parseBtn.addEventListener('click', () => {
+            const inputText = importInput.value.trim();
+            if (!inputText) {
+                showToast('请输入定位复式数据！');
+                playTipSound('error');
+                return;
+            }
+            const lines = inputText.split('\n').filter(line => line.trim() !== '');
+            const validGroups = [];
+            lines.forEach((line, index) => {
+                const parts = line.trim().split('-');
+                if (parts.length === 3) {
+                    validGroups.push({
+                        id: index + 1,
+                        chineseId: numberToChineseOrdinal(index + 1),
+                        line: line.trim(),
+                        hundreds: parts[0],
+                        tens: parts[1],
+                        units: parts[2],
+                        selectedPositions: new Set(),
+                        isSelected: false
+                    });
+                } else {
+                    showToast(`第${index + 1}行格式错误，已忽略！`);
+                    playTipSound('error');
+                }
+            });
+            if (validGroups.length === 0) {
+                renderGroupsContainer([]);
+                showToast('无有效数据！');
+                playTipSound('error');
+                return;
+            }
+            groupsData = validGroups;
+            selectedGroupIds.clear();
+            renderGroupsContainer(validGroups);
+            showToast(`成功解析 ${validGroups.length} 组数据！`);
+            playTipSound('success');
+        });
+        
+        function renderGroupsContainer(groups) {
+            if (groups.length === 0) {
+                groupsContainer.innerHTML = `
+                    <div class="group-card">
+                        <div class="group-header" style="position: relative;">
+                            <div class="group-id">无数据</div>
+                            <div class="group-status"></div>
+                        </div>
+                        <div class="group-data">无有效数据</div>
+                    </div>
+                `;
+                return;
+            }
+            let html = '';
+            groups.forEach(group => {
+                html += `
+                    <div class="group-card ${group.isSelected ? 'selected' : ''}" data-id="${group.id}">
+                        <div class="group-header" style="position: relative;">
+                            <div class="group-id">${group.chineseId}</div>
+                            <div class="group-status"></div>
+                        </div>
+                        <div class="group-data">${group.line}</div>
+                        <div class="position-buttons">
+                            <div class="pos-btn ${group.selectedPositions.has('百位') ? 'active' : ''}" data-pos="百位" data-group-id="${group.id}">百位</div>
+                            <div class="pos-btn ${group.selectedPositions.has('十位') ? 'active' : ''}" data-pos="十位" data-group-id="${group.id}">十位</div>
+                            <div class="pos-btn ${group.selectedPositions.has('个位') ? 'active' : ''}" data-pos="个位" data-group-id="${group.id}">个位</div>
+                        </div>
+                    </div>
+                `;
+            });
+            groupsContainer.innerHTML = html;
+            bindGroupEvents();
+        }
+        
+        function bindGroupEvents() {
+            document.querySelectorAll('.pos-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const groupId = parseInt(btn.dataset.groupId);
+                    const position = btn.dataset.pos;
+                    const group = groupsData.find(g => g.id === groupId);
+                    group.selectedPositions.has(position) ? group.selectedPositions.delete(position) : group.selectedPositions.add(position);
+                    renderGroupsContainer(groupsData);
+                });
+            });
+            document.querySelectorAll('.group-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('pos-btn')) {
+                        const groupId = parseInt(card.dataset.id);
+                        const group = groupsData.find(g => g.id === groupId);
+                        group.isSelected = !group.isSelected;
+                        group.isSelected ? selectedGroupIds.add(groupId) : selectedGroupIds.delete(groupId);
+                        renderGroupsContainer(groupsData);
+                    }
+                });
+            });
+        }
+        
+        selectAllBtn.addEventListener('click', () => {
+            if (groupsData.length === 0) {
+                showToast('请先解析数据！');
+                playTipSound('error');
+                return;
+            }
+            groupsData.forEach(group => {
+                group.isSelected = true;
+                selectedGroupIds.add(group.id);
+            });
+            renderGroupsContainer(groupsData);
+            showToast('已全选所有组！');
+            playTipSound('success');
+        });
+        
+        deselectAllBtn.addEventListener('click', () => {
+            groupsData.forEach(group => group.isSelected = false);
+            selectedGroupIds.clear();
+            renderGroupsContainer(groupsData);
+            showToast('已取消全选！');
+            playTipSound('success');
+        });
+        
+        enableGenerateBtn.addEventListener('click', () => {
+            if (groupsData.length === 0) {
+                showToast('请先解析数据再启用生成功能！');
+                playTipSound('error');
+                return;
+            }
+            generateEnabled = true;
+            calcBtn.disabled = false;
+            enableGenerateBtn.disabled = true;
+            enableGenerateBtn.textContent = '生成功能已启用';
+            showToast('生成功能已启用，可以生成大底号码！');
+            playTipSound('success');
+        });
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                tabContents.forEach(c => c.classList.remove('active'));
+                document.getElementById(`${tab}Content`).classList.add('active');
+                currentVoiceText = document.getElementById(`${tab}Content`).textContent;
+            });
+        });
+        
+        calcBtn.addEventListener('click', () => {
+            if (!generateEnabled) {
+                showToast('请先启用生成功能！');
+                playTipSound('error');
+                return;
+            }
+            const selectedCount = selectedGroupIds.size;
+            if (selectedCount === 0) {
+                showToast('请至少选择一组数据！');
+                playTipSound('error');
+                return;
+            }
+            const minError = parseInt(toleranceMin.value) || 0;
+            const maxError = parseInt(toleranceMax.value) || 0;
+            if (minError < 0 || maxError < 0 || minError > maxError) {
+                showToast('容错范围输入错误！');
+                playTipSound('error');
+                return;
+            }
+            if (maxError > selectedCount) {
+                showToast(`最大错误组数不能超过选中组数（${selectedCount}组）`);
+                playTipSound('error');
+                return;
+            }
+            const selectedGroups = groupsData.filter(g => g.isSelected);
+            const minCorrect = selectedCount - maxError;
+            const maxCorrect = selectedCount - minError;
+            let allNumbers = new Set();
+            selectedGroups.forEach(group => {
+                const { hundreds, tens, units, selectedPositions } = group;
+                const hDigits = hundreds.split('');
+                const tDigits = tens.split('');
+                const uDigits = units.split('');
+                const posCount = selectedPositions.size;
+                if (posCount === 0) {
+                    const hErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !hDigits.includes(d));
+                    const tErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !tDigits.includes(d));
+                    const uErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !uDigits.includes(d));
+                    hErrorDigits.forEach(h => tErrorDigits.forEach(t => uErrorDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                } else if (selectedPositions.has('十位') && selectedPositions.has('个位') && !selectedPositions.has('百位')) {
+                    const hErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !hDigits.includes(d));
+                    hErrorDigits.forEach(h => tDigits.forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                } else if (selectedPositions.has('百位') && selectedPositions.has('十位') && !selectedPositions.has('个位')) {
+                    const uErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !uDigits.includes(d));
+                    hDigits.forEach(h => tDigits.forEach(t => uErrorDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                } else if (selectedPositions.has('百位') && selectedPositions.has('个位') && !selectedPositions.has('十位')) {
+                    const tErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !tDigits.includes(d));
+                    hDigits.forEach(h => tErrorDigits.forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                } else if (selectedPositions.has('百位') && !selectedPositions.has('十位') && !selectedPositions.has('个位')) {
+                    const tErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !tDigits.includes(d));
+                    const uErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !uDigits.includes(d));
+                    hDigits.forEach(h => tErrorDigits.forEach(t => uErrorDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                } else if (!selectedPositions.has('百位') && selectedPositions.has('十位') && !selectedPositions.has('个位')) {
+                    const hErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !hDigits.includes(d));
+                    const uErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !uDigits.includes(d));
+                    hErrorDigits.forEach(h => tDigits.forEach(t => uErrorDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                } else if (!selectedPositions.has('百位') && !selectedPositions.has('十位') && selectedPositions.has('个位')) {
+                    const hErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !hDigits.includes(d));
+                    const tErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !tDigits.includes(d));
+                    hErrorDigits.forEach(h => tErrorDigits.forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                } else if (selectedPositions.has('百位') && selectedPositions.has('十位') && selectedPositions.has('个位')) {
+                    hDigits.forEach(h => tDigits.forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                }
+            });
+            finalNumbers = []; // 清空之前的结果
+            allNumbers.forEach(num => {
+                const hitCount = selectedGroups.filter(group => {
+                    const h = num[0], t = num[1], u = num[2];
+                    const { hundreds, tens, units, selectedPositions } = group;
+                    const posCount = selectedPositions.size;
+                    let isHit = true;
+                    if (posCount === 0) {
+                        if (hundreds.includes(h) || tens.includes(t) || units.includes(u)) isHit = false;
+                    } else {
+                        if (selectedPositions.has('百位') && !hundreds.includes(h)) isHit = false;
+                        if (selectedPositions.has('十位') && !tens.includes(t)) isHit = false;
+                        if (selectedPositions.has('个位') && !units.includes(u)) isHit = false;
+                        if (!selectedPositions.has('百位') && hundreds.includes(h)) isHit = false;
+                        if (!selectedPositions.has('十位') && tens.includes(t)) isHit = false;
+                        if (!selectedPositions.has('个位') && units.includes(u)) isHit = false;
+                    }
+                    return isHit;
+                }).length;
+                if (hitCount >= minCorrect && hitCount <= maxCorrect) {
+                    finalNumbers.push(num);
+                }
+            });
+            generateTabContents(selectedCount, minError, maxError, minCorrect, maxCorrect, selectedGroups, finalNumbers);
+            resultSection.style.display = 'block';
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+            showToast(`大底生成成功！共${finalNumbers.length}注`);
+            playTipSound('success');
+        });
+        
+        function generateTabContents(selectedCount, minError, maxError, minCorrect, maxCorrect, selectedGroups, finalNumbers) {
+            summaryContent.textContent = `📊 大底生成统计\n🎯 选中组数：${selectedCount} 组\n⚠️  容错设置：允许错误组数 ${minError}-${maxError} 组\n✅ 正确组数范围：${minCorrect}-${maxCorrect} 组\n📈 大底号码总数：${finalNumbers.length} 注\n💰 预计金额：${finalNumbers.length * 2} 元（按每注2元计算）\n\n⚠️  核心规则：单组未选择任何位置时，视为「三个位置全错」；选择部分位置时，未选位置视为「必须错误」`;
+            let numbersText = `🎰 3D大底号码（共${finalNumbers.length}注）\n\n`;
+            finalNumbers.sort();
+            finalNumbers.forEach((num, index) => {
+                numbersText += num + ((index + 1) % 10 === 0 ? '\n' : ' ');
+            });
+            numbersContent.textContent = numbersText;
+            let configText = `📋 配置清单\n📅 生成时间：${new Date().toLocaleString()}\n🎯 选中组数：${selectedCount} 组\n⚠️  容错设置：允许错误组数 ${minError}-${maxError} 组\n✅ 正确组数范围：${minCorrect}-${maxCorrect} 组\n\n📝 选中组详细配置：\n`;
+            selectedGroups.forEach(group => {
+                const selectedPos = Array.from(group.selectedPositions).join('、') || '无（全错）';
+                const unselectedPos = group.selectedPositions.size > 0 ? ['百位','十位','个位'].filter(p => !group.selectedPositions.has(p)).join('、') : '无（三个位置全错）';
+                configText += `\n=== ${group.chineseId} ===\n原始数据：${group.line}\n选中位置：${selectedPos} ${group.selectedPositions.size > 0 ? '✅（必须正确）' : '❌（三个位置全错）'}\n未选位置：${unselectedPos} ${group.selectedPositions.size > 0 ? '❌（必须错误）' : ''}\n百位数字：${group.hundreds}\n十位数字：${group.tens}\n个位数字：${group.units}\n`;
+            });
+            configText += `\n⚠️ 十方料码 www.shifanglm.com  `;
+            configContent.textContent = configText;
+            currentVoiceText = summaryContent.textContent;
+        }
+        
+        // 修复：开奖号验证逻辑（确保能正常触发）
+        verifyBtn.addEventListener('click', () => {
+            console.log('验证按钮点击触发'); // 调试日志
+            const lotteryNum = lotteryInput.value.trim();
+            if (!/^\d{3}$/.test(lotteryNum)) {
+                verifyResult.textContent = '❌ 请输入3位数字！';
+                verifyResult.style.color = '#ff4444';
+                playTipSound('error');
+                return;
+            }
+            if (finalNumbers.length === 0) {
+                verifyResult.textContent = '❌ 请先生成大底！';
+                verifyResult.style.color = '#ff4444';
+                playTipSound('error');
+                return;
+            }
+            // 关键修复：确保finalNumbers是数组且包含正确数据
+            console.log('大底号码列表：', finalNumbers); // 调试日志
+            if (finalNumbers.includes(lotteryNum)) {
+                verifyResult.textContent = '🎉 恭喜你中奖多多！';
+                verifyResult.style.color = '#ffd700';
+                playTipSound('success');
+                // 语音播报中奖提示
+                if (speechSynthesis && !speechSynthesis.speaking) {
+                    const utterance = new SpeechSynthesisUtterance('恭喜你中奖多多！');
+                    utterance.lang = 'zh-CN';
+                    speechSynthesis.speak(utterance);
+                }
+            } else {
+                verifyResult.textContent = '很遗憾没有中奖！';
+                verifyResult.style.color = '#ff4444';
+                playTipSound('error');
+            }
+        });
+        
+        // 输入框回车触发验证
+        lotteryInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                verifyBtn.click();
+            }
+        });
+        
+        clearBtn.addEventListener('click', () => {
+            importInput.value = '';
+            groupsData = [];
+            selectedGroupIds.clear();
+            generateEnabled = false;
+            finalNumbers = []; // 清空大底号码
+            calcBtn.disabled = true;
+            enableGenerateBtn.disabled = false;
+            enableGenerateBtn.textContent = '启用生成功能';
+            resultSection.style.display = 'none';
+            verifyResult.textContent = ''; // 清空验证结果
+            lotteryInput.value = ''; // 清空开奖号输入
+            renderGroupsContainer([]);
+            if (speechSynthesis && speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+                voiceBtn.classList.remove('playing');
+            }
+            showToast('数据已清空！');
+            playTipSound('success');
+        });
+        
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 2000);
+        }
     </script>
 </body>
 </html>

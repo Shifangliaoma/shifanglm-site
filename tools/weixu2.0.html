@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>伪序趋势复式点控版本</title>
+    <title>十方料码 - 定位复式 点控版本</title>
     <meta name="theme-color" content="#00ffff">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><circle cx='64' cy='64' r='60' fill='%23000' stroke='%2300ffff' stroke-width='4'/></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><circle cx='64' cy='64' r='60' fill='%23000' stroke='%23ffd700' stroke-width='4'/></svg>">
     <style>
         * {
             margin: 0;
@@ -34,56 +34,97 @@
             display: flex;
             flex-direction: column;
         }
-        h1 {
+        /* 顶部标题区域优化 */
+        .header {
+            position: relative;
             text-align: center;
-            color: #00ffff;
-            text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff;
-            margin-bottom: 20px;
-            font-size: 24px;
-            flex-shrink: 0;
+            margin-bottom: 25px;
+            padding: 15px 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(0, 30, 60, 0.8), rgba(30, 0, 60, 0.8));
+            border: 1px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.2);
         }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255, 215, 0, 0.1)' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+            border-radius: 12px;
+            z-index: 0;
+        }
+        .header h1 {
+            position: relative;
+            color: #fff;
+            font-size: 28px;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #ffd700, 0 0 30px #ff00ff;
+            margin: 0;
+            z-index: 1;
+        }
+        .header .subtitle {
+            position: relative;
+            color: #aaffff;
+            font-size: 14px;
+            margin-top: 5px;
+            text-shadow: 0 0 5px #00ffff;
+            z-index: 1;
+        }
+        /* 导入数据区域优化 */
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             position: relative;
             flex-shrink: 0;
         }
-        label {
+        .input-label {
             display: block;
-            margin-bottom: 8px;
-            color: #00ffff;
+            margin-bottom: 10px;
+            color: #ffd700;
             font-size: 16px;
-            text-shadow: 0 0 5px #00ffff;
+            font-weight: bold;
+            text-shadow: 0 0 5px #ffd700;
+            padding-left: 10px;
+            border-left: 3px solid #00ffff;
         }
         #importInput {
             width: 100%;
-            height: 120px;
-            padding: 12px 15px;
-            background: rgba(0, 20, 30, 0.8);
-            border: 1px solid #00ffff;
-            border-radius: 8px;
-            color: #fff;
+            height: 140px;
+            padding: 15px;
+            background: rgba(0, 20, 40, 0.9);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            color: #aaffff;
             font-size: 16px;
             outline: none;
             resize: vertical;
-            box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.2);
-            padding-right: 120px;
+            box-shadow: inset 0 0 15px rgba(0, 255, 255, 0.2), 0 0 10px rgba(0, 255, 255, 0.1);
+            transition: all 0.3s ease;
         }
         #importInput:focus {
-            border-color: #ff00ff;
-            box-shadow: inset 0 0 15px rgba(255, 0, 255, 0.4);
+            border-color: #ffd700;
+            box-shadow: inset 0 0 15px rgba(255, 215, 0, 0.3), 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+        #importInput::placeholder {
+            color: #669999;
+            font-style: italic;
         }
         .qq-label {
             position: absolute;
             right: 15px;
             bottom: 15px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
-            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            background: linear-gradient(90deg, #00ffff, #ffd700);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             pointer-events: none;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
         }
+        /* 原有样式保留 */
         .btn {
             padding: 14px 0;
             background: linear-gradient(90deg, #00ffff, #ff00ff);
@@ -245,6 +286,9 @@
             font-size: 14px;
             margin-top: 8px;
             line-height: 1.4;
+            background: rgba(0, 30, 30, 0.5);
+            padding: 10px;
+            border-radius: 6px;
         }
         .result-section {
             margin-top: 20px;
@@ -412,21 +456,22 @@
 <body>
     <button class="voice-btn" id="voiceBtn" title="语音播报当前结果">🔊</button>
     <div class="container">
-        <h1>✨ 伪序定位复式点控版本✨</h1>
-        <div class="input-group">
-            <label for="importInput">导入定位复式数据（每行一组）Vx:shifangliaoma</label>
-            <textarea id="importInput" placeholder="请输入多组定位复式数据，每行一组">0846-2874-2758
-9713-0136-0931
-0285-2985-2476
-2456-9754-4568
-9275-0915-0496
-1357-2468-3579
-0246-1357-2468
-1122-3344-5566
-7890-1234-5678
-2345-6789-0123</textarea>
-            <div class="qq-label">www.shifanglm.com</div>
+        <!-- 优化后的顶部标题区域 -->
+        <div class="header">
+            <h1>十方料码 · 福彩3D复式分析系统</h1>
+            <div class="subtitle">精准判定 · 智能筛选 · 高效分析</div>
         </div>
+        
+        <!-- 优化后的导入数据区域 -->
+        <div class="input-group">
+            <label class="input-label" for="importInput">📊 导入定位复式数据（每行一组，格式：百位-十位-个位）</label>
+            <textarea id="importInput" placeholder="示例：2563-1475-2589
+0846-2874-2758
+9713-0136-0931
+0285-2985-2476"></textarea>
+            <div class="qq-label">www.shifangliaoma.com</div>
+        </div>
+        
         <div class="btn-group">
             <button class="btn" id="parseBtn">解析数据</button>
             <button class="btn" id="clearBtn">清空数据</button>
@@ -434,6 +479,7 @@
             <button class="btn" id="deselectAllBtn">取消全选</button>
             <button class="btn full-width" id="enableGenerateBtn">启用生成功能</button>
         </div>
+        
         <div class="groups-container" id="groupsContainer">
             <div class="group-card">
                 <div class="group-header">
@@ -443,6 +489,7 @@
                 <div class="group-data">请点击"解析数据"加载组</div>
             </div>
         </div>
+        
         <div class="settings-section">
             <div class="setting-row">
                 <span class="setting-label">容错范围（错误组数）：</span>
@@ -450,9 +497,16 @@
                 <span class="setting-label">-</span>
                 <input type="number" id="toleranceMax" class="tolerance-input" value="0" min="0">
             </div>
-            <p class="tolerance-desc">⚠️ 核心规则：仅选中的组参与计算，未选中的组直接忽略；单组未选择任何位置时忽略不计算；选择部分位置时，未选位置忽略不计算</p>
+            <p class="tolerance-desc">⚠️ 精准判定规则：<br>
+            1. 选中1个位置 → 该位置正确 → 组命中；<br>
+            2. 选中2个位置 → 两个位置都正确 → 组命中；<br>
+            3. 选中3个位置 → 三个位置都正确 → 组命中；<br>
+            4. 未选中任何位置 → 该组忽略，不参与计算；<br>
+            5. 容错=错误组数（总有效组 - 命中组数），仅筛选错误组数在范围内的号码。</p>
         </div>
+        
         <button class="btn full-width" id="calcBtn" disabled>生成大底号码</button>
+        
         <div class="result-section" id="resultSection">
             <div class="result-title">📊 大底生成结果</div>
             <div class="result-tabs">
@@ -472,13 +526,13 @@
             
             <button class="btn full-width" id="copyBtn">一键复制当前标签内容</button>
         </div>
+        
         <div class="footer">
             温馨提示：本工具仅用于数据分析，不构成购买建议。
         </div>
     </div>
     <div class="toast" id="toast">操作成功！</div>
     <script>
-        // 修复：简化变量定义，避免浏览器解析异常
         let groupsData = [];
         let selectedGroupIds = new Set();
         let generateEnabled = false;
@@ -486,7 +540,6 @@
         let speechSynthesis = window.speechSynthesis || null;
         let finalNumbers = [];
         
-        // 修复：初始化函数提前定义，避免调用时未声明
         function initVoiceTip() {
             if (!speechSynthesis) {
                 showToast('当前浏览器不支持语音播报，将显示文字提示');
@@ -566,7 +619,7 @@
         
         function generateTabContents(selectedCount, validCount, minError, maxError, minCorrect, maxCorrect, validGroups, finalNumbers) {
             const summaryContent = document.getElementById('summaryContent');
-            summaryContent.textContent = `📊 大底生成统计\n🎯 选中组数：${selectedCount} 组（未选中组已忽略）\n✅ 有效参与组数：${validCount} 组（需至少选择一个位置）\n⚠️  容错设置：允许错误组数 ${minError}-${maxError} 组\n✅ 正确组数范围：${minCorrect}-${maxCorrect} 组\n📈 大底号码总数：${finalNumbers.length} 注\n💰 预计金额：${finalNumbers.length * 2} 元（按每注2元计算）\n\n⚠️  核心规则：仅选中的组参与计算，未选中的组直接忽略；单组未选择任何位置时忽略不计算；选择部分位置时，未选位置忽略不计算`;
+            summaryContent.textContent = `📊 大底生成统计\n🎯 选中组数：${selectedCount} 组（未选中组已忽略）\n✅ 有效参与组数：${validCount} 组（需至少选择一个位置）\n⚠️  容错设置：允许错误组数 ${minError}-${maxError} 组\n✅ 正确组数范围：${minCorrect}-${maxCorrect} 组\n📈 大底号码总数：${finalNumbers.length} 注\n💰 预计金额：${finalNumbers.length * 2} 元（按每注2元计算）\n\n🎯 判定规则：选中位置需全部正确才算该组命中`;
             
             const numbersContent = document.getElementById('numbersContent');
             let numbersText = `🎰 3D大底号码（共${finalNumbers.length}注）\n\n`;
@@ -581,9 +634,9 @@
             validGroups.forEach(group => {
                 const selectedPos = Array.from(group.selectedPositions).join('、');
                 const unselectedPos = ['百位','十位','个位'].filter(p => !group.selectedPositions.has(p)).join('、') || '无';
-                configText += `\n=== ${group.chineseId} ===\n原始数据：${group.line}\n选中位置：${selectedPos} ✅（参与校验）\n未选位置：${unselectedPos} ⚠️（忽略不计算）\n百位数字：${group.hundreds}\n十位数字：${group.tens}\n个位数字：${group.units}\n`;
+                configText += `\n=== ${group.chineseId} ===\n原始数据：${group.line}\n选中位置：${selectedPos} ✅（需全部正确才命中）\n未选位置：${unselectedPos} ⚠️（忽略不计算）\n百位数字：${group.hundreds}\n十位数字：${group.tens}\n个位数字：${group.units}\n`;
             });
-            configText += `\n⚠️ 十方料码 www.shifanglm.com  `;
+            configText += `\n⚠️ 十方料码 www.shifangliaoma.com  `;
             configContent.textContent = configText;
             
             currentVoiceText = summaryContent.textContent;
@@ -657,12 +710,10 @@
             });
         }
         
-        // 页面加载后初始化，避免DOM未加载完成就绑定事件
         window.addEventListener('load', () => {
             document.querySelector('.container').style.minHeight = `${window.innerHeight - 30}px`;
             initVoiceTip();
             
-            // 绑定所有按钮事件
             const importInput = document.getElementById('importInput');
             const parseBtn = document.getElementById('parseBtn');
             const clearBtn = document.getElementById('clearBtn');
@@ -680,7 +731,7 @@
             const verifyBtn = document.getElementById('verifyBtn');
             const verifyResult = document.getElementById('verifyResult');
             
-            // 解析数据按钮
+            // 解析数据
             parseBtn.addEventListener('click', () => {
                 const inputText = importInput.value.trim();
                 if (!inputText) {
@@ -721,7 +772,7 @@
                 playTipSound('success');
             });
             
-            // 全选按钮
+            // 全选/取消全选
             selectAllBtn.addEventListener('click', () => {
                 if (groupsData.length === 0) {
                     showToast('请先解析数据！');
@@ -737,7 +788,6 @@
                 playTipSound('success');
             });
             
-            // 取消全选按钮
             deselectAllBtn.addEventListener('click', () => {
                 groupsData.forEach(group => group.isSelected = false);
                 selectedGroupIds.clear();
@@ -746,7 +796,7 @@
                 playTipSound('success');
             });
             
-            // 启用生成功能按钮
+            // 启用生成
             enableGenerateBtn.addEventListener('click', () => {
                 if (groupsData.length === 0) {
                     showToast('请先解析数据再启用生成功能！');
@@ -761,7 +811,7 @@
                 playTipSound('success');
             });
             
-            // 标签切换按钮
+            // 标签切换
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const tab = btn.dataset.tab;
@@ -773,7 +823,7 @@
                 });
             });
             
-            // 复制按钮
+            // 复制
             copyBtn.addEventListener('click', () => {
                 const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
                 const text = document.getElementById(`${activeTab}Content`).textContent;
@@ -789,7 +839,7 @@
                 }
             });
             
-            // 语音按钮
+            // 语音播报
             voiceBtn.addEventListener('click', () => {
                 if (resultSection.style.display !== 'block') {
                     showToast('请先生成结果再进行语音播报！');
@@ -838,7 +888,7 @@
                 speechSynthesis.speak(utterance);
             });
             
-            // 生成大底按钮
+            // 核心逻辑：生成大底（按选中位置全对判定组命中）
             calcBtn.addEventListener('click', () => {
                 if (!generateEnabled) {
                     showToast('请先启用生成功能！');
@@ -851,6 +901,8 @@
                     playTipSound('error');
                     return;
                 }
+                
+                // 容错值处理
                 const minError = parseInt(toleranceMin.value) || 0;
                 const maxError = parseInt(toleranceMax.value) || 0;
                 if (minError < 0 || maxError < 0 || minError > maxError) {
@@ -859,7 +911,7 @@
                     return;
                 }
                 
-                // 筛选有效参与组
+                // 筛选有效参与组（选中+至少选一个位置）
                 const validGroups = groupsData.filter(g => g.isSelected && g.selectedPositions.size > 0);
                 const validCount = validGroups.length;
                 
@@ -875,52 +927,46 @@
                     return;
                 }
                 
+                // 正确组数范围（总有效组 - 错误组数）
                 const minCorrect = validCount - maxError;
                 const maxCorrect = validCount - minError;
+                
+                // 生成所有可能的3位数（000-999）
                 let allNumbers = new Set();
-                
-                // 生成号码组合
-                validGroups.forEach(group => {
-                    const { hundreds, tens, units, selectedPositions } = group;
-                    const hDigits = hundreds.split('');
-                    const tDigits = tens.split('');
-                    const uDigits = units.split('');
-                    
-                    if (selectedPositions.has('百位') && selectedPositions.has('十位') && selectedPositions.has('个位')) {
-                        hDigits.forEach(h => tDigits.forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                    } else if (selectedPositions.has('百位') && selectedPositions.has('十位')) {
-                        hDigits.forEach(h => tDigits.forEach(t => ['0','1','2','3','4','5','6','7','8','9'].forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                    } else if (selectedPositions.has('百位') && selectedPositions.has('个位')) {
-                        hDigits.forEach(h => ['0','1','2','3','4','5','6','7','8','9'].forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                    } else if (selectedPositions.has('十位') && selectedPositions.has('个位')) {
-                        ['0','1','2','3','4','5','6','7','8','9'].forEach(h => tDigits.forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                    } else if (selectedPositions.has('百位')) {
-                        hDigits.forEach(h => ['0','1','2','3','4','5','6','7','8','9'].forEach(t => ['0','1','2','3','4','5','6','7','8','9'].forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                    } else if (selectedPositions.has('十位')) {
-                        ['0','1','2','3','4','5','6','7','8','9'].forEach(h => tDigits.forEach(t => ['0','1','2','3','4','5','6','7','8','9'].forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                    } else if (selectedPositions.has('个位')) {
-                        ['0','1','2','3','4','5','6','7','8','9'].forEach(h => ['0','1','2','3','4','5','6','7','8','9'].forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                for (let h = 0; h < 10; h++) {
+                    for (let t = 0; t < 10; t++) {
+                        for (let u = 0; u < 10; u++) {
+                            allNumbers.add(`${h}${t}${u}`);
+                        }
                     }
-                });
+                }
                 
-                // 筛选符合条件的号码
+                // 核心判定逻辑：选中位置需全部正确才算组命中
                 finalNumbers = [];
                 allNumbers.forEach(num => {
-                    const hitCount = validGroups.filter(group => {
-                        const h = num[0], t = num[1], u = num[2];
+                    const h = num[0], t = num[1], u = num[2];
+                    let hitCount = 0; // 命中的有效组数量
+                    
+                    validGroups.forEach(group => {
                         const { hundreds, tens, units, selectedPositions } = group;
-                        let isHit = true;
+                        let isHit = true; // 默认为命中，只要有一个选中位置错误则变为未命中
+                        
+                        // 校验所有选中的位置，需全部正确
                         if (selectedPositions.has('百位') && !hundreds.includes(h)) isHit = false;
                         if (selectedPositions.has('十位') && !tens.includes(t)) isHit = false;
                         if (selectedPositions.has('个位') && !units.includes(u)) isHit = false;
-                        return isHit;
-                    }).length;
+                        
+                        if (isHit) hitCount++;
+                    });
                     
-                    if (hitCount >= minCorrect && hitCount <= maxCorrect) {
+                    // 计算错误组数，筛选符合条件的号码
+                    const errorCount = validCount - hitCount;
+                    if (errorCount >= minError && errorCount <= maxError) {
                         finalNumbers.push(num);
                     }
                 });
                 
+                // 生成结果内容
                 generateTabContents(selectedCount, validCount, minError, maxError, minCorrect, maxCorrect, validGroups, finalNumbers);
                 resultSection.style.display = 'block';
                 resultSection.scrollIntoView({ behavior: 'smooth' });
@@ -928,7 +974,7 @@
                 playTipSound('success');
             });
             
-            // 开奖号验证按钮
+            // 开奖验证
             verifyBtn.addEventListener('click', () => {
                 const lotteryNum = lotteryInput.value.trim();
                 if (!/^\d{3}$/.test(lotteryNum)) {
@@ -966,7 +1012,7 @@
                 }
             });
             
-            // 清空按钮
+            // 清空
             clearBtn.addEventListener('click', () => {
                 importInput.value = '';
                 groupsData = [];

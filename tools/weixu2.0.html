@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>十方料码 - 定位复式专用 点控版本</title>
+    <title>十方料码 - 定位复式专用分析系统</title>
     <meta name="theme-color" content="#00ffff">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><circle cx='64' cy='64' r='60' fill='%23000' stroke='%23ffd700' stroke-width='4'/></svg>">
     <style>
@@ -636,7 +636,7 @@
                 const unselectedPos = ['百位','十位','个位'].filter(p => !group.selectedPositions.has(p)).join('、') || '无';
                 configText += `\n=== ${group.chineseId} ===\n原始数据：${group.line}\n选中位置：${selectedPos} ✅（需全部正确才命中）\n未选位置：${unselectedPos} ⚠️（忽略不计算）\n百位数字：${group.hundreds}\n十位数字：${group.tens}\n个位数字：${group.units}\n`;
             });
-            configText += `\n⚠️ 十方料码 www.shifangliaoma.com  `;
+            configText += `\n⚠️ 十方料码 www.shifanglm.com  `;
             configContent.textContent = configText;
             
             currentVoiceText = summaryContent.textContent;

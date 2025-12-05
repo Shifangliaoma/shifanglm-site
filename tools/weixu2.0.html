@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>十方料码 www.shifanglm.com</title>
-    <link rel="manifest" href="manifest.json">
+    <title>伪序趋势复式点控版本</title>
     <meta name="theme-color" content="#00ffff">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><circle cx='64' cy='64' r='60' fill='%23000' stroke='%2300ffff' stroke-width='4'/></svg>">
     <style>
@@ -308,50 +307,52 @@
             background: linear-gradient(180deg, #00ffff, #ff00ff);
             border-radius: 3px;
         }
-        /* 优化：缩小开奖号验证区域样式 */
         .verify-section {
-            background: transparent; /* 取消背景，减少占用空间 */
-            border: none; /* 取消边框 */
-            padding: 10px 0;
-            margin: 10px 0;
+            background: rgba(0, 20, 30, 0.8);
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            flex-shrink: 0;
             display: flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: center; /* 居中显示 */
+            flex-direction: column;
+            gap: 10px;
         }
         #lotteryInput {
-            width: 100px; /* 缩小输入框宽度 */
-            padding: 8px; /* 缩小内边距 */
+            width: 100%;
+            padding: 12px;
             background: rgba(0, 20, 30, 0.8);
             border: 2px solid #ffd700;
             border-radius: 6px;
             color: #fff;
             text-align: center;
-            font-size: 16px; /* 缩小字体 */
-            letter-spacing: 1px;
+            font-size: 18px;
+            letter-spacing: 2px;
         }
         #verifyBtn {
-            width: 90px; /* 缩小按钮宽度 */
-            padding: 8px 0; /* 缩小内边距 */
+            width: 100%;
+            padding: 12px 0;
             background: linear-gradient(90deg, #ffd700, #ff6b35);
             border: none;
             border-radius: 6px;
             color: #000;
-            font-size: 14px; /* 缩小字体 */
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
         }
         #verifyBtn:hover {
-            transform: scale(1.05);
+            transform: scale(1.02);
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
         }
         .verify-result {
             text-align: center;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
-            margin-top: 5px;
+            margin-top: 10px;
             height: 24px;
+            width: 100%;
         }
         .footer {
             text-align: center;
@@ -411,9 +412,9 @@
 <body>
     <button class="voice-btn" id="voiceBtn" title="语音播报当前结果">🔊</button>
     <div class="container">
-        <h1>✨ 十方料码 www.shifanglm.com ✨</h1>
+        <h1>✨ 伪序定位复式点控版本✨</h1>
         <div class="input-group">
-            <label for="importInput">导入定位复式数据（每行一组）</label>
+            <label for="importInput">导入定位复式数据（每行一组）Vx:shifangliaoma</label>
             <textarea id="importInput" placeholder="请输入多组定位复式数据，每行一组">0846-2874-2758
 9713-0136-0931
 0285-2985-2476
@@ -424,7 +425,7 @@
 1122-3344-5566
 7890-1234-5678
 2345-6789-0123</textarea>
-            <div class="qq-label">QQ: 921913231</div>
+            <div class="qq-label">www.shifanglm.com</div>
         </div>
         <div class="btn-group">
             <button class="btn" id="parseBtn">解析数据</button>
@@ -444,12 +445,12 @@
         </div>
         <div class="settings-section">
             <div class="setting-row">
-                <span class="setting-label">容错范围:0~0：</span>
+                <span class="setting-label">容错范围（错误组数）：</span>
                 <input type="number" id="toleranceMin" class="tolerance-input" value="0" min="0">
                 <span class="setting-label">-</span>
                 <input type="number" id="toleranceMax" class="tolerance-input" value="0" min="0">
             </div>
-            <p class="tolerance-desc">⚠️ 有疑问❓请联系十方料码！</p>
+            <p class="tolerance-desc">⚠️ 核心规则：仅选中的组参与计算，未选中的组直接忽略；单组未选择任何位置时忽略不计算；选择部分位置时，未选位置忽略不计算</p>
         </div>
         <button class="btn full-width" id="calcBtn" disabled>生成大底号码</button>
         <div class="result-section" id="resultSection">
@@ -463,9 +464,8 @@
             <div class="tab-content" id="numbersContent"></div>
             <div class="tab-content" id="configContent"></div>
             
-            <!-- 优化：缩小后的开奖号验证区域 -->
             <div class="verify-section">
-                <input type="text" id="lotteryInput" placeholder="开奖号" maxlength="3">
+                <input type="text" id="lotteryInput" placeholder="请输入3位开奖号" maxlength="3">
                 <button id="verifyBtn">验证中奖</button>
             </div>
             <div class="verify-result" id="verifyResult"></div>
@@ -473,23 +473,23 @@
             <button class="btn full-width" id="copyBtn">一键复制当前标签内容</button>
         </div>
         <div class="footer">
-            温馨提示：本工具仅用于数据分析，不构成彩票购买建议
+            温馨提示：本工具仅用于数据分析，不构成购买建议。
         </div>
     </div>
     <div class="toast" id="toast">操作成功！</div>
     <script>
+        // 修复：简化变量定义，避免浏览器解析异常
         let groupsData = [];
         let selectedGroupIds = new Set();
         let generateEnabled = false;
         let currentVoiceText = '';
         let speechSynthesis = window.speechSynthesis || null;
-        let finalNumbers = []; // 存储生成的大底号码，用于验证
+        let finalNumbers = [];
         
-        // 修复语音播报：添加文字提示和兼容处理
+        // 修复：初始化函数提前定义，避免调用时未声明
         function initVoiceTip() {
             if (!speechSynthesis) {
                 showToast('当前浏览器不支持语音播报，将显示文字提示');
-                // 替换语音按钮为文字提示按钮
                 const voiceBtn = document.getElementById('voiceBtn');
                 voiceBtn.innerHTML = '📝';
                 voiceBtn.title = '显示文字提示';
@@ -505,9 +505,7 @@
             return chars[ten] + '十' + (one > 0 ? chars[one] : '') + '组';
         }
         
-        // 新增：播放提示音效（兼容浏览器）
         function playTipSound(type = 'success') {
-            // 尝试播放音效，失败则显示文字提示
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioContext.createOscillator();
@@ -538,57 +536,14 @@
             }
         }
         
-        const importInput = document.getElementById('importInput');
-        const parseBtn = document.getElementById('parseBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const selectAllBtn = document.getElementById('selectAllBtn');
-        const deselectAllBtn = document.getElementById('deselectAllBtn');
-        const enableGenerateBtn = document.getElementById('enableGenerateBtn');
-        const calcBtn = document.getElementById('calcBtn');
-        const groupsContainer = document.getElementById('groupsContainer');
-        const toleranceMin = document.getElementById('toleranceMin');
-        const toleranceMax = document.getElementById('toleranceMax');
-        const resultSection = document.getElementById('resultSection');
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-        const summaryContent = document.getElementById('summaryContent');
-        const numbersContent = document.getElementById('numbersContent');
-        const configContent = document.getElementById('configContent');
-        const copyBtn = document.getElementById('copyBtn');
-        const toast = document.getElementById('toast');
-        const voiceBtn = document.getElementById('voiceBtn');
-        // 开奖号验证元素
-        const lotteryInput = document.getElementById('lotteryInput');
-        const verifyBtn = document.getElementById('verifyBtn');
-        const verifyResult = document.getElementById('verifyResult');
-        
-        // 页面加载时初始化语音提示
-        window.addEventListener('load', () => {
-            document.querySelector('.container').style.minHeight = `${window.innerHeight - 30}px`;
-            initVoiceTip(); // 初始化语音/文字提示
-            if (importInput.value.trim()) {
-                parseBtn.click();
-            }
-        });
-        
-        window.addEventListener('resize', () => {
-            document.querySelector('.container').style.minHeight = `${window.innerHeight - 30}px`;
-        });
-        
-        copyBtn.addEventListener('click', () => {
-            const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
-            const text = document.getElementById(`${activeTab}Content`).textContent;
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showToast('复制成功！');
-                    playTipSound('success'); // 复制成功播放音效
-                }).catch(err => {
-                    fallbackCopy(text);
-                });
-            } else {
-                fallbackCopy(text);
-            }
-        });
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 2000);
+        }
         
         function fallbackCopy(text) {
             const textarea = document.createElement('textarea');
@@ -609,97 +564,33 @@
             }
         }
         
-        // 修复语音按钮逻辑：支持文字提示
-        voiceBtn.addEventListener('click', () => {
-            if (resultSection.style.display !== 'block') {
-                showToast('请先生成结果再进行语音播报！');
-                playTipSound('error');
-                return;
-            }
+        function generateTabContents(selectedCount, validCount, minError, maxError, minCorrect, maxCorrect, validGroups, finalNumbers) {
+            const summaryContent = document.getElementById('summaryContent');
+            summaryContent.textContent = `📊 大底生成统计\n🎯 选中组数：${selectedCount} 组（未选中组已忽略）\n✅ 有效参与组数：${validCount} 组（需至少选择一个位置）\n⚠️  容错设置：允许错误组数 ${minError}-${maxError} 组\n✅ 正确组数范围：${minCorrect}-${maxCorrect} 组\n📈 大底号码总数：${finalNumbers.length} 注\n💰 预计金额：${finalNumbers.length * 2} 元（按每注2元计算）\n\n⚠️  核心规则：仅选中的组参与计算，未选中的组直接忽略；单组未选择任何位置时忽略不计算；选择部分位置时，未选位置忽略不计算`;
             
-            const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
-            let text = document.getElementById(`${activeTab}Content`).textContent;
-            text = text.replace(/[📊🎰📝⚠️💰]/g, '').replace(/\n+/g, '。').replace(/\s+/g, ' ');
-            currentVoiceText = text;
-            
-            // 不支持语音播报时显示文字提示
-            if (!speechSynthesis) {
-                alert('当前结果文字提示：\n' + text);
-                showToast('文字提示已显示');
-                return;
-            }
-            
-            if (speechSynthesis.speaking) {
-                speechSynthesis.cancel();
-                voiceBtn.classList.remove('playing');
-                showToast('语音播报已停止');
-                return;
-            }
-            
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'zh-CN';
-            utterance.rate = 0.9;
-            utterance.volume = 1;
-            utterance.pitch = 1;
-            utterance.onstart = () => {
-                voiceBtn.classList.add('playing');
-                showToast('语音播报中...');
-            };
-            utterance.onend = () => {
-                voiceBtn.classList.remove('playing');
-                showToast('语音播报完成！');
-                playTipSound('success');
-            };
-            utterance.onerror = () => {
-                voiceBtn.classList.remove('playing');
-                showToast('语音播报失败，显示文字提示');
-                playTipSound('error');
-                alert('当前结果文字提示：\n' + text);
-            };
-            speechSynthesis.speak(utterance);
-        });
-        
-        parseBtn.addEventListener('click', () => {
-            const inputText = importInput.value.trim();
-            if (!inputText) {
-                showToast('请输入定位复式数据！');
-                playTipSound('error');
-                return;
-            }
-            const lines = inputText.split('\n').filter(line => line.trim() !== '');
-            const validGroups = [];
-            lines.forEach((line, index) => {
-                const parts = line.trim().split('-');
-                if (parts.length === 3) {
-                    validGroups.push({
-                        id: index + 1,
-                        chineseId: numberToChineseOrdinal(index + 1),
-                        line: line.trim(),
-                        hundreds: parts[0],
-                        tens: parts[1],
-                        units: parts[2],
-                        selectedPositions: new Set(),
-                        isSelected: false
-                    });
-                } else {
-                    showToast(`第${index + 1}行格式错误，已忽略！`);
-                    playTipSound('error');
-                }
+            const numbersContent = document.getElementById('numbersContent');
+            let numbersText = `🎰 3D大底号码（共${finalNumbers.length}注）\n\n`;
+            finalNumbers.sort();
+            finalNumbers.forEach((num, index) => {
+                numbersText += num + ((index + 1) % 10 === 0 ? '\n' : ' ');
             });
-            if (validGroups.length === 0) {
-                renderGroupsContainer([]);
-                showToast('无有效数据！');
-                playTipSound('error');
-                return;
-            }
-            groupsData = validGroups;
-            selectedGroupIds.clear();
-            renderGroupsContainer(validGroups);
-            showToast(`成功解析 ${validGroups.length} 组数据！`);
-            playTipSound('success');
-        });
+            numbersContent.textContent = numbersText;
+            
+            const configContent = document.getElementById('configContent');
+            let configText = `📋 配置清单\n📅 生成时间：${new Date().toLocaleString()}\n🎯 选中组数：${selectedCount} 组（未选中组已忽略）\n✅ 有效参与组数：${validCount} 组（需至少选择一个位置）\n⚠️  容错设置：允许错误组数 ${minError}-${maxError} 组\n✅ 正确组数范围：${minCorrect}-${maxCorrect} 组\n\n📝 有效参与组详细配置：\n`;
+            validGroups.forEach(group => {
+                const selectedPos = Array.from(group.selectedPositions).join('、');
+                const unselectedPos = ['百位','十位','个位'].filter(p => !group.selectedPositions.has(p)).join('、') || '无';
+                configText += `\n=== ${group.chineseId} ===\n原始数据：${group.line}\n选中位置：${selectedPos} ✅（参与校验）\n未选位置：${unselectedPos} ⚠️（忽略不计算）\n百位数字：${group.hundreds}\n十位数字：${group.tens}\n个位数字：${group.units}\n`;
+            });
+            configText += `\n⚠️ 十方料码 www.shifanglm.com  `;
+            configContent.textContent = configText;
+            
+            currentVoiceText = summaryContent.textContent;
+        }
         
         function renderGroupsContainer(groups) {
+            const groupsContainer = document.getElementById('groupsContainer');
             if (groups.length === 0) {
                 groupsContainer.innerHTML = `
                     <div class="group-card">
@@ -739,254 +630,373 @@
                     const groupId = parseInt(btn.dataset.groupId);
                     const position = btn.dataset.pos;
                     const group = groupsData.find(g => g.id === groupId);
-                    group.selectedPositions.has(position) ? group.selectedPositions.delete(position) : group.selectedPositions.add(position);
-                    renderGroupsContainer(groupsData);
+                    if (group.isSelected) {
+                        group.selectedPositions.has(position) ? group.selectedPositions.delete(position) : group.selectedPositions.add(position);
+                        renderGroupsContainer(groupsData);
+                    } else {
+                        showToast('请先选中该组再设置位置！');
+                        playTipSound('error');
+                    }
                 });
             });
+            
             document.querySelectorAll('.group-card').forEach(card => {
                 card.addEventListener('click', (e) => {
                     if (!e.target.classList.contains('pos-btn')) {
                         const groupId = parseInt(card.dataset.id);
                         const group = groupsData.find(g => g.id === groupId);
                         group.isSelected = !group.isSelected;
-                        group.isSelected ? selectedGroupIds.add(groupId) : selectedGroupIds.delete(groupId);
+                        if (group.isSelected) {
+                            selectedGroupIds.add(groupId);
+                        } else {
+                            selectedGroupIds.delete(groupId);
+                        }
                         renderGroupsContainer(groupsData);
                     }
                 });
             });
         }
         
-        selectAllBtn.addEventListener('click', () => {
-            if (groupsData.length === 0) {
-                showToast('请先解析数据！');
-                playTipSound('error');
-                return;
-            }
-            groupsData.forEach(group => {
-                group.isSelected = true;
-                selectedGroupIds.add(group.id);
+        // 页面加载后初始化，避免DOM未加载完成就绑定事件
+        window.addEventListener('load', () => {
+            document.querySelector('.container').style.minHeight = `${window.innerHeight - 30}px`;
+            initVoiceTip();
+            
+            // 绑定所有按钮事件
+            const importInput = document.getElementById('importInput');
+            const parseBtn = document.getElementById('parseBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const selectAllBtn = document.getElementById('selectAllBtn');
+            const deselectAllBtn = document.getElementById('deselectAllBtn');
+            const enableGenerateBtn = document.getElementById('enableGenerateBtn');
+            const calcBtn = document.getElementById('calcBtn');
+            const toleranceMin = document.getElementById('toleranceMin');
+            const toleranceMax = document.getElementById('toleranceMax');
+            const resultSection = document.getElementById('resultSection');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const copyBtn = document.getElementById('copyBtn');
+            const voiceBtn = document.getElementById('voiceBtn');
+            const lotteryInput = document.getElementById('lotteryInput');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const verifyResult = document.getElementById('verifyResult');
+            
+            // 解析数据按钮
+            parseBtn.addEventListener('click', () => {
+                const inputText = importInput.value.trim();
+                if (!inputText) {
+                    showToast('请输入定位复式数据！');
+                    playTipSound('error');
+                    return;
+                }
+                const lines = inputText.split('\n').filter(line => line.trim() !== '');
+                const validGroups = [];
+                lines.forEach((line, index) => {
+                    const parts = line.trim().split('-');
+                    if (parts.length === 3) {
+                        validGroups.push({
+                            id: index + 1,
+                            chineseId: numberToChineseOrdinal(index + 1),
+                            line: line.trim(),
+                            hundreds: parts[0],
+                            tens: parts[1],
+                            units: parts[2],
+                            selectedPositions: new Set(),
+                            isSelected: false
+                        });
+                    } else {
+                        showToast(`第${index + 1}行格式错误，已忽略！`);
+                        playTipSound('error');
+                    }
+                });
+                if (validGroups.length === 0) {
+                    renderGroupsContainer([]);
+                    showToast('无有效数据！');
+                    playTipSound('error');
+                    return;
+                }
+                groupsData = validGroups;
+                selectedGroupIds.clear();
+                renderGroupsContainer(validGroups);
+                showToast(`成功解析 ${validGroups.length} 组数据！`);
+                playTipSound('success');
             });
-            renderGroupsContainer(groupsData);
-            showToast('已全选所有组！');
-            playTipSound('success');
-        });
-        
-        deselectAllBtn.addEventListener('click', () => {
-            groupsData.forEach(group => group.isSelected = false);
-            selectedGroupIds.clear();
-            renderGroupsContainer(groupsData);
-            showToast('已取消全选！');
-            playTipSound('success');
-        });
-        
-        enableGenerateBtn.addEventListener('click', () => {
-            if (groupsData.length === 0) {
-                showToast('请先解析数据再启用生成功能！');
-                playTipSound('error');
-                return;
-            }
-            generateEnabled = true;
-            calcBtn.disabled = false;
-            enableGenerateBtn.disabled = true;
-            enableGenerateBtn.textContent = '生成功能已启用';
-            showToast('生成功能已启用，可以生成大底号码！');
-            playTipSound('success');
-        });
-        
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tab = btn.dataset.tab;
-                tabBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                tabContents.forEach(c => c.classList.remove('active'));
-                document.getElementById(`${tab}Content`).classList.add('active');
-                currentVoiceText = document.getElementById(`${tab}Content`).textContent;
+            
+            // 全选按钮
+            selectAllBtn.addEventListener('click', () => {
+                if (groupsData.length === 0) {
+                    showToast('请先解析数据！');
+                    playTipSound('error');
+                    return;
+                }
+                groupsData.forEach(group => {
+                    group.isSelected = true;
+                    selectedGroupIds.add(group.id);
+                });
+                renderGroupsContainer(groupsData);
+                showToast('已全选所有组！');
+                playTipSound('success');
             });
-        });
-        
-        calcBtn.addEventListener('click', () => {
-            if (!generateEnabled) {
-                showToast('请先启用生成功能！');
-                playTipSound('error');
-                return;
-            }
-            const selectedCount = selectedGroupIds.size;
-            if (selectedCount === 0) {
-                showToast('请至少选择一组数据！');
-                playTipSound('error');
-                return;
-            }
-            const minError = parseInt(toleranceMin.value) || 0;
-            const maxError = parseInt(toleranceMax.value) || 0;
-            if (minError < 0 || maxError < 0 || minError > maxError) {
-                showToast('容错范围输入错误！');
-                playTipSound('error');
-                return;
-            }
-            if (maxError > selectedCount) {
-                showToast(`最大错误组数不能超过选中组数（${selectedCount}组）`);
-                playTipSound('error');
-                return;
-            }
-            const selectedGroups = groupsData.filter(g => g.isSelected);
-            const minCorrect = selectedCount - maxError;
-            const maxCorrect = selectedCount - minError;
-            let allNumbers = new Set();
-            selectedGroups.forEach(group => {
-                const { hundreds, tens, units, selectedPositions } = group;
-                const hDigits = hundreds.split('');
-                const tDigits = tens.split('');
-                const uDigits = units.split('');
-                const posCount = selectedPositions.size;
-                if (posCount === 0) {
-                    const hErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !hDigits.includes(d));
-                    const tErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !tDigits.includes(d));
-                    const uErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !uDigits.includes(d));
-                    hErrorDigits.forEach(h => tErrorDigits.forEach(t => uErrorDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                } else if (selectedPositions.has('十位') && selectedPositions.has('个位') && !selectedPositions.has('百位')) {
-                    const hErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !hDigits.includes(d));
-                    hErrorDigits.forEach(h => tDigits.forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                } else if (selectedPositions.has('百位') && selectedPositions.has('十位') && !selectedPositions.has('个位')) {
-                    const uErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !uDigits.includes(d));
-                    hDigits.forEach(h => tDigits.forEach(t => uErrorDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                } else if (selectedPositions.has('百位') && selectedPositions.has('个位') && !selectedPositions.has('十位')) {
-                    const tErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !tDigits.includes(d));
-                    hDigits.forEach(h => tErrorDigits.forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                } else if (selectedPositions.has('百位') && !selectedPositions.has('十位') && !selectedPositions.has('个位')) {
-                    const tErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !tDigits.includes(d));
-                    const uErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !uDigits.includes(d));
-                    hDigits.forEach(h => tErrorDigits.forEach(t => uErrorDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                } else if (!selectedPositions.has('百位') && selectedPositions.has('十位') && !selectedPositions.has('个位')) {
-                    const hErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !hDigits.includes(d));
-                    const uErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !uDigits.includes(d));
-                    hErrorDigits.forEach(h => tDigits.forEach(t => uErrorDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                } else if (!selectedPositions.has('百位') && !selectedPositions.has('十位') && selectedPositions.has('个位')) {
-                    const hErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !hDigits.includes(d));
-                    const tErrorDigits = ['0','1','2','3','4','5','6','7','8','9'].filter(d => !tDigits.includes(d));
-                    hErrorDigits.forEach(h => tErrorDigits.forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
-                } else if (selectedPositions.has('百位') && selectedPositions.has('十位') && selectedPositions.has('个位')) {
-                    hDigits.forEach(h => tDigits.forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+            
+            // 取消全选按钮
+            deselectAllBtn.addEventListener('click', () => {
+                groupsData.forEach(group => group.isSelected = false);
+                selectedGroupIds.clear();
+                renderGroupsContainer(groupsData);
+                showToast('已取消全选！');
+                playTipSound('success');
+            });
+            
+            // 启用生成功能按钮
+            enableGenerateBtn.addEventListener('click', () => {
+                if (groupsData.length === 0) {
+                    showToast('请先解析数据再启用生成功能！');
+                    playTipSound('error');
+                    return;
+                }
+                generateEnabled = true;
+                calcBtn.disabled = false;
+                enableGenerateBtn.disabled = true;
+                enableGenerateBtn.textContent = '生成功能已启用';
+                showToast('生成功能已启用，可以生成大底号码！');
+                playTipSound('success');
+            });
+            
+            // 标签切换按钮
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tab = btn.dataset.tab;
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(`${tab}Content`).classList.add('active');
+                    currentVoiceText = document.getElementById(`${tab}Content`).textContent;
+                });
+            });
+            
+            // 复制按钮
+            copyBtn.addEventListener('click', () => {
+                const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+                const text = document.getElementById(`${activeTab}Content`).textContent;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        showToast('复制成功！');
+                        playTipSound('success');
+                    }).catch(err => {
+                        fallbackCopy(text);
+                    });
+                } else {
+                    fallbackCopy(text);
                 }
             });
-            finalNumbers = []; // 清空之前的结果
-            allNumbers.forEach(num => {
-                const hitCount = selectedGroups.filter(group => {
-                    const h = num[0], t = num[1], u = num[2];
+            
+            // 语音按钮
+            voiceBtn.addEventListener('click', () => {
+                if (resultSection.style.display !== 'block') {
+                    showToast('请先生成结果再进行语音播报！');
+                    playTipSound('error');
+                    return;
+                }
+                
+                const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+                let text = document.getElementById(`${activeTab}Content`).textContent;
+                text = text.replace(/[📊🎰📝⚠️💰]/g, '').replace(/\n+/g, '。').replace(/\s+/g, ' ');
+                currentVoiceText = text;
+                
+                if (!speechSynthesis) {
+                    alert('当前结果文字提示：\n' + text);
+                    showToast('文字提示已显示');
+                    return;
+                }
+                
+                if (speechSynthesis.speaking) {
+                    speechSynthesis.cancel();
+                    voiceBtn.classList.remove('playing');
+                    showToast('语音播报已停止');
+                    return;
+                }
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.9;
+                utterance.volume = 1;
+                utterance.pitch = 1;
+                utterance.onstart = () => {
+                    voiceBtn.classList.add('playing');
+                    showToast('语音播报中...');
+                };
+                utterance.onend = () => {
+                    voiceBtn.classList.remove('playing');
+                    showToast('语音播报完成！');
+                    playTipSound('success');
+                };
+                utterance.onerror = () => {
+                    voiceBtn.classList.remove('playing');
+                    showToast('语音播报失败，显示文字提示');
+                    playTipSound('error');
+                    alert('当前结果文字提示：\n' + text);
+                };
+                speechSynthesis.speak(utterance);
+            });
+            
+            // 生成大底按钮
+            calcBtn.addEventListener('click', () => {
+                if (!generateEnabled) {
+                    showToast('请先启用生成功能！');
+                    playTipSound('error');
+                    return;
+                }
+                const selectedCount = selectedGroupIds.size;
+                if (selectedCount === 0) {
+                    showToast('请至少选择一组数据！');
+                    playTipSound('error');
+                    return;
+                }
+                const minError = parseInt(toleranceMin.value) || 0;
+                const maxError = parseInt(toleranceMax.value) || 0;
+                if (minError < 0 || maxError < 0 || minError > maxError) {
+                    showToast('容错范围输入错误！');
+                    playTipSound('error');
+                    return;
+                }
+                
+                // 筛选有效参与组
+                const validGroups = groupsData.filter(g => g.isSelected && g.selectedPositions.size > 0);
+                const validCount = validGroups.length;
+                
+                if (validCount === 0) {
+                    showToast('无有效参与组（选中组需至少选择一个位置）！');
+                    playTipSound('error');
+                    return;
+                }
+                
+                if (maxError > validCount) {
+                    showToast(`最大错误组数不能超过有效参与组数（${validCount}组）`);
+                    playTipSound('error');
+                    return;
+                }
+                
+                const minCorrect = validCount - maxError;
+                const maxCorrect = validCount - minError;
+                let allNumbers = new Set();
+                
+                // 生成号码组合
+                validGroups.forEach(group => {
                     const { hundreds, tens, units, selectedPositions } = group;
-                    const posCount = selectedPositions.size;
-                    let isHit = true;
-                    if (posCount === 0) {
-                        if (hundreds.includes(h) || tens.includes(t) || units.includes(u)) isHit = false;
-                    } else {
+                    const hDigits = hundreds.split('');
+                    const tDigits = tens.split('');
+                    const uDigits = units.split('');
+                    
+                    if (selectedPositions.has('百位') && selectedPositions.has('十位') && selectedPositions.has('个位')) {
+                        hDigits.forEach(h => tDigits.forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                    } else if (selectedPositions.has('百位') && selectedPositions.has('十位')) {
+                        hDigits.forEach(h => tDigits.forEach(t => ['0','1','2','3','4','5','6','7','8','9'].forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                    } else if (selectedPositions.has('百位') && selectedPositions.has('个位')) {
+                        hDigits.forEach(h => ['0','1','2','3','4','5','6','7','8','9'].forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                    } else if (selectedPositions.has('十位') && selectedPositions.has('个位')) {
+                        ['0','1','2','3','4','5','6','7','8','9'].forEach(h => tDigits.forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                    } else if (selectedPositions.has('百位')) {
+                        hDigits.forEach(h => ['0','1','2','3','4','5','6','7','8','9'].forEach(t => ['0','1','2','3','4','5','6','7','8','9'].forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                    } else if (selectedPositions.has('十位')) {
+                        ['0','1','2','3','4','5','6','7','8','9'].forEach(h => tDigits.forEach(t => ['0','1','2','3','4','5','6','7','8','9'].forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                    } else if (selectedPositions.has('个位')) {
+                        ['0','1','2','3','4','5','6','7','8','9'].forEach(h => ['0','1','2','3','4','5','6','7','8','9'].forEach(t => uDigits.forEach(u => allNumbers.add(`${h}${t}${u}`))));
+                    }
+                });
+                
+                // 筛选符合条件的号码
+                finalNumbers = [];
+                allNumbers.forEach(num => {
+                    const hitCount = validGroups.filter(group => {
+                        const h = num[0], t = num[1], u = num[2];
+                        const { hundreds, tens, units, selectedPositions } = group;
+                        let isHit = true;
                         if (selectedPositions.has('百位') && !hundreds.includes(h)) isHit = false;
                         if (selectedPositions.has('十位') && !tens.includes(t)) isHit = false;
                         if (selectedPositions.has('个位') && !units.includes(u)) isHit = false;
-                        if (!selectedPositions.has('百位') && hundreds.includes(h)) isHit = false;
-                        if (!selectedPositions.has('十位') && tens.includes(t)) isHit = false;
-                        if (!selectedPositions.has('个位') && units.includes(u)) isHit = false;
+                        return isHit;
+                    }).length;
+                    
+                    if (hitCount >= minCorrect && hitCount <= maxCorrect) {
+                        finalNumbers.push(num);
                     }
-                    return isHit;
-                }).length;
-                if (hitCount >= minCorrect && hitCount <= maxCorrect) {
-                    finalNumbers.push(num);
-                }
-            });
-            generateTabContents(selectedCount, minError, maxError, minCorrect, maxCorrect, selectedGroups, finalNumbers);
-            resultSection.style.display = 'block';
-            resultSection.scrollIntoView({ behavior: 'smooth' });
-            showToast(`大底生成成功！共${finalNumbers.length}注`);
-            playTipSound('success');
-        });
-        
-        function generateTabContents(selectedCount, minError, maxError, minCorrect, maxCorrect, selectedGroups, finalNumbers) {
-            summaryContent.textContent = `📊 大底生成统计\n🎯 选中组数：${selectedCount} 组\n⚠️  容错设置：允许错误组数 ${minError}-${maxError} 组\n✅ 正确组数范围：${minCorrect}-${maxCorrect} 组\n📈 大底号码总数：${finalNumbers.length} 注\n💰 预计金额：${finalNumbers.length * 2} 元（按每注2元计算）\n\n⚠️  核心规则：单组未选择任何位置时，视为「三个位置全错」；选择部分位置时，未选位置视为「必须错误」`;
-            let numbersText = `🎰 3D大底号码（共${finalNumbers.length}注）\n\n`;
-            finalNumbers.sort();
-            finalNumbers.forEach((num, index) => {
-                numbersText += num + ((index + 1) % 10 === 0 ? '\n' : ' ');
-            });
-            numbersContent.textContent = numbersText;
-            let configText = `📋 配置清单\n📅 生成时间：${new Date().toLocaleString()}\n🎯 选中组数：${selectedCount} 组\n⚠️  容错设置：允许错误组数 ${minError}-${maxError} 组\n✅ 正确组数范围：${minCorrect}-${maxCorrect} 组\n\n📝 选中组详细配置：\n`;
-            selectedGroups.forEach(group => {
-                const selectedPos = Array.from(group.selectedPositions).join('、') || '无（全错）';
-                const unselectedPos = group.selectedPositions.size > 0 ? ['百位','十位','个位'].filter(p => !group.selectedPositions.has(p)).join('、') : '无（三个位置全错）';
-                configText += `\n=== ${group.chineseId} ===\n原始数据：${group.line}\n选中位置：${selectedPos} ${group.selectedPositions.size > 0 ? '✅（必须正确）' : '❌（三个位置全错）'}\n未选位置：${unselectedPos} ${group.selectedPositions.size > 0 ? '❌（必须错误）' : ''}\n百位数字：${group.hundreds}\n十位数字：${group.tens}\n个位数字：${group.units}\n`;
-            });
-            configText += `\n⚠️ 十方料码 www.shifanglm.com  `;
-            configContent.textContent = configText;
-            currentVoiceText = summaryContent.textContent;
-        }
-        
-        // 修复：开奖号验证逻辑（确保能正常触发）
-        verifyBtn.addEventListener('click', () => {
-            console.log('验证按钮点击触发'); // 调试日志
-            const lotteryNum = lotteryInput.value.trim();
-            if (!/^\d{3}$/.test(lotteryNum)) {
-                verifyResult.textContent = '❌ 请输入3位数字！';
-                verifyResult.style.color = '#ff4444';
-                playTipSound('error');
-                return;
-            }
-            if (finalNumbers.length === 0) {
-                verifyResult.textContent = '❌ 请先生成大底！';
-                verifyResult.style.color = '#ff4444';
-                playTipSound('error');
-                return;
-            }
-            // 关键修复：确保finalNumbers是数组且包含正确数据
-            console.log('大底号码列表：', finalNumbers); // 调试日志
-            if (finalNumbers.includes(lotteryNum)) {
-                verifyResult.textContent = '🎉 恭喜你中奖多多！';
-                verifyResult.style.color = '#ffd700';
+                });
+                
+                generateTabContents(selectedCount, validCount, minError, maxError, minCorrect, maxCorrect, validGroups, finalNumbers);
+                resultSection.style.display = 'block';
+                resultSection.scrollIntoView({ behavior: 'smooth' });
+                showToast(`大底生成成功！共${finalNumbers.length}注`);
                 playTipSound('success');
-                // 语音播报中奖提示
-                if (speechSynthesis && !speechSynthesis.speaking) {
-                    const utterance = new SpeechSynthesisUtterance('恭喜你中奖多多！');
-                    utterance.lang = 'zh-CN';
-                    speechSynthesis.speak(utterance);
+            });
+            
+            // 开奖号验证按钮
+            verifyBtn.addEventListener('click', () => {
+                const lotteryNum = lotteryInput.value.trim();
+                if (!/^\d{3}$/.test(lotteryNum)) {
+                    verifyResult.textContent = '❌ 请输入有效的3位数字！';
+                    verifyResult.style.color = '#ff4444';
+                    playTipSound('error');
+                    return;
                 }
-            } else {
-                verifyResult.textContent = '很遗憾没有中奖！';
-                verifyResult.style.color = '#ff4444';
-                playTipSound('error');
+                if (finalNumbers.length === 0) {
+                    verifyResult.textContent = '❌ 请先生成大底号码！';
+                    verifyResult.style.color = '#ff4444';
+                    playTipSound('error');
+                    return;
+                }
+                if (finalNumbers.includes(lotteryNum)) {
+                    verifyResult.textContent = '🎉 恭喜你中奖多多！';
+                    verifyResult.style.color = '#ffd700';
+                    playTipSound('success');
+                    if (speechSynthesis && !speechSynthesis.speaking) {
+                        const utterance = new SpeechSynthesisUtterance('恭喜你中奖多多！');
+                        utterance.lang = 'zh-CN';
+                        speechSynthesis.speak(utterance);
+                    }
+                } else {
+                    verifyResult.textContent = '很遗憾没有中奖！';
+                    verifyResult.style.color = '#ff4444';
+                    playTipSound('error');
+                }
+            });
+            
+            // 回车验证
+            lotteryInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    verifyBtn.click();
+                }
+            });
+            
+            // 清空按钮
+            clearBtn.addEventListener('click', () => {
+                importInput.value = '';
+                groupsData = [];
+                selectedGroupIds.clear();
+                generateEnabled = false;
+                finalNumbers = [];
+                calcBtn.disabled = true;
+                enableGenerateBtn.disabled = false;
+                enableGenerateBtn.textContent = '启用生成功能';
+                resultSection.style.display = 'none';
+                verifyResult.textContent = '';
+                lotteryInput.value = '';
+                renderGroupsContainer([]);
+                if (speechSynthesis && speechSynthesis.speaking) {
+                    speechSynthesis.cancel();
+                    voiceBtn.classList.remove('playing');
+                }
+                showToast('数据已清空！');
+                playTipSound('success');
+            });
+            
+            // 初始解析示例数据
+            if (importInput.value.trim()) {
+                parseBtn.click();
             }
         });
         
-        // 输入框回车触发验证
-        lotteryInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                verifyBtn.click();
-            }
+        window.addEventListener('resize', () => {
+            document.querySelector('.container').style.minHeight = `${window.innerHeight - 30}px`;
         });
-        
-        clearBtn.addEventListener('click', () => {
-            importInput.value = '';
-            groupsData = [];
-            selectedGroupIds.clear();
-            generateEnabled = false;
-            finalNumbers = []; // 清空大底号码
-            calcBtn.disabled = true;
-            enableGenerateBtn.disabled = false;
-            enableGenerateBtn.textContent = '启用生成功能';
-            resultSection.style.display = 'none';
-            verifyResult.textContent = ''; // 清空验证结果
-            lotteryInput.value = ''; // 清空开奖号输入
-            renderGroupsContainer([]);
-            if (speechSynthesis && speechSynthesis.speaking) {
-                speechSynthesis.cancel();
-                voiceBtn.classList.remove('playing');
-            }
-            showToast('数据已清空！');
-            playTipSound('success');
-        });
-        
-        function showToast(message) {
-            toast.textContent = message;
-            toast.classList.add('active');
-            setTimeout(() => {
-                toast.classList.remove('active');
-            }, 2000);
-        }
     </script>
 </body>
 </html>

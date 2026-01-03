@@ -23,7 +23,7 @@
         body {
             font-family: 'Segoe UI', 'Microsoft YaHei', 'SF Pro Display', sans-serif;
             background-color: #0a0a0f;
-            color: #e0e0ff;
+            color: #f0f0ff;
             line-height: 1.6;
             overflow-x: hidden;
             min-height: 100vh;
@@ -41,9 +41,9 @@
             --dark-2: #0a0a12;
             --dark-3: #0f0f1a;
             --dark-4: #1a1a2e;
-            --light-1: #e0e0ff;
-            --light-2: #b8b8d8;
-            --light-3: #8a8ab8;
+            --light-1: #f0f0ff;
+            --light-2: #d0d0ff;
+            --light-3: #a0a0e0;
             --glow-blue: 0 0 15px rgba(0, 243, 255, 0.7);
             --glow-pink: 0 0 15px rgba(255, 0, 255, 0.7);
             --glow-green: 0 0 15px rgba(0, 255, 157, 0.7);
@@ -104,6 +104,79 @@
             max-width: 1280px;
             margin: 0 auto;
             padding: 0 20px;
+        }
+        
+        /* ===== 按钮样式 ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 28px;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: var(--border-radius-sm);
+            transition: all var(--transition);
+            text-align: center;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            border: 1px solid transparent;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--cyber-blue), var(--cyber-green));
+            color: var(--dark-1);
+            box-shadow: var(--glow-blue);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 243, 255, 0.4), var(--glow-blue);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--cyber-blue);
+            border: 1px solid var(--cyber-blue);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+            transform: translateY(-3px);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, var(--cyber-green), #00cc7a);
+            color: var(--dark-1);
+            box-shadow: var(--glow-green);
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 255, 157, 0.4), var(--glow-green);
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        /* ===== 文字颜色样式 ===== */
+        .text-muted {
+            color: var(--light-3) !important;
+        }
+        
+        .text-primary {
+            color: var(--cyber-blue) !important;
         }
         
         /* ===== 网格背景 ===== */
@@ -339,7 +412,7 @@
         
         /* ===== 卡片设计 ===== */
         .card {
-            background-color: rgba(15, 15, 26, 0.8);
+            background-color: rgba(20, 20, 35, 0.9);
             border-radius: var(--border-radius);
             border: 1px solid rgba(0, 243, 255, 0.15);
             backdrop-filter: blur(10px);
@@ -418,7 +491,7 @@
             text-align: center;
             border: 1px solid rgba(0, 243, 255, 0.2);
             border-radius: var(--border-radius);
-            background: rgba(10, 10, 20, 0.7);
+            background: rgba(15, 15, 30, 0.8);
             transition: all var(--transition);
             position: relative;
             overflow: hidden;
@@ -474,7 +547,7 @@
         }
         
         .dashboard-description {
-            color: var(--light-3);
+            color: var(--light-2);
             line-height: 1.7;
             margin-bottom: 25px;
         }
@@ -607,7 +680,7 @@
             padding: 25px;
             border: 1px solid rgba(0, 243, 255, 0.2);
             border-radius: var(--border-radius);
-            background: rgba(10, 10, 20, 0.7);
+            background: rgba(15, 15, 30, 0.8);
             transition: all var(--transition);
             text-align: center;
             display: flex;
@@ -637,7 +710,7 @@
         }
         
         .tool-description {
-            color: var(--light-3);
+            color: var(--light-2);
             font-size: 0.95rem;
             margin-bottom: 20px;
             flex-grow: 1;
@@ -649,7 +722,7 @@
             border-radius: var(--border-radius);
             padding: 50px 30px;
             text-align: center;
-            background-color: rgba(10, 10, 20, 0.5);
+            background-color: rgba(15, 15, 30, 0.6);
             margin-bottom: 30px;
             cursor: pointer;
             transition: all var(--transition);
@@ -677,7 +750,7 @@
         }
         
         .upload-area p {
-            color: var(--light-3);
+            color: var(--light-2);
             margin-bottom: 25px;
         }
         
@@ -701,7 +774,7 @@
         .form-control {
             width: 100%;
             padding: 16px 20px;
-            background-color: rgba(20, 20, 35, 0.8);
+            background-color: rgba(25, 25, 40, 0.9);
             border: 1px solid rgba(0, 243, 255, 0.3);
             border-radius: var(--border-radius-sm);
             color: var(--light-1);
@@ -751,7 +824,7 @@
         }
         
         .modal-content {
-            background: linear-gradient(145deg, rgba(15, 15, 26, 0.95), rgba(10, 10, 20, 0.95));
+            background: linear-gradient(145deg, rgba(20, 20, 35, 0.95), rgba(15, 15, 25, 0.95));
             border-radius: var(--border-radius-lg);
             width: 90%;
             max-width: 600px;
@@ -825,7 +898,7 @@
         
         .image-modal-info {
             padding: 25px 30px;
-            background-color: rgba(10, 10, 20, 0.9);
+            background-color: rgba(15, 15, 25, 0.95);
         }
         
         .image-modal-title {
@@ -861,7 +934,7 @@
             padding: 25px;
             border: 1px solid rgba(0, 243, 255, 0.2);
             border-radius: var(--border-radius);
-            background: rgba(10, 10, 20, 0.7);
+            background: rgba(15, 15, 30, 0.8);
         }
         
         .permission-header {
@@ -919,7 +992,7 @@
         
         /* ===== 页脚设计 ===== */
         .footer {
-            background-color: rgba(5, 5, 10, 0.95);
+            background-color: rgba(10, 10, 20, 0.95);
             border-top: 1px solid rgba(0, 243, 255, 0.2);
             padding: 40px 0;
             position: relative;
@@ -990,7 +1063,7 @@
         
         .tooltip .tooltip-text {
             visibility: hidden;
-            background-color: rgba(15, 15, 26, 0.95);
+            background-color: rgba(20, 20, 35, 0.95);
             color: var(--light-1);
             text-align: center;
             padding: 8px 12px;
@@ -1396,9 +1469,8 @@
                             </div>
                             <div class="card-body">
                                 <div class="trends-container">
-                                    <!-- 金山文档嵌入（使用正确的嵌入方式） -->
+                                    <!-- 金山文档嵌入 -->
                                     <div class="trends-embed">
-                                        <!-- 这里使用金山文档的正确嵌入代码 -->
                                         <iframe class="trends-frame" 
                                                 src="https://www.kdocs.cn/office/l/chld5b1eqA9d" 
                                                 frameborder="0" 
@@ -1416,7 +1488,7 @@
                                     </div>
                                     
                                     <div class="mt-4">
-                                        <h4><i class="fas fa-info-circle"></i> 趋势分析说明</h4>
+                                        <h4 class="text-primary"><i class="fas fa-info-circle"></i> 趋势分析说明</h4>
                                         <p class="text-muted">
                                             本趋势分析图表基于福彩3D历史数据生成，提供多种维度的趋势分析：
                                         </p>
@@ -1643,34 +1715,23 @@
         let selectedFile = null;
         let imagePreviewUrl = null;
         
-        // Appwrite配置 - 请确保这些ID与您的Appwrite控制台一致
-        const DATABASE_ID = '692c0b030010a28df72e'; // 数据库ID
-        const IMAGES_COLLECTION_ID = 'images'; // 图片集合ID
-        const PERMISSIONS_COLLECTION_ID = 'permissions'; // 权限集合ID
-        const TOOLS_COLLECTION_ID = 'tools'; // 工具集合ID
-        const BUCKET_ID = '692a893600202c4f7dad'; // 存储桶ID
+        // Appwrite配置
+        const DATABASE_ID = '692c0b030010a28df72e';
+        const IMAGES_COLLECTION_ID = 'images';
+        const PERMISSIONS_COLLECTION_ID = 'permissions';
+        const TOOLS_COLLECTION_ID = 'tools';
+        const BUCKET_ID = '692a893600202c4f7dad';
         
-        // 管理员邮箱列表 - 请确保这些邮箱已注册
+        // 管理员邮箱列表
         const ADMIN_EMAILS = ['921913231@qq.com', '1106991066@qq.com'];
         
         // ===== 初始化函数 =====
         document.addEventListener('DOMContentLoaded', function() {
-            // 初始化Appwrite
             initAppwrite();
-            
-            // 检查登录状态
             checkLoginStatus();
-            
-            // 初始化事件监听器
             initEventListeners();
-            
-            // 初始化导航
             initNavigation();
-            
-            // 初始化功能面板
             initDashboard();
-            
-            // 初始化滚动监听
             initScrollListener();
         });
         
@@ -1708,30 +1769,24 @@
         
         // ===== 更新UI（已登录） =====
         function updateUIForLoggedInUser() {
-            // 显示用户信息
             document.getElementById('userInfo').classList.remove('d-none');
             document.getElementById('guestAuth').classList.add('d-none');
             
-            // 设置用户信息
             document.getElementById('userEmail').textContent = currentUser.email;
             
-            // 检查是否是管理员
             isAdmin = ADMIN_EMAILS.includes(currentUser.email);
             
             if (isAdmin) {
-                console.log('当前用户是管理员');
                 document.getElementById('userBadge').textContent = '管理员';
                 document.getElementById('userBadge').style.background = 'linear-gradient(45deg, var(--cyber-pink), var(--cyber-orange))';
                 document.getElementById('permissionManagementLink').classList.remove('d-none');
                 document.getElementById('footerPermissionLink').classList.remove('d-none');
                 document.getElementById('uploadSection').classList.remove('d-none');
             } else {
-                console.log('当前用户是普通用户');
                 document.getElementById('userBadge').textContent = '普通用户';
                 document.getElementById('userBadge').style.background = 'linear-gradient(45deg, var(--cyber-blue), var(--cyber-green))';
             }
             
-            // 检查用户权限
             checkUserPermissions();
         }
         
@@ -1739,15 +1794,12 @@
         function updateUIForGuest() {
             document.getElementById('userInfo').classList.add('d-none');
             document.getElementById('guestAuth').classList.remove('d-none');
-            
-            // 为访客显示基本内容
             loadToolsForGuest();
         }
         
         // ===== 检查用户权限 =====
         async function checkUserPermissions() {
             try {
-                // 查询用户权限
                 const permissions = await databases.listDocuments(
                     DATABASE_ID,
                     PERMISSIONS_COLLECTION_ID,
@@ -1760,57 +1812,42 @@
                     const permission = permissions.documents[0];
                     const now = Date.now();
                     
-                    // 检查权限是否过期
                     if (permission.endTime > now) {
-                        // 权限有效
                         const permissionType = permission.type;
-                        console.log('用户权限类型:', permissionType);
                         
-                        // 根据权限类型更新UI
                         if (permissionType === 'trends' || permissionType === 'both') {
-                            // 用户可以查看趋势图表
                             console.log('用户有趋势图表权限');
                         }
                         
                         if (permissionType === 'tools' || permissionType === 'both') {
-                            // 用户可以使用工具
-                            console.log('用户有工具权限');
                             loadTools();
                         } else {
                             loadToolsForGuest();
                         }
                     } else {
-                        // 权限已过期
-                        console.log('用户权限已过期');
-                        loadToolsForGuest(); // 工具需要权限
+                        loadToolsForGuest();
                     }
                 } else {
-                    // 无权限记录
-                    console.log('用户无权限记录');
-                    loadToolsForGuest(); // 工具需要权限
+                    loadToolsForGuest();
                 }
             } catch (error) {
                 console.error('检查用户权限失败:', error);
-                // 出错时默认显示工具权限提示
                 loadToolsForGuest();
             }
         }
         
         // ===== 初始化事件监听器 =====
         function initEventListeners() {
-            // 登录/注册按钮
             document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
             document.getElementById('registerBtn').addEventListener('click', () => openModal('registerModal'));
             document.getElementById('logoutBtn').addEventListener('click', logout);
             
-            // 模态框关闭按钮
             document.getElementById('loginClose').addEventListener('click', () => closeModal('loginModal'));
             document.getElementById('registerClose').addEventListener('click', () => closeModal('registerModal'));
             document.getElementById('imageViewClose').addEventListener('click', () => closeModal('imageViewModal'));
             document.getElementById('addPermissionClose').addEventListener('click', () => closeModal('addPermissionModal'));
             document.getElementById('fullscreenTrendsClose').addEventListener('click', () => closeModal('fullscreenTrendsModal'));
             
-            // 登录/注册切换
             document.getElementById('switchToRegister').addEventListener('click', (e) => {
                 e.preventDefault();
                 closeModal('loginModal');
@@ -1823,19 +1860,16 @@
                 openModal('loginModal');
             });
             
-            // 登录表单提交
             document.getElementById('doLoginBtn').addEventListener('click', login);
             document.getElementById('loginPassword').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') login();
             });
             
-            // 注册表单提交
             document.getElementById('doRegisterBtn').addEventListener('click', register);
             document.getElementById('registerPasswordConfirm').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') register();
             });
             
-            // 图片上传
             document.getElementById('uploadArea').addEventListener('click', () => {
                 document.getElementById('fileInput').click();
             });
@@ -1843,17 +1877,13 @@
             document.getElementById('fileInput').addEventListener('change', previewImage);
             document.getElementById('uploadImageBtn').addEventListener('click', uploadImage);
             
-            // 权限管理
             document.getElementById('addPermissionBtn').addEventListener('click', () => openModal('addPermissionModal'));
             document.getElementById('savePermissionBtn').addEventListener('click', savePermission);
             
-            // 全屏查看趋势图表
             document.getElementById('openFullscreenBtn').addEventListener('click', () => openModal('fullscreenTrendsModal'));
             
-            // 汉堡菜单
             document.getElementById('menuToggle').addEventListener('click', toggleMobileMenu);
             
-            // 点击菜单外关闭移动菜单
             document.addEventListener('click', (e) => {
                 const menuToggle = document.getElementById('menuToggle');
                 const panelNav = document.getElementById('panelNav');
@@ -1866,14 +1896,12 @@
         
         // ===== 初始化导航 =====
         function initNavigation() {
-            // 导航链接点击事件
             document.querySelectorAll('.panel-link, .footer-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const panelId = this.getAttribute('data-panel');
                     
                     if (panelId) {
-                        // 如果当前在移动端且菜单打开，先关闭菜单
                         if (window.innerWidth <= 768) {
                             const menuToggle = document.getElementById('menuToggle');
                             const panelNav = document.getElementById('panelNav');
@@ -1884,16 +1912,13 @@
                             }
                         }
                         
-                        // 显示对应的部分
                         showPanel(panelId);
                         
-                        // 更新活动导航链接
                         document.querySelectorAll('.panel-link').forEach(nav => {
                             nav.classList.remove('active');
                         });
                         this.classList.add('active');
                         
-                        // 滚动到顶部
                         window.scrollTo({
                             top: 0,
                             behavior: 'smooth'
@@ -1905,18 +1930,15 @@
         
         // ===== 初始化功能面板 =====
         function initDashboard() {
-            // 功能面板选项卡点击事件
             document.querySelectorAll('.dashboard-tab').forEach(tab => {
                 tab.addEventListener('click', function() {
                     const tabId = this.getAttribute('data-tab');
                     
-                    // 更新活动选项卡
                     document.querySelectorAll('.dashboard-tab').forEach(t => {
                         t.classList.remove('active');
                     });
                     this.classList.add('active');
                     
-                    // 显示对应的面板
                     document.querySelectorAll('.panel-content').forEach(panel => {
                         panel.classList.remove('active');
                     });
@@ -1925,11 +1947,9 @@
                     if (targetPanel) {
                         targetPanel.classList.add('active');
                         
-                        // 根据选项卡加载相应内容
                         if (tabId === 'images') {
                             loadImageGallery();
                         } else if (tabId === 'trends') {
-                            // 趋势分析面板已经加载了金山文档
                             console.log('显示趋势分析面板');
                         } else if (tabId === 'tools') {
                             if (currentUser) {
@@ -1942,7 +1962,6 @@
                 });
             });
             
-            // 默认显示绕胆图
             document.querySelector('.dashboard-tab[data-tab="images"]').click();
         }
         
@@ -1954,7 +1973,6 @@
             window.addEventListener('scroll', function() {
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 
-                // 滚动时改变头部样式
                 if (scrollTop > 50) {
                     header.classList.add('scrolled');
                 } else {
@@ -1976,25 +1994,19 @@
         
         // ===== 显示/隐藏面板 =====
         function showPanel(panelId) {
-            // 隐藏所有内容区域
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
             });
             
-            // 显示目标区域
             const targetPanel = document.getElementById(panelId);
             if (targetPanel) {
                 targetPanel.classList.add('active');
                 
-                // 根据面板ID加载相应内容
-                if (panelId === 'dashboard') {
-                    // 功能面板已初始化
-                } else if (panelId === 'permission-management') {
+                if (panelId === 'permission-management') {
                     if (isAdmin) {
                         loadPermissionManagement();
                     } else {
                         showMessage('只有管理员可以访问权限管理', 'error');
-                        // 跳转回功能面板
                         setTimeout(() => {
                             showPanel('dashboard');
                             document.querySelector('.panel-link[data-panel="dashboard"]').classList.add('active');
@@ -2023,10 +2035,8 @@
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             
-            // 清除之前的错误
             clearErrors();
             
-            // 验证输入
             if (!email) {
                 showError('loginEmailError', '请输入邮箱地址');
                 return;
@@ -2054,10 +2064,8 @@
             const password = document.getElementById('registerPassword').value;
             const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
             
-            // 清除之前的错误
             clearErrors();
             
-            // 验证输入
             let hasError = false;
             
             if (!email) {
@@ -2122,7 +2130,6 @@
             if (fileInput.files && fileInput.files[0]) {
                 selectedFile = fileInput.files[0];
                 
-                // 检查文件类型
                 if (!selectedFile.type.match('image/jpeg') && !selectedFile.type.match('image/png')) {
                     showMessage('请选择JPG或PNG格式的图片', 'error');
                     fileInput.value = '';
@@ -2130,7 +2137,6 @@
                     return;
                 }
                 
-                // 检查文件大小（限制5MB）
                 if (selectedFile.size > 5 * 1024 * 1024) {
                     showMessage('图片大小不能超过5MB', 'error');
                     fileInput.value = '';
@@ -2138,7 +2144,6 @@
                     return;
                 }
                 
-                // 显示预览
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     imagePreviewUrl = e.target.result;
@@ -2152,7 +2157,6 @@
                         </div>
                     `;
                     
-                    // 添加更换图片按钮事件
                     document.getElementById('changeImageBtn').addEventListener('click', () => {
                         fileInput.value = '';
                         selectedFile = null;
@@ -2180,7 +2184,6 @@
             
             const title = document.getElementById('imageTitle').value.trim();
             
-            // 验证输入
             if (!selectedFile) {
                 showMessage('请选择要上传的图片', 'error');
                 return;
@@ -2194,13 +2197,11 @@
             const description = document.getElementById('imageDescription').value.trim();
             
             try {
-                // 显示上传中状态
                 const uploadBtn = document.getElementById('uploadImageBtn');
                 const originalText = uploadBtn.innerHTML;
                 uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上传中...';
                 uploadBtn.disabled = true;
                 
-                // 上传图片到存储桶
                 const fileId = Appwrite.ID.unique();
                 const response = await storage.createFile(
                     BUCKET_ID,
@@ -2208,10 +2209,8 @@
                     selectedFile
                 );
                 
-                // 获取文件URL
                 const fileUrl = `https://fra.cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${response.$id}/view?project=6929b5bb003d77ecd385`;
                 
-                // 保存图片信息到数据库
                 await databases.createDocument(
                     DATABASE_ID,
                     IMAGES_COLLECTION_ID,
@@ -2226,18 +2225,15 @@
                     }
                 );
                 
-                // 恢复按钮状态
                 uploadBtn.innerHTML = originalText;
                 uploadBtn.disabled = false;
                 
-                // 清空表单
                 document.getElementById('imageTitle').value = '';
                 document.getElementById('imageDescription').value = '';
                 document.getElementById('fileInput').value = '';
                 selectedFile = null;
                 imagePreviewUrl = null;
                 
-                // 重置上传区域
                 const uploadArea = document.getElementById('uploadArea');
                 uploadArea.innerHTML = `
                     <i class="fas fa-cloud-upload-alt"></i>
@@ -2248,7 +2244,6 @@
                     </button>
                 `;
                 
-                // 重新加载图片库
                 loadImageGallery();
                 
                 showMessage('图片上传成功！', 'success');
@@ -2256,7 +2251,6 @@
                 console.error('上传图片失败:', error);
                 showMessage('上传失败，请稍后重试', 'error');
                 
-                // 恢复按钮状态
                 const uploadBtn = document.getElementById('uploadImageBtn');
                 uploadBtn.innerHTML = '<i class="fas fa-check"></i> 确认上传';
                 uploadBtn.disabled = false;
@@ -2276,7 +2270,6 @@
             `;
             
             try {
-                // 从数据库获取图片列表
                 const response = await databases.listDocuments(
                     DATABASE_ID,
                     IMAGES_COLLECTION_ID,
@@ -2292,7 +2285,6 @@
                 noImagesMessage.classList.add('d-none');
                 gallery.classList.remove('d-none');
                 
-                // 生成图片卡片
                 let galleryHTML = '';
                 
                 response.documents.forEach(image => {
@@ -2335,7 +2327,6 @@
                 
                 gallery.innerHTML = galleryHTML;
                 
-                // 添加查看大图事件
                 document.querySelectorAll('.view-image-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const imageId = this.getAttribute('data-image-id');
@@ -2343,7 +2334,6 @@
                     });
                 });
                 
-                // 添加删除图片事件
                 document.querySelectorAll('.delete-image-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const imageId = this.getAttribute('data-image-id');
@@ -2363,7 +2353,7 @@
             }
         }
         
-        // ===== 加载工具（有权限用户） =====
+        // ===== 加载工具 =====
         async function loadTools() {
             const toolsContainer = document.querySelector('.tools-container');
             
@@ -2375,14 +2365,12 @@
             `;
             
             try {
-                // 从数据库获取工具列表
                 const response = await databases.listDocuments(
                     DATABASE_ID,
                     TOOLS_COLLECTION_ID
                 );
                 
                 if (response.documents.length === 0) {
-                    // 如果没有工具，显示默认工具
                     toolsContainer.innerHTML = `
                         <div class="tool-item">
                             <div class="tool-icon">
@@ -2416,12 +2404,10 @@
                         </div>
                     `;
                     
-                    // 绑定工具按钮事件
                     bindToolEvents();
                     return;
                 }
                 
-                // 生成工具卡片
                 let toolsHTML = '';
                 
                 response.documents.forEach(tool => {
@@ -2451,7 +2437,6 @@
                 
                 toolsContainer.innerHTML = toolsHTML;
                 
-                // 绑定工具按钮事件
                 bindToolEvents();
                 
             } catch (error) {
@@ -2468,21 +2453,18 @@
         
         // ===== 绑定工具事件 =====
         function bindToolEvents() {
-            // 添加使用工具事件
             document.querySelectorAll('.use-tool-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const toolUrl = this.getAttribute('data-tool-url');
                     if (toolUrl) {
                         window.open(toolUrl, '_blank');
                     } else {
-                        // 如果没有URL，显示工具详情
                         const toolName = this.closest('.tool-item').querySelector('.tool-name').textContent;
                         showMessage(`打开 ${toolName} 工具`, 'info');
                     }
                 });
             });
             
-            // 添加编辑工具事件（管理员）
             if (isAdmin) {
                 document.querySelectorAll('.edit-tool-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
@@ -2500,7 +2482,7 @@
             }
         }
         
-        // ===== 加载工具（访客或无权限用户） =====
+        // ===== 加载工具（访客） =====
         function loadToolsForGuest() {
             const toolsContainer = document.querySelector('.tools-container');
             
@@ -2520,7 +2502,6 @@
                 </div>
             `;
             
-            // 添加登录按钮事件
             if (!currentUser) {
                 const loginBtn = document.getElementById('loginFromTools');
                 if (loginBtn) {
@@ -2560,7 +2541,6 @@
             `;
             
             try {
-                // 从数据库获取所有权限
                 const permissions = await databases.listDocuments(
                     DATABASE_ID,
                     PERMISSIONS_COLLECTION_ID
@@ -2587,12 +2567,10 @@
                         </div>
                     `;
                     
-                    // 重新绑定添加权限按钮事件
                     document.getElementById('addPermissionBtn').addEventListener('click', () => openModal('addPermissionModal'));
                     return;
                 }
                 
-                // 生成权限卡片
                 let permissionsHTML = `
                     <div class="card">
                         <div class="card-header">
@@ -2674,10 +2652,8 @@
                 
                 permissionContent.innerHTML = permissionsHTML;
                 
-                // 重新绑定添加权限按钮事件
                 document.getElementById('addPermissionBtn').addEventListener('click', () => openModal('addPermissionModal'));
                 
-                // 绑定编辑和删除权限按钮事件
                 document.querySelectorAll('.edit-permission-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const permissionId = this.getAttribute('data-permission-id');
@@ -2719,10 +2695,8 @@
             const type = document.getElementById('permissionTypeSelect').value;
             const days = parseInt(document.getElementById('permissionDays').value);
             
-            // 清除之前的错误
             clearErrors();
             
-            // 验证输入
             let hasError = false;
             
             if (!email) {
@@ -2741,11 +2715,9 @@
             if (hasError) return;
             
             try {
-                // 计算开始和结束时间
                 const startTime = Date.now();
                 const endTime = startTime + (days * 24 * 60 * 60 * 1000);
                 
-                // 检查是否已存在该用户的权限
                 const existingPermissions = await databases.listDocuments(
                     DATABASE_ID,
                     PERMISSIONS_COLLECTION_ID,
@@ -2755,7 +2727,6 @@
                 );
                 
                 if (existingPermissions.documents.length > 0) {
-                    // 更新现有权限
                     await databases.updateDocument(
                         DATABASE_ID,
                         PERMISSIONS_COLLECTION_ID,
@@ -2770,7 +2741,6 @@
                     
                     showMessage('权限更新成功！', 'success');
                 } else {
-                    // 创建新权限
                     await databases.createDocument(
                         DATABASE_ID,
                         PERMISSIONS_COLLECTION_ID,
@@ -2790,7 +2760,6 @@
                 closeModal('addPermissionModal');
                 loadPermissionManagement();
                 
-                // 清空表单
                 document.getElementById('permissionEmail').value = '';
                 document.getElementById('permissionDays').value = '30';
                 
@@ -2803,26 +2772,21 @@
         // ===== 编辑权限 =====
         async function editPermission(permissionId) {
             try {
-                // 获取权限信息
                 const permission = await databases.getDocument(
                     DATABASE_ID,
                     PERMISSIONS_COLLECTION_ID,
                     permissionId
                 );
                 
-                // 填充表单
                 document.getElementById('permissionEmail').value = permission.email;
                 document.getElementById('permissionTypeSelect').value = permission.type;
                 
-                // 计算剩余天数
                 const now = Date.now();
                 const remainingDays = Math.ceil((permission.endTime - now) / (1000 * 60 * 60 * 24));
                 document.getElementById('permissionDays').value = remainingDays > 0 ? remainingDays : 30;
                 
-                // 打开模态框
                 openModal('addPermissionModal');
                 
-                // 修改保存按钮行为
                 const saveBtn = document.getElementById('savePermissionBtn');
                 const originalClick = saveBtn.onclick;
                 saveBtn.onclick = async function() {
@@ -2842,10 +2806,8 @@
             const type = document.getElementById('permissionTypeSelect').value;
             const days = parseInt(document.getElementById('permissionDays').value);
             
-            // 清除之前的错误
             clearErrors();
             
-            // 验证输入
             let hasError = false;
             
             if (!email) {
@@ -2864,11 +2826,9 @@
             if (hasError) return;
             
             try {
-                // 计算开始和结束时间
                 const startTime = Date.now();
                 const endTime = startTime + (days * 24 * 60 * 60 * 1000);
                 
-                // 更新权限
                 await databases.updateDocument(
                     DATABASE_ID,
                     PERMISSIONS_COLLECTION_ID,
@@ -2886,7 +2846,6 @@
                 closeModal('addPermissionModal');
                 loadPermissionManagement();
                 
-                // 清空表单
                 document.getElementById('permissionEmail').value = '';
                 document.getElementById('permissionDays').value = '30';
                 
@@ -2967,20 +2926,16 @@
             }
             
             try {
-                // 获取图片信息
                 const image = await databases.getDocument(
                     DATABASE_ID,
                     IMAGES_COLLECTION_ID,
                     imageId
                 );
                 
-                // 从存储桶删除文件
                 await storage.deleteFile(BUCKET_ID, image.fileId);
                 
-                // 从数据库删除记录
                 await databases.deleteDocument(DATABASE_ID, IMAGES_COLLECTION_ID, imageId);
                 
-                // 重新加载图片库
                 loadImageGallery();
                 
                 showMessage('图片删除成功', 'success');
@@ -3005,7 +2960,6 @@
         }
         
         function showMessage(message, type) {
-            // 创建消息元素
             const messageEl = document.createElement('div');
             messageEl.className = `alert alert-${type}`;
             messageEl.textContent = message;
@@ -3028,7 +2982,6 @@
             
             document.body.appendChild(messageEl);
             
-            // 3秒后移除
             setTimeout(() => {
                 messageEl.style.opacity = '0';
                 messageEl.style.transform = 'translateY(-10px)';
@@ -3053,7 +3006,6 @@
         
         // ===== 键盘事件 =====
         document.addEventListener('keydown', (e) => {
-            // ESC键关闭模态框
             if (e.key === 'Escape') {
                 const modals = document.querySelectorAll('.modal');
                 modals.forEach(modal => {
@@ -3063,7 +3015,6 @@
                     }
                 });
                 
-                // 如果移动菜单打开，也关闭
                 if (window.innerWidth <= 768) {
                     const menuToggle = document.getElementById('menuToggle');
                     const panelNav = document.getElementById('panelNav');

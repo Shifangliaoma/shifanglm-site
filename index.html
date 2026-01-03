@@ -849,6 +849,74 @@
             padding-top: 15px;
         }
         
+        /* ===== 权限管理页面样式 ===== */
+        .permission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .permission-card {
+            padding: 25px;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: var(--border-radius);
+            background: rgba(10, 10, 20, 0.7);
+        }
+        
+        .permission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+        }
+        
+        .permission-email {
+            font-weight: 600;
+            color: var(--light-1);
+            font-size: 1.1rem;
+        }
+        
+        .permission-type {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(0, 243, 255, 0.2);
+            color: var(--cyber-blue);
+        }
+        
+        .permission-details {
+            margin-top: 15px;
+        }
+        
+        .permission-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.05);
+        }
+        
+        .permission-label {
+            color: var(--light-3);
+            font-size: 0.9rem;
+        }
+        
+        .permission-value {
+            color: var(--light-1);
+            font-weight: 500;
+        }
+        
+        .permission-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
         /* ===== 页脚设计 ===== */
         .footer {
             background-color: rgba(5, 5, 10, 0.95);
@@ -956,6 +1024,63 @@
             opacity: 1;
         }
         
+        /* ===== 趋势图表页面 ===== */
+        .trends-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        
+        .trends-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: var(--border-radius);
+            background: rgba(20, 20, 35, 0.8);
+        }
+        
+        /* ===== 工具页面 ===== */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .tool-item {
+            padding: 25px;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: var(--border-radius);
+            background: rgba(10, 10, 20, 0.7);
+            transition: all var(--transition);
+            text-align: center;
+        }
+        
+        .tool-item:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 243, 255, 0.4);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), var(--glow-blue);
+        }
+        
+        .tool-icon {
+            font-size: 2.5rem;
+            color: var(--cyber-blue);
+            margin-bottom: 15px;
+        }
+        
+        .tool-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--light-1);
+        }
+        
+        .tool-description {
+            color: var(--light-3);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+        
         /* ===== 响应式设计 ===== */
         @media (max-width: 1024px) {
             .gallery-grid {
@@ -964,6 +1089,10 @@
             
             .hero-title {
                 font-size: 3rem;
+            }
+            
+            .permission-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             }
         }
         
@@ -1052,6 +1181,18 @@
             .card-header, .card-body {
                 padding: 20px;
             }
+            
+            .permission-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .trends-iframe {
+                height: 400px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1083,6 +1224,10 @@
             .footer-links {
                 flex-direction: column;
                 gap: 15px;
+            }
+            
+            .trends-iframe {
+                height: 300px;
             }
         }
         
@@ -1190,6 +1335,7 @@
                 <nav class="nav-menu" id="navMenu">
                     <a href="#home" class="nav-link active" data-section="home">首页</a>
                     <a href="#gallery" class="nav-link" data-section="gallery">图片库</a>
+                    <a href="#trends" class="nav-link" data-section="trends">趋势图表</a>
                     <a href="#tools" class="nav-link" data-section="tools">分析工具</a>
                     <a href="#about" class="nav-link" data-section="about">使用说明</a>
                     <a href="#permission-management" class="nav-link d-none" id="permissionManagementLink" data-section="permission-management">权限管理</a>
@@ -1239,8 +1385,8 @@
                             <a href="#gallery" class="btn btn-primary btn-lg" data-section="gallery">
                                 <i class="fas fa-images"></i> 查看绕胆图
                             </a>
-                            <a href="#about" class="btn btn-outline btn-lg" data-section="about">
-                                <i class="fas fa-book"></i> 使用说明
+                            <a href="#trends" class="btn btn-outline btn-lg" data-section="trends">
+                                <i class="fas fa-chart-line"></i> 趋势图表
                             </a>
                         </div>
                     </div>
@@ -1370,6 +1516,35 @@
                 </div>
             </section>
             
+            <!-- 趋势图表 -->
+            <section id="trends" class="section content-section">
+                <div class="section-header">
+                    <h2 class="section-title">趋势图表分析</h2>
+                    <p class="section-subtitle">专业趋势走势图，提供多种图表和历史对比分析</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-chart-line"></i> 福彩3D趋势图表
+                        </h3>
+                        <p class="text-muted">综合趋势走势图，分享多种图表和历史对比</p>
+                    </div>
+                    <div class="card-body">
+                        <div id="trendsContent">
+                            <!-- 趋势图表内容将通过JS加载 -->
+                            <div class="trends-content">
+                                <div class="text-center py-5">
+                                    <i class="fas fa-chart-bar" style="font-size: 4rem; color: var(--cyber-blue);"></i>
+                                    <h3 class="mt-3">趋势图表</h3>
+                                    <p class="text-muted">所有用户均可免费查看趋势图表</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
             <!-- 分析工具 -->
             <section id="tools" class="section content-section">
                 <div class="section-header">
@@ -1380,11 +1555,19 @@
                 <!-- 工具列表 -->
                 <div id="toolsContent">
                     <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-tools"></i> 分析工具列表
+                            </h3>
+                            <p class="text-muted">点击工具卡片即可使用相应工具</p>
+                        </div>
                         <div class="card-body">
-                            <div class="text-center py-5">
-                                <i class="fas fa-lock" style="font-size: 4rem; color: var(--cyber-blue);"></i>
-                                <h3 class="mt-3">需要权限</h3>
-                                <p class="text-muted">使用工具需要相应的使用权限，请联系管理员开通。</p>
+                            <div class="tools-grid">
+                                <!-- 工具将通过JS动态加载 -->
+                                <div class="text-center py-5 w-100">
+                                    <div class="loader mx-auto"></div>
+                                    <p class="mt-3">正在加载工具列表...</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1431,7 +1614,7 @@
                                 
                                 <div class="mb-3">
                                     <h4 class="mb-1">Q: 如何获取工具使用权限？</h4>
-                                    <p>A: 普通用户注册后可免费浏览绕胆图，如需使用专业工具，请联系管理员申请权限。</p>
+                                    <p>A: 普通用户注册后可免费浏览绕胆图和趋势图表，如需使用专业工具，请联系管理员申请权限。</p>
                                 </div>
                                 
                                 <div>
@@ -1453,6 +1636,14 @@
                 
                 <div id="permissionContent">
                     <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-user-shield"></i> 用户权限管理
+                            </h3>
+                            <button class="btn btn-primary" id="addPermissionBtn">
+                                <i class="fas fa-plus"></i> 添加权限
+                            </button>
+                        </div>
                         <div class="card-body">
                             <div class="text-center py-5">
                                 <div class="loader mx-auto"></div>
@@ -1473,6 +1664,7 @@
                 <div class="footer-links">
                     <a href="#home" class="footer-link" data-section="home">首页</a>
                     <a href="#gallery" class="footer-link" data-section="gallery">图片库</a>
+                    <a href="#trends" class="footer-link" data-section="trends">趋势图表</a>
                     <a href="#tools" class="footer-link" data-section="tools">分析工具</a>
                     <a href="#about" class="footer-link" data-section="about">使用说明</a>
                 </div>
@@ -1565,6 +1757,37 @@
         </div>
     </div>
     
+    <!-- 添加权限模态框 -->
+    <div class="modal" id="addPermissionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">添加用户权限</h3>
+                <button class="modal-close" id="addPermissionClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="permissionEmail" class="form-label">用户邮箱</label>
+                    <input type="email" id="permissionEmail" class="form-control" placeholder="请输入用户邮箱">
+                    <div class="error-message" id="permissionEmailError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="permissionTypeSelect" class="form-label">权限类型</label>
+                    <select id="permissionTypeSelect" class="form-control">
+                        <option value="trends">仅查看趋势图表</option>
+                        <option value="tools">仅使用分析工具</option>
+                        <option value="both">查看趋势图表和使用分析工具</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="permissionDays" class="form-label">权限天数</label>
+                    <input type="number" id="permissionDays" class="form-control" placeholder="请输入权限天数" min="1" value="30">
+                    <div class="error-message" id="permissionDaysError"></div>
+                </div>
+                <button class="btn btn-primary btn-block" id="savePermissionBtn">保存权限</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- JavaScript -->
     <script>
         // ===== 初始化变量 =====
@@ -1574,14 +1797,14 @@
         let selectedFile = null;
         let imagePreviewUrl = null;
         
-        // Appwrite配置
-        const DATABASE_ID = '692c0b030010a28df72e';
-        const IMAGES_COLLECTION_ID = 'images';
-        const PERMISSIONS_COLLECTION_ID = 'permissions';
-        const TOOLS_COLLECTION_ID = 'tools';
-        const BUCKET_ID = '692a893600202c4f7dad';
+        // Appwrite配置 - 请确保这些ID与您的Appwrite控制台一致
+        const DATABASE_ID = '692c0b030010a28df72e'; // 数据库ID
+        const IMAGES_COLLECTION_ID = 'images'; // 图片集合ID
+        const PERMISSIONS_COLLECTION_ID = 'permissions'; // 权限集合ID
+        const TOOLS_COLLECTION_ID = 'tools'; // 工具集合ID
+        const BUCKET_ID = '692a893600202c4f7dad'; // 存储桶ID
         
-        // 管理员邮箱列表
+        // 管理员邮箱列表 - 请确保这些邮箱已注册
         const ADMIN_EMAILS = ['921913231@qq.com', '1106991066@qq.com'];
         
         // ===== 初始化函数 =====
@@ -1604,14 +1827,21 @@
         
         // ===== 初始化Appwrite =====
         function initAppwrite() {
-            client = new Appwrite.Client();
-            client
-                .setEndpoint('https://fra.cloud.appwrite.io/v1')
-                .setProject('6929b5bb003d77ecd385');
-            
-            account = new Appwrite.Account(client);
-            storage = new Appwrite.Storage(client);
-            databases = new Appwrite.Databases(client);
+            try {
+                client = new Appwrite.Client();
+                client
+                    .setEndpoint('https://fra.cloud.appwrite.io/v1')
+                    .setProject('6929b5bb003d77ecd385');
+                
+                account = new Appwrite.Account(client);
+                storage = new Appwrite.Storage(client);
+                databases = new Appwrite.Databases(client);
+                
+                console.log('Appwrite初始化成功');
+            } catch (error) {
+                console.error('Appwrite初始化失败:', error);
+                showMessage('系统初始化失败，请刷新页面重试', 'error');
+            }
         }
         
         // ===== 检查登录状态 =====
@@ -1620,7 +1850,9 @@
                 currentUser = await account.get();
                 updateUIForLoggedInUser();
                 loadImageGallery();
+                loadTools();
             } catch (error) {
+                console.log('用户未登录');
                 updateUIForGuest();
             }
         }
@@ -1638,14 +1870,27 @@
             isAdmin = ADMIN_EMAILS.includes(currentUser.email);
             
             if (isAdmin) {
+                console.log('当前用户是管理员');
                 document.getElementById('userBadge').textContent = '管理员';
                 document.getElementById('userBadge').style.background = 'linear-gradient(45deg, var(--cyber-pink), var(--cyber-orange))';
                 document.getElementById('permissionManagementLink').classList.remove('d-none');
                 document.getElementById('uploadSection').classList.remove('d-none');
+                
+                // 加载权限管理数据
+                loadPermissionManagement();
+            } else {
+                console.log('当前用户是普通用户');
+                document.getElementById('userBadge').textContent = '普通用户';
+                document.getElementById('userBadge').style.background = 'linear-gradient(45deg, var(--cyber-blue), var(--cyber-green))';
+                document.getElementById('permissionManagementLink').classList.add('d-none');
+                document.getElementById('uploadSection').classList.add('d-none');
             }
             
             // 更新最新图片预览
             updateLatestImagePreview();
+            
+            // 检查用户权限
+            checkUserPermissions();
         }
         
         // ===== 更新UI（访客） =====
@@ -1654,6 +1899,61 @@
             document.getElementById('guestAuth').classList.remove('d-none');
             document.getElementById('permissionManagementLink').classList.add('d-none');
             document.getElementById('uploadSection').classList.add('d-none');
+            
+            // 为访客显示基本内容
+            loadToolsForGuest();
+        }
+        
+        // ===== 检查用户权限 =====
+        async function checkUserPermissions() {
+            try {
+                // 查询用户权限
+                const permissions = await databases.listDocuments(
+                    DATABASE_ID,
+                    PERMISSIONS_COLLECTION_ID,
+                    [
+                        Appwrite.Query.equal('email', currentUser.email)
+                    ]
+                );
+                
+                if (permissions.documents.length > 0) {
+                    const permission = permissions.documents[0];
+                    const now = Date.now();
+                    
+                    // 检查权限是否过期
+                    if (permission.endTime > now) {
+                        // 权限有效
+                        const permissionType = permission.type;
+                        console.log('用户权限类型:', permissionType);
+                        
+                        // 根据权限类型更新UI
+                        if (permissionType === 'trends' || permissionType === 'both') {
+                            // 用户可以查看趋势图表
+                            loadTrends();
+                        }
+                        
+                        if (permissionType === 'tools' || permissionType === 'both') {
+                            // 用户可以使用工具
+                            loadTools();
+                        }
+                    } else {
+                        // 权限已过期
+                        console.log('用户权限已过期');
+                        loadTrends(); // 趋势图表所有登录用户都可以查看
+                        loadToolsForGuest(); // 工具需要权限
+                    }
+                } else {
+                    // 无权限记录
+                    console.log('用户无权限记录');
+                    loadTrends(); // 趋势图表所有登录用户都可以查看
+                    loadToolsForGuest(); // 工具需要权限
+                }
+            } catch (error) {
+                console.error('检查用户权限失败:', error);
+                // 出错时默认显示趋势图表
+                loadTrends();
+                loadToolsForGuest();
+            }
         }
         
         // ===== 初始化事件监听器 =====
@@ -1667,6 +1967,7 @@
             document.getElementById('loginClose').addEventListener('click', () => closeModal('loginModal'));
             document.getElementById('registerClose').addEventListener('click', () => closeModal('registerModal'));
             document.getElementById('imageViewClose').addEventListener('click', () => closeModal('imageViewModal'));
+            document.getElementById('addPermissionClose').addEventListener('click', () => closeModal('addPermissionModal'));
             
             // 登录/注册切换
             document.getElementById('switchToRegister').addEventListener('click', (e) => {
@@ -1700,6 +2001,10 @@
             
             document.getElementById('fileInput').addEventListener('change', previewImage);
             document.getElementById('uploadImageBtn').addEventListener('click', uploadImage);
+            
+            // 权限管理
+            document.getElementById('addPermissionBtn').addEventListener('click', () => openModal('addPermissionModal'));
+            document.getElementById('savePermissionBtn').addEventListener('click', savePermission);
             
             // 汉堡菜单
             document.getElementById('menuToggle').addEventListener('click', toggleMobileMenu);
@@ -1794,9 +2099,21 @@
             if (targetSection) {
                 targetSection.classList.add('active');
                 
-                // 如果是图片库，确保加载最新图片
+                // 根据部分ID加载相应内容
                 if (sectionId === 'gallery') {
                     loadImageGallery();
+                } else if (sectionId === 'trends') {
+                    loadTrends();
+                } else if (sectionId === 'tools') {
+                    if (currentUser) {
+                        checkUserPermissions();
+                    } else {
+                        loadToolsForGuest();
+                    }
+                } else if (sectionId === 'permission-management') {
+                    if (isAdmin) {
+                        loadPermissionManagement();
+                    }
                 }
             }
         }
@@ -2193,6 +2510,533 @@
             }
         }
         
+        // ===== 加载趋势图表 =====
+        function loadTrends() {
+            const trendsContent = document.getElementById('trendsContent');
+            
+            // 这里可以替换为您的趋势图表URL
+            const trendsUrl = 'https://www.kdocs.cn/l/chld5b1eqA9d'; // 示例URL
+            
+            trendsContent.innerHTML = `
+                <div class="trends-content">
+                    <iframe src="${trendsUrl}" class="trends-iframe" frameborder="0"></iframe>
+                    <div class="mt-3 text-center">
+                        <p class="text-muted">趋势图表仅供参考学习交流使用</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ===== 加载工具（有权限用户） =====
+        async function loadTools() {
+            const toolsGrid = document.querySelector('.tools-grid');
+            
+            toolsGrid.innerHTML = `
+                <div class="text-center py-5 w-100">
+                    <div class="loader mx-auto"></div>
+                    <p class="mt-3">正在加载工具列表...</p>
+                </div>
+            `;
+            
+            try {
+                // 从数据库获取工具列表
+                const response = await databases.listDocuments(
+                    DATABASE_ID,
+                    TOOLS_COLLECTION_ID
+                );
+                
+                if (response.documents.length === 0) {
+                    toolsGrid.innerHTML = `
+                        <div class="text-center py-5 w-100">
+                            <i class="fas fa-tools" style="font-size: 3rem; color: var(--light-3);"></i>
+                            <h3 class="mt-3" style="color: var(--light-3);">暂无工具</h3>
+                            <p class="text-muted">管理员添加工具后，将显示在这里</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // 生成工具卡片
+                let toolsHTML = '';
+                
+                response.documents.forEach(tool => {
+                    toolsHTML += `
+                        <div class="tool-item" data-tool-id="${tool.$id}">
+                            <div class="tool-icon">
+                                <i class="${tool.icon || 'fas fa-toolbox'}"></i>
+                            </div>
+                            <h4 class="tool-name">${tool.name}</h4>
+                            <p class="tool-description">${tool.description || '暂无描述'}</p>
+                            <button class="btn btn-outline btn-sm use-tool-btn" data-tool-url="${tool.url}">
+                                <i class="fas fa-play"></i> 使用工具
+                            </button>
+                            ${isAdmin ? `
+                            <div class="mt-2">
+                                <button class="btn btn-outline btn-sm edit-tool-btn" data-tool-id="${tool.$id}">
+                                    <i class="fas fa-edit"></i> 编辑
+                                </button>
+                                <button class="btn btn-outline btn-sm delete-tool-btn" data-tool-id="${tool.$id}">
+                                    <i class="fas fa-trash"></i> 删除
+                                </button>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                
+                toolsGrid.innerHTML = toolsHTML;
+                
+                // 添加使用工具事件
+                document.querySelectorAll('.use-tool-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const toolUrl = this.getAttribute('data-tool-url');
+                        window.open(toolUrl, '_blank');
+                    });
+                });
+                
+                // 添加编辑工具事件（管理员）
+                if (isAdmin) {
+                    document.querySelectorAll('.edit-tool-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const toolId = this.getAttribute('data-tool-id');
+                            editTool(toolId);
+                        });
+                    });
+                    
+                    document.querySelectorAll('.delete-tool-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const toolId = this.getAttribute('data-tool-id');
+                            deleteTool(toolId);
+                        });
+                    });
+                }
+                
+            } catch (error) {
+                console.error('加载工具失败:', error);
+                toolsGrid.innerHTML = `
+                    <div class="text-center py-5 w-100">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--cyber-blue);"></i>
+                        <h3 class="mt-3">加载失败</h3>
+                        <p>无法加载工具列表，请稍后重试</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // ===== 加载工具（访客或无权限用户） =====
+        function loadToolsForGuest() {
+            const toolsGrid = document.querySelector('.tools-grid');
+            
+            toolsGrid.innerHTML = `
+                <div class="text-center py-5 w-100">
+                    <i class="fas fa-lock" style="font-size: 4rem; color: var(--cyber-blue);"></i>
+                    <h3 class="mt-3">需要权限</h3>
+                    <p class="text-muted">使用分析工具需要相应的使用权限</p>
+                    <p class="text-muted">请联系管理员申请权限</p>
+                    ${!currentUser ? `
+                    <div class="mt-3">
+                        <button class="btn btn-primary" id="loginFromTools">
+                            <i class="fas fa-sign-in-alt"></i> 登录查看权限
+                        </button>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            // 添加登录按钮事件
+            if (!currentUser) {
+                document.getElementById('loginFromTools').addEventListener('click', () => {
+                    openModal('loginModal');
+                });
+            }
+        }
+        
+        // ===== 加载权限管理 =====
+        async function loadPermissionManagement() {
+            if (!isAdmin) {
+                showMessage('只有管理员可以访问权限管理', 'error');
+                return;
+            }
+            
+            const permissionContent = document.getElementById('permissionContent');
+            
+            permissionContent.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-user-shield"></i> 用户权限管理
+                        </h3>
+                        <button class="btn btn-primary" id="addPermissionBtn">
+                            <i class="fas fa-plus"></i> 添加权限
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center py-5">
+                            <div class="loader mx-auto"></div>
+                            <p class="mt-3">正在加载权限数据...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            try {
+                // 从数据库获取所有权限
+                const permissions = await databases.listDocuments(
+                    DATABASE_ID,
+                    PERMISSIONS_COLLECTION_ID
+                );
+                
+                if (permissions.documents.length === 0) {
+                    permissionContent.innerHTML = `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-user-shield"></i> 用户权限管理
+                                </h3>
+                                <button class="btn btn-primary" id="addPermissionBtn">
+                                    <i class="fas fa-plus"></i> 添加权限
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center py-5">
+                                    <i class="fas fa-users" style="font-size: 4rem; color: var(--light-3);"></i>
+                                    <h3 class="mt-3" style="color: var(--light-3);">暂无权限数据</h3>
+                                    <p class="text-muted">点击"添加权限"按钮为用户分配权限</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // 重新绑定添加权限按钮事件
+                    document.getElementById('addPermissionBtn').addEventListener('click', () => openModal('addPermissionModal'));
+                    return;
+                }
+                
+                // 生成权限卡片
+                let permissionsHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-user-shield"></i> 用户权限管理
+                            </h3>
+                            <button class="btn btn-primary" id="addPermissionBtn">
+                                <i class="fas fa-plus"></i> 添加权限
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="permission-grid">
+                `;
+                
+                permissions.documents.forEach(permission => {
+                    const startDate = new Date(permission.startTime).toLocaleDateString('zh-CN');
+                    const endDate = new Date(permission.endTime).toLocaleDateString('zh-CN');
+                    const now = Date.now();
+                    const isActive = permission.endTime > now;
+                    
+                    let permissionTypeText = '';
+                    switch(permission.type) {
+                        case 'trends':
+                            permissionTypeText = '仅查看趋势图表';
+                            break;
+                        case 'tools':
+                            permissionTypeText = '仅使用分析工具';
+                            break;
+                        case 'both':
+                            permissionTypeText = '查看趋势图表和使用分析工具';
+                            break;
+                        default:
+                            permissionTypeText = permission.type;
+                    }
+                    
+                    permissionsHTML += `
+                        <div class="permission-card">
+                            <div class="permission-header">
+                                <span class="permission-email">${permission.email}</span>
+                                <span class="permission-type" style="background: ${isActive ? 'rgba(0, 255, 157, 0.2)' : 'rgba(255, 77, 77, 0.2)'}; color: ${isActive ? 'var(--cyber-green)' : '#ff4d4d'}">
+                                    ${isActive ? '有效' : '已过期'}
+                                </span>
+                            </div>
+                            <div class="permission-details">
+                                <div class="permission-detail">
+                                    <span class="permission-label">权限类型:</span>
+                                    <span class="permission-value">${permissionTypeText}</span>
+                                </div>
+                                <div class="permission-detail">
+                                    <span class="permission-label">开始时间:</span>
+                                    <span class="permission-value">${startDate}</span>
+                                </div>
+                                <div class="permission-detail">
+                                    <span class="permission-label">结束时间:</span>
+                                    <span class="permission-value">${endDate}</span>
+                                </div>
+                                <div class="permission-detail">
+                                    <span class="permission-label">剩余天数:</span>
+                                    <span class="permission-value">${isActive ? Math.ceil((permission.endTime - now) / (1000 * 60 * 60 * 24)) : 0}天</span>
+                                </div>
+                            </div>
+                            <div class="permission-actions">
+                                <button class="btn btn-outline btn-sm edit-permission-btn" data-permission-id="${permission.$id}">
+                                    <i class="fas fa-edit"></i> 编辑
+                                </button>
+                                <button class="btn btn-outline btn-sm delete-permission-btn" data-permission-id="${permission.$id}">
+                                    <i class="fas fa-trash"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                permissionsHTML += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                permissionContent.innerHTML = permissionsHTML;
+                
+                // 重新绑定添加权限按钮事件
+                document.getElementById('addPermissionBtn').addEventListener('click', () => openModal('addPermissionModal'));
+                
+                // 绑定编辑和删除权限按钮事件
+                document.querySelectorAll('.edit-permission-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const permissionId = this.getAttribute('data-permission-id');
+                        editPermission(permissionId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-permission-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const permissionId = this.getAttribute('data-permission-id');
+                        deletePermission(permissionId);
+                    });
+                });
+                
+            } catch (error) {
+                console.error('加载权限管理失败:', error);
+                permissionContent.innerHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-center py-5">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--cyber-blue);"></i>
+                                <h3 class="mt-3">加载失败</h3>
+                                <p>无法加载权限管理数据，请稍后重试</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // ===== 保存权限 =====
+        async function savePermission() {
+            if (!isAdmin) {
+                showMessage('只有管理员可以添加权限', 'error');
+                return;
+            }
+            
+            const email = document.getElementById('permissionEmail').value.trim();
+            const type = document.getElementById('permissionTypeSelect').value;
+            const days = parseInt(document.getElementById('permissionDays').value);
+            
+            // 清除之前的错误
+            clearErrors();
+            
+            // 验证输入
+            let hasError = false;
+            
+            if (!email) {
+                showError('permissionEmailError', '请输入用户邮箱');
+                hasError = true;
+            } else if (!/\S+@\S+\.\S+/.test(email)) {
+                showError('permissionEmailError', '请输入有效的邮箱地址');
+                hasError = true;
+            }
+            
+            if (!days || days < 1) {
+                showError('permissionDaysError', '请输入有效的天数');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            try {
+                // 计算开始和结束时间
+                const startTime = Date.now();
+                const endTime = startTime + (days * 24 * 60 * 60 * 1000);
+                
+                // 检查是否已存在该用户的权限
+                const existingPermissions = await databases.listDocuments(
+                    DATABASE_ID,
+                    PERMISSIONS_COLLECTION_ID,
+                    [
+                        Appwrite.Query.equal('email', email)
+                    ]
+                );
+                
+                if (existingPermissions.documents.length > 0) {
+                    // 更新现有权限
+                    await databases.updateDocument(
+                        DATABASE_ID,
+                        PERMISSIONS_COLLECTION_ID,
+                        existingPermissions.documents[0].$id,
+                        {
+                            type: type,
+                            startTime: startTime,
+                            endTime: endTime,
+                            updatedAt: Date.now()
+                        }
+                    );
+                    
+                    showMessage('权限更新成功！', 'success');
+                } else {
+                    // 创建新权限
+                    await databases.createDocument(
+                        DATABASE_ID,
+                        PERMISSIONS_COLLECTION_ID,
+                        Appwrite.ID.unique(),
+                        {
+                            email: email,
+                            type: type,
+                            startTime: startTime,
+                            endTime: endTime,
+                            createdAt: Date.now()
+                        }
+                    );
+                    
+                    showMessage('权限添加成功！', 'success');
+                }
+                
+                closeModal('addPermissionModal');
+                loadPermissionManagement();
+                
+                // 清空表单
+                document.getElementById('permissionEmail').value = '';
+                document.getElementById('permissionDays').value = '30';
+                
+            } catch (error) {
+                console.error('保存权限失败:', error);
+                showMessage('保存权限失败，请稍后重试', 'error');
+            }
+        }
+        
+        // ===== 编辑权限 =====
+        async function editPermission(permissionId) {
+            try {
+                // 获取权限信息
+                const permission = await databases.getDocument(
+                    DATABASE_ID,
+                    PERMISSIONS_COLLECTION_ID,
+                    permissionId
+                );
+                
+                // 填充表单
+                document.getElementById('permissionEmail').value = permission.email;
+                document.getElementById('permissionTypeSelect').value = permission.type;
+                
+                // 计算剩余天数
+                const now = Date.now();
+                const remainingDays = Math.ceil((permission.endTime - now) / (1000 * 60 * 60 * 24));
+                document.getElementById('permissionDays').value = remainingDays > 0 ? remainingDays : 30;
+                
+                // 打开模态框
+                openModal('addPermissionModal');
+                
+                // 修改保存按钮行为
+                const saveBtn = document.getElementById('savePermissionBtn');
+                const originalClick = saveBtn.onclick;
+                saveBtn.onclick = async function() {
+                    await updatePermission(permissionId);
+                    saveBtn.onclick = originalClick;
+                };
+                
+            } catch (error) {
+                console.error('编辑权限失败:', error);
+                showMessage('编辑权限失败，请稍后重试', 'error');
+            }
+        }
+        
+        // ===== 更新权限 =====
+        async function updatePermission(permissionId) {
+            const email = document.getElementById('permissionEmail').value.trim();
+            const type = document.getElementById('permissionTypeSelect').value;
+            const days = parseInt(document.getElementById('permissionDays').value);
+            
+            // 清除之前的错误
+            clearErrors();
+            
+            // 验证输入
+            let hasError = false;
+            
+            if (!email) {
+                showError('permissionEmailError', '请输入用户邮箱');
+                hasError = true;
+            } else if (!/\S+@\S+\.\S+/.test(email)) {
+                showError('permissionEmailError', '请输入有效的邮箱地址');
+                hasError = true;
+            }
+            
+            if (!days || days < 1) {
+                showError('permissionDaysError', '请输入有效的天数');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            try {
+                // 计算开始和结束时间
+                const startTime = Date.now();
+                const endTime = startTime + (days * 24 * 60 * 60 * 1000);
+                
+                // 更新权限
+                await databases.updateDocument(
+                    DATABASE_ID,
+                    PERMISSIONS_COLLECTION_ID,
+                    permissionId,
+                    {
+                        email: email,
+                        type: type,
+                        startTime: startTime,
+                        endTime: endTime,
+                        updatedAt: Date.now()
+                    }
+                );
+                
+                showMessage('权限更新成功！', 'success');
+                closeModal('addPermissionModal');
+                loadPermissionManagement();
+                
+                // 清空表单
+                document.getElementById('permissionEmail').value = '';
+                document.getElementById('permissionDays').value = '30';
+                
+            } catch (error) {
+                console.error('更新权限失败:', error);
+                showMessage('更新权限失败，请稍后重试', 'error');
+            }
+        }
+        
+        // ===== 删除权限 =====
+        async function deletePermission(permissionId) {
+            if (!confirm('确定要删除这个权限吗？此操作不可撤销。')) {
+                return;
+            }
+            
+            try {
+                await databases.deleteDocument(
+                    DATABASE_ID,
+                    PERMISSIONS_COLLECTION_ID,
+                    permissionId
+                );
+                
+                showMessage('权限删除成功', 'success');
+                loadPermissionManagement();
+            } catch (error) {
+                console.error('删除权限失败:', error);
+                showMessage('删除权限失败，请稍后重试', 'error');
+            }
+        }
+        
         // ===== 查看大图 =====
         async function viewImage(imageId) {
             try {
@@ -2263,6 +3107,34 @@
             } catch (error) {
                 console.error('删除图片失败:', error);
                 showMessage('删除失败，请稍后重试', 'error');
+            }
+        }
+        
+        // ===== 编辑工具 =====
+        async function editTool(toolId) {
+            // 这里可以实现编辑工具的功能
+            showMessage('编辑工具功能暂未实现', 'info');
+        }
+        
+        // ===== 删除工具 =====
+        async function deleteTool(toolId) {
+            if (!isAdmin) {
+                showMessage('只有管理员可以删除工具', 'error');
+                return;
+            }
+            
+            if (!confirm('确定要删除这个工具吗？此操作不可撤销。')) {
+                return;
+            }
+            
+            try {
+                await databases.deleteDocument(DATABASE_ID, TOOLS_COLLECTION_ID, toolId);
+                
+                showMessage('工具删除成功', 'success');
+                loadTools();
+            } catch (error) {
+                console.error('删除工具失败:', error);
+                showMessage('删除工具失败，请稍后重试', 'error');
             }
         }
         

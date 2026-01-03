@@ -80,8 +80,10 @@
             font-size: 16px;
             font-weight: 500;
             cursor: pointer;
+            transition: all 0.3s;
         }
         .btn:active {
+            transform: scale(0.98);
             background: linear-gradient(90deg, #0055bb, #0077ee);
         }
         .btn.primary {
@@ -126,6 +128,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: all 0.2s;
         }
         .match-option.active {
             background: #e53935;
@@ -152,7 +155,7 @@
         /* 结果区域 */
         .result-card {
             margin: 0 15px 30px;
-            display: none; /* 初始隐藏 */
+            display: none;
         }
         .result-header {
             display: flex;
@@ -220,12 +223,88 @@
         .modal-buttons .btn {
             flex: 1;
         }
+        /* 提示消息 */
+        .message {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s, top 0.3s;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        .message.show {
+            opacity: 1;
+            top: 100px;
+        }
+        .message.success {
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+        }
+        .message.info {
+            background: linear-gradient(90deg, #2196F3, #1976D2);
+        }
+        .message.warning {
+            background: linear-gradient(90deg, #ff9800, #f57c00);
+        }
+        .message.error {
+            background: linear-gradient(90deg, #f44336, #d32f2f);
+        }
+        /* 数据统计 */
+        .data-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 15px 15px;
+            padding: 10px 15px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #666;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stat-value {
+            font-weight: 600;
+            color: #e53935;
+            font-size: 16px;
+        }
+        .stat-label {
+            margin-top: 2px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         定位复式大底专用缩水
         <div class="sub-title">十方料码,仅提供交流参考学习使用！</div>
+    </div>
+
+    <!-- 提示消息容器 -->
+    <div id="message-container"></div>
+
+    <!-- 数据统计 -->
+    <div class="data-stats" id="data-stats" style="display: none;">
+        <div class="stat-item">
+            <div class="stat-value" id="stat-groups">0</div>
+            <div class="stat-label">数据组数</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="stat-valid">0</div>
+            <div class="stat-label">有效格式</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="stat-invalid">0</div>
+            <div class="stat-label">无效格式</div>
+        </div>
     </div>
 
     <!-- 输入区域 -->
@@ -317,6 +396,13 @@
             const numbersGrid = document.getElementById('numbers-grid');
             const resultCount = document.getElementById('result-count');
             const matchOptions = document.querySelectorAll('.match-option');
+            const dataStats = document.getElementById('data-stats');
+            const statGroups = document.getElementById('stat-groups');
+            const statValid = document.getElementById('stat-valid');
+            const statInvalid = document.getElementById('stat-invalid');
+
+            // 初始化：更新数据统计
+            updateDataStats();
 
             // 1. 匹配选项选择逻辑（多选）
             matchOptions.forEach(option => {
@@ -334,6 +420,7 @@
             importBtn.addEventListener('click', function() {
                 document.getElementById('import-data').value = '';
                 importModal.style.display = 'flex';
+                showMessage('请在下方粘贴您的定位复式数据', 'info');
             });
 
             // 4. 清除按钮点击事件
@@ -343,27 +430,77 @@
                 resultsSection.style.display = 'none';
                 numbersGrid.innerHTML = '';
                 resultCount.textContent = '0组';
+                // 隐藏统计信息
+                dataStats.style.display = 'none';
+                // 显示提示
+                showMessage('数据已清除', 'warning');
+                // 重置统计
+                updateDataStats();
             });
 
-            // 5. 确认导入按钮点击事件
+            // 5. 确认导入按钮点击事件（增强版）
             confirmImportBtn.addEventListener('click', function() {
                 const importData = document.getElementById('import-data').value.trim();
-                if (importData) {
-                    document.getElementById('positional-compound').value = importData;
-                    importModal.style.display = 'none';
+                if (!importData) {
+                    showMessage('请输入要导入的数据', 'error');
+                    return;
+                }
+                
+                // 验证数据格式
+                const lines = importData.split('\n').filter(line => line.trim() !== '');
+                if (lines.length === 0) {
+                    showMessage('没有检测到有效数据', 'error');
+                    return;
+                }
+                
+                // 验证格式并统计
+                let validCount = 0;
+                let invalidCount = 0;
+                const validLines = [];
+                
+                lines.forEach(line => {
+                    const trimmedLine = line.trim();
+                    // 检查格式：数字-数字-数字
+                    if (/^[\d]+-[\d]+-[\d]+$/.test(trimmedLine)) {
+                        validCount++;
+                        validLines.push(trimmedLine);
+                    } else {
+                        invalidCount++;
+                    }
+                });
+                
+                // 设置输入框内容
+                document.getElementById('positional-compound').value = validLines.join('\n');
+                
+                // 关闭模态框
+                importModal.style.display = 'none';
+                
+                // 显示导入结果消息
+                if (validCount > 0) {
+                    showMessage(`成功导入 ${validCount} 组有效数据${invalidCount > 0 ? `，忽略 ${invalidCount} 组无效格式` : ''}`, 'success');
+                    // 更新数据统计
+                    updateDataStats();
+                } else {
+                    showMessage('未找到有效格式的数据，请检查格式是否正确', 'error');
                 }
             });
 
             // 6. 取消导入按钮点击事件
             cancelImportBtn.addEventListener('click', function() {
                 importModal.style.display = 'none';
+                showMessage('已取消导入操作', 'info');
             });
 
-            // 7. 复制按钮点击事件（修复版：兼容移动端100%）
+            // 7. 复制按钮点击事件
             copyBtn.addEventListener('click', function() {
                 const numbers = Array.from(document.querySelectorAll('.number'))
                     .map(el => el.textContent)
                     .join(' ');
+                
+                if (!numbers.trim()) {
+                    showMessage('没有可复制的号码', 'warning');
+                    return;
+                }
                 
                 // 创建临时文本框实现兼容复制
                 const tempInput = document.createElement('textarea');
@@ -375,24 +512,34 @@
                 
                 // 选中并复制
                 tempInput.select();
-                tempInput.setSelectionRange(0, 99999); // 适配移动端
+                tempInput.setSelectionRange(0, 99999);
                 try {
                     document.execCommand('copy');
-                    alert('号码已复制到剪贴板！');
+                    showMessage(`已复制 ${numbers.split(' ').length} 组号码到剪贴板`, 'success');
                 } catch (err) {
                     console.error('复制失败: ', err);
-                    alert('复制失败，请手动复制号码：\n' + numbers);
+                    showMessage('复制失败，请手动复制号码', 'error');
                 }
                 
                 // 移除临时文本框
                 document.body.removeChild(tempInput);
             });
 
-            // 核心计算函数（完全复用原生逻辑）
+            // 8. 监听输入框变化，实时更新统计
+            document.getElementById('positional-compound').addEventListener('input', function() {
+                updateDataStats();
+            });
+
+            // 核心计算函数
             function calculateResults() {
                 // 获取输入的定位复式
                 const compoundInput = document.getElementById('positional-compound').value;
                 const compoundLines = compoundInput.trim().split('\n').filter(line => line.trim() !== '');
+                
+                if (compoundLines.length === 0) {
+                    showMessage('请输入定位复式数据！', 'error');
+                    return;
+                }
                 
                 // 获取容错设置
                 const toleranceMin = parseInt(document.getElementById('tolerance-min').value);
@@ -402,18 +549,31 @@
                 const selectedMatches = Array.from(document.querySelectorAll('.match-option.active'))
                     .map(el => el.textContent);
                 
-                // 生成号码
-                const numbers = generateNumbers(compoundLines, selectedMatches, toleranceMin, toleranceMax);
+                if (selectedMatches.length === 0) {
+                    showMessage('请至少选择一个匹配条件', 'error');
+                    return;
+                }
                 
-                // 显示结果
-                displayResults(numbers);
+                // 显示计算中消息
+                showMessage('正在计算中，请稍候...', 'info');
+                
+                // 延迟执行以显示消息
+                setTimeout(() => {
+                    // 生成号码
+                    const numbers = generateNumbers(compoundLines, selectedMatches, toleranceMin, toleranceMax);
+                    
+                    // 显示结果
+                    displayResults(numbers);
+                    
+                    // 显示计算完成消息
+                    showMessage(`计算完成，共生成 ${numbers.length} 组号码`, 'success');
+                }, 100);
             }
 
-            // 生成号码函数（完全复用原生逻辑）
+            // 生成号码函数
             function generateNumbers(compoundLines, selectedMatches, toleranceMin, toleranceMax) {
                 // 验证输入
                 if (compoundLines.length === 0) {
-                    alert('请输入定位复式数据！');
                     return [];
                 }
                 
@@ -470,7 +630,7 @@
                 return validNumbers;
             }
 
-            // 显示结果函数（完全复用原生逻辑）
+            // 显示结果函数
             function displayResults(numbers) {
                 // 清空现有的号码
                 numbersGrid.innerHTML = '';
@@ -488,6 +648,71 @@
                 
                 // 显示结果区域
                 resultsSection.style.display = 'block';
+            }
+
+            // 显示提示消息函数
+            function showMessage(text, type = 'info') {
+                // 移除现有的消息
+                const existingMessage = document.querySelector('.message.show');
+                if (existingMessage) {
+                    existingMessage.classList.remove('show');
+                    setTimeout(() => existingMessage.remove(), 300);
+                }
+                
+                // 创建新消息
+                const message = document.createElement('div');
+                message.className = `message ${type}`;
+                message.textContent = text;
+                document.getElementById('message-container').appendChild(message);
+                
+                // 触发显示动画
+                setTimeout(() => message.classList.add('show'), 10);
+                
+                // 3秒后自动消失
+                setTimeout(() => {
+                    message.classList.remove('show');
+                    setTimeout(() => message.remove(), 300);
+                }, 3000);
+            }
+
+            // 更新数据统计函数
+            function updateDataStats() {
+                const compoundInput = document.getElementById('positional-compound').value;
+                const lines = compoundInput.trim().split('\n').filter(line => line.trim() !== '');
+                
+                if (lines.length === 0) {
+                    dataStats.style.display = 'none';
+                    return;
+                }
+                
+                // 统计有效和无效格式
+                let validCount = 0;
+                let invalidCount = 0;
+                
+                lines.forEach(line => {
+                    const trimmedLine = line.trim();
+                    if (/^[\d]+-[\d]+-[\d]+$/.test(trimmedLine)) {
+                        validCount++;
+                    } else {
+                        invalidCount++;
+                    }
+                });
+                
+                // 更新统计显示
+                statGroups.textContent = lines.length;
+                statValid.textContent = validCount;
+                statInvalid.textContent = invalidCount;
+                
+                // 显示统计区域
+                dataStats.style.display = 'flex';
+                
+                // 如果有无效格式，显示警告
+                if (invalidCount > 0) {
+                    dataStats.style.background = '#fff8e1';
+                    showMessage(`检测到 ${invalidCount} 组无效格式数据，建议检查格式`, 'warning');
+                } else {
+                    dataStats.style.background = '#f5f5f5';
+                }
             }
         });
     </script>

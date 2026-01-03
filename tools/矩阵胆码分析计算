@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>十方料码矩阵胆码分析| 粉丝专用</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#00f3ff',
+                        secondary: '#6c00ff',
+                        accent: '#ff00e6',
+                        dark: '#0a0a16',
+                        light: '#f0f5ff',
+                        success: '#00ff9d',
+                        danger: '#ff0055',
+                        warning: '#ffcc00',
+                        neutral: '#8a8dff',
+                        lottery: '#ffd700',
+                        matrix: '#00ff41'
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        exo: ['Exo 2', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon': '0 0 10px theme(colors.primary), 0 0 20px theme(colors.primary), 0 0 30px theme(colors.primary)',
+                        'neon-accent': '0 0 10px theme(colors.accent), 0 0 20px theme(colors.accent), 0 0 30px theme(colors.accent)',
+                        'neon-green': '0 0 10px #00ff41, 0 0 20px #00ff41, 0 0 30px #00ff41',
+                        'card': '0 4px 30px rgba(0, 243, 255, 0.15)',
+                        'btn': '0 0 15px rgba(0, 243, 255, 0.5)',
+                        'btn-hover': '0 0 20px rgba(0, 243, 255, 0.8)',
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(circle, var(--tw-gradient-stops))',
+                        'grid-pattern': 'linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: #0a0a16;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(108, 0, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(255, 0, 230, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 40% 80%, rgba(0, 243, 255, 0.1) 0%, transparent 20%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .neon-border {
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 
+                inset 0 0 10px rgba(0, 243, 255, 0.2),
+                0 0 10px rgba(0, 243, 255, 0.1);
+        }
+        
+        .neon-text {
+            text-shadow: 
+                0 0 5px #00f3ff,
+                0 0 10px #00f3ff,
+                0 0 15px #00f3ff,
+                0 0 20px #6c00ff;
+        }
+        
+        .neon-accent-text {
+            text-shadow: 
+                0 0 5px #ff00e6,
+                0 0 10px #ff00e6,
+                0 0 15px #ff00e6;
+        }
+        
+        .matrix-text {
+            text-shadow: 
+                0 0 5px #00ff41,
+                0 0 10px #00ff41;
+        }
+        
+        .glow-effect {
+            transition: all 0.3s ease;
+        }
+        
+        .glow-effect:hover {
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+        }
+        
+        .number-badge {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.15), rgba(108, 0, 255, 0.15));
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
+        }
+        
+        .scrollbar-thin {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 243, 255, 0.5) rgba(0, 0, 0, 0.1);
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: rgba(0, 243, 255, 0.5);
+            border-radius: 10px;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.8), transparent);
+            animation: scan 3s linear infinite;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        .digital-display {
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 1px;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 8px;
+        }
+        
+        @media (max-width: 640px) {
+            .result-grid {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+<body class="font-exo text-light p-3 md:p-4">
+    <!-- 扫描线效果 -->
+    <div class="scan-line"></div>
+    
+    <!-- 主容器 -->
+    <div class="max-w-full mx-auto bg-dark/95 rounded-2xl shadow-card p-4 md:p-5 neon-border relative overflow-hidden">
+        <!-- 装饰性背景元素 -->
+        <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-radial from-primary/5 to-transparent rounded-full -translate-y-20 translate-x-20"></div>
+        <div class="absolute bottom-0 left-0 w-60 h-60 bg-gradient-radial from-accent/5 to-transparent rounded-full translate-y-20 -translate-x-20"></div>
+        
+        <!-- 头部 -->
+        <header class="mb-5 text-center relative z-10">
+            <div class="flex items-center justify-center gap-3 mb-2">
+                <div class="w-2 h-8 bg-primary rounded-full pulse"></div>
+                <h1 class="text-2xl md:text-3xl font-bold font-orbitron neon-text">
+                    十方料码矩阵胆码分析
+                </h1>
+                <div class="w-2 h-8 bg-accent rounded-full pulse" style="animation-delay: 0.5s"></div>
+            </div>
+            <p class="text-neutral text-sm font-exo">
+                <span class="matrix-text">矩阵算法 | 容错筛选 | 智能验证</span>
+            </p>
+            <div class="flex justify-center items-center gap-4 mt-3">
+                <div class="flex items-center gap-1">
+                    <div class="w-2 h-2 rounded-full bg-success"></div>
+                    <span class="text-xs text-neutral">在线分析</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <div class="w-2 h-2 rounded-full bg-primary"></div>
+                    <span class="text-xs text-neutral">即时反馈</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <div class="w-2 h-2 rounded-full bg-accent"></div>
+                    <span class="text-xs text-neutral">专业匹配</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="space-y-4 relative z-10">
+            <!-- 胆码导入模块 -->
+            <section class="bg-dark/80 rounded-xl p-4 neon-border glow-effect">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-1.5 h-6 bg-accent rounded-full"></div>
+                    <h2 class="text-lg font-semibold font-orbitron text-white flex items-center gap-2">
+                        <i class="fa fa-database text-accent"></i>
+                        <span>胆码数据矩阵</span>
+                    </h2>
+                    <div class="ml-auto flex items-center gap-2">
+                        <div class="text-xs px-2 py-1 number-badge rounded">30组</div>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <label class="text-sm text-neutral flex items-center gap-2">
+                        <i class="fa fa-code text-primary"></i>
+                        输入胆码组 <span class="text-accent">(每组4位数字，换行分隔)</span>
+                    </label>
+                    <div class="relative">
+                        <textarea 
+                            id="codeInput" 
+                            class="w-full h-32 p-3 rounded-lg bg-black/50 border border-primary/30 text-light placeholder-neutral/50 focus:outline-none focus:border-primary focus:shadow-neon transition-all resize-none digital-display scrollbar-thin"
+                            placeholder="输入示例：
+8420
+9481
+1396
+...">8420
+9481
+1396
+3846
+7485
+3675
+9210
+9715
+3260
+7250
+2613
+2065
+7045
+2764
+2869
+7489
+0153
+0859
+7143
+8193
+6157
+6913
+0983
+6018
+6214
+0824
+9537
+9234
+0587
+2547</textarea>
+                        <div class="absolute bottom-3 right-3 text-xs text-primary/70">
+                            <i class="fa fa-keyboard-o mr-1"></i>30行
+                        </div>
+                    </div>
+                    <div id="dataTip" class="h-6 text-sm px-2 rounded hidden digital-display"></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="loadData()" class="py-2.5 px-4 bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/50 text-primary rounded-lg flex items-center justify-center gap-2 shadow-btn hover:shadow-btn-hover transition-all digital-display">
+                            <i class="fa fa-upload"></i>
+                            <span>导入验证</span>
+                        </button>
+                        <button onclick="clearData()" class="py-2.5 px-4 bg-gradient-to-r from-danger/20 to-danger/10 border border-danger/50 text-danger rounded-lg flex items-center justify-center gap-2 hover:shadow-neon-accent transition-all digital-display">
+                            <i class="fa fa-trash"></i>
+                            <span>清除数据</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 核心参数设置模块 -->
+            <section class="bg-dark/80 rounded-xl p-4 neon-border glow-effect">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-1.5 h-6 bg-primary rounded-full"></div>
+                    <h2 class="text-lg font-semibold font-orbitron text-white flex items-center gap-2">
+                        <i class="fa fa-sliders text-primary"></i>
+                        <span>核心参数配置</span>
+                    </h2>
+                </div>
+                <div class="space-y-4">
+                    <!-- 容错设置 -->
+                    <div class="space-y-3">
+                        <label class="text-sm text-neutral flex items-center gap-2">
+                            <i class="fa fa-filter text-warning"></i>
+                            容错范围 <span class="text-accent">(不符合条件组数)</span>
+                        </label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <div class="text-xs text-primary/80">最小容错</div>
+                                <input 
+                                    type="number" 
+                                    id="faultMin" 
+                                    min="0" 
+                                    max="50" 
+                                    value="10" 
+                                    class="w-full p-3 rounded-lg bg-black/50 border border-primary/30 text-primary text-center digital-display focus:outline-none focus:border-primary focus:shadow-neon transition-all"
+                                    placeholder="最小">
+                            </div>
+                            <div class="space-y-1">
+                                <div class="text-xs text-accent/80">最大容错</div>
+                                <input 
+                                    type="number" 
+                                    id="faultMax" 
+                                    min="0" 
+                                    max="50" 
+                                    value="25" 
+                                    class="w-full p-3 rounded-lg bg-black/50 border border-accent/30 text-accent text-center digital-display focus:outline-none focus:border-accent focus:shadow-neon-accent transition-all"
+                                    placeholder="最大">
+                            </div>
+                        </div>
+                        <div class="text-xs text-neutral/70 flex items-center gap-2">
+                            <i class="fa fa-info-circle text-primary/70"></i>
+                            容错10-25 = 不符合条件组数 ≥10 且 ≤25
+                        </div>
+                    </div>
+
+                    <!-- 匹配模式 -->
+                    <div class="space-y-3">
+                        <label class="text-sm text-neutral flex items-center gap-2">
+                            <i class="fa fa-cogs text-success"></i>
+                            匹配模式
+                        </label>
+                        
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <button onclick="switchMode('count')" id="modeCountBtn" class="py-2.5 rounded-lg bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/50 text-primary transition-all digital-display">
+                                <i class="fa fa-sort-amount-asc mr-2"></i> 计重模式
+                            </button>
+                            <button onclick="switchMode('unique')" id="modeUniqueBtn" class="py-2.5 rounded-lg bg-dark/50 border border-neutral/30 text-light transition-all digital-display">
+                                <i class="fa fa-unique mr-2"></i> 不计重模式
+                            </button>
+                        </div>
+
+                        <!-- 匹配数筛选 -->
+                        <div class="space-y-2">
+                            <div class="text-sm text-neutral flex items-center gap-2">
+                                <i class="fa fa-magic text-accent"></i>
+                                匹配数筛选
+                            </div>
+                            <div class="grid grid-cols-5 gap-2" id="matchTypeGroup">
+                                <button onclick="selectMatchType(this)" data-type="0" class="py-2 rounded-lg bg-black/50 border border-neutral/30 text-light hover:border-primary/50 transition-all digital-display text-sm">0</button>
+                                <button onclick="selectMatchType(this)" data-type="1" class="py-2 rounded-lg bg-black/50 border border-neutral/30 text-light hover:border-primary/50 transition-all digital-display text-sm">1</button>
+                                <button onclick="selectMatchType(this)" data-type="2" class="py-2 rounded-lg bg-black/50 border border-neutral/30 text-light hover:border-primary/50 transition-all digital-display text-sm">2</button>
+                                <button onclick="selectMatchType(this)" data-type="3" class="py-2 rounded-lg bg-black/50 border border-neutral/30 text-light hover:border-primary/50 transition-all digital-display text-sm">3</button>
+                                <button onclick="selectMatchType(this)" data-type="01" class="py-2 rounded-lg bg-black/50 border border-neutral/30 text-light hover:border-primary/50 transition-all digital-display text-sm">01</button>
+                                <button onclick="selectMatchType(this)" data-type="02" class="py-2 rounded-lg bg-black/50 border border-neutral/30 text-light hover:border-primary/50 transition-all digital-display text-sm">02</button>
+                                <button onclick="selectMatchType(this)" data-type="03" class="py-2 rounded-lg bg-black/50 border border-neutral/30 text-light hover:border-primary/50 transition-all digital-display text-sm">03</button>
+                                <button onclick="selectMatchType(this)" data-type="12" class="py-2 rounded-lg bg-black/50 border border-neutral/30 text-light hover:border-primary/50 transition-all digital-display text-sm">12</button>
+                                <button onclick="selectMatchType(this)" data-type="13" class="py-2 rounded-lg bg-black/50 border border-neutral/30 text-light hover:border-primary/50 transition-all digital-display text-sm">13</button>
+                                <button onclick="selectMatchType(this)" data-type="23" class="py-2 rounded-lg bg-gradient-to-r from-primary/20 to-primary/10 border border-primary text-primary shadow-neon transition-all digital-display text-sm">23</button>
+                            </div>
+                        </div>
+                        <div class="text-xs text-neutral/70 flex items-center gap-2">
+                            <i class="fa fa-lightbulb-o text-warning/70"></i>
+                            计重：重复号码累积匹配 | 不计重：仅统计唯一数字
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 开奖号验证模块 -->
+            <section class="bg-dark/80 rounded-xl p-4 neon-border glow-effect">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-1.5 h-6 bg-lottery rounded-full"></div>
+                    <h2 class="text-lg font-semibold font-orbitron text-white flex items-center gap-2">
+                        <i class="fa fa-trophy text-lottery"></i>
+                        <span>开奖号验证</span>
+                    </h2>
+                </div>
+                <div class="space-y-3">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="verifyInput" 
+                            maxlength="3" 
+                            class="w-full p-3 rounded-lg bg-black/50 border border-lottery/30 text-lottery digital-display text-center focus:outline-none focus:border-lottery focus:shadow-neon-green transition-all"
+                            placeholder="输入3位开奖号（如626）">
+                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-lottery/50">
+                            <i class="fa fa-search"></i>
+                        </div>
+                    </div>
+                    <button onclick="verifyNumber()" class="w-full py-2.5 bg-gradient-to-r from-lottery/10 to-lottery/5 border border-lottery/50 text-lottery rounded-lg flex items-center justify-center gap-2 hover:shadow-neon-green transition-all digital-display">
+                        <i class="fa fa-bolt"></i>
+                        <span>验证是否在结果中</span>
+                    </button>
+                    <div id="verifyResult" class="py-3 px-3 rounded-lg text-center font-medium hidden digital-display"></div>
+                </div>
+            </section>
+
+            <!-- 计算与复制模块 -->
+            <section class="grid grid-cols-2 gap-3">
+                <button onclick="calculate()" class="py-3 rounded-xl bg-gradient-to-r from-primary to-secondary text-white flex items-center justify-center gap-2 shadow-btn hover:shadow-btn-hover transition-all digital-display font-orbitron">
+                    <i class="fa fa-calculator text-lg"></i>
+                    <span class="font-medium">计算号码</span>
+                </button>
+                <button onclick="copyResult()" class="py-3 rounded-xl bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/50 text-accent flex items-center justify-center gap-2 hover:shadow-neon-accent transition-all digital-display font-orbitron">
+                    <i class="fa fa-copy text-lg"></i>
+                    <span class="font-medium">复制结果</span>
+                </button>
+            </section>
+
+            <!-- 结果显示模块 -->
+            <section class="bg-dark/80 rounded-xl p-4 neon-border glow-effect">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-1.5 h-6 bg-success rounded-full"></div>
+                    <h2 class="text-lg font-semibold font-orbitron text-white flex items-center gap-2">
+                        <i class="fa fa-bar-chart text-success"></i>
+                        <span>分析结果</span>
+                    </h2>
+                    <div id="resultCount" class="ml-auto text-xs px-3 py-1 number-badge rounded hidden">
+                        <span id="countValue">0</span> 注
+                    </div>
+                </div>
+                <div id="result" class="w-full min-h-[120px] max-h-[240px] p-3 rounded-lg bg-black/40 border border-primary/20 text-light overflow-y-auto scrollbar-thin digital-display">
+                    <div class="text-center text-neutral/50 py-8">
+                        <i class="fa fa-microchip text-primary/50 text-xl mb-2"></i>
+                        <div class="text-sm">点击计算按钮生成结果</div>
+                        <div class="text-xs mt-1 text-primary/70">矩阵算法准备就绪</div>
+                    </div>
+                </div>
+                <div class="mt-3 text-xs text-neutral/60 flex items-center justify-between">
+                    <div class="flex items-center gap-1">
+                        <i class="fa fa-clock-o text-primary/70"></i>
+                        <span>计算时间: <span id="calcTime">0</span>ms</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <i class="fa fa-hashtag text-accent/70"></i>
+                        <span>号码总数: <span id="totalNumbers">1000</span></span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="mt-6 text-center text-neutral/50 text-xs space-y-2 relative z-10">
+            <div class="flex items-center justify-center gap-4">
+                <div class="w-16 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+                <i class="fa fa-terminal text-primary/50"></i>
+                <div class="w-16 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent"></div>
+            </div>
+            <p class="font-orbitron text-[10px] tracking-wider">3D MATRIX ANALYSIS SYSTEM © 2026</p>
+            <p class="text-accent/50 text-[10px]">复制成功/失败均有明确提示 | 基于矩阵算法的智能筛选</p>
+        </footer>
+    </div>
+
+    <script>
+        // 全局变量
+        let 胆码组列表 = [];
+        let 符合条件号码 = [];
+        let 当前匹配类型 = "23";
+        let 当前模式 = "count";
+        let 计算开始时间 = 0;
+        
+        // DOM元素
+        const dataTipEl = document.getElementById('dataTip');
+        const resultEl = document.getElementById('result');
+        const verifyResultEl = document.getElementById('verifyResult');
+        const modeCountBtn = document.getElementById('modeCountBtn');
+        const modeUniqueBtn = document.getElementById('modeUniqueBtn');
+        const resultCountEl = document.getElementById('resultCount');
+        const countValueEl = document.getElementById('countValue');
+        const calcTimeEl = document.getElementById('calcTime');
+        const totalNumbersEl = document.getElementById('totalNumbers');
+
+        // 初始化
+        window.onload = function() {
+            document.querySelector(`#matchTypeGroup button[data-type="${当前匹配类型}"]`).classList.add('bg-gradient-to-r', 'from-primary/20', 'to-primary/10', 'border-primary', 'text-primary', 'shadow-neon');
+            document.querySelector(`#matchTypeGroup button[data-type="${当前匹配类型}"]`).classList.remove('bg-black/50', 'border-neutral/30', 'text-light');
+            
+            // 更新号码总数显示
+            totalNumbersEl.textContent = "1000";
+        };
+
+        // 显示提示
+        function showTip(el, text, isSuccess) {
+            el.className = `h-6 text-sm px-2 rounded flex items-center justify-center digital-display ${isSuccess ? 'text-success bg-success/10 border border-success/30' : 'text-danger bg-danger/10 border border-danger/30'}`;
+            el.textContent = text;
+            el.classList.remove('hidden');
+            setTimeout(() => {
+                el.classList.add('hidden');
+            }, 3000);
+        }
+
+        // 切换模式
+        function switchMode(mode) {
+            当前模式 = mode;
+            if (mode === 'count') {
+                modeCountBtn.classList.add('bg-gradient-to-r', 'from-primary/20', 'to-primary/10', 'border-primary/50', 'text-primary');
+                modeCountBtn.classList.remove('bg-dark/50', 'border-neutral/30', 'text-light');
+                modeUniqueBtn.classList.add('bg-dark/50', 'border-neutral/30', 'text-light');
+                modeUniqueBtn.classList.remove('bg-gradient-to-r', 'from-primary/20', 'to-primary/10', 'border-primary/50', 'text-primary');
+                showTip(dataTipEl, '✅ 已切换至计重模式', true);
+            } else {
+                modeUniqueBtn.classList.add('bg-gradient-to-r', 'from-primary/20', 'to-primary/10', 'border-primary/50', 'text-primary');
+                modeUniqueBtn.classList.remove('bg-dark/50', 'border-neutral/30', 'text-light');
+                modeCountBtn.classList.add('bg-dark/50', 'border-neutral/30', 'text-light');
+                modeCountBtn.classList.remove('bg-gradient-to-r', 'from-primary/20', 'to-primary/10', 'border-primary/50', 'text-primary');
+                showTip(dataTipEl, '✅ 已切换至不计重模式', true);
+            }
+        }
+
+        // 选择匹配类型
+        function selectMatchType(el) {
+            document.querySelectorAll('#matchTypeGroup button').forEach(btn => {
+                btn.classList.remove('bg-gradient-to-r', 'from-primary/20', 'to-primary/10', 'border-primary', 'text-primary', 'shadow-neon');
+                btn.classList.add('bg-black/50', 'border-neutral/30', 'text-light');
+            });
+            el.classList.remove('bg-black/50', 'border-neutral/30', 'text-light');
+            el.classList.add('bg-gradient-to-r', 'from-primary/20', 'to-primary/10', 'border-primary', 'text-primary', 'shadow-neon');
+            当前匹配类型 = el.dataset.type;
+            const typeText = 当前匹配类型.length === 1 ? `等于${当前匹配类型}` : `包含${当前匹配类型}`;
+            showTip(dataTipEl, `✅ 匹配条件：${typeText}`, true);
+        }
+
+        // 计算匹配数
+        function calculateMatchCount(号码数组, 胆码组数组) {
+            if (当前模式 === 'count') {
+                return 号码数组.filter(num => 胆码组数组.includes(num)).length;
+            } else {
+                const 号码唯一集合 = new Set(号码数组);
+                const 交集 = [...号码唯一集合].filter(num => 胆码组数组.includes(num));
+                return 交集.length;
+            }
+        }
+
+        // 判断是否匹配
+        function isMatch(matchCount) {
+            if (当前匹配类型.length === 1) {
+                return matchCount === parseInt(当前匹配类型);
+            } else {
+                return 当前匹配类型.includes(matchCount.toString());
+            }
+        }
+
+        // 加载数据
+        function loadData() {
+            const input = document.getElementById('codeInput').value.trim();
+            if (!input) {
+                showTip(dataTipEl, '❌ 请输入胆码数据', false);
+                return;
+            }
+            const lines = input.split('\n').filter(line => line.trim() !== '');
+            const validGroups = [];
+            let hasError = false;
+            lines.forEach((line, index) => {
+                const group = line.trim().split('').map(Number);
+                if (group.length !== 4 || group.some(num => isNaN(num) || num < 0 || num > 9)) {
+                    showTip(dataTipEl, `❌ 第${index+1}行无效`, false);
+                    hasError = true;
+                    return;
+                }
+                validGroups.push(group);
+            });
+            if (hasError) return;
+            胆码组列表 = validGroups;
+            showTip(dataTipEl, `✅ 成功导入${validGroups.length}组胆码`, true);
+        }
+
+        // 清除数据
+        function clearData() {
+            document.getElementById('codeInput').value = '';
+            胆码组列表 = [];
+            符合条件号码 = [];
+            resultEl.innerHTML = `<div class="text-center text-neutral/50 py-8">
+                <i class="fa fa-microchip text-primary/50 text-xl mb-2"></i>
+                <div class="text-sm">点击计算按钮生成结果</div>
+                <div class="text-xs mt-1 text-primary/70">矩阵算法准备就绪</div>
+            </div>`;
+            verifyResultEl.classList.add('hidden');
+            resultCountEl.classList.add('hidden');
+            showTip(dataTipEl, '✅ 已清除所有数据', true);
+        }
+
+        // 生成所有3D号码
+        function generateAll3DNumbers() {
+            let numbers = [];
+            for (let num = 0; num < 1000; num++) {
+                let str = num.toString().padStart(3, '0');
+                let arr = str.split('').map(Number);
+                numbers.push(arr);
+            }
+            return numbers;
+        }
+
+        // 计算号码
+        function calculate() {
+            if (胆码组列表.length === 0) {
+                showTip(dataTipEl, '❌ 请先导入胆码数据', false);
+                return;
+            }
+            const faultMin = parseInt(document.getElementById('faultMin').value);
+            const faultMax = parseInt(document.getElementById('faultMax').value);
+            if (faultMin < 0 || faultMax > 50 || faultMin > faultMax) {
+                showTip(dataTipEl, '❌ 容错范围错误', false);
+                return;
+            }
+            
+            resultEl.innerHTML = `<div class="text-center text-primary py-8">
+                <i class="fa fa-cog fa-spin text-xl mb-2"></i>
+                <div class="text-sm">矩阵计算中...</div>
+                <div class="text-xs mt-1 text-primary/70">正在筛选符合条件号码</div>
+            </div>`;
+            
+            计算开始时间 = Date.now();
+            
+            setTimeout(() => {
+                const allNumbers = generateAll3DNumbers();
+                符合条件号码 = [];
+                const totalGroups = 胆码组列表.length;
+                
+                for (let num of allNumbers) {
+                    let 满足匹配组数 = 0;
+                    for (let group of 胆码组列表) {
+                        const matchCount = calculateMatchCount(num, group);
+                        if (isMatch(matchCount)) {
+                            满足匹配组数++;
+                        }
+                    }
+                    const 不符合组数 = totalGroups - 满足匹配组数;
+                    if (不符合组数 >= faultMin && 不符合组数 <= faultMax) {
+                        符合条件号码.push(num.join(''));
+                    }
+                }
+                
+                const 计算结束时间 = Date.now();
+                const 耗时 = 计算结束时间 - 计算开始时间;
+                calcTimeEl.textContent = 耗时;
+                
+                const modeText = 当前模式 === 'count' ? '计重' : '不计重';
+                const typeText = 当前匹配类型.length === 1 ? `等于${当前匹配类型}` : `包含${当前匹配类型}`;
+                
+                // 更新结果计数
+                countValueEl.textContent = 符合条件号码.length;
+                resultCountEl.classList.remove('hidden');
+                
+                // 显示结果
+                if (符合条件号码.length > 0) {
+                    let resultHTML = `
+                        <div class="text-success font-medium mb-3 flex items-center justify-center gap-2">
+                            <i class="fa fa-check-circle"></i>
+                            <span>矩阵计算完成</span>
+                        </div>
+                        <div class="text-center text-lg font-bold font-orbitron matrix-text mb-3">${符合条件号码.length} 注</div>
+                        <div class="text-xs text-neutral mb-3 flex flex-wrap items-center justify-center gap-2">
+                            <span class="px-2 py-1 bg-primary/10 rounded">${modeText}模式</span>
+                            <span class="px-2 py-1 bg-accent/10 rounded">${typeText}</span>
+                            <span class="px-2 py-1 bg-warning/10 rounded">容错${faultMin}-${faultMax}</span>
+                        </div>
+                        <div class="result-grid">`;
+                    
+                    符合条件号码.forEach(num => {
+                        resultHTML += `<div class="px-2 py-1.5 bg-black/40 border border-primary/20 rounded text-center digital-display text-sm hover:bg-primary/10 hover:border-primary/40 transition-all">${num}</div>`;
+                    });
+                    
+                    resultHTML += `</div>`;
+                    resultEl.innerHTML = resultHTML;
+                } else {
+                    resultEl.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="fa fa-exclamation-triangle text-warning text-xl mb-2"></i>
+                            <div class="text-warning font-medium mb-2">未找到符合条件的号码</div>
+                            <div class="text-xs text-neutral/70">请调整匹配条件或容错范围</div>
+                        </div>`;
+                    resultCountEl.classList.add('hidden');
+                }
+            }, 800);
+        }
+
+        // 复制结果
+        function copyResult() {
+            if (resultEl.textContent.includes('点击计算按钮生成结果') || 符合条件号码.length === 0) {
+                showTip(dataTipEl, '❌ 暂无结果可复制', false);
+                return;
+            }
+
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.style.position = 'fixed';
+            tempTextarea.style.opacity = '0';
+            tempTextarea.value = 符合条件号码.join(' ');
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+
+            try {
+                const copySuccess = document.execCommand('copy');
+                if (copySuccess) {
+                    showTip(dataTipEl, '✅ 复制成功！结果已存剪贴板', true);
+                } else {
+                    showTip(dataTipEl, '❌ 复制失败！请手动选中复制', false);
+                }
+            } catch (err) {
+                showTip(dataTipEl, '❌ 复制失败！浏览器权限不足', false);
+                console.error('复制失败原因：', err);
+            } finally {
+                document.body.removeChild(tempTextarea);
+            }
+        }
+
+        // 验证号码
+        function verifyNumber() {
+            if (胆码组列表.length === 0) {
+                showTip(dataTipEl, '❌ 请先导入胆码数据', false);
+                return;
+            }
+            if (符合条件号码.length === 0) {
+                showTip(dataTipEl, '❌ 请先计算生成号码列表', false);
+                return;
+            }
+            const input = document.getElementById('verifyInput').value.trim().padStart(3, '0');
+            if (input.length !== 3 || isNaN(Number(input))) {
+                showTip(dataTipEl, '❌ 请输入3位有效开奖号', false);
+                return;
+            }
+            verifyResultEl.classList.remove('hidden');
+            if (符合条件号码.includes(input)) {
+                verifyResultEl.className = 'py-3 px-3 rounded-lg text-center font-bold bg-lottery/10 text-lottery border border-lottery/50 matrix-text digital-display';
+                verifyResultEl.innerHTML = `<i class="fa fa-trophy mr-2"></i> 恭喜！开奖号 ${input} 在结果中`;
+            } else {
+                verifyResultEl.className = 'py-3 px-3 rounded-lg text-center font-medium bg-danger/10 text-danger border border-danger/30 digital-display';
+                verifyResultEl.innerHTML = `<i class="fa fa-times mr-2"></i> 开奖号 ${input} 不在结果中`;
+            }
+        }
+    </script>
+</body>
+</html>

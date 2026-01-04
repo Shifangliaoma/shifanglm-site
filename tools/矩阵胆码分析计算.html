@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>十方料码矩阵胆码分析| 粉丝专用</title>
+    <title>十方料码矩阵胆码分析| 增强版 - 支持多格式任意组数</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -198,20 +198,20 @@
                 <div class="w-2 h-8 bg-accent rounded-full pulse" style="animation-delay: 0.5s"></div>
             </div>
             <p class="text-neutral text-sm font-exo">
-                <span class="matrix-text">矩阵算法 | 容错筛选 | 智能验证</span>
+                <span class="matrix-text">增强版 | 多格式支持 | 不限制组数</span>
             </p>
             <div class="flex justify-center items-center gap-4 mt-3">
                 <div class="flex items-center gap-1">
                     <div class="w-2 h-2 rounded-full bg-success"></div>
-                    <span class="text-xs text-neutral">在线分析</span>
+                    <span class="text-xs text-neutral">任意组数</span>
                 </div>
                 <div class="flex items-center gap-1">
                     <div class="w-2 h-2 rounded-full bg-primary"></div>
-                    <span class="text-xs text-neutral">即时反馈</span>
+                    <span class="text-xs text-neutral">多格式解析</span>
                 </div>
                 <div class="flex items-center gap-1">
                     <div class="w-2 h-2 rounded-full bg-accent"></div>
-                    <span class="text-xs text-neutral">专业匹配</span>
+                    <span class="text-xs text-neutral">智能去重</span>
                 </div>
             </div>
         </header>
@@ -223,69 +223,88 @@
                     <div class="w-1.5 h-6 bg-accent rounded-full"></div>
                     <h2 class="text-lg font-semibold font-orbitron text-white flex items-center gap-2">
                         <i class="fa fa-database text-accent"></i>
-                        <span>胆码数据矩阵</span>
+                        <span>胆码数据矩阵 (多格式支持)</span>
                     </h2>
                     <div class="ml-auto flex items-center gap-2">
-                        <div class="text-xs px-2 py-1 number-badge rounded">30组</div>
+                        <div class="text-xs px-2 py-1 number-badge rounded" id="groupCount">0组</div>
                     </div>
                 </div>
                 <div class="space-y-3">
                     <label class="text-sm text-neutral flex items-center gap-2">
                         <i class="fa fa-code text-primary"></i>
-                        输入胆码组 <span class="text-accent">(每组4位数字，换行分隔)</span>
+                        输入胆码组 <span class="text-accent">(支持多种格式，自动解析)</span>
                     </label>
                     <div class="relative">
                         <textarea 
                             id="codeInput" 
                             class="w-full h-32 p-3 rounded-lg bg-black/50 border border-primary/30 text-light placeholder-neutral/50 focus:outline-none focus:border-primary focus:shadow-neon transition-all resize-none digital-display scrollbar-thin"
-                            placeholder="输入示例：
+                            placeholder="支持多种格式示例：
+
+示例1 (每行4位):
 8420
 9481
 1396
-...">8420
-9481
-1396
-3846
-7485
-3675
-9210
-9715
-3260
-7250
-2613
-2065
-7045
-2764
-2869
-7489
-0153
-0859
-7143
-8193
-6157
-6913
-0983
-6018
-6214
-0824
-9537
-9234
-0587
-2547</textarea>
+...
+
+示例2 (空格分隔两组):
+1738 9064
+4938 1705
+3805 1462
+
+示例3 (其他数字组合):
+0236
+4208
+8947
+
+系统自动解析并提取4位数字组">1738 9064
+4938 1705
+3805 1462
+4720 1389
+9120 4735
+2035 4986
+
+4025 3179
+9325 4018
+2518 4976
+1803 4526
+1649 3528
+0593 2714
+
+7496 2180
+0296 7413
+9613 7085
+8274 0615
+5074 8269
+7469 8513
+
+2978 5641
+1578 2963
+7863 2140
+6395 2870
+6021 5873
+9815 7462</textarea>
                         <div class="absolute bottom-3 right-3 text-xs text-primary/70">
-                            <i class="fa fa-keyboard-o mr-1"></i>30行
+                            <i class="fa fa-keyboard-o mr-1"></i>支持任意行数
                         </div>
                     </div>
                     <div id="dataTip" class="h-6 text-sm px-2 rounded hidden digital-display"></div>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-3 gap-3">
                         <button onclick="loadData()" class="py-2.5 px-4 bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/50 text-primary rounded-lg flex items-center justify-center gap-2 shadow-btn hover:shadow-btn-hover transition-all digital-display">
                             <i class="fa fa-upload"></i>
-                            <span>导入验证</span>
+                            <span>智能解析</span>
+                        </button>
+                        <button onclick="formatData()" class="py-2.5 px-4 bg-gradient-to-r from-warning/20 to-warning/10 border border-warning/50 text-warning rounded-lg flex items-center justify-center gap-2 hover:shadow-neon-accent transition-all digital-display">
+                            <i class="fa fa-magic"></i>
+                            <span>格式整理</span>
                         </button>
                         <button onclick="clearData()" class="py-2.5 px-4 bg-gradient-to-r from-danger/20 to-danger/10 border border-danger/50 text-danger rounded-lg flex items-center justify-center gap-2 hover:shadow-neon-accent transition-all digital-display">
                             <i class="fa fa-trash"></i>
                             <span>清除数据</span>
                         </button>
+                    </div>
+                    <div class="text-xs text-neutral/70 flex items-center gap-2 pt-1">
+                        <i class="fa fa-info-circle text-primary/70"></i>
+                        支持格式：单行4位数字、空格分隔两组、多数字组合等，自动提取4位有效组
                     </div>
                 </div>
             </section>
@@ -313,7 +332,7 @@
                                     type="number" 
                                     id="faultMin" 
                                     min="0" 
-                                    max="50" 
+                                    max="200" 
                                     value="10" 
                                     class="w-full p-3 rounded-lg bg-black/50 border border-primary/30 text-primary text-center digital-display focus:outline-none focus:border-primary focus:shadow-neon transition-all"
                                     placeholder="最小">
@@ -324,7 +343,7 @@
                                     type="number" 
                                     id="faultMax" 
                                     min="0" 
-                                    max="50" 
+                                    max="200" 
                                     value="25" 
                                     class="w-full p-3 rounded-lg bg-black/50 border border-accent/30 text-accent text-center digital-display focus:outline-none focus:border-accent focus:shadow-neon-accent transition-all"
                                     placeholder="最大">
@@ -332,7 +351,7 @@
                         </div>
                         <div class="text-xs text-neutral/70 flex items-center gap-2">
                             <i class="fa fa-info-circle text-primary/70"></i>
-                            容错10-25 = 不符合条件组数 ≥10 且 ≤25
+                            <span id="faultTip">容错10-25 = 不符合条件组数 ≥10 且 ≤25</span>
                         </div>
                     </div>
 
@@ -459,7 +478,7 @@
                 <div class="w-16 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent"></div>
             </div>
             <p class="font-orbitron text-[10px] tracking-wider">3D MATRIX ANALYSIS SYSTEM © 2026</p>
-            <p class="text-accent/50 text-[10px]">复制成功/失败均有明确提示 | 基于矩阵算法的智能筛选</p>
+            <p class="text-accent/50 text-[10px]">支持多格式任意组数 | 智能解析去重 | 矩阵算法增强版</p>
         </footer>
     </div>
 
@@ -481,6 +500,8 @@
         const countValueEl = document.getElementById('countValue');
         const calcTimeEl = document.getElementById('calcTime');
         const totalNumbersEl = document.getElementById('totalNumbers');
+        const groupCountEl = document.getElementById('groupCount');
+        const faultTipEl = document.getElementById('faultTip');
 
         // 初始化
         window.onload = function() {
@@ -489,6 +510,35 @@
             
             // 更新号码总数显示
             totalNumbersEl.textContent = "1000";
+            
+            // 设置示例数据
+            document.getElementById('codeInput').value = `1738 9064
+4938 1705
+3805 1462
+4720 1389
+9120 4735
+2035 4986
+
+4025 3179
+9325 4018
+2518 4976
+1803 4526
+1649 3528
+0593 2714
+
+7496 2180
+0296 7413
+9613 7085
+8274 0615
+5074 8269
+7469 8513
+
+2978 5641
+1578 2963
+7863 2140
+6395 2870
+6021 5873
+9815 7462`;
         };
 
         // 显示提示
@@ -532,6 +582,66 @@
             showTip(dataTipEl, `✅ 匹配条件：${typeText}`, true);
         }
 
+        // 智能解析数字组
+        function parseCodeGroups(input) {
+            const lines = input.split('\n');
+            const groups = [];
+            const processed = new Set(); // 用于去重
+            
+            lines.forEach((line, index) => {
+                // 去除空格和制表符
+                const trimmedLine = line.trim();
+                if (trimmedLine === '') return;
+                
+                // 提取所有连续4位数字的组合
+                // 方法1: 查找连续4位数字
+                const fourDigitMatches = trimmedLine.match(/\b\d{4}\b/g);
+                if (fourDigitMatches) {
+                    fourDigitMatches.forEach(match => {
+                        const digits = match.split('').map(Number);
+                        if (digits.length === 4 && !digits.some(d => isNaN(d))) {
+                            const key = digits.join('');
+                            if (!processed.has(key)) {
+                                groups.push(digits);
+                                processed.add(key);
+                            }
+                        }
+                    });
+                }
+                
+                // 方法2: 处理空格分隔的两组数字 (如 "1738 9064")
+                const parts = trimmedLine.split(/\s+/);
+                if (parts.length >= 2) {
+                    parts.forEach(part => {
+                        if (part.length === 4 && /^\d+$/.test(part)) {
+                            const digits = part.split('').map(Number);
+                            const key = digits.join('');
+                            if (!processed.has(key)) {
+                                groups.push(digits);
+                                processed.add(key);
+                            }
+                        }
+                    });
+                }
+                
+                // 方法3: 处理任意数字串中的4位组合
+                const allDigits = trimmedLine.replace(/\D/g, '');
+                if (allDigits.length >= 4) {
+                    for (let i = 0; i <= allDigits.length - 4; i++) {
+                        const fourDigits = allDigits.substr(i, 4);
+                        const digits = fourDigits.split('').map(Number);
+                        const key = digits.join('');
+                        if (!processed.has(key)) {
+                            groups.push(digits);
+                            processed.add(key);
+                        }
+                    }
+                }
+            });
+            
+            return groups;
+        }
+
         // 计算匹配数
         function calculateMatchCount(号码数组, 胆码组数组) {
             if (当前模式 === 'count') {
@@ -559,21 +669,57 @@
                 showTip(dataTipEl, '❌ 请输入胆码数据', false);
                 return;
             }
-            const lines = input.split('\n').filter(line => line.trim() !== '');
-            const validGroups = [];
-            let hasError = false;
-            lines.forEach((line, index) => {
-                const group = line.trim().split('').map(Number);
-                if (group.length !== 4 || group.some(num => isNaN(num) || num < 0 || num > 9)) {
-                    showTip(dataTipEl, `❌ 第${index+1}行无效`, false);
-                    hasError = true;
-                    return;
+            
+            胆码组列表 = parseCodeGroups(input);
+            
+            if (胆码组列表.length === 0) {
+                showTip(dataTipEl, '❌ 未找到有效的4位数字组', false);
+                return;
+            }
+            
+            groupCountEl.textContent = `${胆码组列表.length}组`;
+            
+            // 更新容错提示
+            const totalGroups = 胆码组列表.length;
+            const faultMin = parseInt(document.getElementById('faultMin').value);
+            const faultMax = parseInt(document.getElementById('faultMax').value);
+            
+            if (faultMax > totalGroups) {
+                document.getElementById('faultMax').value = totalGroups;
+            }
+            
+            faultTipEl.textContent = `容错${faultMin}-${Math.min(faultMax, totalGroups)} = 不符合条件组数 ≥${faultMin} 且 ≤${Math.min(faultMax, totalGroups)} (总共${totalGroups}组)`;
+            
+            showTip(dataTipEl, `✅ 成功解析${胆码组列表.length}组胆码 (已自动去重)`, true);
+        }
+
+        // 格式整理
+        function formatData() {
+            const input = document.getElementById('codeInput').value.trim();
+            if (!input) {
+                showTip(dataTipEl, '❌ 请输入胆码数据', false);
+                return;
+            }
+            
+            const groups = parseCodeGroups(input);
+            if (groups.length === 0) {
+                showTip(dataTipEl, '❌ 未找到有效的4位数字组', false);
+                return;
+            }
+            
+            // 整理为每行4组的格式
+            let formattedText = '';
+            for (let i = 0; i < groups.length; i++) {
+                formattedText += groups[i].join('');
+                if ((i + 1) % 4 === 0 && i !== groups.length - 1) {
+                    formattedText += '\n';
+                } else if (i !== groups.length - 1) {
+                    formattedText += ' ';
                 }
-                validGroups.push(group);
-            });
-            if (hasError) return;
-            胆码组列表 = validGroups;
-            showTip(dataTipEl, `✅ 成功导入${validGroups.length}组胆码`, true);
+            }
+            
+            document.getElementById('codeInput').value = formattedText;
+            showTip(dataTipEl, `✅ 已整理为${groups.length}组4位数字`, true);
         }
 
         // 清除数据
@@ -581,6 +727,7 @@
             document.getElementById('codeInput').value = '';
             胆码组列表 = [];
             符合条件号码 = [];
+            groupCountEl.textContent = '0组';
             resultEl.innerHTML = `<div class="text-center text-neutral/50 py-8">
                 <i class="fa fa-microchip text-primary/50 text-xl mb-2"></i>
                 <div class="text-sm">点击计算按钮生成结果</div>
@@ -610,8 +757,10 @@
             }
             const faultMin = parseInt(document.getElementById('faultMin').value);
             const faultMax = parseInt(document.getElementById('faultMax').value);
-            if (faultMin < 0 || faultMax > 50 || faultMin > faultMax) {
-                showTip(dataTipEl, '❌ 容错范围错误', false);
+            const totalGroups = 胆码组列表.length;
+            
+            if (faultMin < 0 || faultMax > totalGroups || faultMin > faultMax) {
+                showTip(dataTipEl, `❌ 容错范围错误 (总共${totalGroups}组)`, false);
                 return;
             }
             
@@ -626,7 +775,6 @@
             setTimeout(() => {
                 const allNumbers = generateAll3DNumbers();
                 符合条件号码 = [];
-                const totalGroups = 胆码组列表.length;
                 
                 for (let num of allNumbers) {
                     let 满足匹配组数 = 0;
@@ -665,6 +813,7 @@
                             <span class="px-2 py-1 bg-primary/10 rounded">${modeText}模式</span>
                             <span class="px-2 py-1 bg-accent/10 rounded">${typeText}</span>
                             <span class="px-2 py-1 bg-warning/10 rounded">容错${faultMin}-${faultMax}</span>
+                            <span class="px-2 py-1 bg-success/10 rounded">${胆码组列表.length}组胆码</span>
                         </div>
                         <div class="result-grid">`;
                     

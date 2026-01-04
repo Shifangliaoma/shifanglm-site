@@ -45,6 +45,7 @@
         }
     </script>
     <style>
+        /* 样式保持不变 */
         body {
             background: #0a0a16;
             background-image: 
@@ -198,16 +199,16 @@
                 <div class="w-2 h-8 bg-accent rounded-full pulse" style="animation-delay: 0.5s"></div>
             </div>
             <p class="text-neutral text-sm font-exo">
-                <span class="matrix-text">增强版 | 多格式支持 | 不限制组数</span>
+                <span class="matrix-text">增强版 | 准确解析 | 不限制组数</span>
             </p>
             <div class="flex justify-center items-center gap-4 mt-3">
                 <div class="flex items-center gap-1">
                     <div class="w-2 h-2 rounded-full bg-success"></div>
-                    <span class="text-xs text-neutral">任意组数</span>
+                    <span class="text-xs text-neutral">精确解析</span>
                 </div>
                 <div class="flex items-center gap-1">
                     <div class="w-2 h-2 rounded-full bg-primary"></div>
-                    <span class="text-xs text-neutral">多格式解析</span>
+                    <span class="text-xs text-neutral">多种格式</span>
                 </div>
                 <div class="flex items-center gap-1">
                     <div class="w-2 h-2 rounded-full bg-accent"></div>
@@ -232,7 +233,7 @@
                 <div class="space-y-3">
                     <label class="text-sm text-neutral flex items-center gap-2">
                         <i class="fa fa-code text-primary"></i>
-                        输入胆码组 <span class="text-accent">(支持多种格式，自动解析)</span>
+                        输入胆码组 <span class="text-accent">(支持多种格式，精确解析)</span>
                     </label>
                     <div class="relative">
                         <textarea 
@@ -251,38 +252,53 @@
 4938 1705
 3805 1462
 
-示例3 (其他数字组合):
-0236
-4208
-8947
+系统准确提取每组4位数字">4695 1073
 
-系统自动解析并提取4位数字组">1738 9064
-4938 1705
-3805 1462
-4720 1389
-9120 4735
-2035 4986
+3195 4608
 
-4025 3179
-9325 4018
-2518 4976
-1803 4526
-1649 3528
-0593 2714
+9508 4372
 
-7496 2180
-0296 7413
-9613 7085
 8274 0615
+
 5074 8269
+
 7469 8513
 
-2978 5641
-1578 2963
-7863 2140
-6395 2870
-6021 5873
-9815 7462</textarea>
+4853 7109
+
+9753 4816
+
+5316 4902
+
+1687 4352
+
+1249 7356
+
+8397 5014
+
+4376 8120
+
+0876 4319
+
+7619 4025
+
+1650 7843
+
+3750 1682
+
+5082 1349
+
+3067 1824
+
+4167 3085
+
+6785 3429
+
+8501 3769
+
+8934 1765
+
+0741 6283</textarea>
                         <div class="absolute bottom-3 right-3 text-xs text-primary/70">
                             <i class="fa fa-keyboard-o mr-1"></i>支持任意行数
                         </div>
@@ -304,7 +320,7 @@
                     </div>
                     <div class="text-xs text-neutral/70 flex items-center gap-2 pt-1">
                         <i class="fa fa-info-circle text-primary/70"></i>
-                        支持格式：单行4位数字、空格分隔两组、多数字组合等，自动提取4位有效组
+                        支持格式：单行4位数字、空格分隔两组等，精确提取每组4位数字
                     </div>
                 </div>
             </section>
@@ -478,7 +494,7 @@
                 <div class="w-16 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent"></div>
             </div>
             <p class="font-orbitron text-[10px] tracking-wider">3D MATRIX ANALYSIS SYSTEM © 2026</p>
-            <p class="text-accent/50 text-[10px]">支持多格式任意组数 | 智能解析去重 | 矩阵算法增强版</p>
+            <p class="text-accent/50 text-[10px]">精确解析不重复 | 智能去重 | 矩阵算法增强版</p>
         </footer>
     </div>
 
@@ -510,35 +526,6 @@
             
             // 更新号码总数显示
             totalNumbersEl.textContent = "1000";
-            
-            // 设置示例数据
-            document.getElementById('codeInput').value = `1738 9064
-4938 1705
-3805 1462
-4720 1389
-9120 4735
-2035 4986
-
-4025 3179
-9325 4018
-2518 4976
-1803 4526
-1649 3528
-0593 2714
-
-7496 2180
-0296 7413
-9613 7085
-8274 0615
-5074 8269
-7469 8513
-
-2978 5641
-1578 2963
-7863 2140
-6395 2870
-6021 5873
-9815 7462`;
         };
 
         // 显示提示
@@ -582,62 +569,62 @@
             showTip(dataTipEl, `✅ 匹配条件：${typeText}`, true);
         }
 
-        // 智能解析数字组
+        // 修正的智能解析数字组 - 更精确
         function parseCodeGroups(input) {
             const lines = input.split('\n');
             const groups = [];
             const processed = new Set(); // 用于去重
             
-            lines.forEach((line, index) => {
+            console.log("开始解析输入数据...");
+            
+            lines.forEach((line, lineIndex) => {
                 // 去除空格和制表符
                 const trimmedLine = line.trim();
                 if (trimmedLine === '') return;
                 
-                // 提取所有连续4位数字的组合
-                // 方法1: 查找连续4位数字
-                const fourDigitMatches = trimmedLine.match(/\b\d{4}\b/g);
-                if (fourDigitMatches) {
-                    fourDigitMatches.forEach(match => {
+                console.log(`解析第${lineIndex+1}行: "${trimmedLine}"`);
+                
+                // 方法1: 直接查找4位数字组（如"4695"）
+                const exact4DigitMatches = trimmedLine.match(/\b\d{4}\b/g);
+                if (exact4DigitMatches) {
+                    console.log(`  找到精确4位数字: ${exact4DigitMatches}`);
+                    exact4DigitMatches.forEach(match => {
                         const digits = match.split('').map(Number);
-                        if (digits.length === 4 && !digits.some(d => isNaN(d))) {
-                            const key = digits.join('');
-                            if (!processed.has(key)) {
-                                groups.push(digits);
-                                processed.add(key);
-                            }
+                        const key = digits.join('');
+                        if (!processed.has(key)) {
+                            groups.push(digits);
+                            processed.add(key);
+                            console.log(`    添加组: ${key}`);
+                        } else {
+                            console.log(`    跳过重复组: ${key}`);
                         }
                     });
                 }
                 
-                // 方法2: 处理空格分隔的两组数字 (如 "1738 9064")
+                // 方法2: 处理空格分隔的两组数字 (如 "4695 1073")
+                // 这种情况下，我们应该按空格分割，然后分别处理每部分
                 const parts = trimmedLine.split(/\s+/);
                 if (parts.length >= 2) {
+                    console.log(`  按空格分割: ${parts}`);
                     parts.forEach(part => {
-                        if (part.length === 4 && /^\d+$/.test(part)) {
+                        // 如果部分正好是4位数字
+                        if (part.length === 4 && /^\d{4}$/.test(part)) {
                             const digits = part.split('').map(Number);
                             const key = digits.join('');
                             if (!processed.has(key)) {
                                 groups.push(digits);
                                 processed.add(key);
+                                console.log(`    添加组: ${key}`);
                             }
                         }
                     });
                 }
                 
-                // 方法3: 处理任意数字串中的4位组合
-                const allDigits = trimmedLine.replace(/\D/g, '');
-                if (allDigits.length >= 4) {
-                    for (let i = 0; i <= allDigits.length - 4; i++) {
-                        const fourDigits = allDigits.substr(i, 4);
-                        const digits = fourDigits.split('').map(Number);
-                        const key = digits.join('');
-                        if (!processed.has(key)) {
-                            groups.push(digits);
-                            processed.add(key);
-                        }
-                    }
-                }
+                // 不再从长数字串中提取多个4位组合，避免过度解析
             });
+            
+            console.log(`解析完成，共找到${groups.length}组不重复的4位数字`);
+            console.log("找到的组:", groups.map(g => g.join('')));
             
             return groups;
         }
@@ -707,16 +694,14 @@
                 return;
             }
             
-            // 整理为每行4组的格式
+            // 整理为每行一组的清晰格式
             let formattedText = '';
-            for (let i = 0; i < groups.length; i++) {
-                formattedText += groups[i].join('');
-                if ((i + 1) % 4 === 0 && i !== groups.length - 1) {
+            groups.forEach((group, index) => {
+                formattedText += group.join('');
+                if (index !== groups.length - 1) {
                     formattedText += '\n';
-                } else if (i !== groups.length - 1) {
-                    formattedText += ' ';
                 }
-            }
+            });
             
             document.getElementById('codeInput').value = formattedText;
             showTip(dataTipEl, `✅ 已整理为${groups.length}组4位数字`, true);

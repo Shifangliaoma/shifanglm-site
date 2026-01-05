@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>3D组选直选双模式分析工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #1a73e8;
+            --primary-dark: #0d47a1;
+            --danger-red: #f44336;
+            --warning-orange: #ff9800;
+            --success-green: #4caf50;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --light-text: #f8fafc;
+            --border-color: #334155;
+            --border-radius: 8px;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            line-height: 1.5;
+            font-size: 14px;
+            padding: 0;
+            margin: 0;
+        }
+        
+        /* 容器适配屏幕 */
+        .app-container {
+            width: 100%;
+            min-height: 100vh;
+            padding: 8px;
+            margin: 0;
+        }
+        
+        /* 头部样式 */
+        .header {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+        }
+        
+        h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .subtitle {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+        
+        /* 模式切换 */
+        .mode-switch {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 10px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: transparent;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .mode-btn.active {
+            background-color: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+        
+        /* 卡片样式 */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--light-text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .card-title i {
+            color: var(--primary-blue);
+        }
+        
+        /* 输入区域 */
+        .input-area {
+            margin-bottom: 12px;
+            width: 100%;
+        }
+        
+        .label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #cbd5e1;
+        }
+        
+        .label i {
+            margin-right: 4px;
+            color: var(--primary-blue);
+        }
+        
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: 'Consolas', 'Monaco', monospace;
+            background-color: rgba(15, 23, 42, 0.7);
+            color: var(--light-text);
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.4;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+        }
+        
+        input {
+            font-size: 0.95rem;
+        }
+        
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+        
+        /* 按钮样式 */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background-color: #475569;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #334155;
+        }
+        
+        .btn-action {
+            background-color: var(--success-green);
+            color: white;
+            font-size: 0.95rem;
+            padding: 12px;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+        
+        /* 结果区域 */
+        .result-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            word-break: keep-all;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+        
+        /* 目标二码标记样式 - 优化不换行不移位 */
+        .target-th {
+            color: #ff5252;
+            font-weight: 800;
+            text-shadow: 0 0 3px rgba(255, 82, 82, 0.3);
+            display: inline;
+        }
+        
+        .target-tu {
+            color: #ffb74d;
+            font-weight: 800;
+            text-shadow: 0 0 3px rgba(255, 183, 77, 0.3);
+            display: inline;
+        }
+        
+        .target-hu {
+            color: #64b5f6;
+            font-weight: 800;
+            text-shadow: 0 0 3px rgba(100, 181, 246, 0.3);
+            display: inline;
+        }
+        
+        /* 分组编码样式 - 不标记 */
+        .group-code {
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        
+        /* 统计数据网格 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+        
+        @media (min-width: 480px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .stat-item {
+            background-color: rgba(30, 41, 59, 0.7);
+            border-radius: 6px;
+            padding: 10px;
+            border-left: 3px solid var(--primary-blue);
+        }
+        
+        .stat-title {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        
+        /* 分组和去重容器 */
+        .group-container, .unique-container {
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 8px;
+            background-color: rgba(15, 23, 42, 0.7);
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-top: 6px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            width: 100%;
+            word-break: keep-all;
+        }
+        
+        /* 重复次数容器 - 每行10个 */
+        .repeat-container {
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 8px;
+            background-color: rgba(15, 23, 42, 0.7);
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-top: 6px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            width: 100%;
+            word-break: keep-all;
+        }
+        
+        /* 状态消息 */
+        .status-message {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #81c784;
+            border-left: 3px solid var(--success-green);
+        }
+        
+        .status-warning {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: #ffb74d;
+            border-left: 3px solid var(--warning-orange);
+        }
+        
+        .status-error {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: #ef9a9a;
+            border-left: 3px solid var(--danger-red);
+        }
+        
+        .status-info {
+            background-color: rgba(33, 150, 243, 0.1);
+            color: #90caf9;
+            border-left: 3px solid var(--primary-blue);
+        }
+        
+        /* 直选模式特定样式 */
+        .direct-mode .stat-item:nth-child(1) .stat-title {
+            color: #ff5252;
+        }
+        
+        .direct-mode .stat-item:nth-child(2) .stat-title {
+            color: #ffb74d;
+        }
+        
+        .direct-mode .stat-item:nth-child(3) .stat-title {
+            color: #64b5f6;
+        }
+        
+        /* 滚动条优化 */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 2px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 2px;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 480px) {
+            .app-container {
+                padding: 6px;
+            }
+            
+            .header {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.1rem;
+            }
+            
+            .card {
+                padding: 10px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                gap: 6px;
+            }
+            
+            .btn {
+                padding: 12px;
+            }
+        }
+        
+        /* 底部信息 */
+        .footer {
+            text-align: center;
+            padding: 15px 0 8px;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1><i class="fas fa-chart-line"></i> 3D双模式分析工具</h1>
+            <p class="subtitle">组选·直选双模式 | 精准数据分析 | 移动端优化</p>
+        </div>
+        
+        <!-- 模式切换 -->
+        <div class="mode-switch">
+            <button class="mode-btn active" id="groupMode">
+                <i class="fas fa-layer-group"></i> 组选模式
+            </button>
+            <button class="mode-btn" id="directMode">
+                <i class="fas fa-bullseye"></i> 直选模式
+            </button>
+        </div>
+        
+        <!-- 数据输入卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-database"></i> 数据输入
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <label class="label">
+                    <i class="fas fa-paste"></i> 粘贴完整数据：
+                </label>
+                <textarea id="sourceData" placeholder="请将您的数据粘贴到这里...">【排序23位组选二码（不去重）分组趋势数据】
+
+[01]  55  17  12  79  36  07  89  49  23  99
+
+[02]  15  57  55  12  07  69  88  45  26  02
+
+[03]  89  22  03  47  04  13  05  39  69  89
+
+[04]  27  22  46  08  03  01  06  35  23  05
+
+[05]  24  15  77  19  14  33  22  49  01  06
+
+[06]  25  68  44  59  56  48  67  77  58  14
+
+[07]  55  17  36  45  27  46  25  35  59  16
+
+[08]  11  78  09  28  37  18  67  19  33  12
+
+[09]  88  46  23  47  09  04  66  28  56  48
+
+[10]  29  39  57  38  17  07  26  08  25  44
+
+[11]  35  16  66  99  13  56  37  18  24  58
+
+[12]  34  79  45  02  03  01  11  37  05  48
+
+[13]  67  24  29  00  79  69  88  26  68  78
+
+[14]  18  00  15  39  77  58  34  36  02  44
+
+[15]  78  28  00  57  19  14  33  38
+
+--- 去重完整列表 ---
+
+【排序23位组选二码（不去重）去重后完整列表】
+
+共 55 个不重复组合：
+
+55 17 12 79 36 07 89 49 23 99 
+
+15 57 69 88 45 26 02 22 03 47 
+
+04 13 05 39 27 46 08 01 06 35 
+
+24 77 19 14 33 25 68 44 59 56 
+
+48 67 58 16 11 78 09 28 37 18 
+
+66 29 38 34 00
+
+--- 重复组合详情 ---
+
+【排序23位组选二码（不去重）重复组合详情解析】
+
+1. 重复1次组合（0个）：
+
+无
+
+2. 重复2次组合（17个）：
+
+49 99 47 04 13 27 08 06 68 59 
+
+16 11 09 66 29 38 34
+
+3. 重复3次组合（38个）：
+
+55 17 12 79 36 07 89 23 15 57 
+
+69 88 45 26 02 22 03 05 39 46 
+
+01 35 24 77 19 14 33 25 44 56 
+
+48 67 58 78 28 37 18 00</textarea>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="initData()">
+                    <i class="fas fa-upload"></i> 加载数据
+                </button>
+                <button class="btn btn-secondary" onclick="clearData()">
+                    <i class="fas fa-redo"></i> 清空重置
+                </button>
+            </div>
+            
+            <div class="input-area">
+                <label class="label">
+                    <i class="fas fa-ticket-alt"></i> 输入3位开奖号码：
+                </label>
+                <input type="text" id="lotteryNum" placeholder="例如：589" maxlength="3" pattern="\d{3}">
+            </div>
+            
+            <button class="btn btn-action" onclick="runAnalysis()">
+                <i class="fas fa-play-circle"></i> 开始分析
+            </button>
+        </div>
+        
+        <!-- 加载日志 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-clipboard-check"></i> 1. 加载日志
+                </div>
+            </div>
+            <div class="status-message status-info" id="loadLog">
+                <i class="fas fa-info-circle"></i>
+                <span>等待数据加载...</span>
+            </div>
+        </div>
+        
+        <!-- 目标二码统计 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-chart-bar"></i> 2. 目标二码统计
+                </div>
+            </div>
+            <div class="stats-grid" id="targetStats">
+                <div class="stat-item">
+                    <div class="stat-title">百十位</div>
+                    <div class="result-content">等待分析...</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-title">百个位</div>
+                    <div class="result-content">等待分析...</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-title">十个位</div>
+                    <div class="result-content">等待分析...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 分组数据 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-layer-group"></i> 3. 分组数据
+                </div>
+            </div>
+            <div class="group-container" id="groupDisplay">
+                请先加载数据并开始分析
+            </div>
+        </div>
+        
+        <!-- 去重列表 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-filter"></i> 4. 去重列表
+                </div>
+            </div>
+            <div class="unique-container" id="uniqueDisplay">
+                请先加载数据并开始分析
+            </div>
+        </div>
+        
+        <!-- 重复次数分析 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-sort-amount-down"></i> 重复次数分析
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <label class="label" id="repeat1Title">
+                    <i class="fas fa-redo"></i> 5. 重复1次组合（0个）
+                </label>
+                <div class="repeat-container" id="repeat1Display">
+                    请先加载数据并开始分析
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <label class="label" id="repeat2Title">
+                    <i class="fas fa-redo"></i> 6. 重复2次组合（0个）
+                </label>
+                <div class="repeat-container" id="repeat2Display">
+                    请先加载数据并开始分析
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <label class="label" id="repeat3Title">
+                    <i class="fas fa-redo"></i> 7. 重复3次组合（0个）
+                </label>
+                <div class="repeat-container" id="repeat3Display">
+                    请先加载数据并开始分析
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部信息 -->
+        <div class="footer">
+            <p>3D组选直选双模式分析工具 v1.0</p>
+            <p>专业数据分析，仅供参考</p>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量 - 分别存储两种模式的数据
+        let currentMode = "group";
+        let groupData = {
+            rows: [],
+            uniqueLines: [],
+            repeat1: [],
+            repeat2: [],
+            repeat3: []
+        };
+        let directData = {
+            rows: [],
+            uniqueLines: [],
+            repeat1: [],
+            repeat2: [],
+            repeat3: []
+        };
+        let target3Pairs = { th: "", tu: "", hu: "" };
+        
+        // 模式切换事件
+        document.getElementById("groupMode").addEventListener("click", function() {
+            currentMode = "group";
+            this.classList.add("active");
+            document.getElementById("directMode").classList.remove("active");
+            document.querySelector('.app-container').classList.remove('direct-mode');
+            document.getElementById("sourceData").placeholder = "请粘贴组选格式的完整数据...";
+            
+            // 恢复组选模式的数据到文本框
+            document.getElementById("sourceData").value = getStoredData("group");
+        });
+
+        document.getElementById("directMode").addEventListener("click", function() {
+            currentMode = "direct";
+            this.classList.add("active");
+            document.getElementById("groupMode").classList.remove("active");
+            document.querySelector('.app-container').classList.add('direct-mode');
+            document.getElementById("sourceData").placeholder = "请粘贴直选格式的完整数据...";
+            
+            // 恢复直选模式的数据到文本框
+            document.getElementById("sourceData").value = getStoredData("direct");
+        });
+
+        // 存储数据到对应模式
+        function storeData(mode, data) {
+            if (mode === "group") {
+                groupData = { ...groupData, ...data };
+                localStorage.setItem('groupData', JSON.stringify(groupData));
+            } else {
+                directData = { ...directData, ...data };
+                localStorage.setItem('directData', JSON.stringify(directData));
+            }
+        }
+
+        // 获取存储的数据
+        function getStoredData(mode) {
+            if (mode === "group") {
+                const saved = localStorage.getItem('groupData');
+                if (saved) {
+                    groupData = JSON.parse(saved);
+                }
+                // 返回示例数据或保存的数据
+                return document.getElementById("sourceData").value;
+            } else {
+                const saved = localStorage.getItem('directData');
+                if (saved) {
+                    directData = JSON.parse(saved);
+                }
+                // 返回直选模式示例数据
+                return `【百十位直选二码分组趋势数据】
+[01]  84  03  65  89  41  08  60  46  22  27
+[02]  50  26  76  00  92  68  34  18  42  03
+[03]  89  50  79  31  55  17  74  36  12  98
+[04]  93  45  95  29  11  87  53  37  99  61
+[05]  65  46  27  31  55  36  26  45  07  21
+[06]  83  40  02  88  64  69  57  90  19  81
+[07]  73  54  49  63  82  15  91  72  18  37
+[08]  99  23  09  28  84  65  89  55  74  93
+[09]  21  83  76  95  57  71  33  90  52  38
+[10]  14  19  29  05  48  92  97  63  39  13
+[11]  75  56  47  66  41  79  17  83  88  69
+[12]  33  00  29  81  05  67  24  86  62  48
+[13]  43  97  59  78  87  25  91  96  75  09
+[14]  03  08  22  31  74  12  21  40  90  24
+[15]  92  11  73  97  59  16  78  54  30  35
+[16]  82  58  13  32  66  04  60  36  02  76
+[17]  95  52  67  86  59  78  68  87  49  63
+[18]  25  82  44  20  06  01  58  10  77  94
+[19]  28  85  46  12  02  88  38  62  11  54
+[20]  20  01  34  53  15  39  91  58  10  96
+[21]  72  77  70  04  08  22  17  98  26  07
+[22]  64  71  52  14  62  48  43  16  30  35
+[23]  25  44  06  34  53  72  18  37  99  13
+[24]  75  32  94  70  56  51  61  80  41  60
+[25]  27  50  93  69  33  14  19  05  24  43
+[26]  35  06  01  15  77  32  51  42  61  23
+[27]  47  09  66  28  04  80  85
+--- 去重完整列表 ---
+【百十位直选二码去重后完整列表】
+共 100 个不重复组合：
+84 03 65 89 41 08 60 46 22 27 
+50 26 76 00 92 68 34 18 42 79 
+31 55 17 74 36 12 98 93 45 95 
+29 11 87 53 37 99 61 07 21 83 
+40 02 88 64 69 57 90 19 81 73 
+54 49 63 82 15 91 72 23 09 28 
+71 33 52 38 14 05 48 97 39 13 
+75 56 47 66 67 24 86 62 43 59 
+78 25 96 16 30 35 58 32 04 44 
+20 06 01 10 77 94 85 70 51 80
+
+--- 重复组合详情 ---
+【百十位直选二码重复组合详情解析】
+1. 重复1次组合（0个）：
+无
+
+2. 重复2次组合（33个）：
+84 00 68 42 79 98 45 07 40 64 
+57 81 73 49 23 71 38 39 56 47 
+67 86 96 16 30 44 20 10 94 85 
+70 51 80
+
+3. 重复3次组合（67个）：
+03 65 89 41 08 60 46 22 27 50 
+26 76 92 34 18 31 55 17 74 36 
+12 93 95 29 11 87 53 37 99 61 
+21 83 02 88 69 90 19 54 63 82 
+15 91 72 09 28 33 52 14 05 48 
+97 13 75 66 24 62 43 59 78 25 
+35 58 32 04 06 01 77`;
+            }
+        }
+
+        // 更新标题统计个数
+        function updateRepeatTitles() {
+            const repeat1Title = document.getElementById("repeat1Title");
+            const repeat2Title = document.getElementById("repeat2Title");
+            const repeat3Title = document.getElementById("repeat3Title");
+            
+            let data;
+            if (currentMode === "group") {
+                data = groupData;
+            } else {
+                data = directData;
+            }
+            
+            repeat1Title.innerHTML = `<i class="fas fa-redo"></i> 5. 重复1次组合（${data.repeat1.length}个）`;
+            repeat2Title.innerHTML = `<i class="fas fa-redo"></i> 6. 重复2次组合（${data.repeat2.length}个）`;
+            repeat3Title.innerHTML = `<i class="fas fa-redo"></i> 7. 重复3次组合（${data.repeat3.length}个）`;
+        }
+
+        // 初始化数据 - 支持两种模式
+        function initData() {
+            const input = document.getElementById("sourceData").value;
+            const logEl = document.getElementById("loadLog");
+            
+            logEl.className = "status-message status-info";
+            logEl.innerHTML = `<i class="fas fa-spinner fa-spin"></i><span>正在解析${currentMode === "group" ? "组选" : "直选"}数据...</span>`;
+            
+            try {
+                let data = {
+                    rows: [],
+                    uniqueLines: [],
+                    repeat1: [],
+                    repeat2: [],
+                    repeat3: []
+                };
+                
+                if (currentMode === "group") {
+                    // 组选模式解析
+                    data = parseGroupData(input);
+                } else {
+                    // 直选模式解析
+                    data = parseDirectData(input);
+                }
+                
+                // 存储到对应模式
+                storeData(currentMode, data);
+                
+                // 更新标题统计个数
+                updateRepeatTitles();
+                
+                // 成功消息
+                logEl.className = "status-message status-success";
+                logEl.innerHTML = `<i class="fas fa-check-circle"></i><span>${currentMode === "group" ? "组选" : "直选"}数据加载成功！解析分组：${data.rows.length}行 | 去重列表：${data.uniqueLines.length}行</span>`;
+                
+            } catch (e) {
+                console.error("数据加载错误:", e);
+                logEl.className = "status-message status-error";
+                logEl.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>加载失败：${e.message}</span>`;
+            }
+        }
+
+        // 解析组选数据
+        function parseGroupData(input) {
+            const data = {
+                rows: [],
+                uniqueLines: [],
+                repeat1: [],
+                repeat2: [],
+                repeat3: []
+            };
+            
+            // 1. 解析分组数据
+            const groupRegex = /【排序[^】]*分组趋势数据】([\s\S]*?)(?:--- 去重完整列表 ---|【排序)/i;
+            
+            const groupMatch = input.match(groupRegex);
+            if (!groupMatch) throw new Error(`未找到组选分组数据块`);
+            
+            const groupLineList = groupMatch[1].split("\n")
+                .map(line => line.trim())
+                .filter(line => line && /^\[\d{2}\]/.test(line));
+            
+            data.rows = groupLineList.map(line => {
+                const [codePart, ...pairs] = line.split(/\s+/);
+                const code = codePart.replace(/\[|\]/g, "");
+                return [code, pairs.filter(p => p)];
+            });
+            
+            // 2. 解析去重列表
+            const uniqueRegex = /【排序[^】]*去重后完整列表】([\s\S]*?)(?:--- 重复组合详情 ---|【排序|$)/i;
+            
+            const uniqueMatch = input.match(uniqueRegex);
+            if (!uniqueMatch) throw new Error(`未找到组选去重列表块`);
+            
+            data.uniqueLines = uniqueMatch[1].split("\n")
+                .map(line => line.trim())
+                .filter(line => line && !line.includes("共") && !line.includes("：") && line.length > 0 && /\d/.test(line));
+            
+            // 3. 解析重复次数数据
+            const repeatRegex = /【排序[^】]*重复组合详情解析】([\s\S]*?)(?:$|【|---)/i;
+            
+            const repeatMatch = input.match(repeatRegex);
+            if (!repeatMatch) throw new Error(`未找到组选重复详情块`);
+            
+            parseRepeatDataCommon(repeatMatch[1], data);
+            
+            return data;
+        }
+
+        // 解析直选数据
+        function parseDirectData(input) {
+            const data = {
+                rows: [],
+                uniqueLines: [],
+                repeat1: [],
+                repeat2: [],
+                repeat3: []
+            };
+            
+            // 1. 解析分组数据 - 直选模式
+            const groupRegex = /【[^】]*直选二码分组趋势数据】([\s\S]*?)(?:--- 去重完整列表 ---|$)/i;
+            
+            const groupMatch = input.match(groupRegex);
+            if (!groupMatch) throw new Error(`未找到直选分组数据块`);
+            
+            const groupLineList = groupMatch[1].split("\n")
+                .map(line => line.trim())
+                .filter(line => line && /^\[\d{2}\]/.test(line));
+            
+            data.rows = groupLineList.map(line => {
+                const [codePart, ...pairs] = line.split(/\s+/);
+                const code = codePart.replace(/\[|\]/g, "");
+                return [code, pairs.filter(p => p)];
+            });
+            
+            // 2. 解析去重列表 - 直选模式
+            const uniqueRegex = /【[^】]*直选二码去重后完整列表】([\s\S]*?)(?:--- 重复组合详情 ---|$)/i;
+            
+            const uniqueMatch = input.match(uniqueRegex);
+            if (!uniqueMatch) throw new Error(`未找到直选去重列表块`);
+            
+            data.uniqueLines = uniqueMatch[1].split("\n")
+                .map(line => line.trim())
+                .filter(line => line && !line.includes("共") && !line.includes("：") && line.length > 0 && /\d/.test(line));
+            
+            // 3. 解析重复次数数据 - 直选模式
+            const repeatRegex = /【[^】]*直选二码重复组合详情解析】([\s\S]*?)$/i;
+            
+            const repeatMatch = input.match(repeatRegex);
+            if (!repeatMatch) throw new Error(`未找到直选重复详情块`);
+            
+            parseRepeatDataCommon(repeatMatch[1], data);
+            
+            return data;
+        }
+
+        // 通用重复数据解析
+        function parseRepeatDataCommon(text, data) {
+            // 按行处理
+            const lines = text.split("\n").map(line => line.trim()).filter(line => line);
+            let currentSection = "";
+            
+            for (let line of lines) {
+                // 检测新的节标题
+                if (line.includes("重复1次组合")) {
+                    currentSection = "repeat1";
+                    continue;
+                } else if (line.includes("重复2次组合")) {
+                    currentSection = "repeat2";
+                    continue;
+                } else if (line.includes("重复3次组合")) {
+                    currentSection = "repeat3";
+                    continue;
+                }
+                
+                // 如果是数字行，提取数字
+                if (currentSection && /\d{2}/.test(line)) {
+                    // 移除非数字字符，提取所有两位数字
+                    const numbers = line.match(/\d{2}/g) || [];
+                    
+                    if (currentSection === "repeat1") {
+                        // 处理"无"的情况
+                        if (line.includes("无")) {
+                            data.repeat1 = [];
+                        } else {
+                            data.repeat1.push(...numbers);
+                        }
+                    } else if (currentSection === "repeat2") {
+                        data.repeat2.push(...numbers);
+                    } else if (currentSection === "repeat3") {
+                        data.repeat3.push(...numbers);
+                    }
+                }
+            }
+        }
+
+        // 清空数据
+        function clearData() {
+            document.getElementById("sourceData").value = "";
+            document.getElementById("lotteryNum").value = "";
+            
+            const logEl = document.getElementById("loadLog");
+            logEl.className = "status-message status-warning";
+            logEl.innerHTML = `<i class="fas fa-exclamation-triangle"></i><span>数据已清空，请重新输入</span>`;
+            
+            document.getElementById("targetStats").innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-title">百十位</div>
+                    <div class="result-content">等待分析...</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-title">百个位</div>
+                    <div class="result-content">等待分析...</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-title">十个位</div>
+                    <div class="result-content">等待分析...</div>
+                </div>
+            `;
+            
+            document.getElementById("groupDisplay").innerHTML = "请先加载数据并开始分析";
+            document.getElementById("uniqueDisplay").innerHTML = "请先加载数据并开始分析";
+            document.getElementById("repeat1Display").innerHTML = "请先加载数据并开始分析";
+            document.getElementById("repeat2Display").innerHTML = "请先加载数据并开始分析";
+            document.getElementById("repeat3Display").innerHTML = "请先加载数据并开始分析";
+            
+            // 重置当前模式的数据
+            if (currentMode === "group") {
+                groupData = {
+                    rows: [],
+                    uniqueLines: [],
+                    repeat1: [],
+                    repeat2: [],
+                    repeat3: []
+                };
+            } else {
+                directData = {
+                    rows: [],
+                    uniqueLines: [],
+                    repeat1: [],
+                    repeat2: [],
+                    repeat3: []
+                };
+            }
+            
+            // 更新标题为0
+            updateRepeatTitles();
+        }
+
+        // 获取目标二码
+        function getTargetPairs(num) {
+            const h = num[0], t = num[1], u = num[2];
+            return { th: h + t, tu: h + u, hu: t + u };
+        }
+
+        // 智能标记函数 - 保持间距不变
+        function smartMark(text) {
+            if (!text || !target3Pairs.th) return text;
+            
+            let result = text;
+            
+            // 使用正则表达式匹配，保持原间距
+            const markers = [
+                { class: 'target-th', value: target3Pairs.th },
+                { class: 'target-tu', value: target3Pairs.tu },
+                { class: 'target-hu', value: target3Pairs.hu }
+            ];
+            
+            markers.forEach(marker => {
+                if (marker.value) {
+                    // 使用更智能的正则，匹配各种空格情况
+                    const regex = new RegExp(`(\\s|^)(${marker.value})(?=\\s|$)`, 'g');
+                    result = result.replace(regex, `$1<span class="${marker.class}">${marker.value}</span>`);
+                }
+            });
+            
+            return result;
+        }
+
+        // 格式化重复数据为每行10个
+        function formatRepeatData(arr, perLine = 10) {
+            if (!arr || arr.length === 0) return "无数据";
+            
+            let result = '';
+            for (let i = 0; i < arr.length; i += perLine) {
+                const line = arr.slice(i, i + perLine).join(' ');
+                result += line + '\n';
+            }
+            return result.trim();
+        }
+
+        // 执行分析
+        function runAnalysis() {
+            const lotteryNum = document.getElementById("lotteryNum").value.trim();
+            const statsEl = document.getElementById("targetStats");
+            const groupEl = document.getElementById("groupDisplay");
+            const uniqueEl = document.getElementById("uniqueDisplay");
+            const r1El = document.getElementById("repeat1Display");
+            const r2El = document.getElementById("repeat2Display");
+            const r3El = document.getElementById("repeat3Display");
+
+            // 获取当前模式的数据
+            let currentData;
+            if (currentMode === "group") {
+                currentData = groupData;
+            } else {
+                currentData = directData;
+            }
+            
+            // 数据校验
+            if (currentData.rows.length === 0) {
+                const logEl = document.getElementById("loadLog");
+                logEl.className = "status-message status-error";
+                logEl.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>请先加载完整数据！</span>`;
+                return;
+            }
+            
+            if (!/^\d{3}$/.test(lotteryNum)) {
+                const logEl = document.getElementById("loadLog");
+                logEl.className = "status-message status-error";
+                logEl.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>请输入3位纯数字开奖号！</span>`;
+                return;
+            }
+
+            // 更新加载日志
+            const logEl = document.getElementById("loadLog");
+            logEl.className = "status-message status-info";
+            logEl.innerHTML = `<i class="fas fa-cogs"></i><span>正在分析开奖号：${lotteryNum} (${currentMode === "group" ? "组选模式" : "直选模式"})</span>`;
+            
+            target3Pairs = getTargetPairs(lotteryNum);
+            
+            // 根据模式调整显示
+            let pairList;
+            if (currentMode === "group") {
+                // 组选模式显示百十位、百个位、十个位
+                pairList = [
+                    { type: "百十位", code: target3Pairs.th, cls: "target-th" },
+                    { type: "百个位", code: target3Pairs.tu, cls: "target-tu" },
+                    { type: "十个位", code: target3Pairs.hu, cls: "target-hu" }
+                ];
+            } else {
+                // 直选模式只显示百十位
+                pairList = [
+                    { type: "百十位", code: target3Pairs.th, cls: "target-th" },
+                    { type: "百十位(直选)", code: target3Pairs.th, cls: "target-th" },
+                    { type: "百十位分析", code: target3Pairs.th, cls: "target-th" }
+                ];
+            }
+
+            // 目标二码统计
+            let statsHtml = "";
+            pairList.forEach(item => {
+                let repTimes = "0";
+                if (currentData.repeat1.includes(item.code)) repTimes = "1";
+                else if (currentData.repeat2.includes(item.code)) repTimes = "2";
+                else if (currentData.repeat3.includes(item.code)) repTimes = "3";
+                
+                const foundGroups = currentData.rows.filter(([_, pairs]) => pairs.includes(item.code)).map(([code]) => `[${code}]`);
+                const groupStr = foundGroups.length > 0 ? foundGroups.join("、") : "无";
+                
+                statsHtml += `
+                <div class="stat-item">
+                    <div class="stat-title">${item.type}</div>
+                    <div class="result-content">
+                        组合: <span class="${item.cls}">${item.code}</span><br>
+                        重复: ${repTimes}次<br>
+                        分布: ${groupStr}
+                    </div>
+                </div>`;
+            });
+            statsEl.innerHTML = statsHtml;
+
+            // 渲染分组数据
+            let groupHtml = "";
+            currentData.rows.forEach(([code, pairs]) => {
+                // 使用单个空格分隔，保持紧凑
+                const line = `[${code}] ${pairs.join(' ')}`;
+                // 标记但不影响间距
+                groupHtml += smartMark(line) + "\n";
+            });
+            groupEl.innerHTML = groupHtml;
+
+            // 渲染去重列表
+            let uniqueHtml = "";
+            currentData.uniqueLines.forEach(line => {
+                // 压缩多余空格
+                const compactLine = line.replace(/\s+/g, ' ');
+                uniqueHtml += smartMark(compactLine) + "\n";
+            });
+            uniqueEl.innerHTML = uniqueHtml;
+
+            // 渲染重复次数容器 - 每行10个
+            // 重复1次
+            if (currentData.repeat1.length === 0) {
+                r1El.innerHTML = '<span style="color: #94a3b8;">无数据</span>';
+            } else {
+                const formattedText = formatRepeatData(currentData.repeat1, 10);
+                r1El.innerHTML = smartMark(formattedText);
+            }
+            
+            // 重复2次 - 每行10个
+            if (currentData.repeat2.length === 0) {
+                r2El.innerHTML = '<span style="color: #94a3b8;">无数据</span>';
+            } else {
+                const formattedText = formatRepeatData(currentData.repeat2, 10);
+                r2El.innerHTML = smartMark(formattedText);
+            }
+            
+            // 重复3次 - 每行10个
+            if (currentData.repeat3.length === 0) {
+                r3El.innerHTML = '<span style="color: #94a3b8;">无数据</span>';
+            } else {
+                const formattedText = formatRepeatData(currentData.repeat3, 10);
+                r3El.innerHTML = smartMark(formattedText);
+            }
+            
+            // 完成提示
+            setTimeout(() => {
+                logEl.className = "status-message status-success";
+                logEl.innerHTML = `<i class="fas fa-check-double"></i><span>分析完成！开奖号 ${lotteryNum} 已解析 (${currentMode === "group" ? "组选模式" : "直选模式"})</span>`;
+            }, 300);
+        }
+        
+        // 页面加载时初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            const logEl = document.getElementById("loadLog");
+            logEl.className = "status-message status-info";
+            logEl.innerHTML = `<i class="fas fa-info-circle"></i><span>请粘贴数据并点击"加载数据"</span>`;
+            
+            // 从本地存储加载数据
+            const savedGroupData = localStorage.getItem('groupData');
+            const savedDirectData = localStorage.getItem('directData');
+            
+            if (savedGroupData) {
+                groupData = JSON.parse(savedGroupData);
+            }
+            
+            if (savedDirectData) {
+                directData = JSON.parse(savedDirectData);
+            }
+            
+            // 更新标题
+            updateRepeatTitles();
+        });
+    </script>
+</body>
+</html>

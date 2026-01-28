@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>十方料码缩水工具网 - 福彩3D专业分析</title>
+    <style>
+        :root {
+            --primary: #ff3366;
+            --primary-dark: #e62e5c;
+            --secondary: #ff9900;
+            --secondary-dark: #e68a00;
+            --accent: #ffcc00;
+            --accent-light: #ffdd44;
+            --dark: #0a0a1a;
+            --darker: #050511;
+            --light: #1a1a2e;
+            --lighter: #2a2a3e;
+            --text: #ffffff;
+            --text-light: #ccccdd;
+            --success: #00ff99;
+            --success-dark: #00cc7a;
+            --warning: #ffcc00;
+            --danger: #ff3366;
+            --border: #33334d;
+            --radius: 8px;
+            --shadow: 0 4px 12px rgba(255, 51, 102, 0.25);
+            --glow: 0 0 20px rgba(255, 51, 102, 0.4);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--text);
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'SF Pro Display', -apple-system, sans-serif;
+            font-size: 13px;
+            line-height: 1.2;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* 趣味醒目标题 */
+        .brand-header {
+            background: linear-gradient(135deg, #ff3366, #ff9900, #ffcc00);
+            padding: 12px 10px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(255, 51, 102, 0.3);
+            border-bottom: 3px solid var(--accent);
+        }
+        
+        .brand-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .brand-logo {
+            font-size: 20px;
+            font-weight: 900;
+            color: white;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .brand-logo::after {
+            content: '✨';
+            position: absolute;
+            right: -25px;
+            top: -5px;
+            animation: sparkle 2s infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        .brand-subtitle {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 主容器 */
+        .main-container {
+            max-width: 100%;
+            padding: 0;
+        }
+        
+        /* 功能切换 */
+        .function-tabs {
+            display: flex;
+            background: var(--light);
+            border-bottom: 2px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+            padding: 0 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 10px 6px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            margin: 0 2px;
+            cursor: pointer;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: rgba(255, 51, 102, 0.1);
+        }
+        
+        .tab:hover {
+            background: rgba(255, 51, 102, 0.05);
+        }
+        
+        /* 功能面板 */
+        .panel {
+            display: none;
+            padding: 0;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .panel.active {
+            display: block;
+        }
+        
+        /* 模块 */
+        .module {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(10px);
+        }
+        
+        .module-title {
+            font-size: 14px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .title-icon {
+            width: 22px;
+            height: 22px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 900;
+            color: white;
+            box-shadow: 0 2px 4px rgba(255, 51, 102, 0.3);
+        }
+        
+        .module-desc {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        
+        /* 胆码选择 */
+        .danma-section {
+            margin-bottom: 15px;
+        }
+        
+        .section-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        
+        .danma-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .danma-btn {
+            padding: 14px 0;
+            background: var(--lighter);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            font-weight: 900;
+            font-size: 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .danma-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 51, 102, 0.2);
+        }
+        
+        .danma-btn.selected {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+            transform: scale(1.05);
+        }
+        
+        .danma-btn.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .selected-danma-display {
+            padding: 10px;
+            background: var(--darker);
+            border-radius: var(--radius);
+            border: 2px solid var(--border);
+            min-height: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .selected-danma-item {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(255, 51, 102, 0.3);
+        }
+        
+        .remove-danma {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .remove-danma:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .no-selection {
+            color: var(--text-light);
+            font-style: italic;
+            font-size: 12px;
+        }
+        
+        /* 范围设置 - 使用选择器 */
+        .range-section {
+            margin-bottom: 15px;
+        }
+        
+        .range-selectors {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .range-select {
+            flex: 1;
+            position: relative;
+        }
+        
+        .range-select select {
+            width: 100%;
+            padding: 12px;
+            background: var(--darker);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 900;
+            text-align: center;
+            appearance: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        .range-select select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.2);
+        }
+        
+        .range-select::after {
+            content: "▼";
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 10px;
+            pointer-events: none;
+        }
+        
+        .range-separator {
+            color: var(--primary);
+            font-size: 16px;
+            font-weight: 900;
+            min-width: 20px;
+            text-align: center;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 模式切换 */
+        .mode-toggle {
+            display: flex;
+            background: var(--darker);
+            border-radius: var(--radius);
+            border: 2px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .mode-option {
+            flex: 1;
+            padding: 12px 6px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 900;
+            color: var(--text-light);
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+        
+        .mode-option.selected {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        /* 按钮组 */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 14px 8px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 8px rgba(255, 51, 102, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 51, 102, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--lighter);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--light);
+            border-color: var(--primary);
+        }
+        
+        /* 开奖号输入 */
+        .lottery-input {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .lottery-input input {
+            flex: 1;
+            padding: 14px;
+            background: var(--darker);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-align: center;
+            transition: all 0.2s;
+            font-family: monospace;
+        }
+        
+        .lottery-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.2);
+        }
+        
+        /* 结果区 */
+        .results-section {
+            padding: 0;
+            background: var(--darker);
+            border-top: 2px solid var(--border);
+        }
+        
+        .results-header {
+            padding: 12px;
+            background: var(--light);
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .results-title {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .results-title::before {
+            content: '📊';
+            font-size: 18px;
+        }
+        
+        .results-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--success);
+            font-family: monospace;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+        
+        /* 提取控制区 */
+        .extract-bar {
+            padding: 10px;
+            background: var(--light);
+            border-bottom: 2px solid var(--border);
+            display: none;
+        }
+        
+        .extract-bar.show {
+            display: block;
+        }
+        
+        .extract-controls {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .extract-btn {
+            flex: 1;
+            padding: 12px 6px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(255, 51, 102, 0.3);
+        }
+        
+        .extract-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 51, 102, 0.4);
+        }
+        
+        .extract-btn.copy {
+            background: linear-gradient(135deg, var(--success), var(--success-dark));
+        }
+        
+        .extract-btn.clear {
+            background: linear-gradient(135deg, var(--danger), #e62e5c);
+        }
+        
+        /* 号码显示区 - 改为一行显示 */
+        .numbers-display {
+            padding: 15px;
+            background: var(--darker);
+            min-height: 60px;
+            max-height: 200px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.6;
+        }
+        
+        .numbers-display.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            font-style: italic;
+            padding: 20px;
+            font-family: inherit;
+        }
+        
+        /* 号码以空格间隔显示 */
+        .numbers-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .number-item {
+            background: rgba(255, 51, 102, 0.15);
+            border: 2px solid rgba(255, 51, 102, 0.4);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--primary);
+            text-align: center;
+            min-width: 50px;
+            transition: all 0.2s;
+        }
+        
+        .number-item:hover {
+            background: rgba(255, 51, 102, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 51, 102, 0.2);
+        }
+        
+        /* 身份标识显示区 */
+        .identity-display {
+            padding: 15px;
+            background: var(--darker);
+            min-height: 60px;
+            max-height: 150px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .identity-display.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            font-style: italic;
+            padding: 20px;
+        }
+        
+        .identity-item {
+            padding: 12px;
+            background: rgba(0, 255, 153, 0.15);
+            border: 2px solid rgba(0, 255, 153, 0.4);
+            border-radius: var(--radius);
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--success);
+            text-align: center;
+            margin-bottom: 8px;
+            word-break: break-all;
+            box-shadow: 0 2px 4px rgba(0, 255, 153, 0.2);
+        }
+        
+        .identity-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* 底部品牌信息 */
+        .brand-footer {
+            padding: 12px;
+            text-align: center;
+            background: var(--light);
+            border-top: 2px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .brand-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent);
+        }
+        
+        .brand-name {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 4px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .brand-name::after {
+            content: '🎯';
+            margin-left: 6px;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        .brand-info {
+            font-size: 10px;
+            color: var(--text-light);
+            line-height: 1.3;
+        }
+        
+        /* 复制提示 */
+        .copy-notice {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, var(--success), var(--success-dark));
+            color: white;
+            padding: 15px 25px;
+            border-radius: var(--radius);
+            font-weight: 900;
+            font-size: 14px;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: popInOut 1.5s ease;
+            box-shadow: 0 8px 20px rgba(0, 255, 153, 0.3);
+        }
+        
+        @keyframes popInOut {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 360px) {
+            .brand-logo {
+                font-size: 18px;
+            }
+            
+            .danma-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .lottery-input input {
+                font-size: 18px;
+                padding: 12px;
+            }
+            
+            .module {
+                padding: 10px;
+            }
+            
+            .number-item {
+                font-size: 16px;
+                padding: 6px 10px;
+                min-width: 45px;
+            }
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--darker);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        /* 无结果状态 */
+        .no-results {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .no-results .icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+            opacity: 0.5;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+        
+        .no-results .message {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+        
+        .no-results .hint {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        
+        /* 错误提示 */
+        .error-message {
+            background: rgba(255, 51, 102, 0.15);
+            color: var(--danger);
+            padding: 10px;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--danger);
+            margin: 8px 0;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .error-message::before {
+            content: '⚠️';
+            font-size: 14px;
+        }
+        
+        /* 成功提示 */
+        .success-message {
+            background: rgba(0, 255, 153, 0.15);
+            color: var(--success);
+            padding: 10px;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--success);
+            margin: 8px 0;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .success-message::before {
+            content: '✅';
+            font-size: 14px;
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 51, 102, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 趣味醒目标题 -->
+    <div class="brand-header">
+        <div class="brand-logo">十方料码缩水工具网</div>
+        <div class="brand-subtitle">专业福彩3D数据分析 | 智能筛选 精准查询</div>
+    </div>
+    
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 功能切换 -->
+        <div class="function-tabs">
+            <div class="tab active" data-tab="shrink">🎯 缩水筛选</div>
+            <div class="tab" data-tab="query">🔍 号码查询</div>
+        </div>
+        
+        <!-- 缩水筛选面板 -->
+        <div class="panel active" id="shrink-panel">
+            <div class="module">
+                <div class="module-title">
+                    <div class="title-icon">①</div>
+                    <span>胆码缩水筛选</span>
+                </div>
+                <div class="module-desc">
+                    选择胆码数字，设置出现次数范围，智能筛选福彩3D号码
+                </div>
+                
+                <!-- 胆码选择 -->
+                <div class="danma-section">
+                    <div class="section-label">选择胆码（可多选）</div>
+                    <div class="danma-grid" id="danma-grid">
+                        <div class="danma-btn" data-digit="0">0</div>
+                        <div class="danma-btn" data-digit="1">1</div>
+                        <div class="danma-btn" data-digit="2">2</div>
+                        <div class="danma-btn" data-digit="3">3</div>
+                        <div class="danma-btn" data-digit="4">4</div>
+                        <div class="danma-btn" data-digit="5">5</div>
+                        <div class="danma-btn" data-digit="6">6</div>
+                        <div class="danma-btn" data-digit="7">7</div>
+                        <div class="danma-btn" data-digit="8">8</div>
+                        <div class="danma-btn" data-digit="9">9</div>
+                    </div>
+                    <div class="selected-danma-display" id="selected-danma-display">
+                        <div class="no-selection">点击上方数字选择胆码</div>
+                    </div>
+                </div>
+                
+                <!-- 次数范围 -->
+                <div class="range-section">
+                    <div class="section-label">出现次数范围</div>
+                    <div class="range-selectors">
+                        <div class="range-select">
+                            <select id="min-count-select">
+                                <option value="0">0次</option>
+                                <option value="1" selected>1次</option>
+                                <option value="2">2次</option>
+                                <option value="3">3次</option>
+                                <option value="4">4次</option>
+                                <option value="5">5次</option>
+                                <option value="6">6次</option>
+                                <option value="7">7次</option>
+                                <option value="8">8次</option>
+                                <option value="9">9次</option>
+                            </select>
+                        </div>
+                        <div class="range-separator">-</div>
+                        <div class="range-select">
+                            <select id="max-count-select">
+                                <option value="0">0次</option>
+                                <option value="1">1次</option>
+                                <option value="2">2次</option>
+                                <option value="3" selected>3次</option>
+                                <option value="4">4次</option>
+                                <option value="5">5次</option>
+                                <option value="6">6次</option>
+                                <option value="7">7次</option>
+                                <option value="8">8次</option>
+                                <option value="9">9次</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 查询模式 -->
+                <div class="range-section">
+                    <div class="section-label">筛选模式</div>
+                    <div class="mode-toggle">
+                        <div class="mode-option selected" id="mode-with-repeat">记重模式</div>
+                        <div class="mode-option" id="mode-without-repeat">不记重模式</div>
+                    </div>
+                </div>
+                
+                <!-- 操作按钮 -->
+                <div class="action-buttons">
+                    <button class="action-btn btn-secondary" id="clear-all">🔄 清空设置</button>
+                    <button class="action-btn btn-primary" id="start-shrink">🚀 开始缩水</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 号码查询面板 -->
+        <div class="panel" id="query-panel">
+            <div class="module">
+                <div class="module-title">
+                    <div class="title-icon">②</div>
+                    <span>号码查询</span>
+                </div>
+                <div class="module-desc">
+                    输入福彩3D号码查询对应的身份标识
+                </div>
+                
+                <!-- 单号查询 -->
+                <div class="range-section">
+                    <div class="section-label">输入3位号码查询</div>
+                    <div class="lottery-input">
+                        <input type="text" id="lottery-number" maxlength="3" placeholder="例如: 123">
+                        <button class="action-btn btn-primary" id="query-single">🔍 查询</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 结果展示区 -->
+        <div class="results-section">
+            <div class="results-header">
+                <div class="results-title">查询结果</div>
+                <div class="results-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="result-count">0</div>
+                        <div class="stat-label">数量</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="query-time">0ms</div>
+                        <div class="stat-label">耗时</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 身份标识显示（号码查询用） -->
+            <div class="identity-display empty" id="identity-display">
+                请输入号码查询对应的身份标识
+            </div>
+            
+            <!-- 提取控制栏 -->
+            <div class="extract-bar" id="extract-bar">
+                <div class="extract-controls">
+                    <button class="extract-btn" id="extract-btn">
+                        <span>📋 提取号码</span>
+                    </button>
+                    <button class="extract-btn copy" id="copy-btn">
+                        <span>📄 复制号码</span>
+                    </button>
+                    <button class="extract-btn clear" id="clear-btn">
+                        <span>🗑️ 清空结果</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 号码显示区 -->
+            <div class="numbers-display empty" id="numbers-display">
+                缩水筛选结果将显示在这里
+            </div>
+        </div>
+        
+        <!-- 底部品牌信息 -->
+        <div class="brand-footer">
+            <div class="brand-name">十方料码</div>
+            <div class="brand-info">专业福彩3D数据分析工具 | 极致优化版 | 仅供学习交流</div>
+        </div>
+        
+        <!-- 复制提示 -->
+        <div class="copy-notice" id="copy-notice">
+            <span>✅</span>
+            <span>已复制到剪贴板</span>
+        </div>
+    </div>
+
+    <script>
+        // 福彩3D数据
+        const lotteryData = [
+            "000000000", "001011310", "002022621", "003033931", "004044241", "005055552", "006066862", "007077172", "008088483", "009099793",
+            "010101220", "011112531", "012123841", "013134151", "014145462", "015156772", "016167082", "017178393", "018189603", "019190913",
+            "020202441", "021213751", "022224061", "023235372", "024246682", "025257992", "026268203", "027279513", "028280823", "029291134",
+            "030303661", "031314971", "032325282", "033336592", "034347802", "035358113", "036369423", "037370733", "038381044", "039392354",
+            "040404881", "041415192", "042426402", "043437712", "044448023", "045459333", "046460643", "047471954", "048482264", "049493574",
+            "050505002", "051516312", "052527622", "053538933", "054549243", "055550553", "056561864", "057572174", "058583484", "059594795",
+            "060606222", "061617532", "062628843", "063639153", "064640463", "065651774", "066662084", "067673394", "068684605", "069695915",
+            "070707442", "071718753", "072729063", "073730373", "074741684", "075752994", "076763204", "077774515", "078785825", "079796135",
+            "080808663", "081819973", "082820283", "083831594", "084842804", "085853114", "086864425", "087875735", "088886045", "089897356",
+            "090909883", "091910193", "092921404", "093932714", "094943024", "095954335", "096965645", "097976955", "098987266", "099998576",
+            "100110130", "101121441", "102132751", "103143061", "104154372", "105165682", "106176992", "107187203", "108198513", "109109823",
+            "110211351", "111222661", "112233971", "113244282", "114255592", "115266802", "116277113", "117288423", "118299733", "119200044",
+            "120312571", "121323881", "122334192", "123345402", "124356712", "125367023", "126378333", "127389643", "128390954", "129301264",
+            "130413791", "131424002", "132435312", "133446622", "134457933", "135468243", "136479553", "137480864", "138491174", "139402484",
+            "140514912", "141525222", "142536532", "143547843", "144558153", "145569463", "146570774", "147581084", "148592394", "149503605",
+            "150615132", "151626442", "152637753", "153648063", "154659373", "155660684", "156671994", "157682204", "158693515", "159604825",
+            "160716352", "161727663", "162738973", "163749283", "164750594", "165761804", "166772114", "167783425", "168794735", "169705045",
+            "170817573", "171828883", "172839193", "173840404", "174851714", "175862024", "176873335", "177884645", "178895955", "179806266",
+            "180918793", "181929003", "182930314", "183941624", "184952934", "185963245", "186974555", "187985865", "188996176", "189907486",
+            "190019913", "191020224", "192031534", "193042844", "194053155", "195064465", "196075775", "197086086", "198097396", "199008606",
+            "200220261", "201231571", "202242881", "203253192", "204264402", "205275712", "206286023", "207297333", "208208643", "209219954",
+            "210321481", "211332791", "212343002", "213354312", "214365622", "215376933", "216387243", "217398553", "218309864", "219310174",
+            "220422601", "221433912", "222444222", "223455532", "224466843", "225477153", "226488463", "227499774", "228400084", "229411394",
+            "230523822", "231534132", "232545442", "233556753", "234567063", "235578373", "236589684", "237590994", "238501204", "239512515",
+            "240624042", "241635352", "242646663", "243657973", "244668283", "245679594", "246680804", "247691114", "248602425", "249613735",
+            "250725262", "251736573", "252747883", "253758193", "254769404", "255770714", "256781024", "257792335", "258703645", "259714955",
+            "260826483", "261837793", "262848003", "263859314", "264860624", "265871934", "266882245", "267893555", "268804865", "269815176",
+            "270927603", "271938913", "272949224", "273950534", "274961844", "275972155", "276983465", "277994775", "278905086", "279916396",
+            "280028823", "281039134", "282040444", "283051754", "284062065", "285073375", "286084685", "287095996", "288006206", "289017516",
+            "290129044", "291130354", "292141664", "293152975", "294163285", "295174595", "296185806", "297196116", "298107426", "299118737",
+            "300330391", "301341601", "302352912", "303363222", "304374532", "305385843", "306396153", "307307463", "308318774", "309329084",
+            "310431511", "311442822", "312453132", "313464442", "314475753", "315486063", "316497373", "317408684", "318419994", "319420204",
+            "320532732", "321543042", "322554352", "323565663", "324576973", "325587283", "326598594", "327509804", "328510114", "329521425",
+            "330633952", "331644262", "332655573", "333666883", "334677193", "335688404", "336699714", "337600024", "338611335", "339622645",
+            "340734172", "341745483", "342756793", "343767003", "344778314", "345789624", "346790934", "347701245", "348712555", "349723865",
+            "350835393", "351846603", "352857913", "353868224", "354879534", "355880844", "356891155", "357802465", "358813775", "359824086",
+            "360936513", "361947823", "362958134", "363969444", "364970754", "365981065", "366992375", "367903685", "368914996", "369925206",
+            "370037733", "371048044", "372059354", "373060664", "374071975", "375082285", "376093595", "377004806", "378015116", "379026426",
+            "380138954", "381149264", "382150574", "383161885", "384172195", "385183405", "386194716", "387105026", "388116336", "389127647",
+            "390239174", "391240484", "392251795", "393262005", "394273315", "395284626", "396295936", "397206246", "398217557", "399228867",
+            "400440421", "401451732", "402462042", "403473352", "404484663", "405495973", "406406283", "407417594", "408428804", "409439114",
+            "410541642", "411552952", "412563262", "413574573", "414585883", "415596193", "416507404", "417518714", "418529024", "419530335",
+            "420642862", "421653172", "422664483", "423675793", "424686003", "425697314", "426608624", "427619934", "428620245", "429631555",
+            "430743082", "431754393", "432765603", "433776913", "434787224", "435798534", "436709844", "437710155", "438721465", "439732775",
+            "440844203", "441855513", "442866823", "443877134", "444888444", "445899754", "446800065", "447811375", "448822685", "449833996",
+            "450945423", "451956733", "452967044", "453978354", "454989664", "455990975", "456901285", "457912595", "458923806", "459934116",
+            "460046643", "461057954", "462068264", "463079574", "464080885", "465091195", "466002405", "467013716", "468024026", "469035336",
+            "470147864", "471158174", "472169484", "473170795", "474181005", "475192315", "476103626", "477114936", "478125246", "479136557",
+            "480248084", "481259394", "482260605", "483271915", "484282225", "485293536", "486204846", "487215156", "488226467", "489237777",
+            "490349204", "491350515", "492361825", "493372135", "494383446", "495394756", "496305066", "497316377", "498327687", "499338997",
+            "500550552", "501561862", "502572172", "503583483", "504594793", "505505003", "506516314", "507527624", "508538934", "509549245",
+            "510651772", "511662082", "512673393", "513684603", "514695913", "515606224", "516617534", "517628844", "518639155", "519640465",
+            "520752992", "521763203", "522774513", "523785823", "524796134", "525707444", "526718754", "527729065", "528730375", "529741685",
+            "530853113", "531864423", "532875733", "533886044", "534897354", "535808664", "536819975", "537820285", "538831595", "539842806",
+            "540954333", "541965643", "542976954", "543987264", "544998574", "545909885", "546910195", "547921405", "548932716", "549943026",
+            "550055553", "551066864", "552077174", "553088484", "554099795", "555000005", "556011315", "557022626", "558033936", "559044246",
+            "560156774", "561167084", "562178394", "563189605", "564190915", "565101225", "566112536", "567123846", "568134156", "569145467",
+            "570257994", "571268204", "572279515", "573280825", "574291135", "575202446", "576213756", "577224066", "578235377", "579246687",
+            "580358114", "581369425", "582370735", "583381045", "584392356", "585303666", "586314976", "587325287", "588336597", "589347807",
+            "590459335", "591460645", "592471955", "593482266", "594493576", "595404886", "596415197", "597426407", "598437717", "599448028",
+            "600660682", "601671992", "602682203", "603693513", "604604823", "605615134", "606626444", "607637754", "608648065", "609659375",
+            "610761802", "611772113", "612783423", "613794733", "614705044", "615716354", "616727664", "617738975", "618749285", "619750595",
+            "620862023", "621873333", "622884643", "623895954", "624806264", "625817574", "626828885", "627839195", "628840405", "629851716",
+            "630963243", "631974553", "632985864", "633996174", "634907484", "635918795", "636929005", "637930315", "638941626", "639952936",
+            "640064463", "641075774", "642086084", "643097394", "644008605", "645019915", "646020225", "647031536", "648042846", "649053156",
+            "650165684", "651176994", "652187204", "653198515", "654109825", "655110135", "656121446", "657132756", "658143066", "659154377",
+            "660266804", "661277114", "662288425", "663299735", "664200045", "665211356", "666222666", "667233976", "668244287", "669255597",
+            "670367024", "671378335", "672389645", "673390955", "674301266", "675312576", "676323886", "677334197", "678345407", "679356717",
+            "680468245", "681479555", "682480865", "683491176", "684402486", "685413796", "686424007", "687435317", "688446627", "689457938",
+            "690569465", "691570775", "692581086", "693592396", "694503606", "695514917", "696525227", "697536537", "698547848", "699558158",
+            "700770712", "701781023", "702792333", "703703643", "704714954", "705725264", "706736574", "707747885", "708758195", "709769405",
+            "710871933", "711882243", "712893553", "713804864", "714815174", "715826484", "716837795", "717848005", "718859315", "719860626",
+            "720972153", "721983463", "722994774", "723905084", "724916394", "725927605", "726938915", "727949225", "728950536", "729961846",
+            "730073373", "731084684", "732095994", "733006204", "734017515", "735028825", "736039135", "737040446", "738051756", "739062066",
+            "740174594", "741185804", "742196114", "743107425", "744118735", "745129045", "746130356", "747141666", "748152976", "749163287",
+            "750275714", "751286024", "752297335", "753208645", "754219955", "755220266", "756231576", "757242886", "758253197", "759264407",
+            "760376934", "761387245", "762398555", "763309865", "764310176", "765321486", "766332796", "767343007", "768354317", "769365627",
+            "770477155", "771488465", "772499775", "773400086", "774411396", "775422606", "776433917", "777444227", "778455537", "779466848",
+            "780578375", "781589685", "782590996", "783501206", "784512516", "785523827", "786534137", "787545447", "788556758", "789567068",
+            "790679595", "791680806", "792691116", "793602426", "794613737", "795624047", "796635357", "797646668", "798657978", "799668288",
+            "800880843", "801891153", "802802463", "803813774", "804824084", "805835394", "806846605", "807857915", "808868225", "809879536",
+            "810981063", "811992373", "812903684", "813914994", "814925204", "815936515", "816947825", "817958135", "818969446", "819970756",
+            "820082283", "821093594", "822004804", "823015114", "824026425", "825037735", "826048045", "827059356", "828060666", "829071976",
+            "830183404", "831194714", "832105024", "833116335", "834127645", "835138955", "836149266", "837150576", "838161886", "839172197",
+            "840284624", "841295934", "842206245", "843217555", "844228865", "845239176", "846240486", "847251796", "848262007", "849273317",
+            "850385844", "851396155", "852307465", "853318775", "854329086", "855330396", "856341606", "857352917", "858363227", "859374537",
+            "860486065", "861497375", "862408685", "863419996", "864420206", "865431516", "866442827", "867453137", "868464447", "869475758",
+            "870587285", "871598595", "872509806", "873510116", "874521426", "875532737", "876543047", "877554357", "878565668", "879576978",
+            "880688405", "881699716", "882600026", "883611336", "884622647", "885633957", "886644267", "887655578", "888666888", "889677198",
+            "890789626", "891790936", "892701246", "893712557", "894723867", "895734177", "896745488", "897756798", "898767008", "899778319",
+            "900990973", "901901283", "902912594", "903923804", "904934114", "905945425", "906956735", "907967045", "908978356", "909989666",
+            "910091193", "911002404", "912013714", "913024024", "914035335", "915046645", "916057955", "917068266", "918079576", "919080886",
+            "920192314", "921103624", "922114934", "923125245", "924136555", "925147865", "926158176", "927169486", "928170796", "929181007",
+            "930293534", "931204844", "932215155", "933226465", "934237775", "935248086", "936259396", "937260606", "938271917", "939282227",
+            "940394754", "941305065", "942316375", "943327685", "944338996", "945349206", "946350516", "947361827", "948372137", "949383447",
+            "950495975", "951406285", "952417595", "953428806", "954439116", "955440426", "956451737", "957462047", "958473357", "959484668",
+            "960596195", "961507405", "962518716", "963529026", "964530336", "965541647", "966552957", "967563267", "968574578", "969585888",
+            "970697315", "971608626", "972619936", "973620246", "974631557", "975642867", "976653177", "977664488", "978675798", "979686008",
+            "980798536", "981709846", "982710156", "983721467", "984732777", "985743087", "986754398", "987765608", "988776918", "989787229",
+            "990899756", "991800066", "992811377", "993822687", "994833997", "995844208", "996855518", "997866828", "998877139", "999888449"
+        ];
+
+        // DOM元素
+        const danmaGrid = document.getElementById('danma-grid');
+        const selectedDanmaDisplay = document.getElementById('selected-danma-display');
+        const minCountSelect = document.getElementById('min-count-select');
+        const maxCountSelect = document.getElementById('max-count-select');
+        const modeWithRepeat = document.getElementById('mode-with-repeat');
+        const modeWithoutRepeat = document.getElementById('mode-without-repeat');
+        const clearAllBtn = document.getElementById('clear-all');
+        const startShrinkBtn = document.getElementById('start-shrink');
+        const lotteryNumberInput = document.getElementById('lottery-number');
+        const querySingleBtn = document.getElementById('query-single');
+        const resultCountEl = document.getElementById('result-count');
+        const queryTimeEl = document.getElementById('query-time');
+        const extractBar = document.getElementById('extract-bar');
+        const extractBtn = document.getElementById('extract-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const numbersDisplay = document.getElementById('numbers-display');
+        const identityDisplay = document.getElementById('identity-display');
+        const copyNotice = document.getElementById('copy-notice');
+        const tabs = document.querySelectorAll('.tab');
+        const panels = document.querySelectorAll('.panel');
+
+        // 当前状态
+        let currentSettings = {
+            selectedDanma: [],
+            mode: 'with-repeat',
+            minCount: 1,
+            maxCount: 3
+        };
+        
+        let currentResults = [];
+        let extractedNumbers = [];
+        let currentMode = 'shrink';
+
+        // 初始化
+        function init() {
+            // 标签页切换
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    currentMode = tabId;
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    panels.forEach(panel => panel.classList.remove('active'));
+                    document.getElementById(`${tabId}-panel`).classList.add('active');
+                    
+                    clearResults();
+                });
+            });
+
+            // 胆码选择
+            danmaGrid.addEventListener('click', function(e) {
+                if (e.target.classList.contains('danma-btn')) {
+                    const digit = e.target.getAttribute('data-digit');
+                    toggleDanma(digit);
+                }
+            });
+
+            // 范围选择器事件
+            minCountSelect.addEventListener('change', function() {
+                currentSettings.minCount = parseInt(this.value);
+                validateRange();
+            });
+            
+            maxCountSelect.addEventListener('change', function() {
+                currentSettings.maxCount = parseInt(this.value);
+                validateRange();
+            });
+
+            // 模式切换
+            modeWithRepeat.addEventListener('click', () => setMode('with-repeat'));
+            modeWithoutRepeat.addEventListener('click', () => setMode('without-repeat'));
+
+            // 按钮事件
+            clearAllBtn.addEventListener('click', clearAll);
+            startShrinkBtn.addEventListener('click', startShrink);
+            querySingleBtn.addEventListener('click', querySingle);
+            extractBtn.addEventListener('click', extractNumbers);
+            copyBtn.addEventListener('click', copyNumbers);
+            clearBtn.addEventListener('click', clearResults);
+
+            // 输入框回车
+            lotteryNumberInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') querySingle();
+            });
+            
+            // 限制号码输入只能数字
+            lotteryNumberInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);
+            });
+
+            // 设置默认值
+            setMode('with-repeat');
+            updateSelectedDanmaDisplay();
+            
+            // 默认选择示例胆码
+            setTimeout(() => {
+                toggleDanma('3');
+                toggleDanma('7');
+            }, 100);
+        }
+
+        // 切换胆码选择
+        function toggleDanma(digit) {
+            const index = currentSettings.selectedDanma.indexOf(digit);
+            
+            if (index === -1) {
+                currentSettings.selectedDanma.push(digit);
+            } else {
+                currentSettings.selectedDanma.splice(index, 1);
+            }
+            
+            updateSelectedDanmaDisplay();
+            
+            // 更新按钮选中状态
+            danmaGrid.querySelectorAll('.danma-btn').forEach(btn => {
+                if (btn.getAttribute('data-digit') === digit) {
+                    if (index === -1) {
+                        btn.classList.add('selected');
+                    } else {
+                        btn.classList.remove('selected');
+                    }
+                }
+            });
+        }
+
+        // 更新已选胆码显示
+        function updateSelectedDanmaDisplay() {
+            const display = selectedDanmaDisplay;
+            
+            if (currentSettings.selectedDanma.length === 0) {
+                display.innerHTML = '<div class="no-selection">点击上方数字选择胆码</div>';
+                return;
+            }
+            
+            const sortedDanma = [...currentSettings.selectedDanma].sort((a, b) => a - b);
+            
+            let html = '';
+            sortedDanma.forEach(digit => {
+                html += `
+                    <div class="selected-danma-item">
+                        ${digit}
+                        <button class="remove-danma" data-digit="${digit}">×</button>
+                    </div>
+                `;
+            });
+            
+            display.innerHTML = html;
+            
+            display.querySelectorAll('.remove-danma').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const digit = this.getAttribute('data-digit');
+                    toggleDanma(digit);
+                });
+            });
+        }
+
+        // 验证范围输入
+        function validateRange() {
+            let min = currentSettings.minCount;
+            let max = currentSettings.maxCount;
+            
+            if (min > max) {
+                max = min;
+                currentSettings.maxCount = max;
+                maxCountSelect.value = max;
+                showMessage(`已自动调整最大值为 ${max}`);
+            }
+        }
+
+        // 设置模式
+        function setMode(mode) {
+            currentSettings.mode = mode;
+            
+            if (mode === 'with-repeat') {
+                modeWithRepeat.classList.add('selected');
+                modeWithoutRepeat.classList.remove('selected');
+            } else {
+                modeWithRepeat.classList.remove('selected');
+                modeWithoutRepeat.classList.add('selected');
+            }
+        }
+
+        // 清空所有
+        function clearAll() {
+            currentSettings.selectedDanma = [];
+            updateSelectedDanmaDisplay();
+            
+            danmaGrid.querySelectorAll('.danma-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            minCountSelect.value = 1;
+            maxCountSelect.value = 3;
+            currentSettings.minCount = 1;
+            currentSettings.maxCount = 3;
+            
+            clearResults();
+            
+            showSuccess('设置已清空');
+        }
+
+        // 开始缩水
+        function startShrink() {
+            if (currentSettings.selectedDanma.length === 0) {
+                showError('请选择至少一个胆码');
+                return;
+            }
+            
+            validateRange();
+            
+            // 显示加载状态
+            const originalText = startShrinkBtn.innerHTML;
+            startShrinkBtn.innerHTML = '<span class="loading"></span> 计算中...';
+            startShrinkBtn.disabled = true;
+            
+            setTimeout(() => {
+                const startTime = performance.now();
+                currentResults = performShrink();
+                const endTime = performance.now();
+                
+                // 恢复按钮状态
+                startShrinkBtn.innerHTML = originalText;
+                startShrinkBtn.disabled = false;
+                
+                // 显示结果
+                displayResults(currentResults, endTime - startTime);
+            }, 50);
+        }
+
+        // 执行缩水逻辑
+        function performShrink() {
+            const { selectedDanma, mode, minCount, maxCount } = currentSettings;
+            const results = [];
+            
+            const danmaDigits = selectedDanma.map(d => parseInt(d));
+            
+            for (let i = 0; i < lotteryData.length; i++) {
+                const identityCode = lotteryData[i];
+                const lotteryNumber = identityCode.substring(0, 3);
+                
+                let matchCount = 0;
+                
+                if (mode === 'with-repeat') {
+                    for (const digit of identityCode) {
+                        if (danmaDigits.includes(parseInt(digit))) {
+                            matchCount++;
+                        }
+                    }
+                } else {
+                    const uniqueDigits = [...new Set(identityCode.split('').map(d => parseInt(d)))];
+                    for (const danmaDigit of danmaDigits) {
+                        if (uniqueDigits.includes(danmaDigit)) {
+                            matchCount++;
+                        }
+                    }
+                }
+                
+                if (matchCount >= minCount && matchCount <= maxCount) {
+                    results.push({
+                        index: i,
+                        number: lotteryNumber,
+                        identity: identityCode,
+                        count: matchCount
+                    });
+                }
+            }
+            
+            return results;
+        }
+
+        // 单号查询
+        function querySingle() {
+            const number = lotteryNumberInput.value.trim();
+            
+            if (!number || !/^\d{3}$/.test(number)) {
+                showError('请输入有效的3位福彩3D号码');
+                return;
+            }
+            
+            // 显示加载状态
+            const originalText = querySingleBtn.innerHTML;
+            querySingleBtn.innerHTML = '<span class="loading"></span> 查询中...';
+            querySingleBtn.disabled = true;
+            
+            setTimeout(() => {
+                const startTime = performance.now();
+                const result = performQuery(number);
+                const endTime = performance.now();
+                
+                // 恢复按钮状态
+                querySingleBtn.innerHTML = originalText;
+                querySingleBtn.disabled = false;
+                
+                // 显示结果
+                displayQueryResult(result, endTime - startTime);
+            }, 50);
+        }
+
+        // 执行号码查询
+        function performQuery(number) {
+            for (let i = 0; i < lotteryData.length; i++) {
+                const identityCode = lotteryData[i];
+                const lotteryNumber = identityCode.substring(0, 3);
+                
+                if (lotteryNumber === number) {
+                    return {
+                        index: i,
+                        number: lotteryNumber,
+                        identity: identityCode
+                    };
+                }
+            }
+            return null;
+        }
+
+        // 显示查询结果
+        function displayQueryResult(result, queryTime = 0) {
+            resultCountEl.textContent = result ? 1 : 0;
+            queryTimeEl.textContent = `${Math.round(queryTime)}ms`;
+            
+            extractBar.classList.remove('show');
+            
+            if (!result) {
+                identityDisplay.innerHTML = `
+                    <div class="no-results">
+                        <div class="icon">🔍</div>
+                        <div class="message">未找到对应的身份标识</div>
+                    </div>
+                `;
+                identityDisplay.classList.add('empty');
+                numbersDisplay.classList.add('empty');
+                numbersDisplay.innerHTML = '缩水筛选结果将显示在这里';
+                return;
+            }
+            
+            identityDisplay.innerHTML = `
+                <div class="identity-item">${result.identity}</div>
+            `;
+            identityDisplay.classList.remove('empty');
+            
+            numbersDisplay.classList.add('empty');
+            numbersDisplay.innerHTML = '缩水筛选结果将显示在这里';
+            
+            setTimeout(() => {
+                document.querySelector('.results-section').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+        }
+
+        // 显示缩水结果 - 修改为空格间隔显示
+        function displayResults(results, queryTime = 0) {
+            resultCountEl.textContent = results.length;
+            queryTimeEl.textContent = `${Math.round(queryTime)}ms`;
+            
+            if (results.length === 0) {
+                numbersDisplay.innerHTML = `
+                    <div class="no-results">
+                        <div class="icon">🔍</div>
+                        <div class="message">未找到匹配的号码</div>
+                        <div class="hint">请调整筛选条件后重试</div>
+                    </div>
+                `;
+                numbersDisplay.classList.add('empty');
+                extractBar.classList.remove('show');
+                identityDisplay.classList.add('empty');
+                identityDisplay.innerHTML = '身份标识查询结果将显示在这里';
+                return;
+            }
+            
+            identityDisplay.classList.add('empty');
+            identityDisplay.innerHTML = '身份标识查询结果将显示在这里';
+            
+            extractBar.classList.add('show');
+            
+            // 显示号码（空格间隔）
+            showNumbers(results.map(r => r.number));
+            
+            setTimeout(() => {
+                document.querySelector('.results-section').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+        }
+
+        // 显示号码 - 改为空格间隔
+        function showNumbers(numbers) {
+            // 去重排序
+            const uniqueNumbers = [...new Set(numbers)].sort((a, b) => parseInt(a) - parseInt(b));
+            
+            numbersDisplay.classList.remove('empty');
+            
+            if (uniqueNumbers.length === 0) {
+                numbersDisplay.innerHTML = '<div class="no-results">没有号码可显示</div>';
+                return;
+            }
+            
+            // 创建带空格间隔的号码显示
+            let html = '<div class="numbers-content">';
+            
+            uniqueNumbers.forEach(number => {
+                html += `<div class="number-item">${number}</div>`;
+            });
+            
+            html += '</div>';
+            numbersDisplay.innerHTML = html;
+            
+            // 保存提取的号码
+            extractedNumbers = uniqueNumbers;
+            
+            // 显示消息
+            showSuccess(`找到 ${currentResults.length} 条记录，去重后 ${uniqueNumbers.length} 个号码`);
+        }
+
+        // 提取号码
+        function extractNumbers() {
+            if (currentResults.length === 0) {
+                showError('没有可提取的号码');
+                return;
+            }
+            
+            const numbers = currentResults.map(r => r.number);
+            showNumbers(numbers);
+            showSuccess('已重新提取号码');
+        }
+
+        // 复制号码 - 改为空格间隔
+        function copyNumbers() {
+            if (extractedNumbers.length === 0) {
+                showError('没有可复制的号码');
+                return;
+            }
+            
+            // 构建文本 - 用空格间隔
+            const text = extractedNumbers.join(' ');
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text)
+                    .then(() => showCopyNotice())
+                    .catch(() => fallbackCopy(text));
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        // 兼容性复制
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopyNotice();
+                } else {
+                    showError('复制失败，请手动复制');
+                }
+            } catch (err) {
+                showError('复制失败，请手动复制');
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        // 显示复制提示
+        function showCopyNotice() {
+            copyNotice.style.display = 'flex';
+            setTimeout(() => {
+                copyNotice.style.display = 'none';
+            }, 1500);
+        }
+
+        // 清空结果
+        function clearResults() {
+            currentResults = [];
+            extractedNumbers = [];
+            resultCountEl.textContent = '0';
+            queryTimeEl.textContent = '0ms';
+            numbersDisplay.innerHTML = '查询结果将显示在这里';
+            numbersDisplay.classList.add('empty');
+            identityDisplay.innerHTML = '十方料码 QQ:921913231';
+            identityDisplay.classList.add('empty');
+            extractBar.classList.remove('show');
+            
+            if (currentMode === 'query') {
+                lotteryNumberInput.value = '';
+            }
+        }
+
+        // 显示错误
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+
+        // 显示成功
+        function showSuccess(message) {
+            showMessage(message, 'success');
+        }
+
+        // 显示消息
+        function showMessage(message, type = 'info') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+            messageDiv.textContent = message;
+            
+            const resultsSection = document.querySelector('.results-section');
+            const extractBar = document.getElementById('extract-bar');
+            
+            if (extractBar.classList.contains('show')) {
+                resultsSection.insertBefore(messageDiv, extractBar);
+            } else {
+                const resultsHeader = resultsSection.querySelector('.results-header');
+                resultsSection.insertBefore(messageDiv, resultsHeader.nextSibling);
+            }
+            
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.parentNode.removeChild(messageDiv);
+                }
+            }, 3000);
+        }
+
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // 防止页面缩放
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+        
+        let lastTouch = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouch < 300) e.preventDefault();
+            lastTouch = now;
+        }, false);
+    </script>
+</body>
+</html>

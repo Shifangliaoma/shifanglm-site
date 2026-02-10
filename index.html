@@ -784,11 +784,20 @@
                         <div style="border: 2px dashed rgba(255, 255, 255, 0.2); padding: 30px; text-align: center; border-radius: 8px; cursor: pointer;" id="beehiveDropArea">
                             <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--beehive-color); margin-bottom: 15px;"></i>
                             <p>点击选择或拖拽图片到此区域</p>
-                            <p style="font-size: 0.9rem; color: #aaa; margin-top: 10px;">支持 JPG, PNG, GIF 格式，最大5MB</p>
+                            <p style="font-size: 0.9rem; color: #aaa; margin-top: 10px;">支持 JPG, PNG, GIF 格式，最大10MB</p>
                             <input type="file" id="beehiveFile" accept="image/*" style="display: none;">
                         </div>
                         <div id="beehivePreview" style="margin-top: 15px; display: none;">
                             <img id="beehivePreviewImage" style="max-width: 200px; border-radius: 8px; border: 2px solid var(--beehive-color);">
+                        </div>
+                    </div>
+                    <div class="progress-bar" style="margin: 15px 0; display: none;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>上传进度</span>
+                            <span id="beehiveProgressPercent">0%</span>
+                        </div>
+                        <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                            <div id="beehiveProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--beehive-color), var(--accent)); transition: width 0.3s;"></div>
                         </div>
                     </div>
                     <button class="btn btn-primary" id="submitBeehiveBtn">
@@ -829,11 +838,20 @@
                         <div style="border: 2px dashed rgba(255, 255, 255, 0.2); padding: 30px; text-align: center; border-radius: 8px; cursor: pointer;" id="pseudoDropArea">
                             <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--pseudo-color); margin-bottom: 15px;"></i>
                             <p>点击选择或拖拽图片到此区域</p>
-                            <p style="font-size: 0.9rem; color: #aaa; margin-top: 10px;">支持 JPG, PNG, GIF 格式，最大5MB</p>
+                            <p style="font-size: 0.9rem; color: #aaa; margin-top: 10px;">支持 JPG, PNG, GIF 格式，最大10MB</p>
                             <input type="file" id="pseudoFile" accept="image/*" style="display: none;">
                         </div>
                         <div id="pseudoPreview" style="margin-top: 15px; display: none;">
                             <img id="pseudoPreviewImage" style="max-width: 200px; border-radius: 8px; border: 2px solid var(--pseudo-color);">
+                        </div>
+                    </div>
+                    <div class="progress-bar" style="margin: 15px 0; display: none;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>上传进度</span>
+                            <span id="pseudoProgressPercent">0%</span>
+                        </div>
+                        <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                            <div id="pseudoProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--pseudo-color), var(--accent)); transition: width 0.3s;"></div>
                         </div>
                     </div>
                     <button class="btn btn-secondary" id="submitPseudoBtn">
@@ -1241,9 +1259,9 @@
                 return;
             }
             
-            // 检查文件大小（5MB限制）
-            if (file.size > 5 * 1024 * 1024) {
-                alert('图片大小不能超过5MB');
+            // 检查文件大小（10MB限制）
+            if (file.size > 10 * 1024 * 1024) {
+                alert('图片大小不能超过10MB');
                 return;
             }
             
@@ -1269,7 +1287,7 @@
             await uploadImage('pseudo');
         });
         
-        // 上传图片函数
+        // 上传图片函数 - 修复版本
         async function uploadImage(category) {
             if (!isAdmin) {
                 alert('只有管理员可以上传图片');
@@ -1279,6 +1297,8 @@
             const titleId = category === 'beehive' ? 'beehiveTitle' : 'pseudoTitle';
             const fileId = category === 'beehive' ? 'beehiveFile' : 'pseudoFile';
             const titleErrorId = category === 'beehive' ? 'beehiveTitleError' : 'pseudoTitleError';
+            const progressBarId = category === 'beehive' ? 'beehiveProgressBar' : 'pseudoProgressBar';
+            const progressPercentId = category === 'beehive' ? 'beehiveProgressPercent' : 'pseudoProgressPercent';
             
             const title = document.getElementById(titleId).value.trim();
             const fileInput = document.getElementById(fileId);
@@ -1297,21 +1317,44 @@
             }
             
             try {
-                // 显示加载状态
+                // 显示加载状态和进度条
                 const btn = category === 'beehive' ? document.getElementById('submitBeehiveBtn') : document.getElementById('submitPseudoBtn');
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上传中...';
                 btn.disabled = true;
                 
+                // 显示进度条
+                const progressBar = document.getElementById(progressBarId);
+                const progressPercent = document.getElementById(progressPercentId);
+                const progressContainer = progressBar.parentElement.parentElement;
+                progressContainer.style.display = 'block';
+                
+                // 创建FormData对象（更可靠的传输方式）
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                // 生成唯一的文件ID
+                const uniqueFileId = Appwrite.ID.unique();
+                
+                // 使用更可靠的方式上传文件
+                console.log('开始上传文件:', file.name, '大小:', file.size, '类型:', file.type);
+                
                 // 上传图片到Appwrite存储
-                const fileId = Appwrite.ID.unique();
                 const response = await storage.createFile(
                     BUCKET_ID,
-                    fileId,
-                    file
+                    uniqueFileId,
+                    file,
+                    (progress) => {
+                        // 更新进度条
+                        const percent = Math.round((progress.loaded / progress.total) * 100);
+                        progressBar.style.width = percent + '%';
+                        progressPercent.textContent = percent + '%';
+                    }
                 );
                 
-                // 获取图片URL
+                console.log('文件上传成功:', response);
+                
+                // 获取图片URL - 使用正确的方式构建URL
                 const imageUrl = `https://fra.cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${response.$id}/view?project=6929b5bb003d77ecd385`;
                 
                 // 保存图片信息到数据库
@@ -1343,6 +1386,11 @@
                     document.getElementById('pseudoPreview').style.display = 'none';
                 }
                 
+                // 隐藏进度条
+                progressContainer.style.display = 'none';
+                progressBar.style.width = '0%';
+                progressPercent.textContent = '0%';
+                
                 // 重新加载图片列表
                 if (document.getElementById('beehive').classList.contains('active')) {
                     loadBeehiveImages();
@@ -1354,7 +1402,26 @@
                 
             } catch (error) {
                 console.error('上传图片失败:', error);
-                alert('上传图片失败，请稍后重试');
+                
+                // 显示详细的错误信息
+                let errorMessage = '上传图片失败，请稍后重试';
+                if (error.message.includes('413')) {
+                    errorMessage = '文件太大，请压缩图片或选择较小的文件';
+                } else if (error.message.includes('415')) {
+                    errorMessage = '不支持的图片格式，请使用JPG、PNG或GIF格式';
+                } else if (error.message.includes('network')) {
+                    errorMessage = '网络错误，请检查网络连接';
+                } else if (error.message.includes('permission')) {
+                    errorMessage = '权限不足，请检查存储桶权限设置';
+                }
+                
+                alert(errorMessage);
+                
+                // 隐藏进度条
+                const progressBar = document.getElementById(category === 'beehive' ? 'beehiveProgressBar' : 'pseudoProgressBar');
+                const progressContainer = progressBar.parentElement.parentElement;
+                progressContainer.style.display = 'none';
+                
             } finally {
                 // 恢复按钮状态
                 const btn = category === 'beehive' ? document.getElementById('submitBeehiveBtn') : document.getElementById('submitPseudoBtn');
@@ -1842,8 +1909,6 @@
                     permissionManagementLink.style.display = 'block';
                     uploadBeehiveBtn.style.display = 'flex';
                     uploadPseudoBtn.style.display = 'flex';
-                    beehiveUploadArea.style.display = 'block';
-                    pseudoUploadArea.style.display = 'block';
                     
                     // 为管理员显示特殊徽章
                     const badge = document.getElementById('permissionBadge');

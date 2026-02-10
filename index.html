@@ -692,30 +692,6 @@
                     </button>
                 </div>
                 
-                <!-- 上传区域 -->
-                <div id="beehiveUploadArea" class="upload-area" style="display: none;">
-                    <h3 style="color: var(--beehive-color); margin-bottom: 15px;">上传蜂巢图</h3>
-                    <div class="form-group">
-                        <label class="form-label">图片标题（格式：期号 开奖号码）</label>
-                        <input type="text" id="beehiveTitle" class="form-control" placeholder="例如：26040期 425">
-                        <div class="error-message" id="beehiveTitleError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">图片链接</label>
-                        <input type="url" id="beehiveUrl" class="form-control" placeholder="请输入图片的在线链接（如Imgur、sm.ms等）">
-                        <div class="error-message" id="beehiveUrlError"></div>
-                        <p style="font-size: 0.9rem; color: #aaa; margin-top: 5px;">
-                            推荐使用免费图床：<br>
-                            1. <a href="https://imgbb.com/" target="_blank" style="color: var(--accent);">ImgBB</a> - 免费图片托管<br>
-                            2. <a href="https://sm.ms/" target="_blank" style="color: var(--accent);">SM.MS</a> - 免费图床<br>
-                            3. <a href="https://imgur.com/" target="_blank" style="color: var(--accent);">Imgur</a> - 国外知名图床
-                        </p>
-                    </div>
-                    <button class="btn btn-primary" id="submitBeehiveBtn">
-                        <i class="fas fa-check"></i> 保存图片
-                    </button>
-                </div>
-                
                 <!-- 蜂巢图列表 -->
                 <div id="beehiveContent">
                     <div class="loading">
@@ -733,30 +709,6 @@
                     <h2 class="card-title"><i class="fas fa-signature"></i> 伪序图签</h2>
                     <button class="btn btn-secondary" id="uploadPseudoBtn">
                         <i class="fas fa-upload"></i> 上传图签
-                    </button>
-                </div>
-                
-                <!-- 上传区域 -->
-                <div id="pseudoUploadArea" class="upload-area" style="display: none;">
-                    <h3 style="color: var(--pseudo-color); margin-bottom: 15px;">上传伪序图签</h3>
-                    <div class="form-group">
-                        <label class="form-label">图片标题（格式：期号 开奖号码）</label>
-                        <input type="text" id="pseudoTitle" class="form-control" placeholder="例如：26040期 425">
-                        <div class="error-message" id="pseudoTitleError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">图片链接</label>
-                        <input type="url" id="pseudoUrl" class="form-control" placeholder="请输入图片的在线链接（如Imgur、sm.ms等）">
-                        <div class="error-message" id="pseudoUrlError"></div>
-                        <p style="font-size: 0.9rem; color: #aaa; margin-top: 5px;">
-                            推荐使用免费图床：<br>
-                            1. <a href="https://imgbb.com/" target="_blank" style="color: var(--accent);">ImgBB</a> - 免费图片托管<br>
-                            2. <a href="https://sm.ms/" target="_blank" style="color: var(--accent);">SM.MS</a> - 免费图床<br>
-                            3. <a href="https://imgur.com/" target="_blank" style="color: var(--accent);">Imgur</a> - 国外知名图床
-                        </p>
-                    </div>
-                    <button class="btn btn-secondary" id="submitPseudoBtn">
-                        <i class="fas fa-check"></i> 保存图片
                     </button>
                 </div>
                 
@@ -811,40 +763,35 @@
         </div>
     </div>
     
-    <!-- 图片链接模态框 -->
-    <div class="modal" id="linkModal">
+    <!-- 上传图片模态框 -->
+    <div class="modal" id="uploadModal">
         <div class="modal-content">
-            <span class="close-btn" id="linkClose">&times;</span>
-            <h3 class="modal-title">上传图片指南</h3>
+            <span class="close-btn" id="uploadClose">&times;</span>
+            <h3 class="modal-title" id="uploadModalTitle">上传图片</h3>
             <div class="form-group">
-                <h4 style="color: var(--accent); margin-bottom: 15px;">第一步：上传图片到图床</h4>
-                <p>由于GitHub Pages是静态网站，无法直接存储图片，请先将图片上传到免费图床：</p>
-                <ol style="margin-left: 20px; margin-top: 10px; margin-bottom: 20px;">
-                    <li>访问 <a href="https://imgbb.com/" target="_blank" style="color: var(--accent);">ImgBB.com</a></li>
-                    <li>点击"Start uploading"按钮</li>
-                    <li>选择您的图片文件</li>
-                    <li>上传后复制图片链接（选择"Direct Link"）</li>
-                </ol>
-                
-                <h4 style="color: var(--accent); margin-bottom: 15px;">第二步：填写图片信息</h4>
-                <div class="form-group">
-                    <label class="form-label">图片标题</label>
-                    <input type="text" id="linkTitle" class="form-control" placeholder="例如：26040期 425">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">图片链接</label>
-                    <input type="url" id="linkUrl" class="form-control" placeholder="粘贴从图床复制的图片链接">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">图片分类</label>
-                    <select id="linkCategory" class="form-control">
-                        <option value="beehive">蜂巢图</option>
-                        <option value="pseudo">伪序图签</option>
-                    </select>
+                <label class="form-label">图片标题（格式：期号 开奖号码）</label>
+                <input type="text" id="uploadTitle" class="form-control" placeholder="例如：26040期 425">
+                <div class="error-message" id="uploadTitleError"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">图片链接</label>
+                <input type="url" id="uploadUrl" class="form-control" placeholder="请输入图片的在线链接（如Imgur、sm.ms等）">
+                <div class="error-message" id="uploadUrlError"></div>
+                <div style="margin-top: 10px; padding: 10px; background: rgba(255, 209, 102, 0.1); border-radius: 8px;">
+                    <p style="font-size: 0.9rem; margin-bottom: 8px; color: var(--accent);">
+                        <i class="fas fa-lightbulb"></i> 如何使用免费图床：
+                    </p>
+                    <ol style="font-size: 0.85rem; margin-left: 20px; color: #aaa;">
+                        <li>访问 <a href="https://imgbb.com/" target="_blank" style="color: var(--accent); text-decoration: underline;">ImgBB.com</a></li>
+                        <li>点击"Start uploading"按钮上传图片</li>
+                        <li>上传后复制"Direct Link"链接</li>
+                        <li>将链接粘贴到上面的输入框中</li>
+                    </ol>
                 </div>
             </div>
-            <button class="btn btn-primary btn-block" id="saveLinkBtn">
-                <i class="fas fa-save"></i> 保存图片信息
+            <input type="hidden" id="uploadCategory" value="">
+            <button class="btn btn-primary btn-block" id="saveUploadBtn">
+                <i class="fas fa-save"></i> 保存图片
             </button>
         </div>
     </div>
@@ -886,14 +833,14 @@
         // DOM元素
         const uploadBeehiveBtn = document.getElementById('uploadBeehiveBtn');
         const uploadPseudoBtn = document.getElementById('uploadPseudoBtn');
-        const beehiveUploadArea = document.getElementById('beehiveUploadArea');
-        const pseudoUploadArea = document.getElementById('pseudoUploadArea');
         const categoryTabs = document.querySelectorAll('.category-tab');
         const previewModal = document.getElementById('previewModal');
         const closePreview = document.getElementById('closePreview');
         const previewImage = document.getElementById('previewImage');
-        const linkModal = document.getElementById('linkModal');
-        const linkClose = document.getElementById('linkClose');
+        const uploadModal = document.getElementById('uploadModal');
+        const uploadClose = document.getElementById('uploadClose');
+        const uploadModalTitle = document.getElementById('uploadModalTitle');
+        const uploadCategory = document.getElementById('uploadCategory');
         
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -912,10 +859,6 @@
                     section.classList.remove('active');
                 });
                 document.getElementById(sectionId).classList.add('active');
-                
-                // 隐藏上传区域
-                beehiveUploadArea.style.display = 'none';
-                pseudoUploadArea.style.display = 'none';
                 
                 // 加载对应内容
                 if (sectionId === 'beehive') {
@@ -945,46 +888,87 @@
         
         // 上传蜂巢图按钮
         uploadBeehiveBtn.addEventListener('click', function() {
-            // 显示图片链接模态框
-            linkModal.style.display = 'flex';
-            document.getElementById('linkCategory').value = 'beehive';
+            // 显示上传模态框
+            uploadModalTitle.textContent = '上传蜂巢图';
+            uploadCategory.value = 'beehive';
+            uploadModal.style.display = 'flex';
+            
+            // 清空表单
+            document.getElementById('uploadTitle').value = '';
+            document.getElementById('uploadUrl').value = '';
+            clearErrors();
         });
         
         // 上传伪序图签按钮
         uploadPseudoBtn.addEventListener('click', function() {
-            // 显示图片链接模态框
-            linkModal.style.display = 'flex';
-            document.getElementById('linkCategory').value = 'pseudo';
+            // 显示上传模态框
+            uploadModalTitle.textContent = '上传伪序图签';
+            uploadCategory.value = 'pseudo';
+            uploadModal.style.display = 'flex';
+            
+            // 清空表单
+            document.getElementById('uploadTitle').value = '';
+            document.getElementById('uploadUrl').value = '';
+            clearErrors();
         });
         
-        // 保存图片链接
-        document.getElementById('saveLinkBtn').addEventListener('click', function() {
-            const title = document.getElementById('linkTitle').value.trim();
-            const url = document.getElementById('linkUrl').value.trim();
-            const category = document.getElementById('linkCategory').value;
+        // 保存上传的图片
+        document.getElementById('saveUploadBtn').addEventListener('click', function() {
+            saveImage();
+        });
+        
+        // 关闭上传模态框
+        uploadClose.addEventListener('click', function() {
+            uploadModal.style.display = 'none';
+        });
+        
+        // 清除错误提示
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+        }
+        
+        // 显示错误提示
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+        
+        // 保存图片
+        function saveImage() {
+            const title = document.getElementById('uploadTitle').value.trim();
+            const url = document.getElementById('uploadUrl').value.trim();
+            const category = document.getElementById('uploadCategory').value;
+            
+            clearErrors();
             
             // 验证输入
-            if (!title) {
-                alert('请输入图片标题');
-                return;
-            }
+            let hasError = false;
             
-            // 验证标题格式
-            const titlePattern = /^\d{5}期 \d{3}$/;
-            if (!titlePattern.test(title)) {
-                alert('标题格式错误，正确格式如：26040期 425');
-                return;
+            if (!title) {
+                showError('uploadTitleError', '请输入图片标题');
+                hasError = true;
+            } else {
+                // 验证标题格式
+                const titlePattern = /^\d{5}期 \d{3}$/;
+                if (!titlePattern.test(title)) {
+                    showError('uploadTitleError', '标题格式错误，正确格式如：26040期 425');
+                    hasError = true;
+                }
             }
             
             if (!url) {
-                alert('请输入图片链接');
-                return;
+                showError('uploadUrlError', '请输入图片链接');
+                hasError = true;
+            } else if (!isValidUrl(url)) {
+                showError('uploadUrlError', '请输入有效的图片链接');
+                hasError = true;
             }
             
-            if (!isValidUrl(url)) {
-                alert('请输入有效的图片链接');
-                return;
-            }
+            if (hasError) return;
             
             // 创建图片对象
             const image = {
@@ -996,18 +980,14 @@
                 isNew: true
             };
             
-            // 添加到图片数组
+            // 添加到图片数组（最新的在前面）
             images.unshift(image);
             
             // 保存到本地存储
             localStorage.setItem('shifanglm_images', JSON.stringify(images));
             
             // 关闭模态框
-            linkModal.style.display = 'none';
-            
-            // 清空表单
-            document.getElementById('linkTitle').value = '';
-            document.getElementById('linkUrl').value = '';
+            uploadModal.style.display = 'none';
             
             // 显示成功消息
             alert('图片保存成功！');
@@ -1020,12 +1000,7 @@
             } else if (document.getElementById('all-images').classList.contains('active')) {
                 loadAllImages();
             }
-        });
-        
-        // 关闭链接模态框
-        linkClose.addEventListener('click', function() {
-            linkModal.style.display = 'none';
-        });
+        }
         
         // 加载蜂巢图
         function loadBeehiveImages() {
@@ -1057,7 +1032,7 @@
                 imagesHTML += `
                     <div class="image-card ${isNew ? 'new' : ''}" data-image-id="${image.id}">
                         <div class="image-container">
-                            <img src="${image.url}" alt="${image.title}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTJlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNnB4IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+5byf5aeL5Zu+PC90ZXh0Pjwvc3ZnPg=='">
+                            <img src="${image.url}" alt="${image.title}" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTJlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNnB4IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+5byf5aeL5Zu+PC90ZXh0Pjwvc3ZnPg==';">
                         </div>
                         <div class="image-info">
                             <h3 class="image-title">${image.title}</h3>
@@ -1136,7 +1111,7 @@
                 imagesHTML += `
                     <div class="image-card ${isNew ? 'new' : ''}" data-image-id="${image.id}">
                         <div class="image-container">
-                            <img src="${image.url}" alt="${image.title}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTJlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNnB4IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+5byf5aeL5Zu+PC90ZXh0Pjwvc3ZnPg=='">
+                            <img src="${image.url}" alt="${image.title}" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTJlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNnB4IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+5byf5aeL5Zu+PC90ZXh0Pjwvc3ZnPg==';">
                         </div>
                         <div class="image-info">
                             <h3 class="image-title">${image.title}</h3>
@@ -1220,7 +1195,7 @@
                 imagesHTML += `
                     <div class="image-card ${isNew ? 'new' : ''}" data-image-id="${image.id}">
                         <div class="image-container">
-                            <img src="${image.url}" alt="${image.title}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTJlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNnB4IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+5byf5aeL5Zu+PC90ZXh0Pjwvc3ZnPg=='">
+                            <img src="${image.url}" alt="${image.title}" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTJlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNnB4IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+5byf5aeL5Zu+PC90ZXh0Pjwvc3ZnPg==';">
                         </div>
                         <div class="image-info">
                             <h3 class="image-title">${image.title}</h3>
@@ -1303,8 +1278,8 @@
             if (event.target === previewModal) {
                 previewModal.classList.remove('active');
             }
-            if (event.target === linkModal) {
-                linkModal.style.display = 'none';
+            if (event.target === uploadModal) {
+                uploadModal.style.display = 'none';
             }
         };
         
@@ -1333,6 +1308,10 @@
                 }
             });
             localStorage.setItem('shifanglm_images', JSON.stringify(images));
+            
+            // 确保上传按钮可见
+            document.getElementById('uploadBeehiveBtn').style.display = 'flex';
+            document.getElementById('uploadPseudoBtn').style.display = 'flex';
         });
     </script>
 </body>

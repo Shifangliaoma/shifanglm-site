@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>十方料码 - 福彩3D蜂巢图与伪序图签分析平台</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
     <style>
         :root {
             --primary: #ff6b35;
@@ -103,42 +102,6 @@
         
         .nav-link:hover::after, .nav-link.active::after {
             width: 100%;
-        }
-        
-        .auth-btns {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .permission-badge {
-            background: rgba(255, 107, 53, 0.2);
-            border: 1px solid var(--beehive-color);
-            border-radius: 15px;
-            padding: 5px 12px;
-            font-size: 0.8rem;
-            color: var(--beehive-color);
-        }
-        
-        .admin-badge {
-            background: rgba(78, 205, 196, 0.2);
-            border: 1px solid var(--pseudo-color);
-            border-radius: 15px;
-            padding: 5px 12px;
-            font-size: 0.8rem;
-            color: var(--pseudo-color);
-        }
-        
-        .countdown {
-            color: var(--accent);
-            font-weight: 600;
-            margin-left: 10px;
         }
         
         /* 主容器 */
@@ -296,7 +259,7 @@
         /* 图片网格 */
         .image-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 25px;
             margin-top: 20px;
         }
@@ -330,7 +293,7 @@
         }
         
         .image-container {
-            height: 200px;
+            height: 220px;
             overflow: hidden;
             position: relative;
         }
@@ -377,6 +340,7 @@
             border-radius: 15px;
             font-size: 0.8rem;
             font-weight: 600;
+            margin-bottom: 8px;
         }
         
         .category-beehive {
@@ -408,21 +372,6 @@
             background: rgba(255, 107, 53, 0.1);
         }
         
-        .upload-btn {
-            display: inline-block;
-            padding: 12px 25px;
-            background: linear-gradient(135deg, var(--beehive-color), var(--pseudo-color));
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .upload-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
-        }
-        
         /* 预览模态框 */
         .preview-modal {
             position: fixed;
@@ -430,7 +379,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             z-index: 1000;
             display: none;
             align-items: center;
@@ -634,14 +583,6 @@
             to { transform: rotate(360deg); }
         }
         
-        /* 权限管理区域 */
-        .permission-management {
-            background: rgba(30, 30, 50, 0.7);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        
         /* 底部信息 */
         footer {
             text-align: center;
@@ -677,11 +618,6 @@
             .category-tabs {
                 flex-direction: column;
             }
-            
-            .auth-btns {
-                flex-direction: column;
-                gap: 10px;
-            }
         }
     </style>
 </head>
@@ -700,21 +636,6 @@
             <a href="#" class="nav-link" data-section="beehive">蜂巢图</a>
             <a href="#" class="nav-link" data-section="pseudo">伪序图签</a>
             <a href="#" class="nav-link" data-section="all-images">全部图库</a>
-            <a href="#" class="nav-link" id="permissionManagementLink" style="display: none;">权限管理</a>
-        </div>
-        <div class="auth-btns">
-            <div id="userInfo" style="display: none;">
-                <div class="user-info">
-                    <span id="userEmail"></span>
-                    <div id="permissionBadge" class="permission-badge" style="display: none;">
-                        <span id="permissionType"></span>
-                        <span id="countdown" class="countdown"></span>
-                    </div>
-                </div>
-                <button class="btn btn-outline" id="logoutBtn">退出登录</button>
-            </div>
-            <button class="btn btn-outline" id="loginBtn">登录</button>
-            <button class="btn btn-primary" id="registerBtn">注册</button>
         </div>
     </nav>
     
@@ -766,42 +687,32 @@
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title"><i class="fas fa-honeycomb"></i> 福彩3D蜂巢图</h2>
-                    <button class="btn btn-primary" id="uploadBeehiveBtn" style="display: none;">
+                    <button class="btn btn-primary" id="uploadBeehiveBtn">
                         <i class="fas fa-upload"></i> 上传蜂巢图
                     </button>
                 </div>
                 
-                <!-- 上传区域（仅管理员可见） -->
+                <!-- 上传区域 -->
                 <div id="beehiveUploadArea" class="upload-area" style="display: none;">
                     <h3 style="color: var(--beehive-color); margin-bottom: 15px;">上传蜂巢图</h3>
                     <div class="form-group">
-                        <label class="form-label">图片标题</label>
-                        <input type="text" id="beehiveTitle" class="form-control" placeholder="例如：2024年3月15日蜂巢图分析">
+                        <label class="form-label">图片标题（格式：期号 开奖号码）</label>
+                        <input type="text" id="beehiveTitle" class="form-control" placeholder="例如：26040期 425">
                         <div class="error-message" id="beehiveTitleError"></div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">选择图片</label>
-                        <div style="border: 2px dashed rgba(255, 255, 255, 0.2); padding: 30px; text-align: center; border-radius: 8px; cursor: pointer;" id="beehiveDropArea">
-                            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--beehive-color); margin-bottom: 15px;"></i>
-                            <p>点击选择或拖拽图片到此区域</p>
-                            <p style="font-size: 0.9rem; color: #aaa; margin-top: 10px;">支持 JPG, PNG, GIF 格式，最大10MB</p>
-                            <input type="file" id="beehiveFile" accept="image/*" style="display: none;">
-                        </div>
-                        <div id="beehivePreview" style="margin-top: 15px; display: none;">
-                            <img id="beehivePreviewImage" style="max-width: 200px; border-radius: 8px; border: 2px solid var(--beehive-color);">
-                        </div>
-                    </div>
-                    <div class="progress-bar" style="margin: 15px 0; display: none;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span>上传进度</span>
-                            <span id="beehiveProgressPercent">0%</span>
-                        </div>
-                        <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
-                            <div id="beehiveProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--beehive-color), var(--accent)); transition: width 0.3s;"></div>
-                        </div>
+                        <label class="form-label">图片链接</label>
+                        <input type="url" id="beehiveUrl" class="form-control" placeholder="请输入图片的在线链接（如Imgur、sm.ms等）">
+                        <div class="error-message" id="beehiveUrlError"></div>
+                        <p style="font-size: 0.9rem; color: #aaa; margin-top: 5px;">
+                            推荐使用免费图床：<br>
+                            1. <a href="https://imgbb.com/" target="_blank" style="color: var(--accent);">ImgBB</a> - 免费图片托管<br>
+                            2. <a href="https://sm.ms/" target="_blank" style="color: var(--accent);">SM.MS</a> - 免费图床<br>
+                            3. <a href="https://imgur.com/" target="_blank" style="color: var(--accent);">Imgur</a> - 国外知名图床
+                        </p>
                     </div>
                     <button class="btn btn-primary" id="submitBeehiveBtn">
-                        <i class="fas fa-check"></i> 上传图片
+                        <i class="fas fa-check"></i> 保存图片
                     </button>
                 </div>
                 
@@ -820,42 +731,32 @@
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title"><i class="fas fa-signature"></i> 伪序图签</h2>
-                    <button class="btn btn-secondary" id="uploadPseudoBtn" style="display: none;">
+                    <button class="btn btn-secondary" id="uploadPseudoBtn">
                         <i class="fas fa-upload"></i> 上传图签
                     </button>
                 </div>
                 
-                <!-- 上传区域（仅管理员可见） -->
+                <!-- 上传区域 -->
                 <div id="pseudoUploadArea" class="upload-area" style="display: none;">
                     <h3 style="color: var(--pseudo-color); margin-bottom: 15px;">上传伪序图签</h3>
                     <div class="form-group">
-                        <label class="form-label">图片标题</label>
-                        <input type="text" id="pseudoTitle" class="form-control" placeholder="例如：2024年3月15日伪序图签分析">
+                        <label class="form-label">图片标题（格式：期号 开奖号码）</label>
+                        <input type="text" id="pseudoTitle" class="form-control" placeholder="例如：26040期 425">
                         <div class="error-message" id="pseudoTitleError"></div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">选择图片</label>
-                        <div style="border: 2px dashed rgba(255, 255, 255, 0.2); padding: 30px; text-align: center; border-radius: 8px; cursor: pointer;" id="pseudoDropArea">
-                            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--pseudo-color); margin-bottom: 15px;"></i>
-                            <p>点击选择或拖拽图片到此区域</p>
-                            <p style="font-size: 0.9rem; color: #aaa; margin-top: 10px;">支持 JPG, PNG, GIF 格式，最大10MB</p>
-                            <input type="file" id="pseudoFile" accept="image/*" style="display: none;">
-                        </div>
-                        <div id="pseudoPreview" style="margin-top: 15px; display: none;">
-                            <img id="pseudoPreviewImage" style="max-width: 200px; border-radius: 8px; border: 2px solid var(--pseudo-color);">
-                        </div>
-                    </div>
-                    <div class="progress-bar" style="margin: 15px 0; display: none;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span>上传进度</span>
-                            <span id="pseudoProgressPercent">0%</span>
-                        </div>
-                        <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
-                            <div id="pseudoProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--pseudo-color), var(--accent)); transition: width 0.3s;"></div>
-                        </div>
+                        <label class="form-label">图片链接</label>
+                        <input type="url" id="pseudoUrl" class="form-control" placeholder="请输入图片的在线链接（如Imgur、sm.ms等）">
+                        <div class="error-message" id="pseudoUrlError"></div>
+                        <p style="font-size: 0.9rem; color: #aaa; margin-top: 5px;">
+                            推荐使用免费图床：<br>
+                            1. <a href="https://imgbb.com/" target="_blank" style="color: var(--accent);">ImgBB</a> - 免费图片托管<br>
+                            2. <a href="https://sm.ms/" target="_blank" style="color: var(--accent);">SM.MS</a> - 免费图床<br>
+                            3. <a href="https://imgur.com/" target="_blank" style="color: var(--accent);">Imgur</a> - 国外知名图床
+                        </p>
                     </div>
                     <button class="btn btn-secondary" id="submitPseudoBtn">
-                        <i class="fas fa-check"></i> 上传图片
+                        <i class="fas fa-check"></i> 保存图片
                     </button>
                 </div>
                 
@@ -898,28 +799,6 @@
                 </div>
             </div>
         </section>
-        
-        <!-- 权限管理页面 -->
-        <section id="permission-management" class="content-section">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-user-shield"></i> 权限管理</h2>
-                </div>
-                
-                <div class="permission-management">
-                    <div class="management-header">
-                        <h3 style="color: var(--primary);">用户权限管理</h3>
-                        <button class="btn btn-primary" id="addPermissionBtn">
-                            <i class="fas fa-plus"></i> 添加权限
-                        </button>
-                    </div>
-                    
-                    <div id="permissionContent">
-                        <p>正在加载用户权限列表...</p>
-                    </div>
-                </div>
-            </div>
-        </section>
     </div>
     
     <!-- 图片预览模态框 -->
@@ -932,111 +811,41 @@
         </div>
     </div>
     
-    <!-- 登录模态框 -->
-    <div class="modal" id="loginModal">
+    <!-- 图片链接模态框 -->
+    <div class="modal" id="linkModal">
         <div class="modal-content">
-            <span class="close-btn" id="loginClose">&times;</span>
-            <h3 class="modal-title">用户登录</h3>
+            <span class="close-btn" id="linkClose">&times;</span>
+            <h3 class="modal-title">上传图片指南</h3>
             <div class="form-group">
-                <label class="form-label">邮箱</label>
-                <input type="email" id="loginEmail" class="form-control" placeholder="请输入注册邮箱">
-                <div class="error-message" id="loginEmailError"></div>
+                <h4 style="color: var(--accent); margin-bottom: 15px;">第一步：上传图片到图床</h4>
+                <p>由于GitHub Pages是静态网站，无法直接存储图片，请先将图片上传到免费图床：</p>
+                <ol style="margin-left: 20px; margin-top: 10px; margin-bottom: 20px;">
+                    <li>访问 <a href="https://imgbb.com/" target="_blank" style="color: var(--accent);">ImgBB.com</a></li>
+                    <li>点击"Start uploading"按钮</li>
+                    <li>选择您的图片文件</li>
+                    <li>上传后复制图片链接（选择"Direct Link"）</li>
+                </ol>
+                
+                <h4 style="color: var(--accent); margin-bottom: 15px;">第二步：填写图片信息</h4>
+                <div class="form-group">
+                    <label class="form-label">图片标题</label>
+                    <input type="text" id="linkTitle" class="form-control" placeholder="例如：26040期 425">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">图片链接</label>
+                    <input type="url" id="linkUrl" class="form-control" placeholder="粘贴从图床复制的图片链接">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">图片分类</label>
+                    <select id="linkCategory" class="form-control">
+                        <option value="beehive">蜂巢图</option>
+                        <option value="pseudo">伪序图签</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">密码</label>
-                <input type="password" id="loginPassword" class="form-control" placeholder="请输入密码">
-                <div class="error-message" id="loginPasswordError"></div>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-primary btn-block" id="doLoginBtn">登录</button>
-            </div>
-            <div class="text-center mt-3">
-                <span>还没有账号？</span>
-                <span class="link-text" id="switchToRegister">立即注册</span>
-                <span> | </span>
-                <span class="link-text" id="forgotPassword">忘记密码</span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 注册模态框 -->
-    <div class="modal" id="registerModal">
-        <div class="modal-content">
-            <span class="close-btn" id="registerClose">&times;</span>
-            <h3 class="modal-title">用户注册</h3>
-            <div class="form-group">
-                <label class="form-label">邮箱</label>
-                <input type="email" id="registerEmail" class="form-control" placeholder="请输入邮箱">
-                <div class="error-message" id="registerEmailError"></div>
-            </div>
-            <div class="form-group">
-                <label class="form-label">密码</label>
-                <input type="password" id="registerPassword" class="form-control" placeholder="请设置密码（至少8位）">
-                <div class="error-message" id="registerPasswordError"></div>
-            </div>
-            <div class="form-group">
-                <label class="form-label">确认密码</label>
-                <input type="password" id="registerPasswordConfirm" class="form-control" placeholder="请再次输入密码">
-                <div class="error-message" id="registerPasswordConfirmError"></div>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-primary btn-block" id="doRegisterBtn">注册</button>
-            </div>
-            <div class="text-center mt-3">
-                <span>已有账号？</span>
-                <span class="link-text" id="switchToLogin">立即登录</span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 忘记密码模态框 -->
-    <div class="modal" id="forgotPasswordModal">
-        <div class="modal-content">
-            <span class="close-btn" id="forgotPasswordClose">&times;</span>
-            <h3 class="modal-title">找回密码</h3>
-            <div class="form-group">
-                <label class="form-label">邮箱</label>
-                <input type="email" id="forgotEmail" class="form-control" placeholder="请输入注册邮箱">
-                <div class="error-message" id="forgotEmailError"></div>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-primary btn-block" id="sendResetLink">发送密码重置链接</button>
-            </div>
-            <div class="info-message">
-                <p>我们将向您的邮箱发送密码重置链接，请查收邮件并按照指示操作。</p>
-            </div>
-            <div class="text-center mt-3">
-                <span class="link-text" id="backToLogin">返回登录</span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 添加权限模态框 -->
-    <div class="modal" id="addPermissionModal">
-        <div class="modal-content">
-            <span class="close-btn" id="addPermissionClose">&times;</span>
-            <h3 class="modal-title">添加用户权限</h3>
-            <div class="form-group">
-                <label class="form-label">用户邮箱</label>
-                <input type="email" id="permissionEmail" class="form-control" placeholder="请输入用户邮箱">
-                <div class="error-message" id="permissionEmailError"></div>
-            </div>
-            <div class="form-group">
-                <label class="form-label">权限类型</label>
-                <select id="permissionTypeSelect" class="form-control">
-                    <option value="view">仅查看</option>
-                    <option value="upload">可上传</option>
-                    <option value="admin">管理员</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">权限天数</label>
-                <input type="number" id="permissionDays" class="form-control" placeholder="请输入权限天数" min="1" value="30">
-                <div class="error-message" id="permissionDaysError"></div>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-primary btn-block" id="savePermissionBtn">保存权限</button>
-            </div>
+            <button class="btn btn-primary btn-block" id="saveLinkBtn">
+                <i class="fas fa-save"></i> 保存图片信息
+            </button>
         </div>
     </div>
 
@@ -1050,53 +859,6 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     
     <script>
-        // 初始化Appwrite
-        const client = new Appwrite.Client();
-        client
-            .setEndpoint('https://fra.cloud.appwrite.io/v1')
-            .setProject('6929b5bb003d77ecd385');
-
-        const account = new Appwrite.Account(client);
-        const storage = new Appwrite.Storage(client);
-        const databases = new Appwrite.Databases(client);
-        
-        // 存储桶ID - 用于存储图片
-        const BUCKET_ID = '692a893600202c4f7dad';
-        
-        // 数据库和集合ID
-        const DATABASE_ID = '692c0b030010a28df72e';
-        const PERMISSIONS_COLLECTION_ID = 'permissions';
-        const IMAGES_COLLECTION_ID = 'images'; // 新集合用于存储图片信息
-        
-        // 管理员邮箱列表
-        const ADMIN_EMAILS = ['921913231@qq.com', '1106991066@qq.com'];
-        
-        // 全局变量
-        let currentUser = null;
-        let isAdmin = false;
-        let userPermission = null;
-        let permissionCountdownInterval = null;
-        let currentCategory = 'all'; // 当前查看的图片分类
-        
-        // DOM元素
-        const loginBtn = document.getElementById('loginBtn');
-        const registerBtn = document.getElementById('registerBtn');
-        const userInfo = document.getElementById('userInfo');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const loginModal = document.getElementById('loginModal');
-        const registerModal = document.getElementById('registerModal');
-        const forgotPasswordModal = document.getElementById('forgotPasswordModal');
-        const addPermissionModal = document.getElementById('addPermissionModal');
-        const previewModal = document.getElementById('previewModal');
-        const closePreview = document.getElementById('closePreview');
-        const previewImage = document.getElementById('previewImage');
-        const permissionManagementLink = document.getElementById('permissionManagementLink');
-        const uploadBeehiveBtn = document.getElementById('uploadBeehiveBtn');
-        const uploadPseudoBtn = document.getElementById('uploadPseudoBtn');
-        const beehiveUploadArea = document.getElementById('beehiveUploadArea');
-        const pseudoUploadArea = document.getElementById('pseudoUploadArea');
-        const categoryTabs = document.querySelectorAll('.category-tab');
-        
         // 初始化粒子背景
         particlesJS('particles-js', {
             particles: {
@@ -1117,6 +879,22 @@
             }
         });
         
+        // 全局变量
+        let currentCategory = 'all';
+        let images = JSON.parse(localStorage.getItem('shifanglm_images')) || [];
+        
+        // DOM元素
+        const uploadBeehiveBtn = document.getElementById('uploadBeehiveBtn');
+        const uploadPseudoBtn = document.getElementById('uploadPseudoBtn');
+        const beehiveUploadArea = document.getElementById('beehiveUploadArea');
+        const pseudoUploadArea = document.getElementById('pseudoUploadArea');
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        const previewModal = document.getElementById('previewModal');
+        const closePreview = document.getElementById('closePreview');
+        const previewImage = document.getElementById('previewImage');
+        const linkModal = document.getElementById('linkModal');
+        const linkClose = document.getElementById('linkClose');
+        
         // 页面导航功能
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
@@ -1134,6 +912,10 @@
                     section.classList.remove('active');
                 });
                 document.getElementById(sectionId).classList.add('active');
+                
+                // 隐藏上传区域
+                beehiveUploadArea.style.display = 'none';
+                pseudoUploadArea.style.display = 'none';
                 
                 // 加载对应内容
                 if (sectionId === 'beehive') {
@@ -1161,525 +943,354 @@
             });
         });
         
-        // 权限管理链接点击事件
-        permissionManagementLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // 更新活动导航链接
-            document.querySelectorAll('.nav-link').forEach(nav => {
-                nav.classList.remove('active');
-            });
-            this.classList.add('active');
-            
-            // 显示权限管理页面
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById('permission-management').classList.add('active');
-            
-            // 加载权限管理内容
-            loadPermissionManagement();
-        });
-        
         // 上传蜂巢图按钮
         uploadBeehiveBtn.addEventListener('click', function() {
-            if (!isAdmin) {
-                alert('只有管理员可以上传图片');
-                return;
-            }
-            
-            beehiveUploadArea.style.display = beehiveUploadArea.style.display === 'none' ? 'block' : 'none';
+            // 显示图片链接模态框
+            linkModal.style.display = 'flex';
+            document.getElementById('linkCategory').value = 'beehive';
         });
         
         // 上传伪序图签按钮
         uploadPseudoBtn.addEventListener('click', function() {
-            if (!isAdmin) {
-                alert('只有管理员可以上传图片');
-                return;
-            }
-            
-            pseudoUploadArea.style.display = pseudoUploadArea.style.display === 'none' ? 'block' : 'none';
+            // 显示图片链接模态框
+            linkModal.style.display = 'flex';
+            document.getElementById('linkCategory').value = 'pseudo';
         });
         
-        // 蜂巢图文件选择
-        document.getElementById('beehiveDropArea').addEventListener('click', function() {
-            document.getElementById('beehiveFile').click();
-        });
-        
-        document.getElementById('beehiveFile').addEventListener('change', function(e) {
-            handleFileSelect(e, 'beehive');
-        });
-        
-        // 伪序图签文件选择
-        document.getElementById('pseudoDropArea').addEventListener('click', function() {
-            document.getElementById('pseudoFile').click();
-        });
-        
-        document.getElementById('pseudoFile').addEventListener('change', function(e) {
-            handleFileSelect(e, 'pseudo');
-        });
-        
-        // 文件拖拽功能
-        ['beehiveDropArea', 'pseudoDropArea'].forEach(id => {
-            const dropArea = document.getElementById(id);
-            
-            dropArea.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.style.borderColor = 'var(--accent)';
-                this.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
-            });
-            
-            dropArea.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                this.style.backgroundColor = 'transparent';
-            });
-            
-            dropArea.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                this.style.backgroundColor = 'transparent';
-                
-                const category = id === 'beehiveDropArea' ? 'beehive' : 'pseudo';
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    handleFileSelect({ target: { files } }, category);
-                }
-            });
-        });
-        
-        // 处理文件选择
-        function handleFileSelect(event, category) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            // 检查文件类型
-            if (!file.type.match('image.*')) {
-                alert('请选择图片文件');
-                return;
-            }
-            
-            // 检查文件大小（10MB限制）
-            if (file.size > 10 * 1024 * 1024) {
-                alert('图片大小不能超过10MB');
-                return;
-            }
-            
-            // 显示预览
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const previewId = category === 'beehive' ? 'beehivePreviewImage' : 'pseudoPreviewImage';
-                const previewContainerId = category === 'beehive' ? 'beehivePreview' : 'pseudoPreview';
-                
-                document.getElementById(previewId).src = e.target.result;
-                document.getElementById(previewContainerId).style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        // 上传蜂巢图
-        document.getElementById('submitBeehiveBtn').addEventListener('click', async function() {
-            await uploadImage('beehive');
-        });
-        
-        // 上传伪序图签
-        document.getElementById('submitPseudoBtn').addEventListener('click', async function() {
-            await uploadImage('pseudo');
-        });
-        
-        // 上传图片函数 - 修复版本
-        async function uploadImage(category) {
-            if (!isAdmin) {
-                alert('只有管理员可以上传图片');
-                return;
-            }
-            
-            const titleId = category === 'beehive' ? 'beehiveTitle' : 'pseudoTitle';
-            const fileId = category === 'beehive' ? 'beehiveFile' : 'pseudoFile';
-            const titleErrorId = category === 'beehive' ? 'beehiveTitleError' : 'pseudoTitleError';
-            const progressBarId = category === 'beehive' ? 'beehiveProgressBar' : 'pseudoProgressBar';
-            const progressPercentId = category === 'beehive' ? 'beehiveProgressPercent' : 'pseudoProgressPercent';
-            
-            const title = document.getElementById(titleId).value.trim();
-            const fileInput = document.getElementById(fileId);
-            const file = fileInput.files[0];
+        // 保存图片链接
+        document.getElementById('saveLinkBtn').addEventListener('click', function() {
+            const title = document.getElementById('linkTitle').value.trim();
+            const url = document.getElementById('linkUrl').value.trim();
+            const category = document.getElementById('linkCategory').value;
             
             // 验证输入
             if (!title) {
-                document.getElementById(titleErrorId).textContent = '请输入图片标题';
-                document.getElementById(titleErrorId).style.display = 'block';
+                alert('请输入图片标题');
                 return;
             }
             
-            if (!file) {
-                alert('请选择要上传的图片');
+            // 验证标题格式
+            const titlePattern = /^\d{5}期 \d{3}$/;
+            if (!titlePattern.test(title)) {
+                alert('标题格式错误，正确格式如：26040期 425');
                 return;
             }
             
-            try {
-                // 显示加载状态和进度条
-                const btn = category === 'beehive' ? document.getElementById('submitBeehiveBtn') : document.getElementById('submitPseudoBtn');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上传中...';
-                btn.disabled = true;
-                
-                // 显示进度条
-                const progressBar = document.getElementById(progressBarId);
-                const progressPercent = document.getElementById(progressPercentId);
-                const progressContainer = progressBar.parentElement.parentElement;
-                progressContainer.style.display = 'block';
-                
-                // 创建FormData对象（更可靠的传输方式）
-                const formData = new FormData();
-                formData.append('file', file);
-                
-                // 生成唯一的文件ID
-                const uniqueFileId = Appwrite.ID.unique();
-                
-                // 使用更可靠的方式上传文件
-                console.log('开始上传文件:', file.name, '大小:', file.size, '类型:', file.type);
-                
-                // 上传图片到Appwrite存储
-                const response = await storage.createFile(
-                    BUCKET_ID,
-                    uniqueFileId,
-                    file,
-                    (progress) => {
-                        // 更新进度条
-                        const percent = Math.round((progress.loaded / progress.total) * 100);
-                        progressBar.style.width = percent + '%';
-                        progressPercent.textContent = percent + '%';
-                    }
-                );
-                
-                console.log('文件上传成功:', response);
-                
-                // 获取图片URL - 使用正确的方式构建URL
-                const imageUrl = `https://fra.cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${response.$id}/view?project=6929b5bb003d77ecd385`;
-                
-                // 保存图片信息到数据库
-                await databases.createDocument(
-                    DATABASE_ID,
-                    IMAGES_COLLECTION_ID,
-                    Appwrite.ID.unique(),
-                    {
-                        title: title,
-                        category: category,
-                        imageId: response.$id,
-                        imageUrl: imageUrl,
-                        uploadTime: Date.now(),
-                        uploader: currentUser.email,
-                        isNew: true // 标记为新上传的图片
-                    }
-                );
-                
-                alert('图片上传成功！');
-                
-                // 清空表单
-                if (category === 'beehive') {
-                    document.getElementById('beehiveTitle').value = '';
-                    document.getElementById('beehiveFile').value = '';
-                    document.getElementById('beehivePreview').style.display = 'none';
-                } else {
-                    document.getElementById('pseudoTitle').value = '';
-                    document.getElementById('pseudoFile').value = '';
-                    document.getElementById('pseudoPreview').style.display = 'none';
-                }
-                
-                // 隐藏进度条
-                progressContainer.style.display = 'none';
-                progressBar.style.width = '0%';
-                progressPercent.textContent = '0%';
-                
-                // 重新加载图片列表
-                if (document.getElementById('beehive').classList.contains('active')) {
-                    loadBeehiveImages();
-                } else if (document.getElementById('pseudo').classList.contains('active')) {
-                    loadPseudoImages();
-                } else if (document.getElementById('all-images').classList.contains('active')) {
-                    loadAllImages();
-                }
-                
-            } catch (error) {
-                console.error('上传图片失败:', error);
-                
-                // 显示详细的错误信息
-                let errorMessage = '上传图片失败，请稍后重试';
-                if (error.message.includes('413')) {
-                    errorMessage = '文件太大，请压缩图片或选择较小的文件';
-                } else if (error.message.includes('415')) {
-                    errorMessage = '不支持的图片格式，请使用JPG、PNG或GIF格式';
-                } else if (error.message.includes('network')) {
-                    errorMessage = '网络错误，请检查网络连接';
-                } else if (error.message.includes('permission')) {
-                    errorMessage = '权限不足，请检查存储桶权限设置';
-                }
-                
-                alert(errorMessage);
-                
-                // 隐藏进度条
-                const progressBar = document.getElementById(category === 'beehive' ? 'beehiveProgressBar' : 'pseudoProgressBar');
-                const progressContainer = progressBar.parentElement.parentElement;
-                progressContainer.style.display = 'none';
-                
-            } finally {
-                // 恢复按钮状态
-                const btn = category === 'beehive' ? document.getElementById('submitBeehiveBtn') : document.getElementById('submitPseudoBtn');
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+            if (!url) {
+                alert('请输入图片链接');
+                return;
             }
-        }
+            
+            if (!isValidUrl(url)) {
+                alert('请输入有效的图片链接');
+                return;
+            }
+            
+            // 创建图片对象
+            const image = {
+                id: Date.now().toString(),
+                title: title,
+                url: url,
+                category: category,
+                uploadTime: Date.now(),
+                isNew: true
+            };
+            
+            // 添加到图片数组
+            images.unshift(image);
+            
+            // 保存到本地存储
+            localStorage.setItem('shifanglm_images', JSON.stringify(images));
+            
+            // 关闭模态框
+            linkModal.style.display = 'none';
+            
+            // 清空表单
+            document.getElementById('linkTitle').value = '';
+            document.getElementById('linkUrl').value = '';
+            
+            // 显示成功消息
+            alert('图片保存成功！');
+            
+            // 重新加载图片列表
+            if (document.getElementById('beehive').classList.contains('active')) {
+                loadBeehiveImages();
+            } else if (document.getElementById('pseudo').classList.contains('active')) {
+                loadPseudoImages();
+            } else if (document.getElementById('all-images').classList.contains('active')) {
+                loadAllImages();
+            }
+        });
+        
+        // 关闭链接模态框
+        linkClose.addEventListener('click', function() {
+            linkModal.style.display = 'none';
+        });
         
         // 加载蜂巢图
-        async function loadBeehiveImages() {
-            try {
-                const content = document.getElementById('beehiveContent');
-                content.innerHTML = '<div class="loading"><div class="spinner"></div><p>正在加载蜂巢图...</p></div>';
+        function loadBeehiveImages() {
+            const content = document.getElementById('beehiveContent');
+            
+            // 筛选蜂巢图
+            const beehiveImages = images.filter(img => img.category === 'beehive');
+            
+            if (beehiveImages.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-honeycomb"></i>
+                        <h3>暂无蜂巢图</h3>
+                        <p>点击"上传蜂巢图"按钮添加第一张蜂巢图</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 显示蜂巢图列表
+            let imagesHTML = '<div class="image-grid">';
+            
+            beehiveImages.forEach((image, index) => {
+                const date = new Date(image.uploadTime);
+                const dateStr = date.toLocaleDateString('zh-CN');
+                const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+                const isNew = image.isNew && (Date.now() - image.uploadTime < 24 * 60 * 60 * 1000);
                 
-                // 从数据库获取蜂巢图
-                const response = await databases.listDocuments(
-                    DATABASE_ID,
-                    IMAGES_COLLECTION_ID,
-                    [
-                        Appwrite.Query.equal('category', 'beehive'),
-                        Appwrite.Query.orderDesc('uploadTime')
-                    ]
-                );
-                
-                if (response.documents.length === 0) {
-                    content.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-honeycomb"></i>
-                            <h3>暂无蜂巢图</h3>
-                            <p>${isAdmin ? '点击"上传蜂巢图"按钮上传第一张蜂巢图' : '蜂巢图正在整理中，敬请期待'}</p>
+                imagesHTML += `
+                    <div class="image-card ${isNew ? 'new' : ''}" data-image-id="${image.id}">
+                        <div class="image-container">
+                            <img src="${image.url}" alt="${image.title}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTJlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNnB4IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+5byf5aeL5Zu+PC90ZXh0Pjwvc3ZnPg=='">
                         </div>
-                    `;
-                    return;
-                }
-                
-                // 显示蜂巢图列表
-                let imagesHTML = '<div class="image-grid">';
-                
-                response.documents.forEach((image, index) => {
-                    const date = new Date(image.uploadTime);
-                    const dateStr = date.toLocaleDateString('zh-CN');
-                    const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-                    const isNew = image.isNew && (Date.now() - image.uploadTime < 24 * 60 * 60 * 1000); // 24小时内为新图
-                    
-                    imagesHTML += `
-                        <div class="image-card ${isNew ? 'new' : ''}" data-image-id="${image.$id}">
-                            <div class="image-container">
-                                <img src="${image.imageUrl}" alt="${image.title}" loading="lazy">
-                            </div>
-                            <div class="image-info">
-                                <h3 class="image-title">${image.title}</h3>
-                                <span class="image-category category-beehive">蜂巢图</span>
-                                <div class="image-meta">
-                                    <div class="image-date">
-                                        <i class="far fa-calendar"></i> ${dateStr} ${timeStr}
-                                    </div>
-                                    <div>
-                                        <i class="fas fa-user"></i> ${image.uploader}
-                                    </div>
+                        <div class="image-info">
+                            <h3 class="image-title">${image.title}</h3>
+                            <span class="image-category category-beehive">蜂巢图</span>
+                            <div class="image-meta">
+                                <div class="image-date">
+                                    <i class="far fa-calendar"></i> ${dateStr} ${timeStr}
+                                </div>
+                                <div class="image-actions">
+                                    <button class="btn btn-sm btn-outline delete-image" data-id="${image.id}" style="padding: 4px 8px; font-size: 0.8rem;">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    `;
-                });
-                
-                imagesHTML += '</div>';
-                content.innerHTML = imagesHTML;
-                
-                // 添加图片点击事件
-                document.querySelectorAll('#beehiveContent .image-card').forEach(card => {
-                    card.addEventListener('click', function() {
-                        const img = this.querySelector('img');
-                        previewImage.src = img.src;
-                        previewModal.classList.add('active');
-                    });
-                });
-                
-            } catch (error) {
-                console.error('加载蜂巢图失败:', error);
-                const content = document.getElementById('beehiveContent');
-                content.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h3>加载失败</h3>
-                        <p>无法加载蜂巢图，请稍后重试</p>
                     </div>
                 `;
-            }
+            });
+            
+            imagesHTML += '</div>';
+            content.innerHTML = imagesHTML;
+            
+            // 添加图片点击事件
+            document.querySelectorAll('#beehiveContent .image-card').forEach(card => {
+                const img = card.querySelector('img');
+                card.addEventListener('click', function(e) {
+                    // 如果点击的是删除按钮，不触发预览
+                    if (e.target.closest('.delete-image')) {
+                        return;
+                    }
+                    
+                    if (img.src && !img.src.includes('data:image/svg+xml')) {
+                        previewImage.src = img.src;
+                        previewModal.classList.add('active');
+                    }
+                });
+            });
+            
+            // 添加删除按钮事件
+            document.querySelectorAll('#beehiveContent .delete-image').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = this.getAttribute('data-id');
+                    deleteImage(id);
+                });
+            });
         }
         
         // 加载伪序图签
-        async function loadPseudoImages() {
-            try {
-                const content = document.getElementById('pseudoContent');
-                content.innerHTML = '<div class="loading"><div class="spinner"></div><p>正在加载伪序图签...</p></div>';
+        function loadPseudoImages() {
+            const content = document.getElementById('pseudoContent');
+            
+            // 筛选伪序图签
+            const pseudoImages = images.filter(img => img.category === 'pseudo');
+            
+            if (pseudoImages.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-signature"></i>
+                        <h3>暂无伪序图签</h3>
+                        <p>点击"上传图签"按钮添加第一张伪序图签</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 显示伪序图签列表
+            let imagesHTML = '<div class="image-grid">';
+            
+            pseudoImages.forEach((image, index) => {
+                const date = new Date(image.uploadTime);
+                const dateStr = date.toLocaleDateString('zh-CN');
+                const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+                const isNew = image.isNew && (Date.now() - image.uploadTime < 24 * 60 * 60 * 1000);
                 
-                // 从数据库获取伪序图签
-                const response = await databases.listDocuments(
-                    DATABASE_ID,
-                    IMAGES_COLLECTION_ID,
-                    [
-                        Appwrite.Query.equal('category', 'pseudo'),
-                        Appwrite.Query.orderDesc('uploadTime')
-                    ]
-                );
-                
-                if (response.documents.length === 0) {
-                    content.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-signature"></i>
-                            <h3>暂无伪序图签</h3>
-                            <p>${isAdmin ? '点击"上传图签"按钮上传第一张伪序图签' : '伪序图签正在整理中，敬请期待'}</p>
+                imagesHTML += `
+                    <div class="image-card ${isNew ? 'new' : ''}" data-image-id="${image.id}">
+                        <div class="image-container">
+                            <img src="${image.url}" alt="${image.title}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTJlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNnB4IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+5byf5aeL5Zu+PC90ZXh0Pjwvc3ZnPg=='">
                         </div>
-                    `;
-                    return;
-                }
-                
-                // 显示伪序图签列表
-                let imagesHTML = '<div class="image-grid">';
-                
-                response.documents.forEach((image, index) => {
-                    const date = new Date(image.uploadTime);
-                    const dateStr = date.toLocaleDateString('zh-CN');
-                    const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-                    const isNew = image.isNew && (Date.now() - image.uploadTime < 24 * 60 * 60 * 1000); // 24小时内为新图
-                    
-                    imagesHTML += `
-                        <div class="image-card ${isNew ? 'new' : ''}" data-image-id="${image.$id}">
-                            <div class="image-container">
-                                <img src="${image.imageUrl}" alt="${image.title}" loading="lazy">
-                            </div>
-                            <div class="image-info">
-                                <h3 class="image-title">${image.title}</h3>
-                                <span class="image-category category-pseudo">伪序图签</span>
-                                <div class="image-meta">
-                                    <div class="image-date">
-                                        <i class="far fa-calendar"></i> ${dateStr} ${timeStr}
-                                    </div>
-                                    <div>
-                                        <i class="fas fa-user"></i> ${image.uploader}
-                                    </div>
+                        <div class="image-info">
+                            <h3 class="image-title">${image.title}</h3>
+                            <span class="image-category category-pseudo">伪序图签</span>
+                            <div class="image-meta">
+                                <div class="image-date">
+                                    <i class="far fa-calendar"></i> ${dateStr} ${timeStr}
+                                </div>
+                                <div class="image-actions">
+                                    <button class="btn btn-sm btn-outline delete-image" data-id="${image.id}" style="padding: 4px 8px; font-size: 0.8rem;">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    `;
-                });
-                
-                imagesHTML += '</div>';
-                content.innerHTML = imagesHTML;
-                
-                // 添加图片点击事件
-                document.querySelectorAll('#pseudoContent .image-card').forEach(card => {
-                    card.addEventListener('click', function() {
-                        const img = this.querySelector('img');
-                        previewImage.src = img.src;
-                        previewModal.classList.add('active');
-                    });
-                });
-                
-            } catch (error) {
-                console.error('加载伪序图签失败:', error);
-                const content = document.getElementById('pseudoContent');
-                content.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h3>加载失败</h3>
-                        <p>无法加载伪序图签，请稍后重试</p>
                     </div>
                 `;
-            }
+            });
+            
+            imagesHTML += '</div>';
+            content.innerHTML = imagesHTML;
+            
+            // 添加图片点击事件
+            document.querySelectorAll('#pseudoContent .image-card').forEach(card => {
+                const img = card.querySelector('img');
+                card.addEventListener('click', function(e) {
+                    // 如果点击的是删除按钮，不触发预览
+                    if (e.target.closest('.delete-image')) {
+                        return;
+                    }
+                    
+                    if (img.src && !img.src.includes('data:image/svg+xml')) {
+                        previewImage.src = img.src;
+                        previewModal.classList.add('active');
+                    }
+                });
+            });
+            
+            // 添加删除按钮事件
+            document.querySelectorAll('#pseudoContent .delete-image').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = this.getAttribute('data-id');
+                    deleteImage(id);
+                });
+            });
         }
         
         // 加载所有图片
-        async function loadAllImages() {
-            try {
-                const content = document.getElementById('allImagesContent');
-                content.innerHTML = '<div class="loading"><div class="spinner"></div><p>正在加载图片库...</p></div>';
+        function loadAllImages() {
+            const content = document.getElementById('allImagesContent');
+            
+            if (images.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-images"></i>
+                        <h3>暂无图片</h3>
+                        <p>前往蜂巢图或伪序图签页面上传图片</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 筛选图片
+            let filteredImages = images;
+            if (currentCategory !== 'all') {
+                filteredImages = images.filter(img => img.category === currentCategory);
+            }
+            
+            // 显示图片列表
+            let imagesHTML = '<div class="image-grid">';
+            
+            filteredImages.forEach((image, index) => {
+                const date = new Date(image.uploadTime);
+                const dateStr = date.toLocaleDateString('zh-CN');
+                const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+                const isNew = image.isNew && (Date.now() - image.uploadTime < 24 * 60 * 60 * 1000);
+                const categoryClass = image.category === 'beehive' ? 'category-beehive' : 'category-pseudo';
+                const categoryText = image.category === 'beehive' ? '蜂巢图' : '伪序图签';
                 
-                // 构建查询条件
-                let queries = [Appwrite.Query.orderDesc('uploadTime')];
-                
-                if (currentCategory !== 'all') {
-                    queries.push(Appwrite.Query.equal('category', currentCategory));
-                }
-                
-                // 从数据库获取图片
-                const response = await databases.listDocuments(
-                    DATABASE_ID,
-                    IMAGES_COLLECTION_ID,
-                    queries
-                );
-                
-                if (response.documents.length === 0) {
-                    content.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-images"></i>
-                            <h3>暂无图片</h3>
-                            <p>${isAdmin ? '前往蜂巢图或伪序图签页面上传图片' : '图片正在整理中，敬请期待'}</p>
+                imagesHTML += `
+                    <div class="image-card ${isNew ? 'new' : ''}" data-image-id="${image.id}">
+                        <div class="image-container">
+                            <img src="${image.url}" alt="${image.title}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTJlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNnB4IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+5byf5aeL5Zu+PC90ZXh0Pjwvc3ZnPg=='">
                         </div>
-                    `;
-                    return;
-                }
-                
-                // 显示图片列表
-                let imagesHTML = '<div class="image-grid">';
-                
-                response.documents.forEach((image, index) => {
-                    const date = new Date(image.uploadTime);
-                    const dateStr = date.toLocaleDateString('zh-CN');
-                    const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-                    const isNew = image.isNew && (Date.now() - image.uploadTime < 24 * 60 * 60 * 1000); // 24小时内为新图
-                    const categoryClass = image.category === 'beehive' ? 'category-beehive' : 'category-pseudo';
-                    const categoryText = image.category === 'beehive' ? '蜂巢图' : '伪序图签';
-                    
-                    imagesHTML += `
-                        <div class="image-card ${isNew ? 'new' : ''}" data-image-id="${image.$id}">
-                            <div class="image-container">
-                                <img src="${image.imageUrl}" alt="${image.title}" loading="lazy">
-                            </div>
-                            <div class="image-info">
-                                <h3 class="image-title">${image.title}</h3>
-                                <span class="image-category ${categoryClass}">${categoryText}</span>
-                                <div class="image-meta">
-                                    <div class="image-date">
-                                        <i class="far fa-calendar"></i> ${dateStr} ${timeStr}
-                                    </div>
-                                    <div>
-                                        <i class="fas fa-user"></i> ${image.uploader}
-                                    </div>
+                        <div class="image-info">
+                            <h3 class="image-title">${image.title}</h3>
+                            <span class="image-category ${categoryClass}">${categoryText}</span>
+                            <div class="image-meta">
+                                <div class="image-date">
+                                    <i class="far fa-calendar"></i> ${dateStr} ${timeStr}
+                                </div>
+                                <div class="image-actions">
+                                    <button class="btn btn-sm btn-outline delete-image" data-id="${image.id}" style="padding: 4px 8px; font-size: 0.8rem;">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    `;
-                });
-                
-                imagesHTML += '</div>';
-                content.innerHTML = imagesHTML;
-                
-                // 添加图片点击事件
-                document.querySelectorAll('#allImagesContent .image-card').forEach(card => {
-                    card.addEventListener('click', function() {
-                        const img = this.querySelector('img');
-                        previewImage.src = img.src;
-                        previewModal.classList.add('active');
-                    });
-                });
-                
-            } catch (error) {
-                console.error('加载所有图片失败:', error);
-                const content = document.getElementById('allImagesContent');
-                content.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h3>加载失败</h3>
-                        <p>无法加载图片，请稍后重试</p>
                     </div>
                 `;
+            });
+            
+            imagesHTML += '</div>';
+            content.innerHTML = imagesHTML;
+            
+            // 添加图片点击事件
+            document.querySelectorAll('#allImagesContent .image-card').forEach(card => {
+                const img = card.querySelector('img');
+                card.addEventListener('click', function(e) {
+                    // 如果点击的是删除按钮，不触发预览
+                    if (e.target.closest('.delete-image')) {
+                        return;
+                    }
+                    
+                    if (img.src && !img.src.includes('data:image/svg+xml')) {
+                        previewImage.src = img.src;
+                        previewModal.classList.add('active');
+                    }
+                });
+            });
+            
+            // 添加删除按钮事件
+            document.querySelectorAll('#allImagesContent .delete-image').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = this.getAttribute('data-id');
+                    deleteImage(id);
+                });
+            });
+        }
+        
+        // 删除图片
+        function deleteImage(id) {
+            if (!confirm('确定要删除这张图片吗？')) {
+                return;
             }
+            
+            // 从数组中删除
+            images = images.filter(img => img.id !== id);
+            
+            // 保存到本地存储
+            localStorage.setItem('shifanglm_images', JSON.stringify(images));
+            
+            // 重新加载图片列表
+            if (document.getElementById('beehive').classList.contains('active')) {
+                loadBeehiveImages();
+            } else if (document.getElementById('pseudo').classList.contains('active')) {
+                loadPseudoImages();
+            } else if (document.getElementById('all-images').classList.contains('active')) {
+                loadAllImages();
+            }
+            
+            alert('图片删除成功！');
         }
         
         // 关闭预览
@@ -1687,581 +1298,42 @@
             previewModal.classList.remove('active');
         });
         
-        // 点击模态框外部关闭预览
-        previewModal.addEventListener('click', function(e) {
-            if (e.target === previewModal) {
-                previewModal.classList.remove('active');
-            }
-        });
-        
-        // 显示/隐藏模态框
-        loginBtn.onclick = () => {
-            loginModal.style.display = 'flex';
-            clearErrors();
-        };
-        
-        registerBtn.onclick = () => {
-            registerModal.style.display = 'flex';
-            clearErrors();
-        };
-        
-        document.getElementById('loginClose').onclick = () => loginModal.style.display = 'none';
-        document.getElementById('registerClose').onclick = () => registerModal.style.display = 'none';
-        document.getElementById('forgotPasswordClose').onclick = () => forgotPasswordModal.style.display = 'none';
-        document.getElementById('addPermissionClose').onclick = () => addPermissionModal.style.display = 'none';
-        
-        document.getElementById('switchToRegister').onclick = () => {
-            loginModal.style.display = 'none';
-            registerModal.style.display = 'flex';
-        };
-        
-        document.getElementById('switchToLogin').onclick = () => {
-            registerModal.style.display = 'none';
-            loginModal.style.display = 'flex';
-        };
-        
-        document.getElementById('forgotPassword').onclick = () => {
-            loginModal.style.display = 'none';
-            forgotPasswordModal.style.display = 'flex';
-        };
-        
-        document.getElementById('backToLogin').onclick = () => {
-            forgotPasswordModal.style.display = 'none';
-            loginModal.style.display = 'flex';
-        };
-        
-        // 清除错误提示
-        function clearErrors() {
-            document.querySelectorAll('.error-message').forEach(el => {
-                el.style.display = 'none';
-                el.textContent = '';
-            });
-        }
-        
-        // 显示错误提示
-        function showError(elementId, message) {
-            const element = document.getElementById(elementId);
-            element.textContent = message;
-            element.style.display = 'block';
-        }
-        
-        // 注册功能
-        document.getElementById('doRegisterBtn').onclick = async () => {
-            const email = document.getElementById('registerEmail').value.trim();
-            const password = document.getElementById('registerPassword').value;
-            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
-            
-            clearErrors();
-            
-            // 验证输入
-            let hasError = false;
-            
-            if (!email) {
-                showError('registerEmailError', '请输入邮箱地址');
-                hasError = true;
-            } else if (!/\S+@\S+\.\S+/.test(email)) {
-                showError('registerEmailError', '请输入有效的邮箱地址');
-                hasError = true;
-            }
-            
-            if (!password) {
-                showError('registerPasswordError', '请输入密码');
-                hasError = true;
-            } else if (password.length < 8) {
-                showError('registerPasswordError', '密码至少需要8位');
-                hasError = true;
-            }
-            
-            if (!passwordConfirm) {
-                showError('registerPasswordConfirmError', '请确认密码');
-                hasError = true;
-            } else if (password !== passwordConfirm) {
-                showError('registerPasswordConfirmError', '两次输入的密码不一致');
-                hasError = true;
-            }
-            
-            if (hasError) return;
-            
-            try {
-                // 创建用户
-                await account.create(
-                    Appwrite.ID.unique(),
-                    email,
-                    password
-                );
-                
-                // 自动登录
-                await account.createEmailSession(email, password);
-                
-                alert('注册成功！已自动登录');
-                registerModal.style.display = 'none';
-                checkLoginStatus();
-            } catch (error) {
-                console.error('注册错误:', error);
-                if (error.message.includes('already exists')) {
-                    showError('registerEmailError', '该邮箱已注册，请直接登录');
-                } else {
-                    showError('registerEmailError', '注册失败，请稍后重试');
-                }
-            }
-        };
-        
-        // 登录功能
-        document.getElementById('doLoginBtn').onclick = async () => {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            
-            clearErrors();
-            
-            if (!email) {
-                showError('loginEmailError', '请输入邮箱地址');
-                return;
-            }
-            
-            if (!password) {
-                showError('loginPasswordError', '请输入密码');
-                return;
-            }
-            
-            try {
-                await account.createEmailSession(email, password);
-                alert('登录成功！');
-                loginModal.style.display = 'none';
-                checkLoginStatus();
-            } catch (error) {
-                console.error('登录错误:', error);
-                if (error.message.includes('Invalid credentials')) {
-                    showError('loginPasswordError', '邮箱或密码错误');
-                } else if (error.message.includes('User not found')) {
-                    showError('loginEmailError', '该邮箱未注册');
-                } else {
-                    showError('loginEmailError', '登录失败，请稍后重试');
-                }
-            }
-        };
-        
-        // 发送密码重置链接
-        document.getElementById('sendResetLink').onclick = async () => {
-            const email = document.getElementById('forgotEmail').value.trim();
-            
-            clearErrors();
-            
-            if (!email) {
-                showError('forgotEmailError', '请输入邮箱地址');
-                return;
-            }
-            
-            if (!/\S+@\S+\.\S+/.test(email)) {
-                showError('forgotEmailError', '请输入有效的邮箱地址');
-                return;
-            }
-            
-            try {
-                const resetUrl = `${window.location.origin}/reset-password.html`;
-                await account.createRecovery(email, resetUrl);
-                
-                alert('密码重置链接已发送到您的邮箱，请查收邮件并按照指示操作。');
-                
-                // 关闭模态框
-                forgotPasswordModal.style.display = 'none';
-                loginModal.style.display = 'flex';
-                
-            } catch (error) {
-                console.error('发送重置邮件失败:', error);
-                
-                if (error.message.includes('User not found')) {
-                    showError('forgotEmailError', '该邮箱未注册');
-                } else if (error.message.includes('rate limit')) {
-                    showError('forgotEmailError', '发送过于频繁，请稍后再试');
-                } else {
-                    showError('forgotEmailError', '发送重置邮件失败，请检查邮箱是否正确或联系管理员');
-                }
-            }
-        };
-        
-        // 退出登录
-        logoutBtn.onclick = async () => {
-            try {
-                await account.deleteSession('current');
-                alert('已退出登录');
-                location.reload();
-            } catch (error) {
-                console.error('退出登录错误:', error);
-            }
-        };
-        
-        // 检查登录状态
-        async function checkLoginStatus() {
-            try {
-                currentUser = await account.get();
-                loginBtn.style.display = 'none';
-                registerBtn.style.display = 'none';
-                userInfo.style.display = 'flex';
-                
-                // 显示用户邮箱
-                document.getElementById('userEmail').textContent = currentUser.email;
-                
-                // 判断是否为管理员
-                isAdmin = ADMIN_EMAILS.includes(currentUser.email);
-                
-                // 如果是管理员，显示权限管理链接和上传按钮
-                if (isAdmin) {
-                    permissionManagementLink.style.display = 'block';
-                    uploadBeehiveBtn.style.display = 'flex';
-                    uploadPseudoBtn.style.display = 'flex';
-                    
-                    // 为管理员显示特殊徽章
-                    const badge = document.getElementById('permissionBadge');
-                    badge.className = 'admin-badge';
-                    badge.style.display = 'flex';
-                    document.getElementById('permissionType').textContent = '系统管理员';
-                    document.getElementById('countdown').textContent = '';
-                } else {
-                    // 普通用户：加载其权限信息
-                    await loadUserPermission();
-                }
-                
-                // 根据当前页面加载内容
-                if (document.getElementById('beehive').classList.contains('active')) {
-                    loadBeehiveImages();
-                } else if (document.getElementById('pseudo').classList.contains('active')) {
-                    loadPseudoImages();
-                } else if (document.getElementById('all-images').classList.contains('active')) {
-                    loadAllImages();
-                }
-                
-            } catch (error) {
-                console.log('用户未登录');
-                loginBtn.style.display = 'block';
-                registerBtn.style.display = 'block';
-                userInfo.style.display = 'none';
-                
-                // 显示未登录状态
-                const beehiveContent = document.getElementById('beehiveContent');
-                const pseudoContent = document.getElementById('pseudoContent');
-                const allImagesContent = document.getElementById('allImagesContent');
-                
-                const loginMessage = `
-                    <div class="empty-state">
-                        <i class="fas fa-lock"></i>
-                        <h3>请先登录</h3>
-                        <p>登录后即可查看图片内容</p>
-                    </div>
-                `;
-                
-                if (beehiveContent) beehiveContent.innerHTML = loginMessage;
-                if (pseudoContent) pseudoContent.innerHTML = loginMessage;
-                if (allImagesContent) allImagesContent.innerHTML = loginMessage;
-            }
-        }
-        
-        // 加载用户权限信息
-        async function loadUserPermission() {
-            if (isAdmin) {
-                return;
-            }
-            
-            try {
-                const response = await databases.listDocuments(
-                    DATABASE_ID,
-                    PERMISSIONS_COLLECTION_ID,
-                    [
-                        Appwrite.Query.equal('email', currentUser.email)
-                    ]
-                );
-                
-                if (response.documents.length > 0) {
-                    userPermission = response.documents[0];
-                    
-                    // 检查权限是否过期
-                    const now = Date.now();
-                    if (userPermission.endTime < now) {
-                        userPermission = null;
-                        document.getElementById('permissionBadge').style.display = 'none';
-                        return;
-                    }
-                    
-                    // 显示权限信息
-                    document.getElementById('permissionBadge').style.display = 'flex';
-                    let permissionText = '';
-                    
-                    switch(userPermission.type) {
-                        case 'view':
-                            permissionText = '查看权限';
-                            break;
-                        case 'upload':
-                            permissionText = '上传权限';
-                            break;
-                        case 'admin':
-                            permissionText = '管理员权限';
-                            break;
-                    }
-                    
-                    document.getElementById('permissionType').textContent = permissionText;
-                    
-                    // 启动倒计时
-                    startPermissionCountdown();
-                } else {
-                    document.getElementById('permissionBadge').style.display = 'none';
-                }
-            } catch (error) {
-                console.error('加载用户权限失败:', error);
-            }
-        }
-        
-        // 启动权限倒计时
-        function startPermissionCountdown() {
-            if (permissionCountdownInterval) {
-                clearInterval(permissionCountdownInterval);
-            }
-            
-            permissionCountdownInterval = setInterval(() => {
-                const now = Date.now();
-                const timeLeft = userPermission.endTime - now;
-                
-                if (timeLeft <= 0) {
-                    clearInterval(permissionCountdownInterval);
-                    userPermission = null;
-                    document.getElementById('permissionBadge').style.display = 'none';
-                    alert('您的权限已到期，请联系管理员续期');
-                    return;
-                }
-                
-                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                
-                document.getElementById('countdown').textContent = `剩余${days}天${hours}小时${minutes}分钟`;
-            }, 1000);
-        }
-        
-        // 加载权限管理
-        async function loadPermissionManagement() {
-            try {
-                const permissionContent = document.getElementById('permissionContent');
-                permissionContent.innerHTML = '<p>正在加载权限管理...</p>';
-                
-                // 获取所有用户权限
-                const response = await databases.listDocuments(
-                    DATABASE_ID,
-                    PERMISSIONS_COLLECTION_ID
-                );
-                
-                // 获取所有用户
-                const usersResponse = await account.list();
-                
-                let permissionsHTML = `
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr>
-                                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);">用户邮箱</th>
-                                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);">权限类型</th>
-                                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);">有效期至</th>
-                                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
-                
-                usersResponse.users.forEach(user => {
-                    const userPermission = response.documents.find(p => p.email === user.email);
-                    let permissionInfo = '无权限';
-                    let endDate = '-';
-                    
-                    if (userPermission) {
-                        const now = Date.now();
-                        
-                        if (userPermission.endTime > now) {
-                            switch(userPermission.type) {
-                                case 'view':
-                                    permissionInfo = '查看权限';
-                                    break;
-                                case 'upload':
-                                    permissionInfo = '上传权限';
-                                    break;
-                                case 'admin':
-                                    permissionInfo = '管理员权限';
-                                    break;
-                            }
-                            
-                            endDate = new Date(userPermission.endTime).toLocaleDateString('zh-CN');
-                        }
-                    }
-                    
-                    permissionsHTML += `
-                        <tr>
-                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">${user.email}</td>
-                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">${permissionInfo}</td>
-                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">${endDate}</td>
-                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <button class="btn btn-sm btn-outline grant-permission" data-email="${user.email}" style="margin-right: 5px;">
-                                    <i class="fas fa-key"></i> 授权
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                permissionsHTML += `
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-                
-                permissionContent.innerHTML = permissionsHTML;
-                
-                // 添加授权按钮事件
-                document.querySelectorAll('.grant-permission').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const email = this.getAttribute('data-email');
-                        openAddPermissionModal(email);
-                    });
-                });
-                
-            } catch (error) {
-                console.error('加载权限管理失败:', error);
-                const permissionContent = document.getElementById('permissionContent');
-                permissionContent.innerHTML = `
-                    <div style="text-align: center; padding: 30px;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ff5555; margin-bottom: 15px;"></i>
-                        <h3 style="color: #ff5555; margin-bottom: 10px;">加载失败</h3>
-                        <p>无法加载权限管理，请稍后重试</p>
-                    </div>
-                `;
-            }
-        }
-        
-        // 打开添加权限模态框
-        function openAddPermissionModal(email = '') {
-            if (!isAdmin) {
-                alert('只有管理员可以添加权限');
-                return;
-            }
-            
-            addPermissionModal.style.display = 'flex';
-            clearErrors();
-            
-            // 填充用户邮箱
-            document.getElementById('permissionEmail').value = email;
-        }
-        
-        // 添加权限按钮
-        document.getElementById('addPermissionBtn').addEventListener('click', function() {
-            openAddPermissionModal();
-        });
-        
-        // 保存权限
-        document.getElementById('savePermissionBtn').addEventListener('click', async function() {
-            if (!isAdmin) {
-                alert('只有管理员可以添加权限');
-                return;
-            }
-            
-            const email = document.getElementById('permissionEmail').value.trim();
-            const type = document.getElementById('permissionTypeSelect').value;
-            const days = parseInt(document.getElementById('permissionDays').value);
-            
-            clearErrors();
-            
-            // 验证输入
-            let hasError = false;
-            
-            if (!email) {
-                showError('permissionEmailError', '请输入用户邮箱');
-                hasError = true;
-            } else if (!/\S+@\S+\.\S+/.test(email)) {
-                showError('permissionEmailError', '请输入有效的邮箱地址');
-                hasError = true;
-            }
-            
-            if (!days || days < 1) {
-                showError('permissionDaysError', '请输入有效的天数');
-                hasError = true;
-            }
-            
-            if (hasError) return;
-            
-            try {
-                // 计算开始和结束时间
-                const startTime = Date.now();
-                const endTime = startTime + (days * 24 * 60 * 60 * 1000);
-                
-                // 检查是否已存在权限
-                const existingPermissions = await databases.listDocuments(
-                    DATABASE_ID,
-                    PERMISSIONS_COLLECTION_ID,
-                    [
-                        Appwrite.Query.equal('email', email)
-                    ]
-                );
-                
-                if (existingPermissions.documents.length > 0) {
-                    // 更新现有权限
-                    await databases.updateDocument(
-                        DATABASE_ID,
-                        PERMISSIONS_COLLECTION_ID,
-                        existingPermissions.documents[0].$id,
-                        {
-                            type: type,
-                            startTime: startTime,
-                            endTime: endTime,
-                            updatedAt: Date.now()
-                        }
-                    );
-                } else {
-                    // 创建新权限
-                    await databases.createDocument(
-                        DATABASE_ID,
-                        PERMISSIONS_COLLECTION_ID,
-                        Appwrite.ID.unique(),
-                        {
-                            email: email,
-                            type: type,
-                            startTime: startTime,
-                            endTime: endTime,
-                            createdAt: Date.now()
-                        }
-                    );
-                }
-                
-                alert('权限设置成功！');
-                addPermissionModal.style.display = 'none';
-                loadPermissionManagement();
-                
-            } catch (error) {
-                console.error('设置权限失败:', error);
-                alert('设置权限失败，请稍后重试');
-            }
-        });
-        
         // 点击模态框外部关闭
         window.onclick = (event) => {
-            if (event.target === loginModal) {
-                loginModal.style.display = 'none';
+            if (event.target === previewModal) {
+                previewModal.classList.remove('active');
             }
-            if (event.target === registerModal) {
-                registerModal.style.display = 'none';
-            }
-            if (event.target === forgotPasswordModal) {
-                forgotPasswordModal.style.display = 'none';
-            }
-            if (event.target === addPermissionModal) {
-                addPermissionModal.style.display = 'none';
+            if (event.target === linkModal) {
+                linkModal.style.display = 'none';
             }
         };
         
-        // 页面加载时检查登录状态
-        document.addEventListener('DOMContentLoaded', checkLoginStatus);
-        
-        // 初始化图片加载（如果当前页面是蜂巢图或伪序图签）
-        if (document.getElementById('beehive').classList.contains('active')) {
-            loadBeehiveImages();
-        } else if (document.getElementById('pseudo').classList.contains('active')) {
-            loadPseudoImages();
-        } else if (document.getElementById('all-images').classList.contains('active')) {
-            loadAllImages();
+        // URL验证函数
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
         }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载首页内容
+            loadBeehiveImages();
+            loadPseudoImages();
+            loadAllImages();
+            
+            // 清除24小时前的"新"标记
+            const now = Date.now();
+            images.forEach(img => {
+                if (now - img.uploadTime > 24 * 60 * 60 * 1000) {
+                    img.isNew = false;
+                }
+            });
+            localStorage.setItem('shifanglm_images', JSON.stringify(images));
+        });
     </script>
 </body>
 </html>

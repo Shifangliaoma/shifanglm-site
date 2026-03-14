@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>十方料码 · 胆码趋势列表</title>
+    <title>十方料码 · 胆码趋势（管理员/普通）</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -52,16 +52,26 @@
             color: #ffd166;
             -webkit-text-fill-color: initial;
         }
-        .nav-tag {
+        .admin-toggle {
             background: rgba(255,107,53,0.2);
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: 40px;
             font-size: 0.9rem;
             border: 1px solid #ff6b3540;
             color: #ffb347;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .admin-toggle.active {
+            background: #ff6b35;
+            color: #111;
+            border-color: #ffd166;
         }
         .container {
-            max-width: 700px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 16px 12px;
         }
@@ -119,71 +129,85 @@
         .trend-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 16px;
         }
-        /* 每一期条目 — 极简分割线 */
         .trend-item {
-            background: rgba(18, 18, 30, 0.6);
+            background: rgba(18, 18, 30, 0.7);
             backdrop-filter: blur(4px);
-            border-radius: 18px;
-            padding: 14px 16px;
+            border-radius: 24px;
+            padding: 16px 18px;
             border: 1px solid rgba(255,255,255,0.03);
             transition: 0.1s;
         }
         .trend-item:hover {
             border-color: rgba(255,107,53,0.2);
         }
-        .item-header {
+
+        /* 一行布局：所有元素在一行内，允许换行 */
+        .row-fields {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px 12px;
         }
-        .issue-draw {
-            display: flex;
-            align-items: baseline;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
+
         .issue {
-            font-size: 1.3rem;
-            font-weight: 600;
+            font-size: 1.6rem;
+            font-weight: 700;
             color: #ffd166;
-            letter-spacing: 0.5px;
-        }
-        .issue small {
-            font-size: 0.8rem;
-            color: #888;
-            font-weight: 400;
-            margin-left: 4px;
+            line-height: 1.2;
+            white-space: nowrap;
         }
         .draw {
             font-size: 1.6rem;
-            font-weight: 700;
+            font-weight: 800;
             color: #4ecdc4;
             font-family: 'Courier New', monospace;
             background: rgba(78,205,196,0.1);
-            padding: 2px 12px;
+            padding: 4px 16px;
             border-radius: 40px;
-            line-height: 1.3;
+            white-space: nowrap;
         }
+        /* 导入框 */
+        .import-input {
+            width: 100px;
+            min-width: 80px;
+            padding: 10px 12px;
+            background: #1e1e30;
+            border: 1px solid #ff6b3540;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            text-align: center;
+            transition: 0.2s;
+        }
+        .import-input:focus {
+            border-color: #ff8c5a;
+            box-shadow: 0 0 8px #ff6b35;
+        }
+        .import-input::placeholder {
+            color: #555;
+            font-size: 0.8rem;
+        }
+
+        /* 操作按钮组 */
         .action-group {
             display: flex;
-            gap: 8px;
+            gap: 4px;
+            margin-left: auto;  /* 在flex中靠右 */
         }
         .action-btn {
             background: transparent;
             border: none;
             color: #aaa;
             font-size: 1.1rem;
-            padding: 6px 8px;
+            padding: 8px;
             border-radius: 50%;
             cursor: pointer;
             transition: 0.2s;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -196,17 +220,19 @@
             background: rgba(255,80,80,0.2);
             color: #ff5e5e;
         }
-        /* 0-9 网格 — 一行10个，手机自适应 */
+
+        /* 0-9网格 — 固定宽度，避免被压缩 */
         .digit-grid {
             display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 6px;
-            margin: 6px 0 0;
+            grid-template-columns: repeat(10, minmax(28px, 1fr));
+            gap: 4px;
+            flex: 0 0 auto;
+            min-width: 280px;
         }
         .digit-cell {
             aspect-ratio: 1/1;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -215,6 +241,7 @@
             color: #aaa;
             border: 1px solid rgba(255,255,255,0.05);
             transition: 0.15s;
+            cursor: default;
         }
         .digit-cell.highlight {
             background: #ff8c5a;
@@ -224,6 +251,7 @@
             font-weight: 800;
             transform: scale(1.02);
         }
+
         /* 空状态 */
         .empty-state {
             text-align: center;
@@ -235,7 +263,7 @@
             margin-bottom: 12px;
             color: #333;
         }
-        /* 底部 */
+
         footer {
             text-align: center;
             padding: 30px 16px 10px;
@@ -247,7 +275,8 @@
         .brand-highlight {
             color: #ffb347;
         }
-        /* 模态框 (保留原有风格) */
+
+        /* 模态框 (保持不变) */
         .modal {
             display: none;
             position: fixed;
@@ -322,13 +351,13 @@
             gap: 8px;
             cursor: pointer;
         }
+
         /* 手机小屏优化 */
-        @media (max-width: 420px) {
-            .issue { font-size: 1.1rem; }
-            .draw { font-size: 1.4rem; padding: 2px 8px; }
-            .digit-cell { font-size: 0.85rem; border-radius: 8px; }
-            .item-header { flex-direction: column; align-items: flex-start; }
-            .action-group { align-self: flex-end; margin-top: -30px; } /* 微调 */
+        @media (max-width: 550px) {
+            .issue, .draw { font-size: 1.3rem; }
+            .import-input { width: 70px; padding: 8px 6px; }
+            .digit-grid { min-width: 240px; grid-template-columns: repeat(10, 1fr); }
+            .action-btn { width: 36px; height: 36px; }
         }
     </style>
 </head>
@@ -339,11 +368,13 @@
             <i class="fas fa-chart-line"></i>
             <span>十方胆码</span>
         </div>
-        <div class="nav-tag"><i class="fas fa-dice-three"></i> 0-9网格</div>
+        <div class="admin-toggle" id="adminToggle">
+            <i class="fas fa-user-shield"></i> <span>普通模式</span>
+        </div>
     </nav>
 
     <div class="container">
-        <!-- 搜索与信息栏 -->
+        <!-- 搜索栏 -->
         <div class="search-bar">
             <i class="fas fa-search"></i>
             <input type="text" id="searchIssue" placeholder="输入期号如 25613" inputmode="numeric">
@@ -351,16 +382,16 @@
         </div>
         <div class="info-row">
             <span><i class="far fa-list-alt"></i> 最近30期 (最新在底部)</span>
-            <span><i class="fas fa-sort-amount-down-alt"></i> 共 <span id="totalCount">0</span> 条</span>
+            <span><i class="fas fa-sort-amount-down-alt"></i> 共 <span id="totalCount">0</span> 条
+                <i class="fas fa-plus-circle" id="addTrendBtn" style="color:#ff8c5a; font-size:1.4rem; cursor:pointer; margin-left:12px; display:none;"></i>
+            </span>
         </div>
 
         <!-- 列表容器 -->
-        <div id="trendListContainer" class="trend-list">
-            <!-- 动态渲染 -->
-        </div>
+        <div id="trendListContainer" class="trend-list"></div>
     </div>
 
-    <!-- 新增/编辑模态框 -->
+    <!-- 新增/编辑模态框 (只编辑期号和奖号，导入码在行内编辑) -->
     <div class="modal" id="trendModal">
         <div class="modal-content">
             <span class="close-btn" id="modalClose">&times;</span>
@@ -381,8 +412,8 @@
     </div>
 
     <footer>
-        <p><span class="brand-highlight">十方料码 · 胆码趋势</span> 期号/奖号可编辑，网格自动标记</p>
-        <p style="margin-top: 6px;">最新期数在底部 · 搜索即过滤</p>
+        <p><span class="brand-highlight">十方料码 · 胆码趋势</span> 管理员可编辑导入框，普通用户只读</p>
+        <p style="margin-top: 6px;">导入框手动输入数字(如 145) 实时高亮网格</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -399,79 +430,108 @@
                 }
             });
 
-            // ---------- 数据 ----------
-            let trends = [];               // 全部数据，按期号升序（旧→新）
-            let filterText = '';           // 当前搜索词
+            // ---------- 状态 ----------
+            let trends = [];               // 全部数据，按期号升序
+            let filterText = '';
+            let isAdmin = false;            // 是否为管理员模式
 
-            // 加载初始数据
+            // 从localStorage加载或初始化
             function loadFromStorage() {
-                const stored = localStorage.getItem('shifang_trends_v2');
+                const stored = localStorage.getItem('shifang_trends_v3');
                 if (stored) {
                     try { trends = JSON.parse(stored); } catch { trends = []; }
                 }
+                // 如果没有数据，填充示例，并为每条添加manualCode字段（导入码）
                 if (!trends.length) {
-                    // 示例数据 (按期号升序：旧在上，新在下)
                     trends = [
-                        { id: '1', issue: '25601', drawNumber: '425' },
-                        { id: '2', issue: '25602', drawNumber: '789' },
-                        { id: '3', issue: '25603', drawNumber: '014' },
-                        { id: '4', issue: '25604', drawNumber: '333' },
-                        { id: '5', issue: '25605', drawNumber: '256' },
-                        { id: '6', issue: '25606', drawNumber: '107' },
-                        { id: '7', issue: '25607', drawNumber: '888' },
-                        { id: '8', issue: '25608', drawNumber: '692' },
-                        { id: '9', issue: '25609', drawNumber: '555' },
-                        { id: '10', issue: '25610', drawNumber: '123' },
-                        { id: '11', issue: '25611', drawNumber: '999' },
-                        { id: '12', issue: '25612', drawNumber: '777' },
-                        { id: '13', issue: '25613', drawNumber: '256' },
-                        { id: '14', issue: '25614', drawNumber: '321' },
-                        { id: '15', issue: '25615', drawNumber: '468' },
-                        { id: '16', issue: '25616', drawNumber: '111' },
-                        { id: '17', issue: '25617', drawNumber: '222' },
-                        { id: '18', issue: '25618', drawNumber: '333' },
-                        { id: '19', issue: '25619', drawNumber: '444' },
-                        { id: '20', issue: '25620', drawNumber: '555' },
-                        { id: '21', issue: '25621', drawNumber: '666' },
-                        { id: '22', issue: '25622', drawNumber: '777' },
-                        { id: '23', issue: '25623', drawNumber: '888' },
-                        { id: '24', issue: '25624', drawNumber: '999' },
-                        { id: '25', issue: '25625', drawNumber: '000' },
-                        { id: '26', issue: '25626', drawNumber: '135' },
-                        { id: '27', issue: '25627', drawNumber: '579' },
-                        { id: '28', issue: '25628', drawNumber: '246' },
-                        { id: '29', issue: '25629', drawNumber: '802' },
-                        { id: '30', issue: '25630', drawNumber: '413' },
-                        { id: '31', issue: '25631', drawNumber: '725' },
-                        { id: '32', issue: '25632', drawNumber: '690' }
+                        { id: '1', issue: '25601', drawNumber: '425', manualCode: '425' },
+                        { id: '2', issue: '25602', drawNumber: '789', manualCode: '789' },
+                        { id: '3', issue: '25603', drawNumber: '014', manualCode: '014' },
+                        { id: '4', issue: '25604', drawNumber: '333', manualCode: '3' },
+                        { id: '5', issue: '25605', drawNumber: '256', manualCode: '256' },
+                        { id: '6', issue: '25606', drawNumber: '107', manualCode: '107' },
+                        { id: '7', issue: '25607', drawNumber: '888', manualCode: '8' },
+                        { id: '8', issue: '25608', drawNumber: '692', manualCode: '692' },
+                        { id: '9', issue: '25609', drawNumber: '555', manualCode: '5' },
+                        { id: '10', issue: '25610', drawNumber: '123', manualCode: '123' },
+                        { id: '11', issue: '25611', drawNumber: '999', manualCode: '9' },
+                        { id: '12', issue: '25612', drawNumber: '777', manualCode: '7' },
+                        { id: '13', issue: '25613', drawNumber: '256', manualCode: '256' },
+                        { id: '14', issue: '25614', drawNumber: '321', manualCode: '321' },
+                        { id: '15', issue: '25615', drawNumber: '468', manualCode: '468' },
+                        { id: '16', issue: '25616', drawNumber: '111', manualCode: '1' },
+                        { id: '17', issue: '25617', drawNumber: '222', manualCode: '2' },
+                        { id: '18', issue: '25618', drawNumber: '333', manualCode: '3' },
+                        { id: '19', issue: '25619', drawNumber: '444', manualCode: '4' },
+                        { id: '20', issue: '25620', drawNumber: '555', manualCode: '5' },
+                        { id: '21', issue: '25621', drawNumber: '666', manualCode: '6' },
+                        { id: '22', issue: '25622', drawNumber: '777', manualCode: '7' },
+                        { id: '23', issue: '25623', drawNumber: '888', manualCode: '8' },
+                        { id: '24', issue: '25624', drawNumber: '999', manualCode: '9' },
+                        { id: '25', issue: '25625', drawNumber: '000', manualCode: '0' },
+                        { id: '26', issue: '25626', drawNumber: '135', manualCode: '135' },
+                        { id: '27', issue: '25627', drawNumber: '579', manualCode: '579' },
+                        { id: '28', issue: '25628', drawNumber: '246', manualCode: '246' },
+                        { id: '29', issue: '25629', drawNumber: '802', manualCode: '802' },
+                        { id: '30', issue: '25630', drawNumber: '413', manualCode: '413' },
+                        { id: '31', issue: '25631', drawNumber: '725', manualCode: '725' },
+                        { id: '32', issue: '25632', drawNumber: '690', manualCode: '690' }
                     ];
+                } else {
+                    // 确保老数据有manualCode，默认为drawNumber
+                    trends.forEach(t => {
+                        if (t.manualCode === undefined) t.manualCode = t.drawNumber;
+                    });
                 }
-                // 确保按期号升序 (旧→新)
                 trends.sort((a, b) => parseInt(a.issue) - parseInt(b.issue));
                 saveToStorage();
             }
 
             function saveToStorage() {
-                localStorage.setItem('shifang_trends_v2', JSON.stringify(trends));
+                localStorage.setItem('shifang_trends_v3', JSON.stringify(trends));
             }
 
-            // ---------- 渲染列表 ----------
+            // 根据manualCode生成网格高亮
+            function getGridHtml(manualCode) {
+                const digits = manualCode ? manualCode.toString() : '';
+                // 提取所有数字字符，去重但保留顺序（用Set去重后转回数组）
+                const uniqueDigits = [...new Set(digits.split('').filter(c => /[0-9]/.test(c)))];
+                let cells = '';
+                for (let d = 0; d <= 9; d++) {
+                    const highlight = uniqueDigits.includes(d.toString());
+                    cells += `<div class="digit-cell ${highlight ? 'highlight' : ''}">${d}</div>`;
+                }
+                return cells;
+            }
+
+            // 更新指定行的网格 (根据item.manualCode)
+            function refreshGridForItem(itemId) {
+                const item = trends.find(t => t.id === itemId);
+                if (!item) return;
+                const gridContainer = document.querySelector(`.trend-item[data-id="${itemId}"] .digit-grid`);
+                if (gridContainer) {
+                    gridContainer.innerHTML = getGridHtml(item.manualCode);
+                }
+            }
+
+            // 渲染整个列表
             function renderTrends() {
                 const container = document.getElementById('trendListContainer');
                 const totalSpan = document.getElementById('totalCount');
+                const addBtn = document.getElementById('addTrendBtn');
                 if (!container) return;
 
-                // 过滤
+                // 控制添加按钮显示
+                addBtn.style.display = isAdmin ? 'inline-block' : 'none';
+
                 let filtered = trends;
                 if (filterText.trim() !== '') {
                     filtered = trends.filter(t => t.issue.includes(filterText.trim()));
                 }
 
-                // 默认显示最近30条 (最新在底部，即升序数组的最后30项)
                 let displayList = filtered;
                 if (filterText.trim() === '') {
-                    // 取最后30项 (最近30期)
-                    displayList = filtered.slice(-30);
+                    displayList = filtered.slice(-30); // 最近30期
                 }
 
                 totalSpan.innerText = filtered.length;
@@ -484,27 +544,29 @@
                 let html = '';
                 displayList.forEach(item => {
                     const draw = item.drawNumber.padEnd(3, ' ').substring(0, 3);
-                    // 生成网格
-                    let gridCells = '';
-                    for (let d = 0; d <= 9; d++) {
-                        const isHighlight = item.drawNumber.includes(d.toString());
-                        gridCells += `<div class="digit-cell ${isHighlight ? 'highlight' : ''}">${d}</div>`;
+                    const gridHtml = getGridHtml(item.manualCode);
+
+                    // 管理员视图：显示导入框、操作按钮；普通视图：不显示
+                    let importField = '';
+                    let actionButtons = '';
+                    if (isAdmin) {
+                        importField = `<input type="text" class="import-input" data-id="${item.id}" value="${item.manualCode || ''}" placeholder="胆码">`;
+                        actionButtons = `
+                            <div class="action-group">
+                                <button class="action-btn edit" data-id="${item.id}" title="编辑"><i class="fas fa-pen"></i></button>
+                                <button class="action-btn delete" data-id="${item.id}" title="删除"><i class="fas fa-trash"></i></button>
+                            </div>
+                        `;
                     }
 
                     html += `
                         <div class="trend-item" data-id="${item.id}">
-                            <div class="item-header">
-                                <div class="issue-draw">
-                                    <span class="issue">${item.issue}<small>期</small></span>
-                                    <span class="draw">${draw}</span>
-                                </div>
-                                <div class="action-group">
-                                    <button class="action-btn edit" data-id="${item.id}" title="编辑"><i class="fas fa-pen"></i></button>
-                                    <button class="action-btn delete" data-id="${item.id}" title="删除"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </div>
-                            <div class="digit-grid">
-                                ${gridCells}
+                            <div class="row-fields">
+                                <span class="issue">${item.issue}</span>
+                                <span class="draw">${draw}</span>
+                                ${importField}
+                                ${actionButtons}
+                                <div class="digit-grid" data-id="${item.id}">${gridHtml}</div>
                             </div>
                         </div>
                     `;
@@ -512,24 +574,44 @@
 
                 container.innerHTML = html;
 
-                // 绑定编辑/删除
-                document.querySelectorAll('.edit').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const id = btn.getAttribute('data-id');
-                        openEditModal(id);
+                // 绑定导入框输入事件 (管理员模式)
+                if (isAdmin) {
+                    document.querySelectorAll('.import-input').forEach(inp => {
+                        inp.addEventListener('input', function(e) {
+                            const id = this.dataset.id;
+                            const newVal = this.value.replace(/[^0-9]/g, ''); // 只保留数字
+                            // 更新trends中对应的manualCode
+                            const trend = trends.find(t => t.id === id);
+                            if (trend) {
+                                trend.manualCode = newVal;
+                                saveToStorage();
+                                // 更新对应网格
+                                refreshGridForItem(id);
+                            }
+                        });
                     });
-                });
-                document.querySelectorAll('.delete').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const id = btn.getAttribute('data-id');
-                        deleteTrend(id);
+
+                    // 编辑按钮
+                    document.querySelectorAll('.edit').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const id = btn.getAttribute('data-id');
+                            openEditModal(id);
+                        });
                     });
-                });
+
+                    // 删除按钮
+                    document.querySelectorAll('.delete').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const id = btn.getAttribute('data-id');
+                            deleteTrend(id);
+                        });
+                    });
+                }
             }
 
-            // ---------- 模态框逻辑 ----------
+            // ---------- 模态框 ----------
             function openAddModal() {
                 document.getElementById('modalTitle').innerText = '添加期号';
                 document.getElementById('issueInput').value = '';
@@ -582,13 +664,15 @@
                     if (index !== -1) {
                         trends[index].issue = issue;
                         trends[index].drawNumber = draw;
+                        // 可选：如果不想自动修改manualCode，保留原manualCode；但也可以默认同步一次
+                        // 这里保持manualCode不变，让管理员自行通过导入框调整
                     }
                 } else {
                     const newId = Date.now() + '-' + Math.random().toString(36).substr(2, 6);
-                    trends.push({ id: newId, issue, drawNumber: draw });
+                    // 新增时 manualCode 默认等于开奖号码
+                    trends.push({ id: newId, issue, drawNumber: draw, manualCode: draw });
                 }
 
-                // 保持升序
                 trends.sort((a, b) => parseInt(a.issue) - parseInt(b.issue));
                 saveToStorage();
                 renderTrends();
@@ -602,13 +686,13 @@
                 renderTrends();
             }
 
-            // 搜索功能
+            // 搜索
             const searchInput = document.getElementById('searchIssue');
             const clearBtn = document.getElementById('clearSearch');
 
             searchInput.addEventListener('input', function() {
-                filterText = this.value.replace(/\D/g, ''); // 只留数字
-                this.value = filterText; // 回显
+                filterText = this.value.replace(/\D/g, '');
+                this.value = filterText;
                 clearBtn.style.display = filterText ? 'inline' : 'none';
                 renderTrends();
             });
@@ -620,21 +704,20 @@
                 renderTrends();
             });
 
-            // 初始化
-            loadFromStorage();
-            renderTrends();
-
-            // 事件绑定
-            document.getElementById('addTrendBtn')?.addEventListener('click', openAddModal); // 我们可能需要添加一个浮动按钮？但原需求没有明确新增按钮，不过我们可以加一个悬浮加号，但现有界面顶部有搜索栏，可以考虑在右上角加一个新增图标。为了保留功能，我们在info-row右侧加一个按钮。
-            // 在info-row中加入添加按钮更合理
-            const infoRow = document.querySelector('.info-row');
-            if (infoRow) {
-                const addBtn = document.createElement('span');
-                addBtn.innerHTML = '<i class="fas fa-plus-circle" style="color:#ff8c5a; font-size:1.4rem; cursor:pointer;"></i>';
-                addBtn.style.marginLeft = 'auto';
-                addBtn.addEventListener('click', openAddModal);
-                infoRow.appendChild(addBtn);
+            // 管理员切换
+            const adminToggle = document.getElementById('adminToggle');
+            function updateAdminUI() {
+                adminToggle.innerHTML = isAdmin ? '<i class="fas fa-user-shield"></i> 管理员' : '<i class="fas fa-user"></i> 普通模式';
+                adminToggle.classList.toggle('active', isAdmin);
+                renderTrends(); // 重新渲染
             }
+            adminToggle.addEventListener('click', () => {
+                isAdmin = !isAdmin;
+                updateAdminUI();
+            });
+
+            // 新增按钮
+            document.getElementById('addTrendBtn').addEventListener('click', openAddModal);
 
             // 模态框关闭
             document.getElementById('modalClose').addEventListener('click', () => {
@@ -645,16 +728,21 @@
                 if (e.target === modal) modal.style.display = 'none';
             });
 
-            // 保存按钮
             document.getElementById('saveTrendBtn').addEventListener('click', saveTrend);
 
-            // 限制数字输入
+            // 数字限制
             document.getElementById('issueInput').addEventListener('input', function(e) {
                 this.value = this.value.replace(/\D/g, '');
             });
             document.getElementById('drawInput').addEventListener('input', function(e) {
                 this.value = this.value.replace(/\D/g, '');
             });
+
+            // 初始化
+            loadFromStorage();
+            // 默认普通模式
+            isAdmin = false;
+            updateAdminUI();
         })();
     </script>
 </body>

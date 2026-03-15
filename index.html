@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>十方料码 · 胆码趋势（一行布局/管理员）</title>
+    <title>十方料码 · 胆码趋势（批量导入/自动高亮）</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -125,128 +125,135 @@
             color: #ff6b35;
             margin-right: 4px;
         }
-        /* 列表区 — 强制一行布局，超宽可横向滑动 */
+        /* 表格样式 */
         .trend-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 2px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 16px;
+            overflow: hidden;
         }
-        .trend-item {
-            background: rgba(18, 18, 30, 0.7);
-            backdrop-filter: blur(4px);
-            border-radius: 24px;
-            padding: 14px 18px;
-            border: 1px solid rgba(255,255,255,0.03);
-            transition: 0.1s;
-            overflow-x: auto;        /* 超宽时出现横向滚动条，保证一行 */
-            -webkit-overflow-scrolling: touch;
-        }
-        .trend-item:hover {
-            border-color: rgba(255,107,53,0.2);
-        }
-
-        /* 行内flex容器，不换行 */
-        .row-fields {
+        .list-header {
             display: flex;
             align-items: center;
+            padding: 12px 16px;
+            background: rgba(30,30,45,0.9);
+            font-weight: 600;
+            color: #ffb347;
+            border-bottom: 1px solid #ff6b3540;
             gap: 12px;
-            flex-wrap: nowrap;       /* 强制不换行 */
-            min-width: min-content;   /* 宽度按内容自适应 */
+            flex-wrap: nowrap;
+            min-width: min-content;
         }
-
-        .issue {
-            font-size: 1.6rem;
-            font-weight: 700;
+        .header-item {
+            flex-shrink: 0;
+        }
+        .header-date {
+            width: 70px;
+        }
+        .header-draw {
+            width: 60px;
+        }
+        .header-trend {
+            min-width: 280px;
+            flex: 1;
+        }
+        .trend-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            background: rgba(18, 18, 30, 0.6);
+            backdrop-filter: blur(4px);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            gap: 12px;
+            flex-wrap: nowrap;
+            min-width: min-content;
+        }
+        .trend-item:hover {
+            background: rgba(30,30,45,0.8);
+        }
+        .col-date {
+            width: 70px;
+            flex-shrink: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
             color: #ffd166;
-            line-height: 1.2;
-            white-space: nowrap;
-            flex-shrink: 0;           /* 禁止缩小 */
         }
-        .draw {
-            font-size: 1.6rem;
-            font-weight: 800;
+        .col-draw {
+            width: 60px;
+            flex-shrink: 0;
+            font-size: 1.3rem;
+            font-weight: 700;
             color: #4ecdc4;
             font-family: 'Courier New', monospace;
             background: rgba(78,205,196,0.1);
-            padding: 4px 16px;
-            border-radius: 40px;
-            white-space: nowrap;
-            flex-shrink: 0;
+            padding: 4px 0;
+            border-radius: 20px;
+            text-align: center;
         }
-        /* 导入框 */
+        /* 导入框（管理员每行编辑） */
         .import-input {
-            width: 100px;
-            min-width: 80px;
-            padding: 10px 12px;
+            width: 110px;
+            flex-shrink: 0;
+            padding: 8px 10px;
             background: #1e1e30;
             border: 1px solid #ff6b3540;
             border-radius: 30px;
             color: #fff;
-            font-size: 1rem;
+            font-size: 0.9rem;
             outline: none;
             text-align: center;
-            transition: 0.2s;
-            flex-shrink: 0;
+            letter-spacing: 2px;
         }
         .import-input:focus {
             border-color: #ff8c5a;
-            box-shadow: 0 0 8px #ff6b35;
         }
-        .import-input::placeholder {
-            color: #555;
-            font-size: 0.8rem;
-        }
-
-        /* 0-9网格 — 允许缩小，但保证最小宽度 */
-        .digit-grid {
+        /* 胆码趋势网格 */
+        .trend-grid {
             display: grid;
             grid-template-columns: repeat(10, minmax(28px, 1fr));
             gap: 4px;
-            flex-shrink: 1;           /* 允许缩小 */
-            min-width: 280px;          /* 最小宽度，再小格子就太小了 */
-            width: auto;
+            flex: 1;
+            min-width: 280px;
         }
         .digit-cell {
             aspect-ratio: 1/1;
-            background: rgba(255,255,255,0.04);
-            border-radius: 8px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #aaa;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.15s;
-            cursor: default;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #ccc;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.1s;
         }
         .digit-cell.highlight {
             background: #ff8c5a;
             color: #111;
             border-color: #ffd166;
-            box-shadow: 0 0 10px #ff6b35;
-            font-weight: 800;
-            transform: scale(1.02);
+            box-shadow: 0 0 6px #ff6b35;
+            font-weight: 700;
         }
-
         /* 操作按钮组 */
         .action-group {
             display: flex;
             gap: 4px;
             flex-shrink: 0;
-            margin-left: auto;         /* 靠右，但在flex中可被压缩 */
+            margin-left: 8px;
         }
         .action-btn {
             background: transparent;
             border: none;
             color: #aaa;
-            font-size: 1.1rem;
-            padding: 8px;
+            font-size: 1rem;
+            padding: 6px;
             border-radius: 50%;
             cursor: pointer;
-            transition: 0.2s;
-            width: 40px;
-            height: 40px;
+            width: 34px;
+            height: 34px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -259,19 +266,11 @@
             background: rgba(255,80,80,0.2);
             color: #ff5e5e;
         }
-
-        /* 空状态 */
         .empty-state {
             text-align: center;
             padding: 50px 20px;
             color: #555;
         }
-        .empty-state i {
-            font-size: 3.5rem;
-            margin-bottom: 12px;
-            color: #333;
-        }
-
         footer {
             text-align: center;
             padding: 30px 16px 10px;
@@ -283,8 +282,7 @@
         .brand-highlight {
             color: #ffb347;
         }
-
-        /* 模态框 (保持不变) */
+        /* 导入模态框 */
         .modal {
             display: none;
             position: fixed;
@@ -300,21 +298,21 @@
             border-radius: 28px;
             padding: 28px 24px;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
             border: 1px solid #ff6b35;
-            box-shadow: 0 20px 40px #00000080;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         .close-btn {
             float: right;
             font-size: 2rem;
-            line-height: 1;
             color: #aaa;
             cursor: pointer;
         }
         .modal-title {
             font-size: 1.8rem;
             color: #ff6b35;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             clear: both;
         }
         .form-group {
@@ -333,16 +331,20 @@
             border-radius: 40px;
             color: #fff;
             font-size: 1rem;
-            outline: none;
         }
         .form-control:focus {
             border-color: #ff6b35;
         }
+        textarea.form-control {
+            border-radius: 20px;
+            min-height: 200px;
+            font-family: monospace;
+            resize: vertical;
+        }
         .error-message {
             color: #ff6b6b;
-            font-size: 0.8rem;
-            margin-top: 5px;
-            display: none;
+            font-size: 0.9rem;
+            margin-top: 8px;
         }
         .btn-block {
             width: 100%;
@@ -353,20 +355,18 @@
             font-weight: 700;
             color: white;
             font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
             cursor: pointer;
+            margin-top: 10px;
         }
-
-        /* 手机小屏优化 */
-        @media (max-width: 550px) {
-            .issue, .draw { font-size: 1.3rem; }
-            .import-input { width: 80px; padding: 8px 6px; }
-            .digit-grid { min-width: 240px; }
-            .digit-cell { font-size: 0.85rem; }
-            .action-btn { width: 36px; height: 36px; }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #ff6b35;
+            color: #ff8c5a;
+        }
+        .flex-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
     </style>
 </head>
@@ -375,7 +375,7 @@
     <nav class="navbar">
         <div class="logo">
             <i class="fas fa-chart-line"></i>
-            <span>十方胆码 · 一行版</span>
+            <span>十方胆码 · 表格版</span>
         </div>
         <div class="admin-toggle active" id="adminToggle">
             <i class="fas fa-user-shield"></i> <span>管理员</span>
@@ -386,14 +386,25 @@
         <!-- 搜索栏 -->
         <div class="search-bar">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchIssue" placeholder="输入期号如 25613" inputmode="numeric">
+            <input type="text" id="searchIssue" placeholder="输入期号如 26048" inputmode="numeric">
             <span class="clear-search" id="clearSearch" style="display: none;">✕</span>
         </div>
         <div class="info-row">
             <span><i class="far fa-list-alt"></i> 最近30期 (最新在底部)</span>
-            <span><i class="fas fa-sort-amount-down-alt"></i> 共 <span id="totalCount">0</span> 条
+            <span>
+                <i class="fas fa-sort-amount-down-alt"></i> 共 <span id="totalCount">0</span> 条
                 <i class="fas fa-plus-circle" id="addTrendBtn" style="color:#ff8c5a; font-size:1.4rem; cursor:pointer; margin-left:12px;"></i>
+                <i class="fas fa-upload" id="importBtn" style="color:#4ecdc4; font-size:1.4rem; cursor:pointer; margin-left:12px;" title="批量导入"></i>
             </span>
+        </div>
+
+        <!-- 表格表头 -->
+        <div class="list-header">
+            <div class="header-item header-date">日期</div>
+            <div class="header-item header-draw">奖号</div>
+            <div class="header-item header-trend">胆码趋势分布</div>
+            <div class="header-item" style="width:110px;"></div> <!-- 导入框占位 -->
+            <div class="header-item" style="width:80px;"></div> <!-- 操作按钮占位 -->
         </div>
 
         <!-- 列表容器 -->
@@ -407,22 +418,45 @@
             <h3 class="modal-title" id="modalTitle">添加期号</h3>
             <div class="form-group">
                 <label class="form-label">期号 (5位数字)</label>
-                <input type="text" id="issueInput" class="form-control" placeholder="如 25613" maxlength="5">
+                <input type="text" id="issueInput" class="form-control" placeholder="如 26048" maxlength="5">
                 <div class="error-message" id="issueError"></div>
             </div>
             <div class="form-group">
                 <label class="form-label">开奖号码 (3位数字)</label>
-                <input type="text" id="drawInput" class="form-control" placeholder="如 256" maxlength="3">
+                <input type="text" id="drawInput" class="form-control" placeholder="如 612" maxlength="3">
                 <div class="error-message" id="drawError"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">胆码趋势 (10位数字)</label>
+                <input type="text" id="trendInput" class="form-control" placeholder="如 5903417268" maxlength="10">
+                <div class="error-message" id="trendError"></div>
             </div>
             <input type="hidden" id="editingId" value="">
             <button class="btn-block" id="saveTrendBtn"><i class="fas fa-save"></i> 保存记录</button>
         </div>
     </div>
 
+    <!-- 批量导入模态框 -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <span class="close-btn" id="importModalClose">&times;</span>
+            <h3 class="modal-title">批量导入数据</h3>
+            <div class="form-group">
+                <label class="form-label">粘贴数据（格式：期号 奖号 胆码趋势，每行一条）</label>
+                <textarea id="importData" class="form-control" placeholder="26048 612 5903417268&#10;26049 110 6732405189&#10;26050 689 9071234568"></textarea>
+                <div class="error-message" id="importError"></div>
+            </div>
+            <div class="flex-row">
+                <button class="btn-block" id="doImportBtn"><i class="fas fa-check"></i> 导入</button>
+                <button class="btn-block btn-secondary" id="clearImportBtn" style="background:transparent;">清空</button>
+            </div>
+            <p style="color:#aaa; font-size:0.8rem; margin-top:10px;">期号5位，奖号3位，胆码10位，空格分隔。重复期号将被覆盖。</p>
+        </div>
+    </div>
+
     <footer>
-        <p><span class="brand-highlight">十方料码 · 胆码趋势</span> 一行布局，横向滑动查看全部</p>
-        <p style="margin-top: 6px;">管理员模式默认开启，导入框手动输入数字(如 145) 实时高亮网格</p>
+        <p><span class="brand-highlight">十方料码 · 胆码趋势</span> 自动高亮开奖号码，批量导入/单行编辑</p>
+        <p style="margin-top:6px;">表格横向滑动，手机全显示</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -439,84 +473,69 @@
                 }
             });
 
-            // ---------- 状态 ----------
-            let trends = [];               // 全部数据，按期号升序
+            // ---------- 数据 ----------
+            let trends = [];
             let filterText = '';
-            let isAdmin = true;             // 默认开启管理员模式，便于测试
+            let isAdmin = true;  // 默认管理员
 
-            // 加载数据
+            // 初始化数据（用户提供的示例）
             function loadFromStorage() {
-                const stored = localStorage.getItem('shifang_trends_v4');
+                const stored = localStorage.getItem('shifang_trends_v6');
                 if (stored) {
                     try { trends = JSON.parse(stored); } catch { trends = []; }
                 }
-                // 示例数据
                 if (!trends.length) {
                     trends = [
-                        { id: '1', issue: '25601', drawNumber: '425', manualCode: '425' },
-                        { id: '2', issue: '25602', drawNumber: '789', manualCode: '789' },
-                        { id: '3', issue: '25603', drawNumber: '014', manualCode: '014' },
-                        { id: '4', issue: '25604', drawNumber: '333', manualCode: '3' },
-                        { id: '5', issue: '25605', drawNumber: '256', manualCode: '256' },
-                        { id: '6', issue: '25606', drawNumber: '107', manualCode: '107' },
-                        { id: '7', issue: '25607', drawNumber: '888', manualCode: '8' },
-                        { id: '8', issue: '25608', drawNumber: '692', manualCode: '692' },
-                        { id: '9', issue: '25609', drawNumber: '555', manualCode: '5' },
-                        { id: '10', issue: '25610', drawNumber: '123', manualCode: '123' },
-                        { id: '11', issue: '25611', drawNumber: '999', manualCode: '9' },
-                        { id: '12', issue: '25612', drawNumber: '777', manualCode: '7' },
-                        { id: '13', issue: '25613', drawNumber: '256', manualCode: '256' },
-                        { id: '14', issue: '25614', drawNumber: '321', manualCode: '321' },
-                        { id: '15', issue: '25615', drawNumber: '468', manualCode: '468' },
-                        { id: '16', issue: '25616', drawNumber: '111', manualCode: '1' },
-                        { id: '17', issue: '25617', drawNumber: '222', manualCode: '2' },
-                        { id: '18', issue: '25618', drawNumber: '333', manualCode: '3' },
-                        { id: '19', issue: '25619', drawNumber: '444', manualCode: '4' },
-                        { id: '20', issue: '25620', drawNumber: '555', manualCode: '5' },
-                        { id: '21', issue: '25621', drawNumber: '666', manualCode: '6' },
-                        { id: '22', issue: '25622', drawNumber: '777', manualCode: '7' },
-                        { id: '23', issue: '25623', drawNumber: '888', manualCode: '8' },
-                        { id: '24', issue: '25624', drawNumber: '999', manualCode: '9' },
-                        { id: '25', issue: '25625', drawNumber: '000', manualCode: '0' },
-                        { id: '26', issue: '25626', drawNumber: '135', manualCode: '135' },
-                        { id: '27', issue: '25627', drawNumber: '579', manualCode: '579' },
-                        { id: '28', issue: '25628', drawNumber: '246', manualCode: '246' },
-                        { id: '29', issue: '25629', drawNumber: '802', manualCode: '802' },
-                        { id: '30', issue: '25630', drawNumber: '413', manualCode: '413' },
-                        { id: '31', issue: '25631', drawNumber: '725', manualCode: '725' },
-                        { id: '32', issue: '25632', drawNumber: '690', manualCode: '690' }
+                        { id: '1', issue: '26048', drawNumber: '612', trendDigits: '5903417268' },
+                        { id: '2', issue: '26049', drawNumber: '110', trendDigits: '6732405189' },
+                        { id: '3', issue: '26050', drawNumber: '689', trendDigits: '9071234568' },
+                        { id: '4', issue: '26051', drawNumber: '302', trendDigits: '6243581907' },
+                        { id: '5', issue: '26052', drawNumber: '277', trendDigits: '4568137029' },
+                        { id: '6', issue: '26053', drawNumber: '755', trendDigits: '0984526137' },
+                        { id: '7', issue: '26054', drawNumber: '217', trendDigits: '5396102784' },
+                        { id: '8', issue: '26055', drawNumber: '107', trendDigits: '0281356794' },
+                        { id: '9', issue: '26056', drawNumber: '477', trendDigits: '0637891245' },
+                        { id: '10', issue: '26057', drawNumber: '264', trendDigits: '5367419082' },
+                        { id: '11', issue: '26058', drawNumber: '543', trendDigits: '6925837140' },
+                        { id: '12', issue: '26059', drawNumber: '794', trendDigits: '1098347562' },
+                        { id: '13', issue: '26060', drawNumber: '943', trendDigits: '1473289065' },
+                        { id: '14', issue: '26061', drawNumber: '429', trendDigits: '5349160782' },
+                        { id: '15', issue: '26062', drawNumber: '294', trendDigits: '7901324568' },
+                        { id: '16', issue: '26063', drawNumber: '517', trendDigits: '2938016745' }
                     ];
-                } else {
-                    // 保证每个对象有manualCode
-                    trends.forEach(t => { if (t.manualCode === undefined) t.manualCode = t.drawNumber; });
                 }
+                // 确保每个对象有trendDigits且为10位
+                trends.forEach(t => {
+                    if (!t.trendDigits) t.trendDigits = t.drawNumber.padEnd(10, '0').slice(0,10);
+                    if (t.trendDigits.length < 10) t.trendDigits = t.trendDigits.padEnd(10, '0');
+                    if (t.trendDigits.length > 10) t.trendDigits = t.trendDigits.slice(0,10);
+                });
                 trends.sort((a, b) => parseInt(a.issue) - parseInt(b.issue));
                 saveToStorage();
             }
 
             function saveToStorage() {
-                localStorage.setItem('shifang_trends_v4', JSON.stringify(trends));
+                localStorage.setItem('shifang_trends_v6', JSON.stringify(trends));
             }
 
-            // 根据manualCode生成网格HTML
-            function getGridHtml(manualCode) {
-                const digits = manualCode ? manualCode.toString() : '';
-                const uniqueDigits = [...new Set(digits.split('').filter(c => /[0-9]/.test(c)))];
-                let cells = '';
-                for (let d = 0; d <= 9; d++) {
-                    const highlight = uniqueDigits.includes(d.toString());
-                    cells += `<div class="digit-cell ${highlight ? 'highlight' : ''}">${d}</div>`;
+            // 生成带高亮的网格HTML (trendDigits: 10位字符串, drawNumber: 开奖号)
+            function getGridHtml(trendDigits, drawNumber) {
+                let html = '';
+                for (let i = 0; i < 10; i++) {
+                    const digit = trendDigits[i] || '0';
+                    const highlight = drawNumber.includes(digit) ? 'highlight' : '';
+                    html += `<div class="digit-cell ${highlight}">${digit}</div>`;
                 }
-                return cells;
+                return html;
             }
 
-            // 刷新单个网格
-            function refreshGridForItem(itemId) {
+            // 更新某行的网格显示 (根据最新的trendDigits和drawNumber)
+            function refreshRowGrid(itemId) {
                 const item = trends.find(t => t.id === itemId);
                 if (!item) return;
-                const gridContainer = document.querySelector(`.trend-item[data-id="${itemId}"] .digit-grid`);
+                const gridContainer = document.querySelector(`.trend-item[data-id="${itemId}"] .trend-grid`);
                 if (gridContainer) {
-                    gridContainer.innerHTML = getGridHtml(item.manualCode);
+                    gridContainer.innerHTML = getGridHtml(item.trendDigits, item.drawNumber);
                 }
             }
 
@@ -525,9 +544,11 @@
                 const container = document.getElementById('trendListContainer');
                 const totalSpan = document.getElementById('totalCount');
                 const addBtn = document.getElementById('addTrendBtn');
+                const importBtn = document.getElementById('importBtn');
                 if (!container) return;
 
                 addBtn.style.display = isAdmin ? 'inline-block' : 'none';
+                importBtn.style.display = isAdmin ? 'inline-block' : 'none';
 
                 let filtered = trends;
                 if (filterText.trim() !== '') {
@@ -536,7 +557,7 @@
 
                 let displayList = filtered;
                 if (filterText.trim() === '') {
-                    displayList = filtered.slice(-30);
+                    displayList = filtered.slice(-30); // 最近30期
                 }
 
                 totalSpan.innerText = filtered.length;
@@ -549,12 +570,12 @@
                 let html = '';
                 displayList.forEach(item => {
                     const draw = item.drawNumber.padEnd(3, ' ').substring(0, 3);
-                    const gridHtml = getGridHtml(item.manualCode);
+                    const gridHtml = getGridHtml(item.trendDigits, item.drawNumber);
 
                     let importField = '';
                     let actionButtons = '';
                     if (isAdmin) {
-                        importField = `<input type="text" class="import-input" data-id="${item.id}" value="${item.manualCode || ''}" placeholder="胆码">`;
+                        importField = `<input type="text" class="import-input" data-id="${item.id}" value="${item.trendDigits}" maxlength="10" placeholder="10位胆码">`;
                         actionButtons = `
                             <div class="action-group">
                                 <button class="action-btn edit" data-id="${item.id}" title="编辑"><i class="fas fa-pen"></i></button>
@@ -563,16 +584,13 @@
                         `;
                     }
 
-                    // 注意顺序：期号-奖号-导入框-胆码网格-操作按钮
                     html += `
                         <div class="trend-item" data-id="${item.id}">
-                            <div class="row-fields">
-                                <span class="issue">${item.issue}</span>
-                                <span class="draw">${draw}</span>
-                                ${importField}
-                                <div class="digit-grid" data-id="${item.id}">${gridHtml}</div>
-                                ${actionButtons}
-                            </div>
+                            <div class="col-date">${item.issue}</div>
+                            <div class="col-draw">${draw}</div>
+                            ${importField}
+                            <div class="trend-grid" data-id="${item.id}">${gridHtml}</div>
+                            ${actionButtons}
                         </div>
                     `;
                 });
@@ -583,13 +601,15 @@
                     // 导入框输入事件
                     document.querySelectorAll('.import-input').forEach(inp => {
                         inp.addEventListener('input', function(e) {
+                            let val = this.value.replace(/[^0-9]/g, '');
+                            if (val.length > 10) val = val.slice(0,10);
+                            this.value = val;
                             const id = this.dataset.id;
-                            const newVal = this.value.replace(/[^0-9]/g, '');
-                            const trend = trends.find(t => t.id === id);
-                            if (trend) {
-                                trend.manualCode = newVal;
+                            const item = trends.find(t => t.id === id);
+                            if (item) {
+                                item.trendDigits = val;
                                 saveToStorage();
-                                refreshGridForItem(id);
+                                refreshRowGrid(id); // 刷新网格（同时应用高亮）
                             }
                         });
                     });
@@ -614,11 +634,12 @@
                 }
             }
 
-            // 模态框逻辑
+            // ---------- 模态框逻辑 ----------
             function openAddModal() {
                 document.getElementById('modalTitle').innerText = '添加期号';
                 document.getElementById('issueInput').value = '';
                 document.getElementById('drawInput').value = '';
+                document.getElementById('trendInput').value = '';
                 document.getElementById('editingId').value = '';
                 clearErrors();
                 document.getElementById('trendModal').style.display = 'flex';
@@ -630,6 +651,7 @@
                 document.getElementById('modalTitle').innerText = '编辑期号';
                 document.getElementById('issueInput').value = trend.issue;
                 document.getElementById('drawInput').value = trend.drawNumber;
+                document.getElementById('trendInput').value = trend.trendDigits;
                 document.getElementById('editingId').value = id;
                 clearErrors();
                 document.getElementById('trendModal').style.display = 'flex';
@@ -638,40 +660,45 @@
             function clearErrors() {
                 document.getElementById('issueError').style.display = 'none';
                 document.getElementById('drawError').style.display = 'none';
-            }
-
-            function showError(elId, msg) {
-                const el = document.getElementById(elId);
-                el.innerText = msg;
-                el.style.display = 'block';
+                document.getElementById('trendError').style.display = 'none';
             }
 
             function saveTrend() {
                 const issue = document.getElementById('issueInput').value.trim();
                 const draw = document.getElementById('drawInput').value.trim();
+                const trend = document.getElementById('trendInput').value.trim().replace(/[^0-9]/g, '');
                 const editingId = document.getElementById('editingId').value;
 
                 clearErrors();
 
+                let hasError = false;
                 if (!/^\d{5}$/.test(issue)) {
-                    showError('issueError', '期号必须为5位数字');
-                    return;
+                    document.getElementById('issueError').innerText = '期号必须为5位数字';
+                    document.getElementById('issueError').style.display = 'block';
+                    hasError = true;
                 }
                 if (!/^\d{3}$/.test(draw)) {
-                    showError('drawError', '开奖号码必须为3位数字');
-                    return;
+                    document.getElementById('drawError').innerText = '开奖号码必须为3位数字';
+                    document.getElementById('drawError').style.display = 'block';
+                    hasError = true;
                 }
+                if (trend.length !== 10) {
+                    document.getElementById('trendError').innerText = '胆码趋势必须为10位数字';
+                    document.getElementById('trendError').style.display = 'block';
+                    hasError = true;
+                }
+                if (hasError) return;
 
                 if (editingId) {
                     const index = trends.findIndex(t => t.id === editingId);
                     if (index !== -1) {
                         trends[index].issue = issue;
                         trends[index].drawNumber = draw;
-                        // 编辑时不覆盖manualCode，保留原导入码
+                        trends[index].trendDigits = trend;
                     }
                 } else {
                     const newId = Date.now() + '-' + Math.random().toString(36).substr(2, 6);
-                    trends.push({ id: newId, issue, drawNumber: draw, manualCode: draw });
+                    trends.push({ id: newId, issue, drawNumber: draw, trendDigits: trend });
                 }
 
                 trends.sort((a, b) => parseInt(a.issue) - parseInt(b.issue));
@@ -687,7 +714,61 @@
                 renderTrends();
             }
 
-            // 搜索
+            // ---------- 批量导入 ----------
+            function openImportModal() {
+                document.getElementById('importData').value = '';
+                document.getElementById('importError').style.display = 'none';
+                document.getElementById('importModal').style.display = 'flex';
+            }
+
+            function doImport() {
+                const raw = document.getElementById('importData').value;
+                const lines = raw.split(/\r?\n/).filter(line => line.trim() !== '');
+                const errorDiv = document.getElementById('importError');
+                errorDiv.style.display = 'none';
+                let successCount = 0;
+                let failCount = 0;
+
+                lines.forEach(line => {
+                    const parts = line.trim().split(/\s+/);
+                    if (parts.length < 3) {
+                        failCount++;
+                        return;
+                    }
+                    const issue = parts[0];
+                    const draw = parts[1];
+                    const trend = parts[2].replace(/[^0-9]/g, ''); // 只留数字
+
+                    if (!/^\d{5}$/.test(issue) || !/^\d{3}$/.test(draw) || trend.length !== 10) {
+                        failCount++;
+                        return;
+                    }
+
+                    // 检查是否存在，存在则覆盖
+                    const existingIndex = trends.findIndex(t => t.issue === issue);
+                    const newItem = { id: existingIndex >= 0 ? trends[existingIndex].id : (Date.now() + '-' + Math.random().toString(36).substr(2, 6)), issue, drawNumber: draw, trendDigits: trend };
+                    if (existingIndex >= 0) {
+                        trends[existingIndex] = newItem;
+                    } else {
+                        trends.push(newItem);
+                    }
+                    successCount++;
+                });
+
+                if (successCount > 0 || failCount > 0) {
+                    trends.sort((a, b) => parseInt(a.issue) - parseInt(b.issue));
+                    saveToStorage();
+                    renderTrends();
+                    errorDiv.innerText = `导入完成：成功 ${successCount} 条，失败 ${failCount} 条（格式不正确）`;
+                    errorDiv.style.display = 'block';
+                    errorDiv.style.color = successCount > 0 ? '#55ff55' : '#ff6b6b';
+                } else {
+                    errorDiv.innerText = '没有成功导入任何数据，请检查格式';
+                    errorDiv.style.display = 'block';
+                }
+            }
+
+            // ---------- 搜索 ----------
             const searchInput = document.getElementById('searchIssue');
             const clearBtn = document.getElementById('clearSearch');
 
@@ -705,7 +786,7 @@
                 renderTrends();
             });
 
-            // 管理员切换
+            // ---------- 管理员切换 ----------
             const adminToggle = document.getElementById('adminToggle');
             function updateAdminUI() {
                 adminToggle.innerHTML = isAdmin ? '<i class="fas fa-user-shield"></i> 管理员' : '<i class="fas fa-user"></i> 普通模式';
@@ -717,27 +798,42 @@
                 updateAdminUI();
             });
 
+            // ---------- 事件绑定 ----------
             document.getElementById('addTrendBtn').addEventListener('click', openAddModal);
+            document.getElementById('importBtn').addEventListener('click', openImportModal);
             document.getElementById('modalClose').addEventListener('click', () => {
                 document.getElementById('trendModal').style.display = 'none';
+            });
+            document.getElementById('importModalClose').addEventListener('click', () => {
+                document.getElementById('importModal').style.display = 'none';
             });
             window.addEventListener('click', (e) => {
                 const modal = document.getElementById('trendModal');
                 if (e.target === modal) modal.style.display = 'none';
+                const importModal = document.getElementById('importModal');
+                if (e.target === importModal) importModal.style.display = 'none';
             });
-            document.getElementById('saveTrendBtn').addEventListener('click', saveTrend);
 
-            // 数字限制
+            document.getElementById('saveTrendBtn').addEventListener('click', saveTrend);
+            document.getElementById('doImportBtn').addEventListener('click', doImport);
+            document.getElementById('clearImportBtn').addEventListener('click', () => {
+                document.getElementById('importData').value = '';
+            });
+
+            // 输入限制
             document.getElementById('issueInput').addEventListener('input', function(e) {
                 this.value = this.value.replace(/\D/g, '');
             });
             document.getElementById('drawInput').addEventListener('input', function(e) {
                 this.value = this.value.replace(/\D/g, '');
             });
+            document.getElementById('trendInput').addEventListener('input', function(e) {
+                this.value = this.value.replace(/\D/g, '');
+            });
 
             // 初始化
             loadFromStorage();
-            isAdmin = true;  // 确保默认管理员
+            isAdmin = true;
             updateAdminUI();
         })();
     </script>

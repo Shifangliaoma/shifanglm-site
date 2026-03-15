@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>十方料码 · 胆码趋势（管理员/普通）</title>
+    <title>十方料码 · 胆码趋势（一行布局/管理员）</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -71,7 +71,7 @@
             border-color: #ffd166;
         }
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 16px 12px;
         }
@@ -125,30 +125,33 @@
             color: #ff6b35;
             margin-right: 4px;
         }
-        /* 列表区 */
+        /* 列表区 — 强制一行布局，超宽可横向滑动 */
         .trend-list {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
         .trend-item {
             background: rgba(18, 18, 30, 0.7);
             backdrop-filter: blur(4px);
             border-radius: 24px;
-            padding: 16px 18px;
+            padding: 14px 18px;
             border: 1px solid rgba(255,255,255,0.03);
             transition: 0.1s;
+            overflow-x: auto;        /* 超宽时出现横向滚动条，保证一行 */
+            -webkit-overflow-scrolling: touch;
         }
         .trend-item:hover {
             border-color: rgba(255,107,53,0.2);
         }
 
-        /* 一行布局：所有元素在一行内，允许换行 */
+        /* 行内flex容器，不换行 */
         .row-fields {
             display: flex;
-            flex-wrap: wrap;
             align-items: center;
-            gap: 10px 12px;
+            gap: 12px;
+            flex-wrap: nowrap;       /* 强制不换行 */
+            min-width: min-content;   /* 宽度按内容自适应 */
         }
 
         .issue {
@@ -157,6 +160,7 @@
             color: #ffd166;
             line-height: 1.2;
             white-space: nowrap;
+            flex-shrink: 0;           /* 禁止缩小 */
         }
         .draw {
             font-size: 1.6rem;
@@ -167,6 +171,7 @@
             padding: 4px 16px;
             border-radius: 40px;
             white-space: nowrap;
+            flex-shrink: 0;
         }
         /* 导入框 */
         .import-input {
@@ -181,6 +186,7 @@
             outline: none;
             text-align: center;
             transition: 0.2s;
+            flex-shrink: 0;
         }
         .import-input:focus {
             border-color: #ff8c5a;
@@ -191,11 +197,44 @@
             font-size: 0.8rem;
         }
 
+        /* 0-9网格 — 允许缩小，但保证最小宽度 */
+        .digit-grid {
+            display: grid;
+            grid-template-columns: repeat(10, minmax(28px, 1fr));
+            gap: 4px;
+            flex-shrink: 1;           /* 允许缩小 */
+            min-width: 280px;          /* 最小宽度，再小格子就太小了 */
+            width: auto;
+        }
+        .digit-cell {
+            aspect-ratio: 1/1;
+            background: rgba(255,255,255,0.04);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #aaa;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.15s;
+            cursor: default;
+        }
+        .digit-cell.highlight {
+            background: #ff8c5a;
+            color: #111;
+            border-color: #ffd166;
+            box-shadow: 0 0 10px #ff6b35;
+            font-weight: 800;
+            transform: scale(1.02);
+        }
+
         /* 操作按钮组 */
         .action-group {
             display: flex;
             gap: 4px;
-            margin-left: auto;  /* 在flex中靠右 */
+            flex-shrink: 0;
+            margin-left: auto;         /* 靠右，但在flex中可被压缩 */
         }
         .action-btn {
             background: transparent;
@@ -219,37 +258,6 @@
         .action-btn.delete:hover {
             background: rgba(255,80,80,0.2);
             color: #ff5e5e;
-        }
-
-        /* 0-9网格 — 固定宽度，避免被压缩 */
-        .digit-grid {
-            display: grid;
-            grid-template-columns: repeat(10, minmax(28px, 1fr));
-            gap: 4px;
-            flex: 0 0 auto;
-            min-width: 280px;
-        }
-        .digit-cell {
-            aspect-ratio: 1/1;
-            background: rgba(255,255,255,0.04);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #aaa;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.15s;
-            cursor: default;
-        }
-        .digit-cell.highlight {
-            background: #ff8c5a;
-            color: #111;
-            border-color: #ffd166;
-            box-shadow: 0 0 10px #ff6b35;
-            font-weight: 800;
-            transform: scale(1.02);
         }
 
         /* 空状态 */
@@ -355,8 +363,9 @@
         /* 手机小屏优化 */
         @media (max-width: 550px) {
             .issue, .draw { font-size: 1.3rem; }
-            .import-input { width: 70px; padding: 8px 6px; }
-            .digit-grid { min-width: 240px; grid-template-columns: repeat(10, 1fr); }
+            .import-input { width: 80px; padding: 8px 6px; }
+            .digit-grid { min-width: 240px; }
+            .digit-cell { font-size: 0.85rem; }
             .action-btn { width: 36px; height: 36px; }
         }
     </style>
@@ -366,10 +375,10 @@
     <nav class="navbar">
         <div class="logo">
             <i class="fas fa-chart-line"></i>
-            <span>十方胆码</span>
+            <span>十方胆码 · 一行版</span>
         </div>
-        <div class="admin-toggle" id="adminToggle">
-            <i class="fas fa-user-shield"></i> <span>普通模式</span>
+        <div class="admin-toggle active" id="adminToggle">
+            <i class="fas fa-user-shield"></i> <span>管理员</span>
         </div>
     </nav>
 
@@ -383,7 +392,7 @@
         <div class="info-row">
             <span><i class="far fa-list-alt"></i> 最近30期 (最新在底部)</span>
             <span><i class="fas fa-sort-amount-down-alt"></i> 共 <span id="totalCount">0</span> 条
-                <i class="fas fa-plus-circle" id="addTrendBtn" style="color:#ff8c5a; font-size:1.4rem; cursor:pointer; margin-left:12px; display:none;"></i>
+                <i class="fas fa-plus-circle" id="addTrendBtn" style="color:#ff8c5a; font-size:1.4rem; cursor:pointer; margin-left:12px;"></i>
             </span>
         </div>
 
@@ -391,7 +400,7 @@
         <div id="trendListContainer" class="trend-list"></div>
     </div>
 
-    <!-- 新增/编辑模态框 (只编辑期号和奖号，导入码在行内编辑) -->
+    <!-- 新增/编辑模态框 -->
     <div class="modal" id="trendModal">
         <div class="modal-content">
             <span class="close-btn" id="modalClose">&times;</span>
@@ -412,8 +421,8 @@
     </div>
 
     <footer>
-        <p><span class="brand-highlight">十方料码 · 胆码趋势</span> 管理员可编辑导入框，普通用户只读</p>
-        <p style="margin-top: 6px;">导入框手动输入数字(如 145) 实时高亮网格</p>
+        <p><span class="brand-highlight">十方料码 · 胆码趋势</span> 一行布局，横向滑动查看全部</p>
+        <p style="margin-top: 6px;">管理员模式默认开启，导入框手动输入数字(如 145) 实时高亮网格</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -433,15 +442,15 @@
             // ---------- 状态 ----------
             let trends = [];               // 全部数据，按期号升序
             let filterText = '';
-            let isAdmin = false;            // 是否为管理员模式
+            let isAdmin = true;             // 默认开启管理员模式，便于测试
 
-            // 从localStorage加载或初始化
+            // 加载数据
             function loadFromStorage() {
-                const stored = localStorage.getItem('shifang_trends_v3');
+                const stored = localStorage.getItem('shifang_trends_v4');
                 if (stored) {
                     try { trends = JSON.parse(stored); } catch { trends = []; }
                 }
-                // 如果没有数据，填充示例，并为每条添加manualCode字段（导入码）
+                // 示例数据
                 if (!trends.length) {
                     trends = [
                         { id: '1', issue: '25601', drawNumber: '425', manualCode: '425' },
@@ -478,23 +487,20 @@
                         { id: '32', issue: '25632', drawNumber: '690', manualCode: '690' }
                     ];
                 } else {
-                    // 确保老数据有manualCode，默认为drawNumber
-                    trends.forEach(t => {
-                        if (t.manualCode === undefined) t.manualCode = t.drawNumber;
-                    });
+                    // 保证每个对象有manualCode
+                    trends.forEach(t => { if (t.manualCode === undefined) t.manualCode = t.drawNumber; });
                 }
                 trends.sort((a, b) => parseInt(a.issue) - parseInt(b.issue));
                 saveToStorage();
             }
 
             function saveToStorage() {
-                localStorage.setItem('shifang_trends_v3', JSON.stringify(trends));
+                localStorage.setItem('shifang_trends_v4', JSON.stringify(trends));
             }
 
-            // 根据manualCode生成网格高亮
+            // 根据manualCode生成网格HTML
             function getGridHtml(manualCode) {
                 const digits = manualCode ? manualCode.toString() : '';
-                // 提取所有数字字符，去重但保留顺序（用Set去重后转回数组）
                 const uniqueDigits = [...new Set(digits.split('').filter(c => /[0-9]/.test(c)))];
                 let cells = '';
                 for (let d = 0; d <= 9; d++) {
@@ -504,7 +510,7 @@
                 return cells;
             }
 
-            // 更新指定行的网格 (根据item.manualCode)
+            // 刷新单个网格
             function refreshGridForItem(itemId) {
                 const item = trends.find(t => t.id === itemId);
                 if (!item) return;
@@ -514,14 +520,13 @@
                 }
             }
 
-            // 渲染整个列表
+            // 渲染列表
             function renderTrends() {
                 const container = document.getElementById('trendListContainer');
                 const totalSpan = document.getElementById('totalCount');
                 const addBtn = document.getElementById('addTrendBtn');
                 if (!container) return;
 
-                // 控制添加按钮显示
                 addBtn.style.display = isAdmin ? 'inline-block' : 'none';
 
                 let filtered = trends;
@@ -531,7 +536,7 @@
 
                 let displayList = filtered;
                 if (filterText.trim() === '') {
-                    displayList = filtered.slice(-30); // 最近30期
+                    displayList = filtered.slice(-30);
                 }
 
                 totalSpan.innerText = filtered.length;
@@ -546,7 +551,6 @@
                     const draw = item.drawNumber.padEnd(3, ' ').substring(0, 3);
                     const gridHtml = getGridHtml(item.manualCode);
 
-                    // 管理员视图：显示导入框、操作按钮；普通视图：不显示
                     let importField = '';
                     let actionButtons = '';
                     if (isAdmin) {
@@ -559,14 +563,15 @@
                         `;
                     }
 
+                    // 注意顺序：期号-奖号-导入框-胆码网格-操作按钮
                     html += `
                         <div class="trend-item" data-id="${item.id}">
                             <div class="row-fields">
                                 <span class="issue">${item.issue}</span>
                                 <span class="draw">${draw}</span>
                                 ${importField}
-                                ${actionButtons}
                                 <div class="digit-grid" data-id="${item.id}">${gridHtml}</div>
+                                ${actionButtons}
                             </div>
                         </div>
                     `;
@@ -574,18 +579,16 @@
 
                 container.innerHTML = html;
 
-                // 绑定导入框输入事件 (管理员模式)
                 if (isAdmin) {
+                    // 导入框输入事件
                     document.querySelectorAll('.import-input').forEach(inp => {
                         inp.addEventListener('input', function(e) {
                             const id = this.dataset.id;
-                            const newVal = this.value.replace(/[^0-9]/g, ''); // 只保留数字
-                            // 更新trends中对应的manualCode
+                            const newVal = this.value.replace(/[^0-9]/g, '');
                             const trend = trends.find(t => t.id === id);
                             if (trend) {
                                 trend.manualCode = newVal;
                                 saveToStorage();
-                                // 更新对应网格
                                 refreshGridForItem(id);
                             }
                         });
@@ -611,7 +614,7 @@
                 }
             }
 
-            // ---------- 模态框 ----------
+            // 模态框逻辑
             function openAddModal() {
                 document.getElementById('modalTitle').innerText = '添加期号';
                 document.getElementById('issueInput').value = '';
@@ -664,12 +667,10 @@
                     if (index !== -1) {
                         trends[index].issue = issue;
                         trends[index].drawNumber = draw;
-                        // 可选：如果不想自动修改manualCode，保留原manualCode；但也可以默认同步一次
-                        // 这里保持manualCode不变，让管理员自行通过导入框调整
+                        // 编辑时不覆盖manualCode，保留原导入码
                     }
                 } else {
                     const newId = Date.now() + '-' + Math.random().toString(36).substr(2, 6);
-                    // 新增时 manualCode 默认等于开奖号码
                     trends.push({ id: newId, issue, drawNumber: draw, manualCode: draw });
                 }
 
@@ -709,17 +710,14 @@
             function updateAdminUI() {
                 adminToggle.innerHTML = isAdmin ? '<i class="fas fa-user-shield"></i> 管理员' : '<i class="fas fa-user"></i> 普通模式';
                 adminToggle.classList.toggle('active', isAdmin);
-                renderTrends(); // 重新渲染
+                renderTrends();
             }
             adminToggle.addEventListener('click', () => {
                 isAdmin = !isAdmin;
                 updateAdminUI();
             });
 
-            // 新增按钮
             document.getElementById('addTrendBtn').addEventListener('click', openAddModal);
-
-            // 模态框关闭
             document.getElementById('modalClose').addEventListener('click', () => {
                 document.getElementById('trendModal').style.display = 'none';
             });
@@ -727,7 +725,6 @@
                 const modal = document.getElementById('trendModal');
                 if (e.target === modal) modal.style.display = 'none';
             });
-
             document.getElementById('saveTrendBtn').addEventListener('click', saveTrend);
 
             // 数字限制
@@ -740,8 +737,7 @@
 
             // 初始化
             loadFromStorage();
-            // 默认普通模式
-            isAdmin = false;
+            isAdmin = true;  // 确保默认管理员
             updateAdminUI();
         })();
     </script>
